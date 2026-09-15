@@ -23,7 +23,7 @@
 
 ```text
 apps/web/                мобильный интерфейс / PWA
-backend/src/brutfors/    API, catalog, recognition
+backend/src/brutforce/    API, catalog, recognition
 evaluation/             описание наборов, метрик и компактные отчёты
 contracts/              канонические экспортированные схемы и описания
 docs/                   решения и запуск
