@@ -1,0 +1,42 @@
+{
+  "manifest_version": "1.0.0",
+  "source_id": "open-food-facts-product-database",
+  "upstream_snapshot_sha": "cb3a359d7064c1ec535faa58ee1ea965c61a345c",
+  "counts": {
+    "candidate_products": 28,
+    "strong_russian_origin_or_manufacturing": 0,
+    "russian_brand_candidates": 10,
+    "probable_russian_needs_review": 3,
+    "sold_in_russia_only_needs_review": 4,
+    "rejected_explicit_foreign_origin": 8,
+    "rejected_obvious_category_error": 3,
+    "embedded_image_metadata_records": 118,
+    "selected_for_image_download": 13,
+    "selected_front_images": 11,
+    "selected_products_without_front": 2,
+    "downloaded_or_cached_images": 11,
+    "decoded_images": 11,
+    "download_or_decode_errors": 0,
+    "exact_duplicate_groups": 0
+  },
+  "method": {
+    "wine_filter": [
+      "en:wines",
+      "en:red-wines",
+      "en:white-wines",
+      "en:rose-wines",
+      "en:sparkling-wines",
+      "en:sweet-wines",
+      "en:fortified-wines"
+    ],
+    "russian_filter": "origins/manufacturing_places/country-of-sale tags",
+    "important_caveat": "country-of-sale Russia does not prove Russian production"
+  },
+  "gates": {
+    "metadata_filter_complete": true,
+    "all_candidates_are_verified_russian_wines": false,
+    "images_downloaded_and_audited": true,
+    "sku_labels_exact_to_off_record": true,
+    "russian_origin_manually_verified": false
+  }
+}

@@ -1,0 +1,65 @@
+{
+  "manifest_version": "1.1.0",
+  "source_id": "mavt-ru-wines-2026-09-15",
+  "source_capture_id": "mavt-capture-20260915",
+  "capture_date": "2026-09-15",
+  "collection_scope": "query-free wine product URLs from the public MAVT sitemap; accepted only when product property Страна starts with Россия",
+  "request_policy": {
+    "user_agent": "VinoDatasetResearch/1.0",
+    "cookies_persisted": false,
+    "header_or_ip_rotation": false,
+    "faceted_or_pagination_urls_requested": false,
+    "stop_on_http_status": [
+      403,
+      429
+    ]
+  },
+  "rights": {
+    "declared_dataset_license": null,
+    "rights_status": "legal_review",
+    "training_use": "internal_noncommercial_research_pending_legal_review",
+    "derivatives": "legal_review",
+    "redistribution": "not_allowed_without_permission",
+    "basis": "Public retailer pages and product images; no dataset/open-content license found in captured pages."
+  },
+  "counts": {
+    "sitemap_wine_product_urls": 4780,
+    "product_urls_scanned": 4780,
+    "scan_http_or_parse_errors": 1,
+    "russian_category_reported_products": 703,
+    "russian_products_from_sitemap": 763,
+    "russian_products_with_primary_image_url": 760,
+    "russian_products_with_decoded_media": 760,
+    "discovered_product_gallery_image_urls": 760,
+    "primary_image_associations": 760,
+    "gallery_image_associations": 0,
+    "unique_image_urls": 1272,
+    "raw_image_urls_excluded_as_non_product_assets": 512,
+    "unique_decoded_media_by_sha256": 760,
+    "image_download_or_decode_errors": 0,
+    "exact_duplicate_image_groups": 0,
+    "shared_media_product_groups": 0,
+    "duplicate_external_articles": 0,
+    "needs_verification": 2,
+    "needs_annotation": 3
+  },
+  "gates": {
+    "full_sitemap_scan_complete": true,
+    "scan_results_accounted": true,
+    "accepted_products_have_russian_country_evidence": true,
+    "all_retained_raw_pages_exist_and_match_hash": true,
+    "all_downloaded_media_exist_and_match_hash": true,
+    "all_product_gallery_image_urls_accounted": true,
+    "all_downloaded_images_decode": true,
+    "all_products_have_decoded_media": false,
+    "category_count_matches_sitemap_result": false,
+    "ready_for_frozen_split": false
+  },
+  "limitations": [
+    "The Russian country category uses query-string pagination disallowed by robots.txt; it was not crawled beyond the clean landing page.",
+    "The public sitemap can include items unavailable in the selected store/region, so its count may differ from the category UI count.",
+    "Retailer country metadata and exact source image association are captured; cross-source wine family, vintage and redesign identity remain unreviewed.",
+    "Two cards whose source value is Россия (Винос де Мадрид) are retained from the explicit retailer field but quarantined in needs_verification as contradictory origin evidence.",
+    "No MAVT product is assigned a Svoe Vino slug without separate exact identity review."
+  ]
+}

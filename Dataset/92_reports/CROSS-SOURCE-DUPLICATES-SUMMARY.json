@@ -1,0 +1,21 @@
+{
+  "manifest_rows_by_source": {
+    "svoe_archive": 15770,
+    "svoe_live_new": 4,
+    "telegram": 507,
+    "retail": 1884,
+    "xwines_slim": 1007,
+    "winesensed_ru": 0,
+    "rf100": 4643,
+    "open_food_facts": 11,
+    "mavt_ru": 760,
+    "amwine_ru": 1760,
+    "alkoteka_ru": 727
+  },
+  "total_media_rows": 27073,
+  "cross_source_exact_duplicate_groups": 0,
+  "cross_source_same_dhash_candidate_groups": 24,
+  "cross_source_same_dhash_review_items": 24,
+  "same_dhash_is_not_proof": true,
+  "split_gate": "all exact groups and visually confirmed near-duplicate groups must stay in one split"
+}

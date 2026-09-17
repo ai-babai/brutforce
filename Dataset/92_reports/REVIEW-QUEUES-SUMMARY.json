@@ -1,0 +1,83 @@
+{
+  "telegram_scene_images": 207,
+  "telegram_caption_first_priority": 39,
+  "svoe_ambiguous_media": 61,
+  "svoe_live_shared_associations": 8,
+  "rf100_cross_split_dhash_groups": 33,
+  "open_food_facts_russian_origin_candidates": 13,
+  "cross_source_same_dhash_candidates": 24,
+  "per_dataset_review_workspaces": {
+    "01_svoe_vino_catalog": {
+      "needs_verification": 61,
+      "needs_annotation": 0
+    },
+    "02_rvk_telegram": {
+      "needs_verification": 0,
+      "needs_annotation": 207
+    },
+    "03_manual_store": {
+      "needs_verification": 0,
+      "needs_annotation": 0
+    },
+    "04_svoe_vino_web_enrichment": {
+      "needs_verification": 8,
+      "needs_annotation": 0
+    },
+    "05_retail_alcohol_detection": {
+      "needs_verification": 0,
+      "needs_annotation": 0
+    },
+    "06_wine_images_126k": {
+      "needs_verification": 0,
+      "needs_annotation": 0
+    },
+    "07_x_wines": {
+      "needs_verification": 0,
+      "needs_annotation": 0
+    },
+    "08_winesensed": {
+      "needs_verification": 0,
+      "needs_annotation": 0
+    },
+    "09_rf100_wine_labels": {
+      "needs_verification": 33,
+      "needs_annotation": 0
+    },
+    "10_open_food_facts_wine_ru": {
+      "needs_verification": 13,
+      "needs_annotation": 0
+    },
+    "11_mavt_ru_wines": {
+      "needs_verification": 2,
+      "needs_annotation": 3
+    },
+    "12_krasnoe_i_beloe_ru_wines": {
+      "needs_verification": 0,
+      "needs_annotation": 0
+    },
+    "13_winelab_ru_wines": {
+      "needs_verification": 0,
+      "needs_annotation": 0
+    },
+    "14_simplewine_ru_wines": {
+      "needs_verification": 0,
+      "needs_annotation": 0
+    },
+    "15_aromatny_mir_ru_wines": {
+      "needs_verification": 25,
+      "needs_annotation": 0
+    },
+    "16_alkoteka_ru_wines": {
+      "needs_verification": 58,
+      "needs_annotation": 0
+    },
+    "17_luding_ru_wines": {
+      "needs_verification": 0,
+      "needs_annotation": 0
+    },
+    "18_russian_wine_master": {
+      "needs_verification": 552,
+      "needs_annotation": 3
+    }
+  }
+}

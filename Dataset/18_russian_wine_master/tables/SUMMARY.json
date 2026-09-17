@@ -1,0 +1,415 @@
+{
+  "manifest_version": "1.0.0",
+  "dataset_version": "2026-09-15.1",
+  "script_version": "1.0.0",
+  "purpose": "Russian-wine open-world master index without forced cross-source identity merge",
+  "inputs": {
+    "sources": {
+      "01_svoe_vino_catalog": {
+        "status": "available",
+        "expected_files": [
+          "Dataset/01_svoe_vino_catalog/tables/products.jsonl",
+          "Dataset/01_svoe_vino_catalog/tables/media.jsonl",
+          "Dataset/01_svoe_vino_catalog/tables/associations.jsonl"
+        ],
+        "present_files": [
+          "Dataset/01_svoe_vino_catalog/tables/products.jsonl",
+          "Dataset/01_svoe_vino_catalog/tables/media.jsonl",
+          "Dataset/01_svoe_vino_catalog/tables/associations.jsonl"
+        ]
+      },
+      "04_svoe_vino_web_enrichment": {
+        "status": "available",
+        "expected_files": [
+          "Dataset/04_svoe_vino_web_enrichment/tables/live_products.jsonl",
+          "Dataset/04_svoe_vino_web_enrichment/tables/live_associations.jsonl",
+          "Dataset/04_svoe_vino_web_enrichment/tables/new_live_media.jsonl"
+        ],
+        "present_files": [
+          "Dataset/04_svoe_vino_web_enrichment/tables/live_products.jsonl",
+          "Dataset/04_svoe_vino_web_enrichment/tables/live_associations.jsonl",
+          "Dataset/04_svoe_vino_web_enrichment/tables/new_live_media.jsonl"
+        ]
+      },
+      "07_x_wines": {
+        "status": "available",
+        "expected_files": [
+          "Dataset/07_x_wines/tables/slim_russian_products.jsonl",
+          "Dataset/07_x_wines/tables/slim_media.jsonl"
+        ],
+        "present_files": [
+          "Dataset/07_x_wines/tables/slim_russian_products.jsonl",
+          "Dataset/07_x_wines/tables/slim_media.jsonl"
+        ]
+      },
+      "10_open_food_facts_wine_ru": {
+        "status": "available",
+        "expected_files": [
+          "Dataset/10_open_food_facts_wine_ru/tables/candidates.jsonl",
+          "Dataset/10_open_food_facts_wine_ru/tables/media.jsonl",
+          "Dataset/10_open_food_facts_wine_ru/tables/associations.jsonl"
+        ],
+        "present_files": [
+          "Dataset/10_open_food_facts_wine_ru/tables/candidates.jsonl",
+          "Dataset/10_open_food_facts_wine_ru/tables/media.jsonl",
+          "Dataset/10_open_food_facts_wine_ru/tables/associations.jsonl"
+        ]
+      },
+      "11_mavt_ru_wines": {
+        "status": "available",
+        "expected_files": [
+          "Dataset/11_mavt_ru_wines/tables/products.jsonl",
+          "Dataset/11_mavt_ru_wines/tables/catalog_memberships.jsonl",
+          "Dataset/11_mavt_ru_wines/tables/media.jsonl",
+          "Dataset/11_mavt_ru_wines/tables/product_media_associations.jsonl"
+        ],
+        "present_files": [
+          "Dataset/11_mavt_ru_wines/tables/products.jsonl",
+          "Dataset/11_mavt_ru_wines/tables/catalog_memberships.jsonl",
+          "Dataset/11_mavt_ru_wines/tables/media.jsonl",
+          "Dataset/11_mavt_ru_wines/tables/product_media_associations.jsonl"
+        ]
+      },
+      "15_aromatny_mir_ru_wines": {
+        "status": "available",
+        "expected_files": [
+          "Dataset/15_aromatny_mir_ru_wines/tables/products.jsonl",
+          "Dataset/15_aromatny_mir_ru_wines/tables/catalog_memberships.jsonl",
+          "Dataset/15_aromatny_mir_ru_wines/tables/media.jsonl",
+          "Dataset/15_aromatny_mir_ru_wines/tables/product_media_associations.jsonl"
+        ],
+        "present_files": [
+          "Dataset/15_aromatny_mir_ru_wines/tables/products.jsonl",
+          "Dataset/15_aromatny_mir_ru_wines/tables/catalog_memberships.jsonl",
+          "Dataset/15_aromatny_mir_ru_wines/tables/media.jsonl",
+          "Dataset/15_aromatny_mir_ru_wines/tables/product_media_associations.jsonl"
+        ]
+      },
+      "16_alkoteka_ru_wines": {
+        "status": "available",
+        "expected_files": [
+          "Dataset/16_alkoteka_ru_wines/tables/products.jsonl",
+          "Dataset/16_alkoteka_ru_wines/tables/catalog_memberships.jsonl",
+          "Dataset/16_alkoteka_ru_wines/tables/media.jsonl",
+          "Dataset/16_alkoteka_ru_wines/tables/associations.jsonl"
+        ],
+        "present_files": [
+          "Dataset/16_alkoteka_ru_wines/tables/products.jsonl",
+          "Dataset/16_alkoteka_ru_wines/tables/catalog_memberships.jsonl",
+          "Dataset/16_alkoteka_ru_wines/tables/media.jsonl",
+          "Dataset/16_alkoteka_ru_wines/tables/associations.jsonl"
+        ]
+      }
+    },
+    "files": [
+      {
+        "relative_path": "Dataset/01_svoe_vino_catalog/tables/associations.jsonl",
+        "bytes": 1835470,
+        "rows": 5697,
+        "sha256": "aae5a32b5123bb5a9e06e8e156915612ea8fb756a5ff758be26095ad2d6a1b1b"
+      },
+      {
+        "relative_path": "Dataset/01_svoe_vino_catalog/tables/media.jsonl",
+        "bytes": 17076437,
+        "rows": 15770,
+        "sha256": "c06afc3eb0634aabbd6654a12c7b755c8346a4282ed865161a0f44fc7fd31441"
+      },
+      {
+        "relative_path": "Dataset/01_svoe_vino_catalog/tables/products.jsonl",
+        "bytes": 2312874,
+        "rows": 2103,
+        "sha256": "c1cb3738dfc43b3f9db3c838dcfa0662b21bc6e4e83cf2154a5599efb154bc8a"
+      },
+      {
+        "relative_path": "Dataset/04_svoe_vino_web_enrichment/tables/live_associations.jsonl",
+        "bytes": 830559,
+        "rows": 2041,
+        "sha256": "af9618f8a492e075b87fd9f81caadf5440c3c380443de3bbfdd88a5bd0728157"
+      },
+      {
+        "relative_path": "Dataset/04_svoe_vino_web_enrichment/tables/live_products.jsonl",
+        "bytes": 3014945,
+        "rows": 2041,
+        "sha256": "ff0d72c317910fa072f5c316c9c96523707abacf7014f809950592eb581f4fea"
+      },
+      {
+        "relative_path": "Dataset/04_svoe_vino_web_enrichment/tables/new_live_media.jsonl",
+        "bytes": 3282,
+        "rows": 4,
+        "sha256": "8f2bc9f56526189426e4526faeb0a1f6361785a3c26c54d9b52dce364605f805"
+      },
+      {
+        "relative_path": "Dataset/07_x_wines/tables/slim_media.jsonl",
+        "bytes": 656564,
+        "rows": 1007,
+        "sha256": "f7aea557a41ab3cb3e9014ecf65322e78bb42eb19572acb384ec43222b6e6fb6"
+      },
+      {
+        "relative_path": "Dataset/07_x_wines/tables/slim_russian_products.jsonl",
+        "bytes": 19182,
+        "rows": 7,
+        "sha256": "89a57b8aba5e59e19f4b5a80f21cbbdb786fb231192b3e61ff1b28e373e46658"
+      },
+      {
+        "relative_path": "Dataset/10_open_food_facts_wine_ru/tables/associations.jsonl",
+        "bytes": 4914,
+        "rows": 13,
+        "sha256": "0da552de57ca93999e69e3f08b3c5fa24bf0548f3e7bcdd07496d5bf16a17507"
+      },
+      {
+        "relative_path": "Dataset/10_open_food_facts_wine_ru/tables/candidates.jsonl",
+        "bytes": 47781,
+        "rows": 28,
+        "sha256": "bd51a00367cc3c6880b9ab6747fefc44f264992a86c2aad98de41e2cd7c2f39c"
+      },
+      {
+        "relative_path": "Dataset/10_open_food_facts_wine_ru/tables/media.jsonl",
+        "bytes": 8646,
+        "rows": 11,
+        "sha256": "85482e2436efaa73961188b0ca25e73c835ca41cc9e1a04d28d53ad9b689db17"
+      },
+      {
+        "relative_path": "Dataset/11_mavt_ru_wines/tables/catalog_memberships.jsonl",
+        "bytes": 270491,
+        "rows": 763,
+        "sha256": "b7846e94d0673c956bf4579b4305ab6ce6b80e6a1251aa110e3e321a08befc20"
+      },
+      {
+        "relative_path": "Dataset/11_mavt_ru_wines/tables/media.jsonl",
+        "bytes": 941185,
+        "rows": 760,
+        "sha256": "c417d19112600df157d4ffd55b35b43374ec8a8d4d9b02a674c805bae9d0f3d9"
+      },
+      {
+        "relative_path": "Dataset/11_mavt_ru_wines/tables/product_media_associations.jsonl",
+        "bytes": 412225,
+        "rows": 760,
+        "sha256": "b2fc465a93e259a0f10e09c52800c7210ad07afbdac528e8ad01b08b2246a99a"
+      },
+      {
+        "relative_path": "Dataset/11_mavt_ru_wines/tables/products.jsonl",
+        "bytes": 1272469,
+        "rows": 763,
+        "sha256": "7754f0cdbe1b1e38d87e8ededf905da367512a1ee6c76f1c71597a7fa4e8746c"
+      },
+      {
+        "relative_path": "Dataset/15_aromatny_mir_ru_wines/tables/catalog_memberships.jsonl",
+        "bytes": 444989,
+        "rows": 845,
+        "sha256": "4250cdd3f532882dbf471a0e730d5c4fb085fe0ba8a5b1b09441327331e135ba"
+      },
+      {
+        "relative_path": "Dataset/15_aromatny_mir_ru_wines/tables/media.jsonl",
+        "bytes": 1678750,
+        "rows": 1760,
+        "sha256": "cf2762b73e3480e317fa15f11e135da753361e0ded5a1cb5602836030deedf28"
+      },
+      {
+        "relative_path": "Dataset/15_aromatny_mir_ru_wines/tables/product_media_associations.jsonl",
+        "bytes": 892839,
+        "rows": 1760,
+        "sha256": "4ed2cc500b3cad62f258b9a86fe037470f5fa51235ab67d0762b98f4de3eaffb"
+      },
+      {
+        "relative_path": "Dataset/15_aromatny_mir_ru_wines/tables/products.jsonl",
+        "bytes": 2100027,
+        "rows": 845,
+        "sha256": "696013c81060e9687193c62184ea0de20eba98eda7fc5886308eb85f9760ba3b"
+      },
+      {
+        "relative_path": "Dataset/16_alkoteka_ru_wines/tables/associations.jsonl",
+        "bytes": 509238,
+        "rows": 727,
+        "sha256": "2f155f71044d9388a4d939a048dfd773c080c11767ce90333275c5dd4fec4c75"
+      },
+      {
+        "relative_path": "Dataset/16_alkoteka_ru_wines/tables/catalog_memberships.jsonl",
+        "bytes": 430781,
+        "rows": 727,
+        "sha256": "bbc658b3e7909d0f4c83ee6017b779119470046d1468782d91b652b1ee0799bf"
+      },
+      {
+        "relative_path": "Dataset/16_alkoteka_ru_wines/tables/media.jsonl",
+        "bytes": 913561,
+        "rows": 727,
+        "sha256": "d304e46e8c14c7aa7ffe2d818bba62bdc3b6439ac299e035598a225b49e105c7"
+      },
+      {
+        "relative_path": "Dataset/16_alkoteka_ru_wines/tables/products.jsonl",
+        "bytes": 3188432,
+        "rows": 727,
+        "sha256": "7818416d82a8af9c100d196cdc23c73a9708e9f9597b371f3d269d049b88aa88"
+      }
+    ]
+  },
+  "counts": {
+    "products": 6499,
+    "catalog_memberships": 6499,
+    "media": 9156,
+    "associations": 11005,
+    "identity_eligible_associations": 10719,
+    "exact_current_svoe_slugs": 2033,
+    "provisional_family_candidates": 446,
+    "cross_catalog_family_candidates": 324,
+    "family_candidate_members": 1662,
+    "needs_verification": 552,
+    "needs_annotation": 3,
+    "review_decisions_preserved": 0
+  },
+  "catalog_counts": {
+    "alkoteka": 727,
+    "amwine.ru": 845,
+    "mavt": 763,
+    "open_food_facts": 13,
+    "svoe_vino_archive": 2103,
+    "svoe_vino_current": 2041,
+    "x_wines_slim": 7
+  },
+  "origin_status_counts": {
+    "bronze_probable_russian_needs_review": 3,
+    "gold_catalog_scope_russian_wine": 4144,
+    "gold_source_country_ru": 7,
+    "gold_source_explicit": 727,
+    "gold_source_product_country_explicit": 1608,
+    "silver_russian_brand_candidate": 10
+  },
+  "review_action_counts": {
+    "cross_product_exact_duplicate_media": 1,
+    "find_or_capture_real_product_image; current source asset is a placeholder": 53,
+    "no_selected_product_image": 24,
+    "obtain and verify a label/bottle reference image": 3,
+    "review_same_family_uncertain_without_merging_variants_or_label_designs": 446,
+    "verify contradictory source country/region evidence before Russian-origin use": 2,
+    "verify whether the shared exact source image represents every SKU and assign variant/design relation": 5,
+    "verify_Russian_production_and_wine_category_from_label_or_authoritative_product_evidence": 13,
+    "verify_current_svoe_product_to_primary_media_identity_before_exact_slug_use": 8
+  },
+  "review_state_counts": {
+    "needs_annotation": 3,
+    "needs_verification": 552
+  },
+  "source_counts": {
+    "01_svoe_vino_catalog": {
+      "products": 2103,
+      "catalog_memberships": 2103,
+      "media": 5887,
+      "associations": 5697,
+      "needs_verification": 299,
+      "needs_annotation": 0
+    },
+    "04_svoe_vino_web_enrichment": {
+      "products": 2041,
+      "catalog_memberships": 2041,
+      "media": 4,
+      "associations": 2041,
+      "needs_verification": 298,
+      "needs_annotation": 0
+    },
+    "07_x_wines": {
+      "products": 7,
+      "catalog_memberships": 7,
+      "media": 7,
+      "associations": 7,
+      "needs_verification": 1,
+      "needs_annotation": 0
+    },
+    "10_open_food_facts_wine_ru": {
+      "products": 13,
+      "catalog_memberships": 13,
+      "media": 11,
+      "associations": 13,
+      "needs_verification": 14,
+      "needs_annotation": 0
+    },
+    "11_mavt_ru_wines": {
+      "products": 763,
+      "catalog_memberships": 763,
+      "media": 760,
+      "associations": 760,
+      "needs_verification": 2,
+      "needs_annotation": 3
+    },
+    "15_aromatny_mir_ru_wines": {
+      "products": 845,
+      "catalog_memberships": 845,
+      "media": 1760,
+      "associations": 1760,
+      "needs_verification": 172,
+      "needs_annotation": 0
+    },
+    "16_alkoteka_ru_wines": {
+      "products": 727,
+      "catalog_memberships": 727,
+      "media": 727,
+      "associations": 727,
+      "needs_verification": 201,
+      "needs_annotation": 0
+    }
+  },
+  "integrity_checks": {
+    "unique_master_product_ids": true,
+    "unique_master_membership_ids": true,
+    "unique_master_media_ids": true,
+    "unique_master_association_ids": true,
+    "all_memberships_reference_products": true,
+    "all_products_have_catalog_membership": true,
+    "all_associations_reference_products": true,
+    "all_associations_reference_existing_media_or_explicit_null": true,
+    "all_identity_eligible_associations_have_media": true,
+    "all_media_have_path_hash_and_decode_status": true,
+    "all_media_have_mime_type": true,
+    "all_media_paths_resolve_inside_project_dataset": true,
+    "all_products_have_explicit_russian_origin_status": true,
+    "all_family_members_reference_products": true,
+    "family_candidates_are_provisional": true,
+    "no_cross_source_product_collapse": true,
+    "exact_current_svoe_slug_only_from_verified_live_associations": true,
+    "no_media_copied_into_master_dataset": true
+  },
+  "all_integrity_checks_pass": true,
+  "policy": {
+    "cross_source_merge": "forbidden_without_human_verified_decision",
+    "family_candidates": "same_family_uncertain_only",
+    "vintage_volume_label_design": "preserved_separately",
+    "exact_current_svoe_slug": "only_verified_2026-09-15_live_product_media_associations",
+    "media_storage": "references_only_no_image_copy",
+    "split_assignment": "not_performed"
+  },
+  "output_files": {
+    "associations": {
+      "relative_path": "Dataset/18_russian_wine_master/tables/associations.jsonl",
+      "rows": 11005,
+      "sha256": "a3f3b972ea9ebe198a4cf3a825059ecc3e33e1e63d44d02142f788aab5855898"
+    },
+    "catalog_memberships": {
+      "relative_path": "Dataset/18_russian_wine_master/tables/catalog_memberships.jsonl",
+      "rows": 6499,
+      "sha256": "ef4e29065f0639c1bab6c154ae570ecf632bf5d834da3112bf8e9e626ac0a8d7"
+    },
+    "family_candidates": {
+      "relative_path": "Dataset/18_russian_wine_master/tables/family_candidates.jsonl",
+      "rows": 446,
+      "sha256": "3a6f7f42f1b9904dff5cd1fe4b4c965c2ae5267cfd0430e614a8d36f16e51e52"
+    },
+    "media": {
+      "relative_path": "Dataset/18_russian_wine_master/tables/media.jsonl",
+      "rows": 9156,
+      "sha256": "0bb1e7cff527c5c754485b1e3af2bb6d2b8fa1b6a72b6fcf21c9b614350f7743"
+    },
+    "needs_annotation": {
+      "relative_path": "Dataset/18_russian_wine_master/review/needs_annotation/queue.jsonl",
+      "rows": 3,
+      "sha256": "fa34e39fd7be773578402690de7531632b700d88e9cc66f2bbb49a629daa46d7"
+    },
+    "needs_verification": {
+      "relative_path": "Dataset/18_russian_wine_master/review/needs_verification/queue.jsonl",
+      "rows": 552,
+      "sha256": "5da5f0f5a6b9f5d6bd859be6342d90d0ac576a27a228382b1ee9058e16a9498e"
+    },
+    "products": {
+      "relative_path": "Dataset/18_russian_wine_master/tables/products.jsonl",
+      "rows": 6499,
+      "sha256": "0242f0c6ae6857b625d3212f1688598c0d618cf3148757df7f5c554d200acb8b"
+    }
+  }
+}

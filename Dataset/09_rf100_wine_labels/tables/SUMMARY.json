@@ -1,0 +1,51 @@
+{
+  "manifest_version": "1.0.0",
+  "source_id": "rf100-wine-labels",
+  "counts": {
+    "media": 4643,
+    "bboxes": 25034,
+    "categories": 13,
+    "decode_ok": 4643,
+    "decode_error_or_missing": 0,
+    "images_with_bboxes": 4642,
+    "images_without_bboxes": 1,
+    "valid_bboxes": 25034,
+    "invalid_bboxes": 0,
+    "validation_errors": 0,
+    "exact_duplicate_groups": 0,
+    "exact_cross_split_duplicate_groups": 0,
+    "same_dhash_cross_split_groups": 33
+  },
+  "source_splits": {
+    "train": 3172,
+    "valid": 841,
+    "test": 630
+  },
+  "categories": {
+    "0": "wine-labels",
+    "1": "AlcoholPercentage",
+    "2": "Appellation AOC DOC AVARegion",
+    "3": "Appellation QualityLevel",
+    "4": "CountryCountry",
+    "5": "Distinct Logo",
+    "6": "Established YearYear",
+    "7": "Maker-Name",
+    "8": "Organic",
+    "9": "Sustainable",
+    "10": "Sweetness-Brut-SecSweetness-Brut-Sec",
+    "11": "TypeWine Type",
+    "12": "VintageYear"
+  },
+  "semantic_scope": {
+    "bboxes_describe": "text/logo/attribute regions on wine labels",
+    "bboxes_do_not_describe": "wine bottle extents or exact wine SKU identities",
+    "russian_wine_filter": "not available from COCO annotations; OCR/manual review required"
+  },
+  "gates": {
+    "all_images_decode": true,
+    "all_coco_images_accounted_for": true,
+    "all_bboxes_valid": true,
+    "safe_to_reuse_upstream_splits_without_leakage_review": false,
+    "exact_russian_wine_labels_available": false
+  }
+}

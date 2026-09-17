@@ -1,0 +1,18 @@
+{
+    "package_version":  "2026-09-17",
+    "package_name":  "Vino-parsed-dataset-2026-09-17",
+    "purpose":  "Internal parsed Vino dataset transfer",
+    "manifest_records":  32883,
+    "manifest_payload_bytes":  4205228981,
+    "manifest_sha256":  "6b286ed28a45328bfc86b529c6b68dd1d28efba659d0d9889d1f62313c0ea691",
+    "selected_raw_dependency_files":  4330,
+    "selected_raw_dependency_bytes":  456504036,
+    "parsed_reference_rows":  36890,
+    "parsed_reference_values":  37650,
+    "raw_policy":  "Only media/PDF files directly referenced by normalized tables, plus 00_raw/README.md",
+    "directly_referenced_cache_files":  1007,
+    "cache_policy":  "Excluded by default; directly referenced media retained to avoid broken paths",
+    "project_files_included":  false,
+    "frozen_split_ready":  false,
+    "usage_scope":  "internal_noncommercial_research_rights_status_per_source"
+}

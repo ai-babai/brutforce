@@ -1,0 +1,8 @@
+# Модель, reasoning, approvals, sandbox, providers и web search наследуются из
+# пользовательского/desktop-слоя. Проект задаёт только документацию и subagents.
+project_doc_max_bytes = 65536
+
+[agents]
+enabled = true
+max_concurrent_threads_per_session = 3
+interrupt_message = true

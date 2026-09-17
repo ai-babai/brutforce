@@ -1,0 +1,52 @@
+{
+  "manifest_version": "1.0.0",
+  "source_id": "retail-alcohol-detection-kaggle",
+  "counts": {
+    "media": 1884,
+    "bboxes": 21441,
+    "validation_errors": 0,
+    "classification_images": 1625,
+    "classification_named": 637,
+    "classification_opaque": 988,
+    "detection_images": 259,
+    "detection_label_files": 259,
+    "valid_bboxes": 21441,
+    "clipped_rounding_bboxes": 139,
+    "invalid_bboxes": 0,
+    "images_decode_error": 0,
+    "missing_label_files": 0,
+    "orphan_label_files": 0,
+    "exact_duplicate_groups": 196
+  },
+  "distributions": {
+    "classification_named_classes": {
+      "Aperol": 23,
+      "Campari": 17,
+      "CinZano": 66,
+      "LЁN": 17,
+      "Martini dark green": 25,
+      "Martini green": 127,
+      "Martini red": 102,
+      "Алтай": 8,
+      "Егермейстер": 19,
+      "Мамонт": 11,
+      "Пять озёр": 38,
+      "Русский стандарт": 104,
+      "Талка": 31,
+      "Тундра": 23,
+      "Хаски": 26
+    },
+    "bbox_class_ids": {
+      "0": 21441
+    }
+  },
+  "gates": {
+    "all_images_have_label_or_bbox_status": true,
+    "all_detection_images_have_label_file": true,
+    "all_detection_labels_have_image": true,
+    "all_bboxes_usable": true,
+    "exact_russian_wine_labels_available": false
+  },
+  "missing_label_stems": [],
+  "orphan_label_stems": []
+}

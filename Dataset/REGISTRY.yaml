@@ -1,0 +1,435 @@
+registry_version: 1.0.0
+updated_at: 2026-09-15
+project_use:
+  purpose: noncommercial_research
+  commercial: false
+  redistribution_default: prohibited_until_confirmed
+download_workflow_completed_for_received_sources: true
+raw_manifest_records: 9219
+raw_manifest_sha256: baa306a1820f36c32fbcccf462dc57beda0696f0b9223816c45f2f21803ce524
+
+sources:
+  - id: caseholder-svoe-vino-2026-09
+    ordinal: 1
+    title: Архив каталога Своё Вино
+    status: parsed_audited_current_site_enriched
+    priority: core
+    source_type: caseholder_archive
+    raw_path: 00_raw/01_svoe_vino_caseholder/Датасет.zip
+    received_at: 2026-09-15
+    bytes: 2252013652
+    sha256: b01a1b9ff65c195ca5cb34d0aaa4d0d447749fbd3ef9fe72b2be37cdef5d92f8
+    facts:
+      catalog_rows: 4147
+      unique_slugs: 2103
+      extracted_files: 15803
+      images: 15770
+      images_decode_ok: 15769
+      gold_labeled_images: 5487
+      training_candidate_originals: 1788
+      current_site_products: 2041
+      current_site_new_vs_archive: 4
+      evaluation_queries: 3
+    intended_use: catalog_reference_and_caseholder_evaluation
+    rights:
+      training_use: provided_for_case_pending_written_confirmation
+      attribution: caseholder
+      derivatives: internal_research_only_until_confirmed
+      redistribution: not_confirmed
+
+  - id: rvk-telegram-2026-09-15
+    ordinal: 2
+    title: Telegram-export чата любителей российского вина
+    status: parsed_audited_manual_annotation_required
+    priority: core_candidate
+    source_type: telegram_export
+    raw_path: 00_raw/02_rvk_telegram/ChatExport_2026-09-15
+    received_at: 2026-09-15
+    anchor_file: messages.html
+    anchor_sha256: b54b40370c5aa1f7bd5c86c2f53e53e1739eea3e395d855dca220420b8604dde
+    facts:
+      total_files: 561
+      messages: 457
+      images: 507
+      scene_images: 207
+      scene_images_with_caption_candidates: 39
+      verified_product_labels: 0
+      bbox_annotations: 0
+      original_jpg: 201
+      pdf: 49
+      pdf_table_rows_raw: 12128
+      pdf_table_rows_canonical: 5876
+      video: 2
+      photo_messages_captioned: 132
+      photo_messages_without_caption: 68
+    intended_use: field_images_and_tasting_event_associations
+    rights:
+      training_use: internal_noncommercial_research_pending_participant_terms
+      attribution: unresolved
+      derivatives: internal_only_until_confirmed
+      redistribution: not_confirmed
+
+  - id: manual-store-captures
+    ordinal: 3
+    title: Ручная съёмка в магазинах российского вина
+    status: planned
+    priority: high
+    source_type: first_party_capture
+    raw_path: 00_raw/03_manual_store
+    intended_use: controlled_field_queries_and_hard_cases
+    rights:
+      training_use: capture_consent_and_store_policy_required
+      attribution: capture_log
+      derivatives: pending_collection_protocol
+      redistribution: pending_collection_protocol
+
+  - id: svoe-vino-live-2026-09-15
+    ordinal: 4
+    title: Точечные снимки публичного каталога Своё Вино
+    status: full_wine_sitemap_captured_parsed_audited
+    priority: high_after_gap_audit
+    source_type: website_snapshot
+    source_url: https://vino-svoe.ru/wines
+    raw_path: 00_raw/04_svoe_vino_web_snapshots
+    intended_use: fill_verified_catalog_gaps
+    facts:
+      sitemap_products: 2041
+      pages_captured: 2041
+      fetch_or_parse_errors: 0
+      new_products_vs_archive: 4
+      product_image_associations: 2041
+      supervised_eligible_associations: 2033
+      shared_primary_image_review: 8
+    rights:
+      training_use: terms_and_asset_rights_review_required
+      attribution: source_url_and_capture_time
+      derivatives: legal_review
+      redistribution: not_confirmed
+
+  - id: retail-alcohol-detection-kaggle
+    ordinal: 5
+    title: Retail Alcohol Detection Dataset
+    status: downloaded_parsed_audited
+    priority: high
+    source_type: kaggle
+    source_url: https://www.kaggle.com/datasets/axlifreeway/retail-alcohol-detection-dataset
+    raw_path: 00_raw/05_retail_alcohol_detection
+    declared_license: MIT
+    reported_bytes: 965326532
+    intended_use: russian_retail_domain_pretraining_detection_and_hard_negatives
+    archive_sha256: e1087f4bb4558281283a68770639136a626e2b7ee2a7bfc33f5939c2715b9619
+    facts:
+      images: 1884
+      detection_images: 259
+      valid_bboxes: 21441
+      classification_images: 1625
+      exact_russian_wine_sku_labels: 0
+    caveats: one generic alcohol-product bbox class; not an exact Russian wine SKU dataset
+    rights:
+      training_use: allowed_under_declared_license
+      attribution: retain_source_and_license
+      derivatives: allowed_under_declared_license
+      redistribution: verify_kaggle_asset_terms_before_copying
+
+  - id: wine-images-126k-hf
+    ordinal: 6
+    title: Wine Images Dataset 126K
+    status: metadata_filtered_no_russian_candidates
+    priority: medium
+    source_type: huggingface
+    source_url: https://huggingface.co/datasets/cipher982/wine-images-126k
+    raw_path: 00_raw/06_wine_images_126k
+    declared_license: CC-BY-4.0
+    reported_rows: 125787
+    reported_size_bytes_current: 12500000000
+    intended_use: generic_clean_bottle_and_image_text_pretraining
+    facts:
+      metadata_rows_checked: 125787
+      russian_region_or_brand_candidates: 0
+      image_shards_downloaded: 0
+    caveats: russian_coverage_unknown_and_underlying_retailer_image_rights_need_review
+    rights:
+      training_use: research_candidate
+      attribution: required
+      derivatives: source_asset_rights_review
+      redistribution: source_asset_rights_review
+
+  - id: x-wines
+    ordinal: 7
+    title: X-Wines
+    status: downloaded_parsed_russian_subset_audited
+    priority: medium
+    source_type: github_and_kaggle
+    source_url: https://github.com/rogerioxavier/X-Wines
+    secondary_url: https://www.kaggle.com/datasets/rogerioxavier/x-wines-slim-version
+    raw_path: 00_raw/07_x_wines
+    declared_license_repository: CC0-1.0
+    declared_license_kaggle: ODbL_and_DbCL
+    reported_wines_full: 100646
+    reported_ratings_full: 21013536
+    intended_use: metadata_recommendation_research_and_label_asset_pilot
+    facts:
+      slim_products_and_images: 1007
+      russian_products_and_images: 7
+      images_decode_error: 0
+      russian_crosswalk_reviewed: 7
+      exact_svoe_sku_crosswalks: 0
+    caveats: editions_have_different_license_labels_and_full_image_coverage_is_unverified
+    rights:
+      training_use: research_candidate_after_edition_selection
+      attribution: citation_required_by_project
+      derivatives: edition_specific_review
+      redistribution: edition_specific_review
+
+  - id: winesensed-hf
+    ordinal: 8
+    title: WineSensed
+    status: full_snapshot_downloaded_filtered_no_russian_candidates
+    priority: low_pilot
+    source_type: huggingface
+    source_url: https://huggingface.co/datasets/christopher/winesensed
+    raw_path: 00_raw/08_winesensed
+    declared_license: CC-BY-NC-ND-4.0
+    reported_rows: 1018017
+    reported_size_bytes: 35754252326
+    facts:
+      parquet_shards_expected: 24
+      parquet_shards_complete: 24
+      source_rows_checked: 1014630
+      russian_geography_or_known_brand_candidates: 0
+    intended_use: small_streaming_multimodal_research_pilot
+    caveats: noncommercial_use_fits_NC_but_ND_still_restricts_derivatives
+    rights:
+      training_use: noncommercial_research_candidate
+      attribution: required
+      derivatives: legal_review_due_to_ND
+      redistribution: prohibited_without_separate_permission
+
+  - id: rf100-wine-labels
+    ordinal: 9
+    title: RF100 Wine Labels
+    status: downloaded_parsed_audited
+    priority: medium
+    source_type: roboflow
+    source_url: https://universe.roboflow.com/roboflow-100/wine-labels
+    raw_path: 00_raw/09_rf100_wine_labels
+    declared_license: CC-BY-4.0
+    reported_images: 4643
+    reported_classes: 13
+    facts:
+      images: 4643
+      images_decode_error: 0
+      valid_bboxes: 25034
+      cross_split_dhash_groups_for_review: 33
+      exact_russian_wine_sku_labels: 0
+    intended_use: auxiliary_label_element_detection_and_OCR
+    rights:
+      training_use: allowed_with_attribution
+      attribution: required
+      derivatives: allowed_with_attribution
+      redistribution: preserve_license_and_attribution
+
+  - id: open-food-facts-product-database
+    ordinal: 10
+    title: Open Food Facts Images — Russian wine subset
+    status: metadata_filtered_selected_images_audited
+    priority: high
+    source_type: open_data_aws
+    source_url: https://registry.opendata.aws/openfoodfacts-images/
+    raw_path: 00_raw/10_open_food_facts_wine_ru
+    declared_image_license: CC-BY-SA
+    declared_database_license: ODbL
+    intended_use: metadata_first_filter_then_selected_russian_wine_images
+    facts:
+      metadata_candidates: 28
+      russian_brand_candidates: 10
+      probable_russian_candidates: 3
+      selected_front_images: 11
+      decoded_selected_images: 11
+      rejected_foreign_or_category_error: 11
+    caveats: do_not_download_full_image_bucket
+    rights:
+      training_use: allowed_under_applicable_open_licenses
+      attribution: required
+      derivatives: share_alike_review_required
+      redistribution: preserve_attribution_and_compatible_terms
+
+  - id: mavt-ru-wines-2026-09-15
+    ordinal: 11
+    title: МАВТ — российские вина
+    status: full_sitemap_snapshot_parsed_audited_with_accounted_gaps
+    priority: high
+    source_type: retailer_website_snapshot
+    source_url: https://mavt.ru/catalog/wine/
+    raw_path: 00_raw/11_mavt_ru_wines
+    intended_use: russian_open_world_reference_and_variant_history
+    facts:
+      sitemap_wine_product_urls: 4780
+      product_urls_scanned: 4780
+      russian_products: 763
+      decoded_primary_images: 760
+      products_without_image: 3
+      contradictory_origin_values_for_review: 2
+      out_of_scope_recommendation_images: 512
+      image_download_or_decode_errors: 0
+    caveats: regional category showed 703 products while sitemap yielded 763 Russian cards; one stale sitemap URL and three missing product images are explicitly accounted
+    rights:
+      training_use: internal_noncommercial_research_pending_terms_review
+      attribution: source_url_and_capture_time
+      derivatives: legal_review
+      redistribution: not_confirmed
+
+  - id: krasnoe-i-beloe-russian-wine-web
+    ordinal: 12
+    title: Красное&Белое — российские вина
+    status: policy_and_sitemap_captured_product_access_blocked_403
+    priority: high
+    source_type: retailer_website_snapshot
+    source_url: https://krasnoeibeloe.ru/catalog/__2/
+    raw_path: 00_raw/12_krasnoe_i_beloe_ru_wines
+    intended_use: russian_open_world_reference_mass_market_and_hard_cases
+    facts:
+      dedicated_russian_wine_category: true
+      catalog_depends_on_selected_store: true
+    caveats: robots_requires_crawl_delay_2; product_page_returned_403_to_declared_research_bot; official_export_or_permission_required
+    rights:
+      training_use: internal_noncommercial_research_pending_terms_review
+      attribution: source_url_capture_time_and_store_context
+      derivatives: legal_review
+      redistribution: not_confirmed
+
+  - id: winelab-russian-wine-web
+    ordinal: 13
+    title: ВинЛаб — российские вина
+    status: policy_and_sitemap_captured_product_access_blocked_401
+    priority: high
+    source_type: retailer_website_snapshot
+    source_url: https://www.winelab.ru/
+    raw_path: 00_raw/13_winelab_ru_wines
+    intended_use: russian_open_world_metadata_variant_and_label_history
+    facts:
+      sitemap_urls_observed: 3027
+      product_article_country_producer_vintage_available: true
+    caveats: robots_restricts_media_paths_and_named_ai_bots; product_page_returned_401_to_declared_research_bot
+    rights:
+      training_use: metadata_research_pilot_pending_terms_review
+      attribution: source_url_and_capture_time
+      derivatives: legal_review
+      redistribution: not_confirmed
+
+  - id: simplewine-russian-wine-web
+    ordinal: 14
+    title: SimpleWine — российские вина
+    status: access_blocked_403_at_robots_probe
+    priority: high
+    source_type: retailer_website_snapshot
+    source_url: https://simplewine.ru/catalog/vino/filter/country-rossiya/
+    raw_path: 00_raw/14_simplewine_ru_wines
+    intended_use: russian_open_world_reference_vintage_and_rebrand_history
+    facts:
+      russian_wine_products_observed: 326
+      numeric_product_id_and_vintage_available: true
+    caveats: scripted_user_agent_received_403; prefer_permission_export_or_limited_visible_browser_pilot
+    rights:
+      training_use: internal_noncommercial_research_pending_terms_review
+      attribution: source_url_and_capture_time
+      derivatives: legal_review
+      redistribution: not_confirmed
+
+  - id: aromatny-mir-russian-wine-web
+    ordinal: 15
+    title: Ароматный Мир — российские вина
+    status: full_allowed_snapshot_parsed_audited
+    priority: medium
+    source_type: retailer_website_snapshot
+    source_url: https://amwine.ru/
+    raw_path: 00_raw/15_aromatny_mir_ru_wines
+    intended_use: russian_open_world_reference_and_private_label_coverage
+    facts:
+      selected_product_urls: 846
+      parsed_russian_products: 845
+      gallery_images_decoded: 1760
+      exact_product_media_associations: 1760
+      products_with_media: 821
+      products_without_media_for_review: 24
+      cross_product_exact_duplicate_groups_for_review: 1
+      raw_hash_mismatches: 0
+    caveats: one removed product redirect is accounted; availability and prices use the default Moscow store context; one exact image shared by two SKU remains gated
+    rights:
+      training_use: internal_noncommercial_research_pending_terms_review
+      attribution: source_url_capture_time_and_store_context
+      derivatives: legal_review
+      redistribution: not_confirmed
+
+  - id: alkoteka-russian-wine-web-2026-09-15-krasnodar
+    ordinal: 16
+    title: Алкотека — российские вина
+    status: full_fixed_city_snapshot_parsed_audited
+    priority: high
+    source_type: retailer_website_snapshot
+    source_url: https://alkoteka.com/catalog/
+    raw_path: 00_raw/16_alkoteka_ru_wines
+    intended_use: russian_open_world_reference_southern_retail_coverage
+    facts:
+      listed_products: 727
+      product_details: 727
+      explicit_russian_products: 727
+      decoded_primary_images: 727
+      identity_eligible_associations: 663
+      placeholder_media_excluded: 53
+      shared_media_for_review: 11
+      review_items: 58
+      detail_or_decode_errors: 0
+    caveats: snapshot_is_for_krasnodar_city_context; historical_delisted_and_other_city_only_products_are_out_of_scope
+    rights:
+      training_use: internal_noncommercial_research_pending_terms_review
+      attribution: source_url_capture_time_and_store_context
+      derivatives: legal_review
+      redistribution: not_confirmed
+
+  - id: luding-russian-wine-web
+    ordinal: 17
+    title: LUDING — российские вина
+    status: access_blocked_403_at_robots_probe
+    priority: medium
+    source_type: retailer_website_snapshot
+    source_url: https://luding.ru/
+    raw_path: 00_raw/17_luding_ru_wines
+    intended_use: russian_open_world_reference_and_rich_product_metadata
+    facts:
+      observed_catalog_wines: 9876
+      country_filter_available: true
+      city_subdomains_present: true
+    caveats: scripted_user_agent_received_403_and_city_subdomains_can_duplicate_products
+    rights:
+      training_use: internal_noncommercial_research_pending_terms_review
+      attribution: source_url_capture_time_and_city_context
+      derivatives: legal_review
+      redistribution: not_confirmed
+
+  - id: russian-wine-master-2026-09-15.1
+    ordinal: 18
+    title: Единый open-world master-index российских вин
+    status: derived_aggregate_built_audited_independent_qa_pass
+    priority: core
+    source_type: derived_aggregate
+    derived_path: 18_russian_wine_master
+    intended_use: cross_catalog_reference_identity_review_and_future_grouped_splits
+    facts:
+      products: 6499
+      media_references: 9156
+      associations: 11005
+      identity_eligible_associations: 10719
+      exact_current_svoe_slugs: 2033
+      provisional_family_candidates: 446
+      needs_verification: 552
+      needs_annotation: 3
+      independent_qa_p0: 0
+      independent_qa_p1: 0
+      independent_qa_p2: 0
+    caveats: source products remain separate; cross-source family candidates are provisional and exact Svoe slug is never inferred for external sources
+    rights:
+      training_use: inherit_per_source_rights_and_quality_gates
+      attribution: inherit_per_source
+      derivatives: inherit_per_source
+      redistribution: inherit_per_source_and_default_to_prohibited

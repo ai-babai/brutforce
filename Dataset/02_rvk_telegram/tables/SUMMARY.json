@@ -1,0 +1,52 @@
+{
+  "manifest_version": "1.0.0",
+  "source_id": "rvk-telegram-2026-09-15",
+  "counts": {
+    "messages": 457,
+    "private_messages": 457,
+    "media": 507,
+    "association_candidates": 479,
+    "pdf_documents": 49,
+    "pdf_table_rows": 12128,
+    "products_available_for_caption_matching": 2103,
+    "images_decode_ok": 507,
+    "images_decode_error": 0,
+    "scene_images": 207,
+    "scene_images_with_caption_candidates": 39,
+    "scene_images_with_verified_product_label": 0,
+    "scene_images_with_bbox_annotations": 0,
+    "exact_duplicate_groups": 0,
+    "pdf_parse_ok": 49,
+    "pdf_parse_error": 0
+  },
+  "distributions": {
+    "source_roles": {
+      "telegram_file_image": 6,
+      "derived_thumbnail": 256,
+      "telegram_export_ui_asset": 42,
+      "telegram_photo": 201,
+      "other_image": 2
+    },
+    "label_status": {
+      "unlabeled": 168,
+      "derived_thumbnail_excluded": 258,
+      "out_of_scope_export_asset": 42,
+      "candidate_from_caption_unverified": 39
+    },
+    "image_formats": {
+      "PNG": 47,
+      "JPEG": 460
+    }
+  },
+  "gates": {
+    "all_images_accounted_for": true,
+    "all_pdfs_accounted_for": true,
+    "supervised_training_ready": false,
+    "blockers": [
+      "visual verification of caption-to-product candidates",
+      "bbox annotation for multi-bottle and shelf scenes",
+      "event segmentation and cumulative score-table deduplication",
+      "participant/media usage terms confirmation"
+    ]
+  }
+}

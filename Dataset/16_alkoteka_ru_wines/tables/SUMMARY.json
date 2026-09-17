@@ -1,0 +1,179 @@
+{
+  "manifest_version": "1.0.0",
+  "source_id": "alkoteka-russian-wine-web-2026-09-15-krasnodar",
+  "snapshot_id": "capture_alkoteka_517d4364d655df114754",
+  "capture_completed_at_utc": "2026-09-15T16:46:32+00:00",
+  "catalog_context": {
+    "city_uuid": "4a70f9e0-46ae-11e7-83ff-00155d026416",
+    "city_slug": "krasnodar",
+    "city_name": "Краснодар"
+  },
+  "scope": {
+    "root_categories": [
+      "vino",
+      "shampanskoe-i-igristoe"
+    ],
+    "country_filter": "rossiya",
+    "coverage_claim": "products returned by the two public category API filters in the fixed city context",
+    "does_not_claim": "all historic, delisted, or every-city-only Alkoteca products"
+  },
+  "static_capture": {
+    "robots_sha256": "c13333c34d22957a45b428235dd40d9e654c23069785cc51818574946fd9319a",
+    "catalog_entry_sha256": "c87135dab03fa862d855f68e7d63538902da0aaae24c95f157df277d9219c56e",
+    "sitemap_sha256": "aa14060ade3377b403bc9881037ec06175644f18f758478fb6da406f48557480",
+    "declared_product_sitemaps": [
+      "https://web.alkoteka.com/sitemaps/sitemap-product-1.xml",
+      "https://web.alkoteka.com/sitemaps/sitemap-product-2.xml"
+    ]
+  },
+  "roots": {
+    "vino": {
+      "declared_total": 551,
+      "rows_seen": 551,
+      "pages_captured": 6
+    },
+    "shampanskoe-i-igristoe": {
+      "declared_total": 176,
+      "rows_seen": 176,
+      "pages_captured": 2
+    }
+  },
+  "counts": {
+    "unique_listed_products": 727,
+    "product_details": 727,
+    "detail_errors": 0,
+    "normalized_products": 727,
+    "explicit_russian_products": 727,
+    "media": 727,
+    "decoded_media": 727,
+    "decode_errors": 0,
+    "exact_product_media_associations": 727,
+    "identity_eligible_product_media_associations": 663,
+    "placeholder_media_excluded": 53,
+    "shared_non_placeholder_exact_image_groups_for_review": 5,
+    "shared_non_placeholder_media_for_review": 11,
+    "discovered_unique_image_urls": 1349,
+    "primary_original_image_urls": 727,
+    "listing_resize_derivative_urls": 674,
+    "additional_gallery_image_urls": 0,
+    "exact_duplicate_image_groups": 6,
+    "network_objects_accounted": 1467,
+    "fetch_statuses": {
+      "cached": 1467
+    }
+  },
+  "exact_duplicate_media_groups": [
+    [
+      "media_alkoteka_9bed617d87f750b7b4ba",
+      "media_alkoteka_2e97ca4ffeba3190d79a",
+      "media_alkoteka_115a2f8b1cf854cc1911",
+      "media_alkoteka_f462132d9783dfd37a40",
+      "media_alkoteka_918024e5043e9c02e8de",
+      "media_alkoteka_52d2a3f37f438c4f981b",
+      "media_alkoteka_26d105a09fbacf77b41e",
+      "media_alkoteka_066342a9fdd1f77a948f",
+      "media_alkoteka_8800eb0725570092fb69",
+      "media_alkoteka_e276cfb90e6849049125",
+      "media_alkoteka_710dd3477277a83d68c0",
+      "media_alkoteka_6454e45fd67877e7bae7",
+      "media_alkoteka_4d7ee406637730d8355d",
+      "media_alkoteka_edd3a8d1981eafb5686d",
+      "media_alkoteka_faead94a3b4d75407e61",
+      "media_alkoteka_98da43ef65145f88537b",
+      "media_alkoteka_a13b68e32a24f1d4e68d",
+      "media_alkoteka_8451d86d62d5ccef0637",
+      "media_alkoteka_ec8e589a56d30e946d07",
+      "media_alkoteka_916b173c72d0abc47d55",
+      "media_alkoteka_83881e00a39b9315b237",
+      "media_alkoteka_d04a4b9f09416dff9a77",
+      "media_alkoteka_574c2d4fa95a0c65fcc7",
+      "media_alkoteka_fa1aa9abd921a5e20173",
+      "media_alkoteka_a3aceb762de812d6c0bd",
+      "media_alkoteka_984b0d0368c2b1850a79",
+      "media_alkoteka_48c3ce6304404301e2fb",
+      "media_alkoteka_db204fe68d1c91221467",
+      "media_alkoteka_8fd13af501e00bde3c6d",
+      "media_alkoteka_1e4d47feab8e44a0b090",
+      "media_alkoteka_d88296de3fb6e771c349",
+      "media_alkoteka_d02f3c7f26349c51ba7a",
+      "media_alkoteka_cf65dffce9916992f074",
+      "media_alkoteka_2bd0fe32f42b980ca5a2",
+      "media_alkoteka_021a774ca7307d8f2680",
+      "media_alkoteka_dcea8d7f39600b8ed573",
+      "media_alkoteka_131e9ddce81b620cb45c",
+      "media_alkoteka_5e8c92bbf2abf012a5f0",
+      "media_alkoteka_96341f6b783798137547",
+      "media_alkoteka_ebc417f5ab50df7db432",
+      "media_alkoteka_dafbb563c45932718e3c",
+      "media_alkoteka_0ab44e8de6c375955845",
+      "media_alkoteka_d408f65ea47e61359f57",
+      "media_alkoteka_bee75af886d5ab8dad10",
+      "media_alkoteka_cb2a6157422379d73350",
+      "media_alkoteka_863efa7f3f08e54e87b7",
+      "media_alkoteka_821ac0e7c8386bf47469",
+      "media_alkoteka_242657e4f5d10673c809",
+      "media_alkoteka_d83bb61c09c1b8369c94",
+      "media_alkoteka_d182cef4b3747b09c7df",
+      "media_alkoteka_202ba4ede748c91236b3",
+      "media_alkoteka_9aca8b67ae16e1a0bbd5",
+      "media_alkoteka_4815623bacf963263a99"
+    ],
+    [
+      "media_alkoteka_bcd1381e3243952ef86f",
+      "media_alkoteka_e5b8b3c7a3bf1e147dec"
+    ],
+    [
+      "media_alkoteka_b8c0c13c5040789e6ccc",
+      "media_alkoteka_eec3c42af3a283d3cf4f",
+      "media_alkoteka_7929bdca8351affb94ac"
+    ],
+    [
+      "media_alkoteka_5e90e588e421ee327831",
+      "media_alkoteka_6bef04cb7c631ccfad3f"
+    ],
+    [
+      "media_alkoteka_02d1a7f3611cf57d2c68",
+      "media_alkoteka_2f64ce65759bc79281b5"
+    ],
+    [
+      "media_alkoteka_2a5ebcce23c54b29903c",
+      "media_alkoteka_4127d1cb9b6ba8952f06"
+    ]
+  ],
+  "detail_image_schema_audit": {
+    "detail_records_scanned": 727,
+    "image_like_field_occurrences": {
+      "results.image_url": 727
+    },
+    "distinct_urls_by_path": {
+      "results.image_url": 675
+    },
+    "observed_detail_image_urls": 675,
+    "all_observed_detail_image_urls_accounted": true,
+    "gallery_or_additional_image_paths": [],
+    "api_exposes_only_single_primary_image_url": true
+  },
+  "checks": {
+    "all_listed_products_have_details": true,
+    "unique_source_sku": true,
+    "all_products_source_explicit_russia": true,
+    "all_products_have_decoded_media": true,
+    "all_associations_referential": true,
+    "all_source_sku_associations_exact": true,
+    "all_identity_unsafe_images_gated": true,
+    "all_detail_image_urls_accounted": true,
+    "all_original_detail_images_downloaded": true,
+    "no_403_or_429": true,
+    "training_rights_remain_gated": true,
+    "no_forced_svoe_crosswalk": true
+  },
+  "all_checks_pass": true,
+  "rights": {
+    "purpose": "noncommercial_research",
+    "training_use": "pending_terms_and_asset_rights_review",
+    "attribution": "source_url_capture_time_and_city_context_required",
+    "derivatives": "legal_review",
+    "redistribution": "not_confirmed"
+  },
+  "hard_stop": null
+}

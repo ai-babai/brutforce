@@ -1,0 +1,68 @@
+{
+  "manifest_version": "1.0.0",
+  "source_id": "caseholder-svoe-vino-2026-09",
+  "inputs": {
+    "catalog_csv": "01_svoe_vino_catalog/cache/outer/Датасет/strapi_output0709.csv",
+    "uploads": "01_svoe_vino_catalog/media/source_extract/prod-svoe-vino-strapi/prod-svoe-vino/strapi/uploads"
+  },
+  "counts": {
+    "catalog_rows": 4147,
+    "products": 2103,
+    "product_conflicts": 0,
+    "media": 15770,
+    "associations": 5697,
+    "caseholder_eval": 3,
+    "quarantine": 12,
+    "rows_without_slug": 0,
+    "products_clean": 2103,
+    "products_conflict": 0,
+    "unique_photo_keys": 1828,
+    "shared_photo_keys": 35,
+    "images_decode_ok": 15769,
+    "images_decode_error": 1,
+    "images_gold_labeled": 5487,
+    "images_ambiguous": 61,
+    "images_out_of_scope": 10222,
+    "training_candidate_originals": 1788,
+    "products_with_gold_original": 1736,
+    "products_without_gold_original": 367,
+    "exact_duplicate_groups": 866,
+    "cross_product_exact_duplicate_groups": 51,
+    "derivatives_missing_original": 2,
+    "oversized_images": 11
+  },
+  "distributions": {
+    "variants": {
+      "original": 6208,
+      "large": 585,
+      "medium": 1370,
+      "small": 1405,
+      "thumbnail": 6202
+    },
+    "formats": {
+      "WEBP": 15230,
+      "JPEG": 293,
+      "PNG": 242,
+      "AVIF": 2,
+      "None": 1,
+      "TIFF": 2
+    },
+    "label_status": {
+      "out_of_scope_site_media": 10222,
+      "gold_exact_asset_key": 5487,
+      "ambiguous_shared_catalog_asset": 61
+    }
+  },
+  "gates": {
+    "all_media_accounted_for": true,
+    "all_catalog_rows_accounted_for": true,
+    "all_caseholder_eval_checksums_verified": true,
+    "split_ready": false,
+    "split_blockers": [
+      "manual review of shared photo keys",
+      "near-duplicate graph across original assets",
+      "training rights confirmation",
+      "caseholder evaluation isolation manifest"
+    ]
+  }
+}

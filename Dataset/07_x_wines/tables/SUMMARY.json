@@ -1,0 +1,22 @@
+{
+  "source_commit": "5e43c7f38ff4abaee1815f84dbdd2b54aa873b1d",
+  "edition": "XWines_Test_100",
+  "counts": {
+    "products": 100,
+    "media": 100,
+    "russian_products": 2,
+    "missing_images": 0,
+    "decode_errors": 0,
+    "russian_images": 2,
+    "russian_crosswalk_matches": 1,
+    "russian_crosswalk_reviewed": 2,
+    "exact_duplicate_groups": 0
+  },
+  "missing_image_ids": [],
+  "gates": {
+    "all_products_have_image_level_label": true,
+    "all_images_decode": true,
+    "russian_subset_present": true,
+    "catalog_crosswalk_review_complete": true
+  }
+}

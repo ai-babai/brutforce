@@ -1,0 +1,26 @@
+{
+  "manifest_version": "1.0.0",
+  "source_id": "winesensed",
+  "upstream_snapshot_sha": "b6d1f4d0ed58184e2f3787a1720de2a207860681",
+  "license": "CC BY-NC-ND 4.0",
+  "counts": {
+    "expected_shards": 24,
+    "complete_shards": 24,
+    "source_rows": 1014630,
+    "russian_candidate_source_rows": 0,
+    "russian_candidate_unique_vintages": 0,
+    "explicit_russian_geography_vintages": 0,
+    "known_russian_brand_only_vintages": 0,
+    "decoded_images": 0,
+    "image_errors": 0,
+    "exact_duplicate_groups": 0
+  },
+  "country_distribution": {},
+  "gates": {
+    "raw_snapshot_complete": true,
+    "russian_filter_complete": true,
+    "images_audited": true,
+    "license_restricted_noncommercial_only": true,
+    "cross_source_sku_identity_verified": false
+  }
+}

@@ -1,0 +1,76 @@
+{
+  "dataset_version": "1.0.0",
+  "source_id": "aromatny-mir-russian-wine-web",
+  "source_capture_id": "amwine_20260915_001",
+  "capture_date": "2026-09-15",
+  "generated_at": "2026-09-15T17:38:42+00:00",
+  "status": "complete",
+  "crawl_policy": {
+    "user_agent": "VinoResearchBot/1.0 (noncommercial dataset audit; single-client polite crawl)",
+    "request_delay_seconds": 0.8,
+    "sequential": false,
+    "concurrent_workers": 4,
+    "minimum_request_start_interval_seconds_per_host": 0.8,
+    "hard_stop_statuses": [
+      403,
+      429
+    ],
+    "robots_aware": true,
+    "cookies_used": false,
+    "private_api_used": false,
+    "image_mode": "all"
+  },
+  "counts": {
+    "allowed_product_urls": 856,
+    "selected_product_urls": 846,
+    "product_pages_parsed": 845,
+    "product_page_failures": 1,
+    "unique_products": 845,
+    "external_product_ids": 845,
+    "country_values": {
+      "Россия": 845
+    },
+    "explicit_russia_product_pages": 845,
+    "product_image_urls_selected": 1760,
+    "media_urls_accounted": 1760,
+    "images_downloaded": 1760,
+    "images_not_downloaded": 0,
+    "images_decode_ok": 1760,
+    "images_decode_error": 0,
+    "product_media_associations": 1760,
+    "products_with_media_association": 821,
+    "orphan_media_associations": 0,
+    "exact_duplicate_image_hash_groups": 1,
+    "source_asset_groups": 1457,
+    "multi_representation_asset_groups": 303,
+    "resize_cache_media": 1446,
+    "needs_verification": 25,
+    "needs_annotation": 0,
+    "raw_files": 2782,
+    "fetch_events_this_run": 2
+  },
+  "invariants": {
+    "all_selected_pages_accounted": true,
+    "all_product_ids_unique": true,
+    "all_parsed_products_have_external_id": true,
+    "all_parsed_products_explicitly_russian": true,
+    "all_downloaded_images_decode": true,
+    "all_media_have_mime_type": true,
+    "all_associations_reference_media": true,
+    "no_forced_svoe_slug": true
+  },
+  "rights": {
+    "purpose": "internal_noncommercial_research",
+    "training_use": "pending_terms_and_asset_rights_review",
+    "attribution": "source_url_and_capture_time_required",
+    "derivatives": "legal_review",
+    "redistribution": "not_confirmed"
+  },
+  "limitations": [
+    "wine_family_id remains null until cross-source identity review",
+    "label_design_id identifies exact primary-image bytes, not a manually reviewed rebrand family",
+    "no Svoe Vino slug is inferred from retailer metadata",
+    "availability and price reflect the site's default selected Moscow store context",
+    "clean catalog images have no object bounding boxes; bbox annotation is not required for exact catalog association"
+  ]
+}

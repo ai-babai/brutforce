@@ -1,0 +1,290 @@
+{
+  "audit_date": "2026-09-15",
+  "checks": [
+    {
+      "name": "svoe_media_accounting",
+      "passed": true,
+      "detail": "15770 media rows"
+    },
+    {
+      "name": "svoe_training_label_gate",
+      "passed": true,
+      "detail": "training candidates require exact product asset key and successful decode"
+    },
+    {
+      "name": "svoe_live_catalog_complete",
+      "passed": true,
+      "detail": "2041 current sitemap products with media association"
+    },
+    {
+      "name": "telegram_media_accounting",
+      "passed": true,
+      "detail": "507 media rows"
+    },
+    {
+      "name": "telegram_scene_supervision_gate",
+      "passed": true,
+      "detail": "207 scene images explicitly excluded pending annotation"
+    },
+    {
+      "name": "retail_images_decode",
+      "passed": true,
+      "detail": "1884 images"
+    },
+    {
+      "name": "retail_image_annotation_accounting",
+      "passed": true,
+      "detail": "every classification image has a class and every detection image has one or more valid boxes"
+    },
+    {
+      "name": "retail_bboxes_valid",
+      "passed": true,
+      "detail": "21441 boxes"
+    },
+    {
+      "name": "retail_bbox_referential_labels",
+      "passed": true,
+      "detail": "every box resolves to an image and has a class label"
+    },
+    {
+      "name": "xwines_image_labels",
+      "passed": true,
+      "detail": "1007 exact WineID labels"
+    },
+    {
+      "name": "xwines_russian_subset",
+      "passed": true,
+      "detail": "7 Russian products; 7 visual crosswalk decisions"
+    },
+    {
+      "name": "rf100_images_decode",
+      "passed": true,
+      "detail": "4643 images"
+    },
+    {
+      "name": "rf100_bboxes_valid",
+      "passed": true,
+      "detail": "25034 boxes"
+    },
+    {
+      "name": "rf100_bbox_referential_labels",
+      "passed": true,
+      "detail": "every box resolves to an image and has an element label"
+    },
+    {
+      "name": "rf100_annotation_accounting",
+      "passed": true,
+      "detail": "every image has element boxes or explicit negative status"
+    },
+    {
+      "name": "open_food_facts_downloaded_images",
+      "passed": true,
+      "detail": "11 selected front images"
+    },
+    {
+      "name": "open_food_facts_product_associations",
+      "passed": true,
+      "detail": "13 selected product records"
+    },
+    {
+      "name": "mavt_full_sitemap_scan",
+      "passed": true,
+      "detail": "4,780/4,780 sitemap product URLs accounted"
+    },
+    {
+      "name": "mavt_russian_products",
+      "passed": true,
+      "detail": "763 explicit source-Russia products"
+    },
+    {
+      "name": "mavt_product_media_associations",
+      "passed": true,
+      "detail": "760 exact primary associations; zero broken references/decode errors"
+    },
+    {
+      "name": "mavt_review_accounting",
+      "passed": true,
+      "detail": "2 contradictory origin values and 3 missing-image products are queued"
+    },
+    {
+      "name": "amwine_product_catalog",
+      "passed": true,
+      "detail": "845 parsed Russian cards; one removed redirect accounted"
+    },
+    {
+      "name": "amwine_gallery_media",
+      "passed": true,
+      "detail": "1,760/1,760 gallery media decoded with explicit MIME"
+    },
+    {
+      "name": "amwine_product_media_associations",
+      "passed": true,
+      "detail": "1,760 associations; zero orphan references"
+    },
+    {
+      "name": "amwine_source_audit_and_review",
+      "passed": true,
+      "detail": "15/15 source checks; 24 missing-image cards plus one shared exact-image group queued"
+    },
+    {
+      "name": "alkoteka_fixed_city_snapshot",
+      "passed": true,
+      "detail": "727 Russian products/images in fixed Krasnodar context"
+    },
+    {
+      "name": "alkoteka_product_media_associations",
+      "passed": true,
+      "detail": "727 exact product-media associations"
+    },
+    {
+      "name": "alkoteka_identity_gate",
+      "passed": true,
+      "detail": "663 eligible; 53 placeholder items and 5 shared-image groups queued"
+    },
+    {
+      "name": "russian_master_counts",
+      "passed": true,
+      "detail": "6,499 products; 9,156 media refs; 11,005 associations"
+    },
+    {
+      "name": "russian_master_integrity",
+      "passed": true,
+      "detail": "all 18 master integrity checks pass"
+    },
+    {
+      "name": "russian_master_identity_and_slug_gates",
+      "passed": true,
+      "detail": "10,719 identity-eligible associations; zero external Svoe slug assignments"
+    },
+    {
+      "name": "russian_master_review_queues",
+      "passed": true,
+      "detail": "552 verification and 3 annotation tasks"
+    },
+    {
+      "name": "winesensed_russian_filter",
+      "passed": true,
+      "detail": "complete"
+    },
+    {
+      "name": "wine_images_126k_filter",
+      "passed": true,
+      "detail": "125,787 metadata rows checked; no Russian candidates"
+    }
+  ],
+  "checks_passed": 34,
+  "checks_total": 34,
+  "all_sources_fully_processed": false,
+  "all_received_sources_fully_processed": true,
+  "all_allowed_captures_processed": true,
+  "completed_retail_sources": [
+    "mavt-ru-wines-2026-09-15",
+    "aromatny-mir-russian-wine-web",
+    "alkoteka-russian-wine-web-2026-09-15-krasnodar"
+  ],
+  "sources_blocked_by_access_controls": [
+    "krasnoe-i-beloe-russian-wine-web",
+    "winelab-russian-wine-web",
+    "simplewine-russian-wine-web",
+    "luding-russian-wine-web"
+  ],
+  "planned_sources_pending_pilot": [
+    "krasnoe-i-beloe-russian-wine-web",
+    "winelab-russian-wine-web",
+    "simplewine-russian-wine-web",
+    "luding-russian-wine-web"
+  ],
+  "all_media_accounted_for": true,
+  "all_media_supervised_ready": false,
+  "frozen_split_ready": false,
+  "review_queues": {
+    "telegram_scene_images": 207,
+    "telegram_caption_first_priority": 39,
+    "svoe_ambiguous_media": 61,
+    "svoe_live_shared_associations": 8,
+    "rf100_cross_split_dhash_groups": 33,
+    "open_food_facts_russian_origin_candidates": 13,
+    "cross_source_same_dhash_candidates": 24,
+    "per_dataset_review_workspaces": {
+      "01_svoe_vino_catalog": {
+        "needs_verification": 61,
+        "needs_annotation": 0
+      },
+      "02_rvk_telegram": {
+        "needs_verification": 0,
+        "needs_annotation": 207
+      },
+      "03_manual_store": {
+        "needs_verification": 0,
+        "needs_annotation": 0
+      },
+      "04_svoe_vino_web_enrichment": {
+        "needs_verification": 8,
+        "needs_annotation": 0
+      },
+      "05_retail_alcohol_detection": {
+        "needs_verification": 0,
+        "needs_annotation": 0
+      },
+      "06_wine_images_126k": {
+        "needs_verification": 0,
+        "needs_annotation": 0
+      },
+      "07_x_wines": {
+        "needs_verification": 0,
+        "needs_annotation": 0
+      },
+      "08_winesensed": {
+        "needs_verification": 0,
+        "needs_annotation": 0
+      },
+      "09_rf100_wine_labels": {
+        "needs_verification": 33,
+        "needs_annotation": 0
+      },
+      "10_open_food_facts_wine_ru": {
+        "needs_verification": 13,
+        "needs_annotation": 0
+      },
+      "11_mavt_ru_wines": {
+        "needs_verification": 2,
+        "needs_annotation": 3
+      },
+      "12_krasnoe_i_beloe_ru_wines": {
+        "needs_verification": 0,
+        "needs_annotation": 0
+      },
+      "13_winelab_ru_wines": {
+        "needs_verification": 0,
+        "needs_annotation": 0
+      },
+      "14_simplewine_ru_wines": {
+        "needs_verification": 0,
+        "needs_annotation": 0
+      },
+      "15_aromatny_mir_ru_wines": {
+        "needs_verification": 25,
+        "needs_annotation": 0
+      },
+      "16_alkoteka_ru_wines": {
+        "needs_verification": 58,
+        "needs_annotation": 0
+      },
+      "17_luding_ru_wines": {
+        "needs_verification": 0,
+        "needs_annotation": 0
+      },
+      "18_russian_wine_master": {
+        "needs_verification": 552,
+        "needs_annotation": 3
+      }
+    }
+  },
+  "hard_blockers": [
+    "Telegram scene images require manual SKU verification and bottle boxes",
+    "Svoe/RF100 near-duplicate and shared-asset groups must be grouped before split",
+    "Open Food Facts Russian-production candidates require manual origin verification",
+    "K&B, Winelab, SimpleWine and LUDING require official export/permission because declared-client access stopped at 403/401",
+    "License-restricted sources must remain separable in manifests and exports"
+  ]
+}

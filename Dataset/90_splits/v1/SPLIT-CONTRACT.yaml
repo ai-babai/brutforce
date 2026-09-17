@@ -1,0 +1,58 @@
+split_contract_version: 1.0.0
+created_at: 2026-09-15
+status: assignment_pending_identity_audit
+seed: 20260915
+
+roles:
+  catalog_reference:
+    manifest: catalog_reference.jsonl
+    query_role: false
+    purpose: retrieval_index
+  train:
+    manifest: train.jsonl
+    query_role: true
+    target_fraction_of_development_pool: 0.70
+  val:
+    manifest: val.jsonl
+    query_role: true
+    target_fraction_of_development_pool: 0.15
+  test:
+    manifest: test.jsonl
+    query_role: true
+    target_fraction_of_development_pool: 0.15
+  holdout:
+    manifest: holdout.jsonl
+    query_role: true
+    target_fraction_of_development_pool: null
+    policy: reserve_by_capture_session_before_training
+  caseholder_eval:
+    manifest: caseholder_eval.jsonl
+    query_role: true
+    target_fraction_of_development_pool: null
+    policy: isolated_never_train_or_tune
+
+assignment_unit: connected_component
+group_keys:
+  - sha256
+  - parent_media_id
+  - identity_group_id
+  - near_duplicate_group_id
+  - serial_capture_group_id
+
+stratify_when_possible:
+  - source_id
+  - product_id
+  - capture_condition
+  - difficulty_bucket
+
+association_policy:
+  train_allowed_grades: [gold, silver]
+  evaluation_allowed_grades: [gold]
+  excluded_grades: [bronze, rejected]
+
+freeze_gate:
+  - item_level_manifest_complete
+  - duplicate_graph_built
+  - association_audit_complete
+  - rights_training_use_allowed
+  - leakage_audit_passed
