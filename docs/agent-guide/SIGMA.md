@@ -14,7 +14,7 @@ Before GitHub writes run `gh api user --jq .login` and verify exact `aika-ai-age
 
 ## Runtime
 
-Hermes runs as Linux user sigma-ops (not lct). Systemd loads GH_TOKEN from root-owned /etc/sigma-hermes/github.env into gateway and board runner; subprocesses inherit it. Token must not appear in repository URLs, command arguments, logs or onboarding archives. Use gh for API/PR operations and HTTPS Git with gh credential helper. No token stored in Git config.
+Hermes runs as Linux user sigma-ops (not lct). Systemd loads GH_TOKEN from root-owned /etc/sigma-hermes/github.env into gateway and board runner. Hermes intentionally strips GH_TOKEN from terminal children; their gh and Git credential helper use the native GitHub CLI credential store /home/sigma-ops/.config/gh/hosts.yml (directory0700, file0600, owned by sigma-ops). sigma-board supports that same store when GH_TOKEN is absent. No Hermes security filter is disabled. Token must not appear in repository URLs, command arguments, logs or onboarding archives. Use gh for API/PR operations and HTTPS Git with gh credential helper. No token stored in Git config.
 
 Git author: aika-ai-agent <330356150+aika-ai-agent@users.noreply.github.com>. Commit attribution alone is not authentication; verify API identity as above.
 Use own clone/worktree and codex/sigma-<task> branch. Shared /srv/lct/repo uses another deploy credential; do not change its remote/config or write into other people's worktrees. Prefer a separate clone under /srv/lct/work/sigma-<task> with HTTPS origin https://github.com/ai-babai/brutforce.git.
