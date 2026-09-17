@@ -22,6 +22,15 @@ def _atomic_json(path: Path, value: dict) -> None:
     os.replace(temporary, path)
 
 
+def _process_identity(pid: int) -> dict | None:
+    try:
+        stat = Path(f"/proc/{pid}/stat").read_text()
+        fields = stat[stat.rfind(")") + 2:].split()
+        return {"pid": pid, "start_time": int(fields[19]), "process_group": int(fields[2])}
+    except (FileNotFoundError, IndexError, ValueError, PermissionError):
+        return None
+
+
 def _valid_review(value: object) -> bool:
     return (
         isinstance(value, dict)
@@ -154,7 +163,11 @@ def main() -> int:
             completed = _run_command(
                 command, input_data=None if worker_kind == "hermes" else manifest["prompt"].encode(),
                 stdout=stdout, stderr=stderr, env=env, timeout=manifest["timeout_seconds"],
-                on_start=lambda process: child.__setitem__(0, process),
+                on_start=lambda process: (
+                    child.__setitem__(0, process),
+                    _atomic_json(Path(manifest["child_identity_path"]), _process_identity(process.pid)
+                                 or {"identity_unavailable": True, "pid": process.pid}),
+                ),
             )
         payload = {
             "state": "succeeded" if completed.returncode == 0 else "failed",

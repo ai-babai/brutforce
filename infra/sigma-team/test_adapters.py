@@ -60,15 +60,16 @@ class AdapterTest(unittest.TestCase):
                "workdir": "/srv/lct/work/team-2-attempt",
                "result_path": str(Path(self.temporary.name) / "run-2" / "result.json")}
 
+        aborted = [False]
         def fake_http(method, path, *, directory, body=None):
             if path == "/session/status":
-                return {"ses_sigma": {"type": "idle"}}
+                return {} if aborted[0] else {"ses_sigma": {"type": "idle"}}
             if path == "/permission":
                 return [{"sessionID": "ses_other"}, {"sessionID": "ses_sigma"}]
             if method == "POST" and path == "/session/ses_sigma/abort":
+                aborted[0] = True
                 return True
-            if path == "/session/status":
-                return {}
+            if path == "/session/ses_sigma": return {"id": "ses_sigma"}
             raise AssertionError(path)
 
         with patch.object(adapters, "_http", side_effect=fake_http):
@@ -90,12 +91,14 @@ class AdapterTest(unittest.TestCase):
             if method == "POST" and path.endswith("/abort"):
                 return True
             if path == "/session/status":
-                return {"ses_sigma": {"type": "idle"}}
+                return {}
+            if path == "/session/ses_sigma": return {"id": "ses_sigma"}
             raise AssertionError(path)
         with patch.object(adapters, "_http", side_effect=abort_http):
             result = adapters.executor_status(run)
         self.assertEqual("blocked", result["state"])
-        self.assertEqual([("POST", "/session/ses_sigma/abort"), ("GET", "/session/status")], calls)
+        self.assertEqual([("POST", "/session/ses_sigma/abort"), ("GET", "/session/status"),
+                          ("GET", "/session/ses_sigma")], calls)
 
     def test_reviewer_launch_is_hermes_and_requires_dedicated_config(self):
         hermes_home = Path(self.temporary.name) / "hermes"
@@ -120,10 +123,17 @@ class AdapterTest(unittest.TestCase):
             "output": {"verdict": "fail", "summary": "one finding", "findings": ["bug"],
                        "human_verification": ["confirm expected behavior"]},
         }))
-        result = adapters.reviewer_status({
+        run = {
             "adapter": "codex-reviewer", "external_id": "process:review-1", "run_id": "review-1",
             "workdir": "/tmp/work", "result_path": str(result_path),
-        })
+        }
+        child_path = run_dir / "child-identity.json"
+        child_path.write_text(json.dumps({"pid": 2, "start_time": 2, "process_group": 2}))
+        (run_dir / "adapter.json").write_text(json.dumps({**run,
+            "worker_identity": {"pid": 1, "start_time": 1, "process_group": 1},
+            "child_identity_path": str(child_path)}))
+        with patch.object(adapters, "_owned_group_status", side_effect=["stopped", "stopped"]):
+            result = adapters.reviewer_status(run)
         self.assertEqual("fail", result["verdict"])
         self.assertEqual(["bug"], result["findings"])
 
@@ -170,29 +180,31 @@ class AdapterTest(unittest.TestCase):
         if adapter != "opencode":
             manifest["worker_pid"] = 1234
             manifest["worker_identity"] = {"pid": 1234, "start_time": 9, "process_group": 1234}
+            manifest["child_identity_path"] = str(run_dir / "child-identity.json")
+            (run_dir / "child-identity.json").write_text(json.dumps(
+                {"pid": 5678, "start_time": 10, "process_group": 5678}))
         (run_dir / "adapter.json").write_text(json.dumps(manifest))
         return run, run_dir
 
-    def test_cancel_opencode_interrupts_exact_parent_and_busy_child_then_waits_all_idle(self):
+    def test_cancel_opencode_interrupts_parent_busy_child_and_late_child_only(self):
         run, run_dir = self._cancel_run()
         calls = []
-        active = {"ses_parent": "busy", "ses_child": "busy"}
+        lists = [
+            [{"id": "ses_parent"}, {"id": "ses_child", "parentID": "ses_parent"}, {"id": "ses_unrelated"}],
+            [{"id": "ses_parent"}, {"id": "ses_child", "parentID": "ses_parent"},
+             {"id": "ses_late", "parentID": "ses_child"}, {"id": "ses_unrelated"}],
+            [{"id": "ses_parent"}, {"id": "ses_child", "parentID": "ses_parent"},
+             {"id": "ses_late", "parentID": "ses_child"}, {"id": "ses_unrelated"}],
+        ]
 
         def fake_http(method, path, *, directory, body=None, query_params=None):
             calls.append((method, path))
             if path == "/api/session":
-                return {"data": [
-                    {"id": "ses_parent"}, {"id": "ses_child", "parentID": "ses_parent"},
-                    {"id": "ses_unrelated"},
-                ], "cursor": {}}
+                return {"data": lists.pop(0) if len(lists) > 1 else lists[0], "cursor": {}}
             if method == "POST" and path.endswith("/interrupt"):
-                active[path.split("/")[-2]] = "idle"
                 return None
             if method == "POST" and path.endswith("/wait"):
-                self.assertEqual("idle", active[path.split("/")[-2]])
                 return None
-            if path == "/session/status":
-                return {session_id: {"type": state} for session_id, state in active.items()}
             raise AssertionError(path)
 
         with patch.object(adapters, "_http", side_effect=fake_http):
@@ -200,17 +212,16 @@ class AdapterTest(unittest.TestCase):
             repeated = adapters.cancel(run)
         self.assertEqual("cancelled", result["state"])
         self.assertEqual(result, repeated)
-        self.assertEqual(["ses_parent", "ses_child"], result["sessions"])
+        self.assertEqual(["ses_parent", "ses_child", "ses_late"], result["sessions"])
         self.assertTrue(result["confirmed"])
         self.assertNotIn(("POST", "/api/session/ses_unrelated/interrupt"), calls)
         self.assertEqual(1, calls.count(("POST", "/api/session/ses_child/interrupt")))
+        self.assertEqual(1, calls.count(("POST", "/api/session/ses_late/interrupt")))
         self.assertTrue((run_dir / "result.json").exists())
 
     def test_cancel_process_signals_only_recorded_process_group_and_persists_result(self):
         run, run_dir = self._cancel_run("codex-executor")
-        identity = {"pid": 1234, "start_time": 9, "process_group": 1234}
-        with patch.object(adapters, "_process_identity", return_value=identity), \
-                patch.object(adapters, "_process_stopped", return_value=True), \
+        with patch.object(adapters, "_owned_group_status", side_effect=["running", "running", "stopped", "stopped"]), \
                 patch.object(adapters.os, "killpg") as killpg:
             result = adapters.cancel(run)
         self.assertEqual("cancelled", result["state"])
@@ -219,14 +230,60 @@ class AdapterTest(unittest.TestCase):
 
     def test_cancel_process_refuses_reused_pid_without_signalling(self):
         run, run_dir = self._cancel_run("codex-executor")
-        mismatch = {"pid": 1234, "start_time": 10, "process_group": 1234}
-        with patch.object(adapters, "_process_identity", return_value=mismatch), \
+        with patch.object(adapters, "_owned_group_status", side_effect=["mismatch", "running"]), \
                 patch.object(adapters.os, "killpg") as killpg:
             with self.assertRaises(adapters.AdapterError):
                 adapters.cancel(run)
         killpg.assert_not_called()
         manifest = json.loads((run_dir / "adapter.json").read_text())
         self.assertEqual("refused_pid_mismatch", manifest["cancellation"]["state"])
+
+    def test_cancel_process_stops_orphan_child_when_wrapper_died(self):
+        run, unused = self._cancel_run("codex-executor")
+        with patch.object(adapters, "_owned_group_status", side_effect=["stopped", "running", "stopped", "stopped"]), \
+                patch.object(adapters.os, "killpg") as killpg:
+            result = adapters.cancel(run)
+        killpg.assert_called_once_with(5678, 15)
+        self.assertTrue(result["confirmed"])
+
+    def test_cancel_process_fails_safe_when_wrapper_died_before_child_identity(self):
+        run, run_dir = self._cancel_run("codex-executor")
+        (run_dir / "child-identity.json").unlink()
+        with patch.object(adapters, "_owned_group_status", return_value="stopped"), \
+                patch.object(adapters.os, "killpg") as killpg:
+            with self.assertRaises(adapters.AdapterError): adapters.cancel(run)
+        killpg.assert_not_called()
+
+    def test_cancel_process_keeps_unconfirmed_when_descendant_survives_leaders(self):
+        run, unused = self._cancel_run("codex-executor")
+        statuses = ["stopped", "running", "stopped", "running"]
+        with patch.object(adapters, "_owned_group_status", side_effect=statuses), \
+                patch.object(adapters.os, "killpg"), \
+                patch.object(adapters.time, "monotonic", side_effect=[0, 20]):
+            with self.assertRaises(adapters.AdapterError): adapters.cancel(run)
+
+    def test_existing_opencode_result_does_not_skip_descendant_stop(self):
+        run, run_dir = self._cancel_run()
+        (run_dir / "result.json").write_text(json.dumps({"state": "succeeded", "summary": "done"}))
+        with patch.object(adapters, "_interrupt_opencode_family", return_value=["ses_parent", "ses_child"]) as stop:
+            result = adapters.cancel(run)
+        stop.assert_called_once_with("ses_parent", "/tmp/work")
+        self.assertTrue(result["confirmed"])
+        self.assertEqual(["ses_parent", "ses_child"], result["sessions"])
+
+    def test_process_status_uses_group_identity_and_reports_orphan_child(self):
+        run, unused = self._cancel_run("codex-executor")
+        with patch.object(adapters, "_owned_group_status", side_effect=["stopped", "running"]):
+            result = adapters.executor_status(run)
+        self.assertEqual("running", result["state"])
+        self.assertIn("orphan child", result["summary"])
+
+    def test_process_status_does_not_publish_result_while_group_is_live(self):
+        run, run_dir = self._cancel_run("codex-executor")
+        (run_dir / "result.json").write_text(json.dumps({"state": "succeeded", "summary": "done"}))
+        with patch.object(adapters, "_owned_group_status", side_effect=["stopped", "running"]):
+            result = adapters.executor_status(run)
+        self.assertEqual("running", result["state"])
 
 
 if __name__ == "__main__":

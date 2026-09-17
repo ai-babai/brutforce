@@ -78,8 +78,7 @@ a durable outbox event. Events retry with bounded exponential backoff. Comments 
 marker; after an uncertain comment timeout, a freshly returned issue comment carrying that
 marker is treated as delivered rather than duplicated. A delivery outage after a successful
 worker or review retains the active logical phase and worker slot, so it cannot launch again.
-The current GitHub adapter exposes comment presence only through the next board poll; this is
-the timeout duplicate check available without a second write API.
+Marker checks run before every comment write and paginate the issue's complete comment history.
 
 Record an active cancellation promptly and idempotently:
 
@@ -87,9 +86,14 @@ Record an active cancellation promptly and idempotently:
 sigma-team cancel NUMBER --requested-by 199560169 --reason TEXT
 ```
 
-The next poll handles cancellation before normal status progression, including a reservation,
+The CLI binds the request to the current `run_id` in a separate atomic file and does not wait
+for the dispatcher's main state lock or network calls. The next poll handles cancellation before normal status progression, including a reservation,
 executor, review wait, reviewer, or completion race. It preserves adapter responses as evidence,
 does not launch another worker until confirmed, then delivers `Pending` with the recorded reason.
+OpenCode cancellation repeatedly discovers and stops only the parent session and descendants,
+including helpers created during the stop race. Process workers persist wrapper and child PID
+start times and process-group IDs; cancellation verifies that no live members remain and refuses
+PID mismatches or missing identity evidence.
 Before review, the dispatcher reads the fixed commit and associated PR metadata
 with its service credential and embeds the snapshot plus observation time in the
 review prompt. The read-only reviewer receives no GitHub credential. Evidence
@@ -124,6 +128,12 @@ helpers, installs a repository-local Sigma helper and Sigma Git author, creates
 
 The notification command receives one JSON object on stdin. Recipient is fixed
 in code to Maks Telegram ID `199560169`; the sink owns Telegram credentials.
+Delivery uses bounded backoff. After five failed attempts the event remains in
+durable state with `blocked: true`, the active terminal slot stays occupied, and
+no model is relaunched. Recovery is intentionally manual: the coordinator fixes
+the endpoint or credential, inspects the recorded error, clears `blocked` and
+sets `next_at` under the normal state lock, then lets the ordinary dispatcher
+retry. Telegram remains at-least-once because Bot API has no idempotency key.
 
 Example `/etc/sigma-hermes/team.json`:
 

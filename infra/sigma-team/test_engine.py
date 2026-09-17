@@ -1,8 +1,14 @@
 import subprocess
 import tempfile
 import unittest
+import fcntl
+import json
+import datetime as dt
+import sys
 from pathlib import Path
+from unittest.mock import patch
 
+import adapters
 from engine import Engine
 from state_store import StateStore
 
@@ -18,9 +24,12 @@ class Board:
     def __init__(self, value):
         self.value, self.statuses, self.comments = value, [], []
         self.fail_comment = False
+        self.fail_status = False
 
     def list_items(self): return [self.value]
-    def set_status(self, unused, status): self.statuses.append(status); self.value["fields"]["Status"] = status
+    def set_status(self, unused, status):
+        if self.fail_status: raise RuntimeError("status API unavailable")
+        self.statuses.append(status); self.value["fields"]["Status"] = status
     def comment(self, unused, body):
         if self.fail_comment: raise RuntimeError("comment API unavailable")
         self.comments.append(body)
@@ -49,7 +58,7 @@ class Adapter:
     def reviewer_status(self, run): return self.reviewer.pop(0)
     def cancel(self, run):
         self.cancelled.append(run)
-        return {"confirmed": True, "reason": "fake stopped"}
+        return {"state": "cancelled", "confirmed": True, "reason": "fake stopped"}
 
 
 class EngineTest(unittest.TestCase):
@@ -174,7 +183,8 @@ class EngineTest(unittest.TestCase):
 
     def test_failed_review_still_goes_to_human_verification(self):
         self.adapter.executor = [{"state": "succeeded", "summary": "built"}]
-        self.adapter.reviewer = [{"state": "succeeded", "summary": "tests fail", "verdict": "fail"}]
+        self.adapter.reviewer = [{"state": "succeeded", "summary": "tests fail", "verdict": "fail",
+                                  "findings": ["regression"], "human_verification": ["inspect logs"]}]
         self.engine.poll(); self.engine.poll()
         self.board.value["fields"]["Status"] = "Sigma verification"
         self.assertEqual(self.engine.poll(), "REVIEW_WAIT")
@@ -191,6 +201,9 @@ class EngineTest(unittest.TestCase):
         self.assertEqual(self.board.statuses[-1], "human_verification")
         self.assertIn("run_id=", self.board.comments[-1])
         self.assertIn("OpenCode session_id=exec", self.board.comments[-1])
+        self.assertIn("Summary: tests fail", self.board.comments[-1])
+        self.assertIn("- regression", self.board.comments[-1])
+        self.assertIn("- inspect logs", self.board.comments[-1])
         with self.store.locked() as state: self.assertIsNone(state["active"])
 
     def test_github_evidence_error_is_disclosed_but_review_starts(self):
@@ -245,23 +258,41 @@ class EngineTest(unittest.TestCase):
 
     def test_cancellation_stops_exact_executor_before_pending(self):
         self.engine.poll(); self.engine.poll()
-        with self.store.locked() as state:
-            Engine.request_cancel(state, 7, 199560169, "operator stop")
+        request = self.store.request_cancel(7, 199560169, "operator stop")
         self.assertEqual(self.engine.poll(), "PENDING")
         self.assertEqual(self.adapter.cancelled, [{"external_id": "exec", "run_id": self.adapter.cancelled[0]["run_id"]}])
         with self.store.locked() as state:
-            request = state["cancellations"]["7"]
-            self.assertIsNotNone(request["confirmed_at"])
-            self.assertTrue(request["evidence"])
+            request = state["cancellation_audit"][-1]
+            self.assertIsNotNone(request["confirmed_at"]); self.assertTrue(request["evidence"])
             self.assertIsNone(state["active"])
         self.assertEqual(self.board.statuses[-1], "Pending")
+
+    def test_engine_accepts_real_adapter_cancellation_contract(self):
+        self.engine.poll(); self.engine.poll()
+        run_root = Path(self.tmp.name) / "adapter-runs"
+        with self.store.locked() as state:
+            task = state["active"]
+            run_dir = run_root / task["run_id"]; run_dir.mkdir(parents=True)
+            run = {"adapter": "opencode", "external_id": "ses_real", "run_id": task["run_id"],
+                   "workdir": task["workdir"], "result_path": str(run_dir / "result.json")}
+            (run_dir / "adapter.json").write_text(json.dumps(run))
+            task["executor_run"] = run
+        self.store.request_cancel(7, 199560169, "real adapter contract")
+        actual = Engine(self.board, self.store, self.engine.config, adapters)
+        with patch.object(adapters, "RUN_ROOT", run_root), \
+                patch.object(adapters, "_interrupt_opencode_family", return_value=["ses_real"]):
+            self.assertEqual("PENDING", actual.poll())
+        with self.store.locked() as state:
+            self.assertIsNone(state["active"])
 
     def test_unconfirmed_cancellation_blocks_progress(self):
         self.engine.poll(); self.engine.poll()
         self.adapter.cancel = lambda run: {"confirmed": False, "reason": "still stopping"}
-        with self.store.locked() as state: Engine.request_cancel(state, 7, 199560169, "stop")
+        self.store.request_cancel(7, 199560169, "stop")
         self.assertEqual(self.engine.poll(), "CANCEL_WAITING")
-        with self.store.locked() as state: self.assertEqual(state["active"]["phase"], "executing")
+        with self.store.locked() as state:
+            self.assertEqual(state["active"]["phase"], "executing")
+            self.assertEqual("waiting", state["cancellation_audit"][-1]["outcome"])
 
     def test_comment_timeout_marker_prevents_duplicate_delivery(self):
         self.engine.poll(); self.engine.poll()
@@ -285,6 +316,146 @@ class EngineTest(unittest.TestCase):
         with self.store.locked() as state:
             self.assertEqual(state["active"]["phase"], "human_verification_delivery")
         self.assertEqual(self.adapter.starts, 1)
+
+    def test_initial_status_retry_launches_executor_exactly_once(self):
+        self.assertEqual(self.engine.poll(), "RESERVED")
+        self.board.fail_status = True
+        self.assertEqual(self.engine.poll(), "DELIVERY_RETRY")
+        self.assertEqual(self.adapter.starts, 0)
+        with self.store.locked() as state:
+            state["outbox"][0]["next_at"] = "2000-01-01T00:00:00+00:00"
+            self.assertEqual(state["active"]["phase"], "start_status_delivery")
+        self.board.fail_status = False
+        self.assertEqual(self.engine.poll(), "EXECUTING")
+        self.assertEqual(self.adapter.starts, 1)
+
+    def test_terminal_delivery_backoff_survives_restart_and_keeps_slot(self):
+        self.adapter.executor = [{"state": "succeeded", "summary": "built"}]
+        self.adapter.reviewer = [{"state": "succeeded", "summary": "ok", "verdict": "pass",
+                                  "findings": [], "human_verification": []}]
+        self.engine.poll(); self.engine.poll(); self.board.value["fields"]["Status"] = "Sigma verification"
+        self.engine.poll(); self.engine.poll(); self.board.fail_comment = True
+        self.assertEqual(self.engine.poll(), "DELIVERY_RETRY")
+        restarted = Engine(self.board, self.store, self.engine.config, self.adapter)
+        self.assertEqual(restarted.poll(), "DELIVERY_WAIT")
+        with self.store.locked() as state:
+            self.assertIsNotNone(state["active"])
+            for event in state["outbox"]: event["next_at"] = "2000-01-01T00:00:00+00:00"
+        self.board.fail_comment = False
+        self.assertEqual(restarted.poll(), "HUMAN_VERIFICATION")
+
+    def test_terminal_intents_are_persisted_atomically_before_delivery(self):
+        self.adapter.executor = [{"state": "succeeded", "summary": "built"}]
+        self.adapter.reviewer = [{"state": "succeeded", "summary": "ok", "verdict": "pass",
+                                  "findings": [], "human_verification": []}]
+        self.engine.poll(); self.engine.poll(); self.board.value["fields"]["Status"] = "Sigma verification"
+        self.engine.poll(); self.engine.poll(); self.engine.config["notification_command"] = ["notify"]
+        self.board.fail_status = True
+        self.assertEqual(self.engine.poll(), "DELIVERY_RETRY")
+        with self.store.locked() as state:
+            self.assertEqual({"status", "comment", "notify"}, {event["kind"] for event in state["outbox"]})
+
+    def test_existing_marker_is_checked_before_comment_post(self):
+        marker = "<!-- sigma-team-event:event-1 -->"
+        self.board.value["comments"]["nodes"].append({"body": "already posted\n" + marker,
+            "createdAt": "2026-01-01T00:00:00+00:00", "author": {"login": "aika-ai-agent"}})
+        with self.store.locked() as state:
+            state["outbox"] = [{"id": "event-1", "kind": "comment", "issue": 7, "item": {"id": "ISSUE"},
+                                "body": "already posted", "attempts": 0, "next_at": "2000-01-01T00:00:00+00:00"}]
+        self.assertEqual(self.engine.poll(), "RESERVED")
+        self.assertEqual(self.board.comments, [])
+
+    def test_cancel_request_is_run_bound_consumed_and_rejected_without_active(self):
+        self.engine.poll(); self.engine.poll()
+        first = self.store.request_cancel(7, 199560169, "stop first")
+        self.engine.poll()
+        self.assertFalse((self.store.cancel_root / (first["run_id"] + ".json")).exists())
+        with self.assertRaises(ValueError): self.store.request_cancel(7, 199560169, "future cancel")
+        with self.store.locked() as state:
+            Engine.authorize_retry(state, 7, 199560169, "retry")
+        self.board.value["fields"]["Status"] = "Backlog"
+        self.assertEqual(self.engine.poll(), "RESERVED")
+        with self.store.locked() as state:
+            self.assertNotEqual(first["run_id"], state["active"]["run_id"])
+
+    def test_stale_cancel_race_is_audited_and_consumed(self):
+        self.engine.poll(); self.engine.poll()
+        request = self.store.request_cancel(7, 199560169, "raced completion")
+        with self.store.locked() as state:
+            state["tasks"]["7"] = {**state["active"], "phase": "pending", "finished_at": "2026-01-01T00:00:00+00:00"}
+            state["active"] = None
+        self.assertEqual("IDLE", self.engine.poll())
+        with self.store.locked() as state:
+            self.assertEqual("stale_run", state["cancellation_audit"][-1]["outcome"])
+        self.assertFalse((self.store.cancel_root / (request["run_id"] + ".json")).exists())
+
+    def test_cancel_request_does_not_wait_for_dispatcher_flock(self):
+        self.engine.poll(); self.engine.poll()
+        self.store.root.mkdir(parents=True, exist_ok=True)
+        with self.store.lock_path.open("a+") as lock:
+            fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+            request = self.store.request_cancel(7, 199560169, "quick")
+        self.assertEqual(7, request["issue"])
+
+    def test_retry_without_recorded_base_is_explicit_blocker(self):
+        with self.store.locked() as state:
+            state["tasks"]["7"] = {"phase": "pending", "finished_at": "2026-01-01T00:00:00+00:00"}
+            Engine.authorize_retry(state, 7, 199560169, "continue")
+        self.assertEqual(self.engine.poll(), "RESERVED")
+        self.assertEqual(self.engine.poll(), "PENDING")
+        self.assertEqual(self.adapter.starts, 0)
+        self.assertIn("no recorded workdir", self.board.comments[-1])
+
+    def test_cancel_supersedes_deferred_running_status(self):
+        self.engine.poll(); self.board.fail_status = True
+        self.assertEqual(self.engine.poll(), "DELIVERY_RETRY")
+        self.store.request_cancel(7, 199560169, "cancel before launch")
+        self.board.fail_status = False
+        self.assertEqual(self.engine.poll(), "PENDING")
+        self.assertEqual(self.board.statuses, ["Pending"])
+        self.assertEqual(self.adapter.starts, 0)
+        with self.store.locked() as state:
+            self.assertFalse(any(event.get("status") == "running" for event in state["outbox"]))
+
+    def test_cancel_during_launching_never_creates_worker_to_cancel(self):
+        self.engine.poll()
+        with self.store.locked() as state:
+            state["active"]["phase"] = "launching"
+        self.store.request_cancel(7, 199560169, "stop ambiguous launch")
+        self.assertEqual(self.engine.poll(), "CANCEL_WAITING")
+        self.assertEqual(self.adapter.starts, 0)
+
+    def test_cli_cancel_returns_while_dispatcher_lock_is_held(self):
+        self.engine.poll(); self.engine.poll()
+        config = Path(self.tmp.name) / "team.json"
+        config.write_text(json.dumps({"state_root": self.tmp.name}))
+        command = [sys.executable, str(Path(__file__).with_name("sigma-team")), "--config", str(config),
+                   "cancel", "7", "--requested-by", "199560169", "--reason", "quick"]
+        with self.store.lock_path.open("a+") as lock:
+            fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+            completed = subprocess.run(command, text=True, capture_output=True, timeout=2)
+        self.assertEqual(0, completed.returncode, completed.stderr)
+        self.assertEqual(7, json.loads(completed.stdout)["issue"])
+
+    def test_cancel_crash_after_finalization_resumes_same_outbox(self):
+        self.engine.poll(); self.engine.poll()
+        request = self.store.request_cancel(7, 199560169, "stop")
+        original = self.engine._flush_outbox
+        self.engine._flush_outbox = lambda state, items: (_ for _ in ()).throw(SystemExit("crash"))
+        with self.assertRaises(SystemExit): self.engine.poll()
+        self.engine._flush_outbox = original
+        self.assertTrue((self.store.cancel_root / (request["run_id"] + ".json")).exists())
+        with self.store.locked() as state:
+            self.assertEqual("pending_delivery", state["active"]["phase"])
+            self.assertEqual(3, len(state["outbox"]))
+        restarted = Engine(self.board, self.store, self.engine.config, self.adapter)
+        self.assertEqual("PENDING", restarted.poll())
+        with self.store.locked() as state:
+            self.assertEqual([], state["outbox"])
+            self.assertIsNone(state["active"])
+        self.assertEqual(["running", "Pending"], self.board.statuses)
+        self.assertEqual(2, len(self.board.comments))
+        self.assertFalse((self.store.cancel_root / (request["run_id"] + ".json")).exists())
 
 
 if __name__ == "__main__":

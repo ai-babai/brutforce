@@ -31,7 +31,11 @@ def main():
     with open(args.config) as src:
         config = json.load(src)
     store = StateStore(config.get("state_root", "/srv/agents/sigma/team"))
-    if args.action in {"control", "configure", "authorize-retry", "cancel"}:
+    if args.action == "cancel":
+        request = store.request_cancel(args.issue, args.requested_by, args.reason)
+        print(json.dumps(request, ensure_ascii=False, indent=2))
+        return
+    if args.action in {"control", "configure", "authorize-retry"}:
         with store.locked() as state:
             if args.action == "control":
                 if args.command == "pause": state["paused"] = True
@@ -48,10 +52,6 @@ def main():
             elif args.action == "authorize-retry":
                 authorization = Engine.authorize_retry(state, args.issue, args.requested_by, args.reason)
                 print(json.dumps(authorization, ensure_ascii=False, indent=2))
-                return
-            else:
-                request = Engine.request_cancel(state, args.issue, args.requested_by, args.reason)
-                print(json.dumps(request, ensure_ascii=False, indent=2))
                 return
             print(json.dumps(state, ensure_ascii=False, indent=2))
         return

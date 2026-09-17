@@ -118,6 +118,19 @@ class GitHub:
             raise RuntimeError("commit not found in GitHub repository")
         return {"oid": value["oid"], "pull_requests": value["associatedPullRequests"]["nodes"]}
 
+    def all_comments(self, item):
+        q = """query($id:ID!,$cursor:String){node(id:$id){... on Issue{comments(first:100,after:$cursor){pageInfo{hasNextPage endCursor} nodes{body createdAt author{login}}}}}}"""
+        cursor, comments = None, []
+        while True:
+            page = self.graphql(q, {"id": item["id"], "cursor": cursor})["node"]["comments"]
+            comments.extend(page["nodes"])
+            if not page["pageInfo"]["hasNextPage"]:
+                return comments
+            cursor = page["pageInfo"]["endCursor"]
+
+    def comment_marker_present(self, item, marker):
+        return any(marker in comment.get("body", "") for comment in self.all_comments(item))
+
     def comment(self, item, body):
         self.verify_write_identity()
         q = """mutation($id:ID!,$body:String!){addComment(input:{subjectId:$id,body:$body}){commentEdge{node{id}}}}"""

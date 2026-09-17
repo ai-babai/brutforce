@@ -26,6 +26,20 @@ class Board:
 
 
 class SigmaTaskTest(unittest.TestCase):
+    def test_comment_marker_search_paginates_all_comments(self):
+        class API(GitHub):
+            def __init__(self): super().__init__(); self.calls = 0
+            def graphql(self, query, variables=None):
+                self.calls += 1
+                if self.calls == 1:
+                    return {"node": {"comments": {"pageInfo": {"hasNextPage": True, "endCursor": "next"},
+                                                    "nodes": [{"body": "old"}]}}}
+                return {"node": {"comments": {"pageInfo": {"hasNextPage": False, "endCursor": None},
+                                                "nodes": [{"body": "<!-- sigma-team-event:x -->"}]}}}
+        api = API()
+        self.assertTrue(api.comment_marker_present({"id": "ISSUE"}, "<!-- sigma-team-event:x -->"))
+        self.assertEqual(2, api.calls)
+
     def test_review_evidence_uses_exact_commit_and_returns_pr_snapshot(self):
         class API(GitHub):
             def __init__(self):

@@ -121,6 +121,11 @@ def _public_run(manifest: dict[str, Any]) -> dict[str, Any]:
     return {key: manifest[key] for key in ("external_id", "run_id", "workdir", "result_path", "adapter")}
 
 
+def existing_run(run_id: str) -> dict[str, Any] | None:
+    manifest = _existing_manifest(run_id)
+    return _public_run(manifest) if manifest else None
+
+
 def _process_identity(pid: int) -> dict[str, int] | None:
     """Return Linux process identity fields which change when a PID is reused."""
     try:
@@ -138,6 +143,57 @@ def _process_stopped(pid: int) -> bool:
         return stat[stat.rfind(")") + 2:].split()[0] == "Z"
     except (FileNotFoundError, IndexError, PermissionError):
         return True
+
+
+def _identity_status(expected: dict[str, Any] | None) -> str:
+    if not isinstance(expected, dict) or expected.get("identity_unavailable"):
+        return "unknown"
+    try:
+        normalized = {"pid": int(expected["pid"]), "start_time": int(expected["start_time"]),
+                      "process_group": int(expected["process_group"])}
+    except (KeyError, TypeError, ValueError):
+        return "unknown"
+    actual = _process_identity(normalized["pid"])
+    if actual is None or _process_stopped(normalized["pid"]):
+        return "stopped"
+    return "running" if actual == normalized else "mismatch"
+
+
+def _group_members(process_group: int) -> list[int]:
+    members = []
+    for entry in Path("/proc").iterdir():
+        if not entry.name.isdigit():
+            continue
+        try:
+            stat = (entry / "stat").read_text()
+            fields = stat[stat.rfind(")") + 2:].split()
+            if fields[0] != "Z" and int(fields[2]) == int(process_group):
+                members.append(int(entry.name))
+        except (FileNotFoundError, IndexError, ValueError, PermissionError):
+            continue
+    return members
+
+
+def _owned_group_status(expected: dict[str, Any] | None) -> str:
+    identity = _identity_status(expected)
+    if identity in {"unknown", "mismatch"}:
+        return identity
+    members = _group_members(int(expected["process_group"]))
+    return "running" if members else "stopped"
+
+
+def _child_identity(manifest: dict[str, Any]) -> dict[str, Any] | None:
+    name = manifest.get("child_identity_path")
+    if not isinstance(name, str) or not name:
+        return None
+    path = Path(name)
+    if not path.is_file():
+        return None
+    try:
+        value = json.loads(path.read_text())
+        return value if isinstance(value, dict) else None
+    except json.JSONDecodeError:
+        return None
 
 
 def _write_manifest(manifest: dict[str, Any]) -> None:
@@ -243,6 +299,7 @@ def _start_process(workdir: str, prompt: str, run_id: str, *, reviewer: bool) ->
         "provider": OPENCODE_PROVIDER,
         "timeout_seconds": 150 if reviewer else int(os.environ.get("SIGMA_TEAM_TIMEOUT_SECONDS", "1500")),
         "prompt": worker_prompt,
+        "child_identity_path": str(run_dir / "child-identity.json"),
     }
     _atomic_json(run_dir / "worker-manifest.json", manifest)
     process = subprocess.Popen(
@@ -298,7 +355,10 @@ def _abort_opencode(session_id: str, workdir: str) -> None:
     while True:
         statuses = _http("GET", "/session/status", directory=workdir)
         status = statuses.get(session_id) if isinstance(statuses, dict) else None
-        if isinstance(status, dict) and status.get("type") == "idle":
+        # The legacy status map commonly contains only active sessions. Verify
+        # the exact session still exists, then treat a missing map entry as idle.
+        exists = _http("GET", f"/session/{quote(session_id)}", directory=workdir)
+        if isinstance(exists, dict) and (status is None or status.get("type") == "idle"):
             return
         if time.monotonic() >= deadline:
             observed = status.get("type", "missing") if isinstance(status, dict) else "invalid"
@@ -306,8 +366,7 @@ def _abort_opencode(session_id: str, workdir: str) -> None:
         time.sleep(0.1)
 
 
-def _opencode_family(session_id: str, workdir: str) -> list[str]:
-    """Read the documented session graph and return this session plus descendants."""
+def _opencode_family_v2(session_id: str, workdir: str) -> list[str]:
     sessions: list[dict[str, Any]] = []
     cursor: str | None = None
     while True:
@@ -338,20 +397,51 @@ def _opencode_family(session_id: str, workdir: str) -> list[str]:
     return family
 
 
-def _interrupt_opencode_family(session_id: str, workdir: str) -> list[str]:
-    family = _opencode_family(session_id, workdir)
-    # The documented endpoint is an exact-session interrupt. Parent first lets
-    # its helper sessions settle, then each discovered descendant is interrupted.
-    for target in family:
-        _http("POST", f"/api/session/{quote(target)}/interrupt", directory=workdir)
-    for target in family:
-        _http("POST", f"/api/session/{quote(target)}/wait", directory=workdir)
-    statuses = _http("GET", "/session/status", directory=workdir)
-    active = [target for target in family
-              if not isinstance(statuses, dict) or statuses.get(target, {}).get("type") != "idle"]
-    if active:
-        raise AdapterError("OpenCode sessions did not confirm idle: " + ", ".join(active))
+def _opencode_family_legacy(session_id: str, workdir: str) -> list[str]:
+    family, pending = [], [session_id]
+    while pending:
+        current = pending.pop()
+        family.append(current)
+        children = _http("GET", f"/session/{quote(current)}/children", directory=workdir)
+        if not isinstance(children, list):
+            raise AdapterError("OpenCode legacy children response is invalid")
+        pending.extend(child["id"] for child in children
+                       if isinstance(child, dict) and isinstance(child.get("id"), str)
+                       and child["id"] not in family and child["id"] not in pending)
     return family
+
+
+def _opencode_family(session_id: str, workdir: str) -> list[str]:
+    """Use the documented v2 graph, with the documented legacy children route as fallback."""
+    try:
+        return _opencode_family_v2(session_id, workdir)
+    except AdapterError:
+        return _opencode_family_legacy(session_id, workdir)
+
+
+def _stop_opencode_session(session_id: str, workdir: str) -> None:
+    try:
+        _http("POST", f"/api/session/{quote(session_id)}/interrupt", directory=workdir)
+        # Documented v2 wait returns only after the agent loop is idle.
+        _http("POST", f"/api/session/{quote(session_id)}/wait", directory=workdir)
+    except AdapterError:
+        _abort_opencode(session_id, workdir)
+
+
+def _interrupt_opencode_family(session_id: str, workdir: str) -> list[str]:
+    stopped: list[str] = []
+    for _ in range(8):
+        family = _opencode_family(session_id, workdir)
+        for target in family:
+            if target not in stopped:
+                _stop_opencode_session(target, workdir)
+                stopped.append(target)
+        # Rediscovery after the parent stops closes the helper-creation race.
+        rediscovered = _opencode_family(session_id, workdir)
+        late = [target for target in rediscovered if target not in stopped]
+        if not late:
+            return stopped
+    raise AdapterError("OpenCode descendants did not stabilize during cancellation")
 
 
 def _opencode_status(run: dict[str, Any]) -> dict[str, Any]:
@@ -389,7 +479,18 @@ def _opencode_status(run: dict[str, Any]) -> dict[str, Any]:
 
 def _process_status(run: dict[str, Any]) -> dict[str, Any]:
     result_path = Path(run["result_path"])
-    if result_path.exists():
+    manifest = _existing_manifest(run["run_id"])
+    if not manifest:
+        return {"state": "failed", "summary": "Worker manifest is missing"}
+    wrapper = _owned_group_status(manifest.get("worker_identity"))
+    child_identity = _child_identity(manifest)
+    child = _owned_group_status(child_identity) if child_identity else "unknown"
+    if "mismatch" in {wrapper, child}:
+        return {"state": "blocked", "summary": "Recorded worker PID identity mismatch; manual investigation required"}
+    if wrapper == "running" or child == "running":
+        detail = "wrapper" if wrapper == "running" else "orphan child"
+        return {"state": "running", "summary": f"Worker {detail} is running"}
+    if wrapper == "stopped" and child == "stopped" and result_path.exists():
         result = json.loads(result_path.read_text())
         output = result.get("output")
         if isinstance(output, dict):
@@ -401,17 +502,9 @@ def _process_status(run: dict[str, Any]) -> dict[str, Any]:
         else:
             result.setdefault("summary", result["state"])
         return result
-    manifest = _existing_manifest(run["run_id"])
-    pid = manifest.get("worker_pid") if manifest else None
-    if pid:
-        try:
-            os.kill(int(pid), 0)
-            return {"state": "running", "summary": f"Worker process {pid} is running"}
-        except ProcessLookupError:
-            pass
-        except PermissionError:
-            return {"state": "running", "summary": f"Worker process {pid} is owned by the service account"}
-    return {"state": "failed", "summary": "Worker exited without writing result.json"}
+    if wrapper == "stopped" and child == "stopped":
+        return {"state": "failed", "summary": "Worker and child exited without writing result.json"}
+    return {"state": "blocked", "summary": "Worker identity unavailable after wrapper exit; manual investigation required"}
 
 
 def executor_status(run: dict[str, Any]) -> dict[str, Any]:
@@ -447,51 +540,57 @@ def _record_cancellation(manifest: dict[str, Any], state: str, summary: str) -> 
 
 
 def _cancel_process(manifest: dict[str, Any]) -> dict[str, Any]:
-    existing = _terminal_result(manifest)
-    if existing is not None:
-        return existing
-    expected = manifest.get("worker_identity")
-    if not isinstance(expected, dict):
-        raise AdapterError("worker manifest has no reuse-resistant process identity")
-    try:
-        pid = int(expected["pid"])
-        expected_start = int(expected["start_time"])
-        expected_group = int(expected["process_group"])
-    except (KeyError, TypeError, ValueError) as error:
-        raise AdapterError("worker manifest has invalid process identity") from error
-    actual = _process_identity(pid)
-    if actual is not None and actual != {"pid": pid, "start_time": expected_start, "process_group": expected_group}:
+    wrapper = manifest.get("worker_identity")
+    child = _child_identity(manifest)
+    wrapper_status = _owned_group_status(wrapper)
+    child_status = _owned_group_status(child) if child else "unknown"
+    if "mismatch" in {wrapper_status, child_status}:
         manifest["cancellation"] = {"state": "refused_pid_mismatch", "recorded_at": int(time.time())}
         _write_manifest(manifest)
         raise AdapterError("refusing to signal worker: PID identity no longer matches manifest")
-    if actual is None:
-        # It may have exited just before cancellation. A durable result is still required.
-        return _record_cancellation(manifest, "cancelled", "Worker was already stopped before cancellation")
-    os.killpg(expected_group, 15)
+    if wrapper_status == "unknown":
+        raise AdapterError("worker wrapper has no reuse-resistant process identity")
+    if wrapper_status == "stopped" and child_status == "unknown":
+        raise AdapterError("worker wrapper exited before child identity was recorded; manual investigation required")
+    targets = []
+    if wrapper_status == "running":
+        targets.append(wrapper)
+    if wrapper_status == "stopped" and child_status == "running":
+        targets.append(child)
+    for identity in targets:
+        os.killpg(int(identity["process_group"]), 15)
     deadline = time.monotonic() + float(os.environ.get("SIGMA_PROCESS_CANCEL_WAIT_SECONDS", "15"))
-    while not _process_stopped(pid):
+    while True:
+        wrapper_status = _owned_group_status(wrapper)
+        child_status = _owned_group_status(child) if child else "unknown"
+        if "mismatch" in {wrapper_status, child_status}:
+            raise AdapterError("PID identity changed while waiting for cancellation")
+        if wrapper_status == "stopped" and child_status == "stopped":
+            break
         if time.monotonic() >= deadline:
-            raise AdapterError("worker did not stop after targeted cancellation")
+            raise AdapterError("worker wrapper or child did not stop after targeted cancellation")
         time.sleep(0.1)
-    return _record_cancellation(manifest, "cancelled", "Worker cancellation confirmed")
+    existing = _terminal_result(manifest)
+    if existing is not None:
+        return existing
+    return _record_cancellation(manifest, "cancelled", "Worker wrapper and child process groups confirmed stopped")
 
 
 def cancel(run: dict[str, Any]) -> dict[str, Any]:
     """Stop exactly the run named by its manifest and return only after it is terminal."""
     manifest = _manifest_for_cancel(run)
     existing = _terminal_result(manifest)
-    if existing is not None:
-        if existing.get("confirmed"):
-            return existing
-        return {**existing, "confirmed": True,
-                "reason": "worker was already terminal"}
     if manifest["adapter"] == "opencode":
+        if existing is not None and existing.get("state") == "cancelled" and existing.get("confirmed"):
+            return existing
         family = _interrupt_opencode_family(manifest["external_id"], manifest["workdir"])
-        result = _record_cancellation(manifest, "cancelled", "OpenCode cancellation confirmed idle")
-        result.setdefault("sessions", family)
+        result = existing or _record_cancellation(manifest, "cancelled", "OpenCode cancellation confirmed idle")
+        result["sessions"] = family
         result["confirmed"] = True
         result["reason"] = "OpenCode parent and descendant sessions confirmed idle"
         _atomic_json(Path(manifest["result_path"]), result)
+        manifest["cancellation"] = {"state": "confirmed", "sessions": family, "recorded_at": int(time.time())}
+        _write_manifest(manifest)
         return result
     result = _cancel_process(manifest)
-    return {**result, "confirmed": True, "reason": "worker process group confirmed stopped"}
+    return {**result, "confirmed": True, "reason": "worker wrapper and child process groups confirmed stopped"}
