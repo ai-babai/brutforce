@@ -1,0 +1,25 @@
+#!/usr/bin/python3
+"""Fixed-recipient Sigma workflow notifications. Never log Telegram credentials."""
+import json
+import os
+import sys
+import urllib.request
+
+payload = json.load(sys.stdin)
+if payload.get("recipient") != 199560169:
+    raise SystemExit("Recipient is not enabled")
+token = os.environ.get("TELEGRAM_BOT_TOKEN")
+if not token:
+    raise SystemExit("Telegram credential unavailable")
+labels = {"started": "задача передана исполнителю", "pending": "нужна помощь", "human_verification": "проверка закончена — нужно решение человека"}
+number = payload.get("issue")
+text = "Sigma: " + labels.get(payload["event"], payload["event"]) + "\n"
+text += "https://github.com/ai-babai/brutforce/issues/" + str(number) + "\n"
+text += payload.get("detail", "")[:3000]
+request = urllib.request.Request("https://api.telegram.org/bot" + token + "/sendMessage", data=json.dumps({"chat_id": 199560169, "text": text}).encode(), headers={"Content-Type": "application/json"})
+try:
+    with urllib.request.urlopen(request, timeout=15) as response:
+        if not json.load(response).get("ok"):
+            raise SystemExit("Telegram rejected notification")
+except Exception:
+    raise SystemExit("Telegram delivery failed")

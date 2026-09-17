@@ -1,0 +1,38 @@
+[Unit]
+Description=Sigma deterministic board dispatcher and delegated workers
+After=wg-sigma.service sigma-opencode.service
+Requires=wg-sigma.service
+BindsTo=wg-sigma.service
+PartOf=wg-sigma.service
+
+[Service]
+User=sigma-ops
+Group=lct
+WorkingDirectory=/srv/agents/sigma
+Environment=HOME=/home/sigma-ops
+Environment=HERMES_HOME=/home/sigma-ops/.hermes
+Environment=GH_CONFIG_DIR=/etc/sigma-team/github
+Environment=PATH=/opt/sigma-hermes/bin:/opt/sigma-hermes/venv/bin:/usr/local/bin:/usr/bin:/bin
+EnvironmentFile=/etc/sigma-hermes/runtime.env
+EnvironmentFile=/etc/sigma-hermes/telegram.env
+EnvironmentFile=/etc/sigma-web-apps/opencode.env
+NetworkNamespacePath=/run/netns/opencode-nl
+BindReadOnlyPaths=/etc/netns/opencode-nl/resolv.conf:/etc/resolv.conf
+BindReadOnlyPaths=/etc/netns/opencode-nl/nsswitch.conf:/etc/nsswitch.conf
+ExecStart=/opt/sigma-hermes/team/sigma-team serve
+Restart=on-failure
+RestartSec=15
+TimeoutStopSec=30
+KillMode=control-group
+UMask=0007
+PrivateTmp=yes
+ProtectSystem=full
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectControlGroups=yes
+MemoryMax=4G
+CPUQuota=200%
+TasksMax=512
+
+[Install]
+WantedBy=multi-user.target wg-sigma.service

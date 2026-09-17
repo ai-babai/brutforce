@@ -1,0 +1,9 @@
+{
+  "state_root": "/srv/agents/sigma/team",
+  "work_root": "/srv/lct/work",
+  "repo_source": "https://github.com/ai-babai/brutforce.git",
+  "executor": "opencode",
+  "adapter_module": "adapters",
+  "poll_interval": 60,
+  "notification_command": ["/opt/sigma-hermes/bin/sigma-team-notify"]
+}

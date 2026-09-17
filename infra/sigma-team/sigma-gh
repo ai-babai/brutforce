@@ -1,0 +1,5 @@
+#!/bin/sh
+# Dedicated Sigma identity, without changing the shared lct GitHub configuration.
+unset GH_TOKEN GITHUB_TOKEN
+export GH_CONFIG_DIR=/etc/sigma-team/github
+exec /usr/bin/gh "$@"
