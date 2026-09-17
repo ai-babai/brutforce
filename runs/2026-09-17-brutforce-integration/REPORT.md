@@ -11,6 +11,9 @@
 - Под отдельным worktree подготовлен основной Git-безопасный слой Vino:
   проектные правила, Agents OS, 6 ролевых профилей, требования, архитектура,
   scripts подготовки данных, contracts/registry, README и компактные summary.
+- Интеграционный срез отправлен в `origin/codex/vino-integration`; основной
+  commit содержимого — `42b5ee7`. GitHub предложил PR endpoint
+  `https://github.com/ai-babai/brutforce/pull/new/codex/vino-integration`.
 - Raw/media, закрытый PDF ТЗ, большие таблицы, Telegram-export, веса, индексы,
   архив Dataset и SSH credentials не добавлены в Git.
 - В `.env.example` записаны только несекретные URL/имена моделей. Разница между

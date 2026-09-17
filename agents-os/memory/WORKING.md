@@ -58,9 +58,9 @@ exports четырёх защищённых retail-каталогов.
   независимый QA PASS, P0/P1/P2=0.
 - GitHub-приглашение в `ai-babai/brutforce` принято; локальный Git Credential
   Manager авторизован как `MisterMolox`, чтение приватного remote подтверждено.
-- Репозиторий клонирован локально, создан отдельный worktree/ветка
-  `codex/vino-integration`; подготовлен Git-безопасный импорт правил, памяти,
-  документации, dataset metadata/summary и scripts без raw/media/secrets.
+- Репозиторий клонирован локально; Git-безопасный импорт правил, памяти,
+  документации, dataset metadata/summary и scripts без raw/media/secrets
+  отправлен в `origin/codex/vino-integration` коммитом `42b5ee7`.
 - Режим — некоммерческое исследование; права на производные и распространение
   всё равно проверяются по каждому источнику.
 - Nuxt/PostgreSQL+pgvector/SigLIP 2/Strapi/Docker остаются рекомендованными в ТЗ
