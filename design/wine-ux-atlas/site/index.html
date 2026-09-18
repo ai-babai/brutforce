@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Мобильный UX винных приложений: официальные скриншоты, пользовательские сценарии и интерактивный прототип для ЛЦТ.">
+  <title>Wine UX Atlas — референсы и сценарии ЛЦТ</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="assets/fonts/onest.css">
+  <link rel="stylesheet" href="design.css">
+</head>
+<body>
+  <header class="masthead"><a href="#references" class="brand" aria-label="Wine UX Atlas, главная">W<span> / </span>UX</a><div class="heading"><h1>Вино. Экраны. Сценарии.</h1><p>Мировые референсы → решение для ЛЦТ / РСХБ</p></div><span class="edition">Исследование<br>18 сентября 2026</span></header>
+  <nav class="main-nav" aria-label="Разделы отчёта">
+    <button class="active" data-view="references" aria-pressed="true">01 <span>Реальные экраны</span></button>
+    <button data-view="components" aria-pressed="false">02 <span>Коллекция элементов</span></button>
+    <button data-view="flows" aria-pressed="false">03 <span>Сценарии и макет</span></button>
+    <button data-view="decisions" aria-pressed="false">04 <span>Что берём в продукт</span></button>
+    <button data-view="sources" aria-pressed="false">05 <span>Источники и границы</span></button>
+  </nav>
+  <main>
+    <section id="references" class="view">
+      <div class="reference-layout"><aside class="app-index"><p class="eyebrow">Пять винных продуктов</p><div id="core-apps"></div><p class="eyebrow adjacent-label">Смежные механики</p><div id="adjacent-apps"></div></aside>
+        <article class="reference-content" id="app-detail" aria-live="polite"></article>
+      </div>
+    </section>
+    <section id="components" class="view" hidden>
+      <div class="component-intro"><p class="eyebrow">От референса к своей системе</p><h2>Детали, из которых<br>складывается продукт.</h2><p>Фрагмент реального экрана, принцип его устройства и наша версия элемента. Нажмите на референс, чтобы увидеть исходный экран целиком.</p></div>
+      <div class="component-filters" id="component-filters" aria-label="Тип элемента"></div>
+      <div id="component-collection" class="component-collection"></div>
+      <div class="system-strip"><div><h3>Одна система на всех экранах</h3><p>Наши проектные параметры, не спецификация конкурентов.</p></div><div><span class="system-swatch" style="background:#742c46"></span><strong>Акцент</strong><span>Винный · #742C46</span></div><div><strong class="type-example">Aa</strong><strong>Onest</strong><span>32 / 24 / 16 / 13 px</span></div><div><strong class="rhythm-example">8 · 16 · 24</strong><strong>Ритм</strong><span>Кнопка 50 px · цель от 44 px</span></div></div>
+    </section>
+    <section id="flows" class="view" hidden>
+      <div class="section-intro"><div><p class="eyebrow">Предлагаемый UX • кликабельный макет</p><h2>От этикетки к точному вину</h2></div><p>Подтверждено публичной задачей: найти карточку по фотографии. Остальное ниже — наши UX-рекомендации, ещё не сверенные с полным ТЗ.</p></div>
+      <div class="design-summary"><span>Новый макет</span><p>Фотография бутылки · полноэкранная камера · визуальный выбор винтажа · карточка с вкладками</p><button id="view-components">Из каких элементов собран ↗</button></div>
+      <div id="scenario-picker" class="scenario-picker" aria-label="Сценарии"></div>
+      <div class="flow-layout"><div class="flow-explanation" id="flow-explanation"></div><div class="prototype-stage"><div class="prototype-label">Наш макет <span>Вымышленные данные</span></div><div class="phone"><div class="phone-status"><span>9:41</span><span>● ▰</span></div><div id="phone-content" aria-live="polite"></div></div><p class="demo-caption">Кнопки работают внутри макета. Камера, распознавание и каталог не подключены.</p><button class="text-button" id="restart">Начать сценарий заново</button></div><aside class="screen-notes"><p class="eyebrow">Почему экран устроен так</p><div id="screen-notes" aria-live="polite"></div></aside></div>
+    </section>
+    <section id="decisions" class="view" hidden>
+      <div class="section-intro"><div><p class="eyebrow">Решения для первой версии</p><h2>Заимствуем механику, а не всё приложение</h2></div><p>Популярность продукта не доказывает качество каждого его экрана. Эти решения — наш синтез публичных экранов и пользовательских отзывов.</p></div>
+      <div id="decision-content"></div>
+    </section>
+    <section id="sources" class="view" hidden>
+      <div class="section-intro"><div><p class="eyebrow">Как читать этот атлас</p><h2>Что мы видели, а что предлагаем</h2></div></div>
+      <div class="source-grid"><article><h3>Реальные изображения</h3><p>Официальные изображения со страниц приложений в App Store. Это промоскриншоты разработчиков: они показывают выбранные экраны, иногда с рекламными подписями и компоновкой. Это не запись нашего тестирования установленного приложения.</p><p>Снимки сохраняются локально вместе со ссылками на оригиналы. Дата сбора — 18 сентября 2026. Версия интерфейса на промоматериале может отличаться от текущей версии приложения.</p></article><article><h3>Отзывы пользователей</h3><p>Reddit, WineBerserkers и отзывы в сторах из предшествующего исследования. Свидетельства качественные, не репрезентативный опрос. Историческая похвала и свежая критика могут относиться к разным версиям.</p><p>«Что берём» и комментарии к экранам — наша оценка пригодности для задачи. Это не цитаты пользователей.</p></article><article><h3>Требования ЛЦТ</h3><p>Доступная публичная формулировка: фотография → карточка российского вина с описанием из массива платформы «Свое Вино». Полный текст ТЗ не найден: обязательность остальных экранов и функций не подтверждена.</p><a target="_blank" rel="noopener" href="https://i.moscow/hackaton/lct/3a9c0c2e86184425bd73d4cedbf6565a">Официальная карточка задачи ↗</a></article><article><h3>Наш прототип</h3><p>Схематичный мобильный интерфейс для обсуждения сценариев. Все вина, поля и результаты — демонстрационные. Макет не обращается к модели и не измеряет качество распознавания.</p><p>Не используем вымышленные проценты уверенности. Время анимации не является обещанием скорости сервиса.</p></article></div>
+      <h3 class="source-heading">Продукты и пользовательские свидетельства</h3><div id="source-list"></div>
+    </section>
+  </main>
+  <footer><span>ЛЦТ / Свое Вино · UX research atlas</span><span>Референсы ≠ полное ТЗ · исследование</span></footer>
+  <dialog id="image-dialog"><div class="dialog-bar"><div id="image-title"></div><button id="close-image" aria-label="Закрыть изображение">Закрыть ×</button></div><img id="large-image" alt=""><div class="dialog-bottom"><button id="image-prev" aria-label="Предыдущий скриншот">← Назад</button><a id="image-source" target="_blank" rel="noopener">Оригинал ↗</a><button id="image-next" aria-label="Следующий скриншот">Далее →</button></div></dialog>
+  <script src="assets/manifest.js"></script><script src="assets/icons.js"></script><script src="app.js"></script><script src="design.js"></script>
+</body>
+</html>
