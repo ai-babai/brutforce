@@ -32,3 +32,10 @@
 .scan-explained{min-height:82px;justify-content:flex-start;gap:14px;padding:16px;text-align:left}.scan-explained>.ui-icon{width:30px;height:30px}.scan-explained>span{min-width:0}.scan-explained small{color:#efdae3;font-size:11px;margin:4px 0 0}.scan-variants .scan-explained strong{font-size:14px}
 
 .component-card:has(.scan-variants) .component-examples{grid-template-columns:1fr}.element-specimen:has(.scan-variants){aspect-ratio:auto;height:auto;max-height:none;overflow:visible;align-items:stretch}.scan-variants .scan-entry{box-sizing:border-box}
+
+/* v3.4: restore the original main action, replace only the trailing arrow. */
+.scan-primary{display:grid;grid-template-columns:42px minmax(0,1fr) 24px;gap:12px;padding:17px 16px;min-height:82px;border-radius:18px;text-align:left;box-shadow:0 5px 12px #742c4614}
+.scan-primary-camera{display:flex;align-items:center;justify-content:center;width:42px;height:42px;border-radius:13px;background:#ffffff16}.scan-primary-camera .ui-icon{width:24px;height:24px}
+.scan-primary-copy{min-width:0}.scan-primary .scan-primary-copy strong{font-size:14px;line-height:1.35;letter-spacing:-.1px}.scan-primary-copy small{font-size:11px;line-height:1.5;margin-top:4px;color:#efdae3}
+.scan-primary-mark{display:flex;align-items:center;justify-content:center}.scan-primary-mark .ui-icon{width:24px;height:24px;stroke-width:1.8}
+@media(max-width:360px){.scan-primary{grid-template-columns:36px minmax(0,1fr) 22px;gap:9px;padding:15px 12px}.scan-primary-camera{width:36px;height:40px}.scan-primary .scan-primary-copy strong{font-size:13px}.scan-primary-copy small{font-size:10px}.scan-primary-mark .ui-icon{width:22px;height:22px}}
