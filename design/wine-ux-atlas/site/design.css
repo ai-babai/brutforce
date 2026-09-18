@@ -9,14 +9,15 @@
 
 .gallery-photo{padding:0;border:1px solid #e4d9df;border-radius:18px;background:#faf7f9;overflow:hidden;color:#742c46;text-align:left}.gallery-photo>span{display:block;padding:15px;font:12px var(--sans)}.gallery-photo .capture-panel{border-radius:0}
 
-/* v3.1: fixed slots keep the action arrow at the trailing edge. */
-.scan-entry{display:grid;grid-template-columns:42px minmax(0,1fr) 20px;gap:12px;align-items:center;padding:17px 16px;min-height:82px;border-radius:18px;background:#742c46;box-shadow:0 5px 12px #742c4614;transition:background .15s ease,transform .15s ease}
+/* v3.3: centered label and scan mark, based on the user's reference. */
+.scan-entry{display:flex;justify-content:center;align-items:center;gap:16px;width:100%;min-height:64px;padding:16px 24px;border:0;border-radius:16px;background:#742c46;color:#fff;box-shadow:none;text-align:center;cursor:pointer;transition:background .15s ease,transform .15s ease}
+.scan-entry strong{font:600 16px/1.3 var(--sans);letter-spacing:-.2px;white-space:nowrap}
+.scan-entry>.ui-icon{margin-left:0;width:27px;height:27px;stroke-width:1.8;flex:none}
 .scan-entry:hover{background:#65233d}.scan-entry:active{transform:translateY(1px);background:#5c2038}
-.scan-entry-icon{width:42px;height:42px;border:0;border-radius:13px;background:#ffffff16;color:#fff}.scan-entry-icon .ui-icon{width:24px;height:24px;stroke-width:1.65}
-.scan-entry-copy{min-width:0}.scan-entry .scan-entry-copy strong{font-size:14px;line-height:1.35;letter-spacing:-.1px;font-weight:600;white-space:nowrap}.scan-entry .scan-entry-copy small{font-size:11px;line-height:1.5;margin-top:4px;color:#efdae3}
-.scan-entry-arrow{display:flex;align-items:center;justify-content:center;justify-self:end;width:20px;height:24px;color:#fff}.scan-entry-arrow .ui-icon{width:20px;height:20px;stroke-width:1.8}
-.entry-alternatives button{font-size:11px;gap:7px}.entry-alternatives .ui-icon{width:18px;height:18px}
-@media(max-width:360px){.scan-entry{grid-template-columns:36px minmax(0,1fr) 18px;gap:10px;padding:15px 12px}.scan-entry-icon{width:36px;height:40px}.scan-entry .scan-entry-copy strong{font-size:13px}.scan-entry .scan-entry-copy small{font-size:10px}.entry-alternatives button{font-size:10px}}
+.scan-entry:focus-visible{outline:3px solid #b87390;outline-offset:4px}
+.entry-alternatives button{font-size:11px;gap:7px;min-height:48px}.entry-alternatives .ui-icon{width:18px;height:18px}
+.scan-variants{width:100%;display:grid;gap:16px;padding:8px 0}.scan-variants small{display:block;font-size:11px;color:var(--muted);margin-bottom:7px}.scan-variants p{font-size:11px;line-height:1.5;margin:0;color:var(--muted)}.scan-variants .scan-entry{cursor:default}.scan-variants .scan-entry strong{font-size:15px}.scan-tall{min-height:72px;border-radius:18px}.scan-edge{position:relative;padding-left:44px;padding-right:44px}.scan-edge>.ui-icon{position:absolute;right:16px}
+@media(max-width:390px){.scan-entry strong{font-size:16px}.entry-alternatives button{font-size:10px}}
 @media(prefers-reduced-motion:reduce){.scan-entry{transition:none}.scan-entry:active{transform:none}}
 
 /* v3.2: retain the input beside ambiguous results; comfortable touch targets. */
@@ -27,3 +28,7 @@
 .native-shot{flex:0 0 150px;margin:0}.native-shot figcaption{font-size:12px;padding:8px 0;color:var(--muted)}.native-shot a{display:inline-block}.native-shot img{display:block}
 
 .detector-card,.platform-review,.mobile-audit{min-width:0}.native-shots{max-width:100%}@media(max-width:760px){.detector-grid{grid-template-columns:minmax(0,1fr)}}
+
+.scan-explained{min-height:82px;justify-content:flex-start;gap:14px;padding:16px;text-align:left}.scan-explained>.ui-icon{width:30px;height:30px}.scan-explained>span{min-width:0}.scan-explained small{color:#efdae3;font-size:11px;margin:4px 0 0}.scan-variants .scan-explained strong{font-size:14px}
+
+.component-card:has(.scan-variants) .component-examples{grid-template-columns:1fr}.element-specimen:has(.scan-variants){aspect-ratio:auto;height:auto;max-height:none;overflow:visible;align-items:stretch}.scan-variants .scan-entry{box-sizing:border-box}
