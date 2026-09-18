@@ -1,11 +1,11 @@
 {
-  "version": "3.4",
+  "version": "3.5",
   "date": "2026-09-19",
   "url": "https://reps.maks.dzap.pw/view",
   "files": {
-    "index.html": "f49141d0a581fe0248c7fdff403678ebdff95c00a32af2d2ad2f49e330414434",
+    "index.html": "970cdfbcd6ef800efe09ce12361837202ecd7ff2a37696fc5e4414a5b53f0d33",
     "design.js": "34139bba6485f3e1cf5903bd0124efca0c0e7c1897a2ccaee6dcfc6755ce948e",
-    "design.css": "47c8ae701040a330d18d29c8e2ef59ec9362887dffe801ca4d894d380cde6568",
+    "design.css": "bed22ddfcd3fec03876f6e2a74c4e164ab473b3ab793b7420907a59a22193481",
     "research.js": "5d9cf1b2891472dfc9d72d90df9830ec8cb600dd6a8517f35bb9a5a4ae95af27",
     "style.css": "fef76c856f4d49179df49a72edbd629860920823932c7e8f39982aee2600225c",
     "app.js": "eabaebb5c1437ab332d0c3a0956e5bc17e3e8893e866a020edca9bec3a6fc707",
