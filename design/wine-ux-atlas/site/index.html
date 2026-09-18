@@ -4,9 +4,9 @@
   <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Мобильный UX винных приложений: официальные скриншоты, пользовательские сценарии и интерактивный прототип для ЛЦТ.">
   <title>Wine UX Atlas — референсы и сценарии ЛЦТ</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css?v=3">
   <link rel="stylesheet" href="assets/fonts/onest.css">
-  <link rel="stylesheet" href="design.css">
+  <link rel="stylesheet" href="design.css?v=3">
 </head>
 <body>
   <header class="masthead"><a href="#references" class="brand" aria-label="Wine UX Atlas, главная">W<span> / </span>UX</a><div class="heading"><h1>Вино. Экраны. Сценарии.</h1><p>Мировые референсы → решение для ЛЦТ / РСХБ</p></div><span class="edition">Исследование<br>18 сентября 2026</span></header>
@@ -30,23 +30,34 @@
       <div class="system-strip"><div><h3>Одна система на всех экранах</h3><p>Наши проектные параметры, не спецификация конкурентов.</p></div><div><span class="system-swatch" style="background:#742c46"></span><strong>Акцент</strong><span>Винный · #742C46</span></div><div><strong class="type-example">Aa</strong><strong>Onest</strong><span>32 / 24 / 16 / 13 px</span></div><div><strong class="rhythm-example">8 · 16 · 24</strong><strong>Ритм</strong><span>Кнопка 50 px · цель от 44 px</span></div></div>
     </section>
     <section id="flows" class="view" hidden>
-      <div class="section-intro"><div><p class="eyebrow">Предлагаемый UX • кликабельный макет</p><h2>От этикетки к точному вину</h2></div><p>Подтверждено публичной задачей: найти карточку по фотографии. Остальное ниже — наши UX-рекомендации, ещё не сверенные с полным ТЗ.</p></div>
-      <div class="design-summary"><span>Новый макет</span><p>Фотография бутылки · полноэкранная камера · визуальный выбор винтажа · карточка с вкладками</p><button id="view-components">Из каких элементов собран ↗</button></div>
+      <div class="section-intro"><div><p class="eyebrow">Предлагаемый UX • кликабельный макет</p><h2>От этикетки к точному вину</h2></div><p>Уточнено по Q&A организаторов: фото → правильная карточка. При неуверенности — ближайшие варианты. Это кликабельный макет мобильного веба, а не работающее распознавание.</p></div>
+      <div class="design-summary"><span>Новый макет</span><p>Прямой результат · похожие варианты · бутылка на полке · ожидание без потери фото</p><button id="view-components">Из каких элементов собран ↗</button></div>
       <div id="scenario-picker" class="scenario-picker" aria-label="Сценарии"></div>
       <div class="flow-layout"><div class="flow-explanation" id="flow-explanation"></div><div class="prototype-stage"><div class="prototype-label">Наш макет <span>Вымышленные данные</span></div><div class="phone"><div class="phone-status"><span>9:41</span><span>● ▰</span></div><div id="phone-content" aria-live="polite"></div></div><p class="demo-caption">Кнопки работают внутри макета. Камера, распознавание и каталог не подключены.</p><button class="text-button" id="restart">Начать сценарий заново</button></div><aside class="screen-notes"><p class="eyebrow">Почему экран устроен так</p><div id="screen-notes" aria-live="polite"></div></aside></div>
     </section>
     <section id="decisions" class="view" hidden>
       <div class="section-intro"><div><p class="eyebrow">Решения для первой версии</p><h2>Заимствуем механику, а не всё приложение</h2></div><p>Популярность продукта не доказывает качество каждого его экрана. Эти решения — наш синтез публичных экранов и пользовательских отзывов.</p></div>
-      <div id="decision-content"></div>
+      <div id="decision-content"></div><div id="detector-research"></div>
     </section>
     <section id="sources" class="view" hidden>
       <div class="section-intro"><div><p class="eyebrow">Как читать этот атлас</p><h2>Что мы видели, а что предлагаем</h2></div></div>
-      <div class="source-grid"><article><h3>Реальные изображения</h3><p>Официальные изображения со страниц приложений в App Store. Это промоскриншоты разработчиков: они показывают выбранные экраны, иногда с рекламными подписями и компоновкой. Это не запись нашего тестирования установленного приложения.</p><p>Снимки сохраняются локально вместе со ссылками на оригиналы. Дата сбора — 18 сентября 2026. Версия интерфейса на промоматериале может отличаться от текущей версии приложения.</p></article><article><h3>Отзывы пользователей</h3><p>Reddit, WineBerserkers и отзывы в сторах из предшествующего исследования. Свидетельства качественные, не репрезентативный опрос. Историческая похвала и свежая критика могут относиться к разным версиям.</p><p>«Что берём» и комментарии к экранам — наша оценка пригодности для задачи. Это не цитаты пользователей.</p></article><article><h3>Требования ЛЦТ</h3><p>Доступная публичная формулировка: фотография → карточка российского вина с описанием из массива платформы «Свое Вино». Полный текст ТЗ не найден: обязательность остальных экранов и функций не подтверждена.</p><a target="_blank" rel="noopener" href="https://i.moscow/hackaton/lct/3a9c0c2e86184425bd73d4cedbf6565a">Официальная карточка задачи ↗</a></article><article><h3>Наш прототип</h3><p>Схематичный мобильный интерфейс для обсуждения сценариев. Все вина, поля и результаты — демонстрационные. Макет не обращается к модели и не измеряет качество распознавания.</p><p>Не используем вымышленные проценты уверенности. Время анимации не является обещанием скорости сервиса.</p></article></div>
+      <div class="source-grid"><article><h3>Реальные изображения</h3><p>Официальные изображения со страниц приложений в App Store. Это промоскриншоты разработчиков: они показывают выбранные экраны, иногда с рекламными подписями и компоновкой. Это не запись нашего тестирования установленного приложения.</p><p>Снимки сохраняются локально вместе со ссылками на оригиналы. Дата сбора — 18 сентября 2026. Версия интерфейса на промоматериале может отличаться от текущей версии приложения.</p></article><article><h3>Отзывы пользователей</h3><p>Reddit, WineBerserkers и отзывы в сторах из предшествующего исследования. Свидетельства качественные, не репрезентативный опрос. Историческая похвала и свежая критика могут относиться к разным версиям.</p><p>«Что берём» и комментарии к экранам — наша оценка пригодности для задачи. Это не цитаты пользователей.</p></article><article><h3>Требования ЛЦТ</h3><p>Основание обновления: секция Q&A организаторов. Обязательный минимум карточки: название, фото, винодельня. Мобильный веб допустим; при неуверенности показываются ближайшие варианты. Полный текст ТЗ и актуальный оценочный скрипт этим не заменяются.</p><a target="_blank" rel="noopener" href="https://i.moscow/hackaton/lct/3a9c0c2e86184425bd73d4cedbf6565a">Официальная карточка задачи ↗</a></article><article><h3>Наш прототип</h3><p>Схематичный мобильный интерфейс для обсуждения сценариев. Все вина, поля и результаты — демонстрационные. Макет не обращается к модели и не измеряет качество распознавания.</p><p>Не используем вымышленные проценты уверенности. Время анимации не является обещанием скорости сервиса.</p></article></div>
       <h3 class="source-heading">Продукты и пользовательские свидетельства</h3><div id="source-list"></div>
     </section>
   </main>
-  <footer><span>ЛЦТ / Свое Вино · UX research atlas</span><span>Референсы ≠ полное ТЗ · исследование</span></footer>
+<details class="changelog" id="changelog">
+<summary>История изменений <span>18.09.2026 · версия 3</span></summary>
+<article><h3>Версия 3 · Q&A и мобильные распознаватели</h3>
+<p><strong>Было → стало:</strong> проверка фото и подтверждение вина → съёмка сразу ведёт к карточке. Причина: цель организаторов — убрать обязательный выбор. Намерение: меньше действий у полки.</p>
+<p>Выбор года → список похожих вин только при неуверенности. Год остался в деталях. Причина: Q&A допускает другой винтаж, но правило оценочного скрипта ещё требует проверки. Намерение: не усложнять основной путь.</p>
+<p>Навигация «сканер / поиск / сохранённое» → компактный веб-сканер. Добавлены соседние бутылки в кадре, долгое ожидание и отмена с сохранением фото. Намерение: учесть реальную съёмку и не терять попытку.</p>
+<p>Добавлен разбор пяти распознавателей: Lens, Pl@ntNet, PictureThis, Merlin, Shazam. Похвала за простой вход и сравнение; жалобы на ложные ответы и преграды до результата учтены в макете. Отзывы качественные, оценки сторов не равны точности.</p></article>
+<article><h3>Версия 2 · Коллекция элементов и визуальная переработка</h3><p>Текстовые экраны → композиции с бутылкой, камерой, визуальными кандидатами и вкладками. Добавлены 12 разборов элементов. Намерение: связать референсы с конкретными решениями. Перенос на reps.maks.dzap.pw/view.</p></article>
+<article><h3>Версия 1 · Первый интерактивный атлас</h3><p>Исследование → галерея из 38 официальных промоскриншотов восьми приложений и восемь сценариев. Намерение: собрать общую основу для обсуждения. Первая публикация на maks.dzap.pw.</p></article>
+</details>
+  <footer><span>ЛЦТ / Свое Вино · UX research atlas</span><span>Q&A + референсы · концепт мобильного веба</span></footer>
   <dialog id="image-dialog"><div class="dialog-bar"><div id="image-title"></div><button id="close-image" aria-label="Закрыть изображение">Закрыть ×</button></div><img id="large-image" alt=""><div class="dialog-bottom"><button id="image-prev" aria-label="Предыдущий скриншот">← Назад</button><a id="image-source" target="_blank" rel="noopener">Оригинал ↗</a><button id="image-next" aria-label="Следующий скриншот">Далее →</button></div></dialog>
-  <script src="assets/manifest.js"></script><script src="assets/icons.js"></script><script src="app.js"></script><script src="design.js"></script>
+  <script src="assets/manifest.js"></script><script src="assets/icons.js"></script><script src="app.js?v=3"></script><script src="design.js?v=3"></script>
+  <script src="research.js?v=3"></script>
 </body>
 </html>

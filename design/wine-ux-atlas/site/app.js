@@ -23,7 +23,7 @@ document.querySelectorAll('[data-view]').forEach(b=>b.addEventListener('click',(
 function renderApp(){
  document.querySelectorAll('[data-app]').forEach(b=>{let on=b.dataset.app===currentApp.id;b.classList.toggle('active',on);b.setAttribute('aria-pressed',on)});
  const a=currentApp, shots=screenshots(), pageSize=window.innerWidth<=440?2:3, start=galleryPage*pageSize, shown=shots.slice(start,start+pageSize);
- $('#app-detail').innerHTML=`<div class="app-title-row"><div><p class="eyebrow">${esc(a.role)}</p><h2>${esc(a.name)}</h2><p class="app-subtitle">${esc(a.focus)}</p></div><a class="source-link" target="_blank" rel="noopener" href="${esc(assetFor(a.id)?.sourceUrl||a.store)}">App Store ↗</a></div><div class="app-meta"><span class="pill ${a.core?'core':''}">${a.core?'Основной референс':'Смежный референс'}</span><span class="pill">${esc(a.scale)}</span><span class="pill">${esc(a.apply)}</span></div><div class="gallery">${shown.map((s,i)=>`<figure class="screen-card"><button class="screen-open" data-shot="${start+i}" aria-label="Увеличить: ${esc(s.title)}"><img src="${esc(imgPath(s))}" alt="${esc(s.description||s.title)}" loading="${i?'lazy':'eager'}"><span class="zoom-hint">Увеличить ⤢</span></button><figcaption>${String(start+i+1).padStart(2,'0')} / ${esc(s.title)}<span>${esc(s.description||'Официальный промоскриншот')}</span></figcaption></figure>`).join('')}</div><div class="gallery-controls"><p>${shots.length?'Официальные промоскриншоты · '+(start+1)+'–'+Math.min(start+pageSize,shots.length)+' из '+shots.length:'Изображения для этого приложения не получены'}<br>Нажмите на экран, чтобы рассмотреть его крупнее.</p><div><button id="gallery-prev" ${galleryPage===0?'disabled':''}>← Назад</button><button id="gallery-next" ${start+pageSize>=shots.length?'disabled':''}>Далее →</button></div></div><div class="insights"><div class="take"><h3>Что берём для ЛЦТ</h3><p>${esc(a.take)}</p></div><div><h3>Что ценят пользователи</h3><p>${esc(a.praise)}</p></div><div><h3>Ограничение / антипример</h3><p>${esc(a.pain)}</p></div></div><p class="evidence">Основания: ${a.links.map(([t,u])=>`<a href="${esc(u)}" target="_blank" rel="noopener">${esc(t)} ↗</a>`).join('')}<br>Публичный масштаб — из исследования 18.09.2026; установки не равны активной аудитории. Комментарии «что берём» — наша интерпретация.</p>`;
+ $('#app-detail').innerHTML=`<div class="app-title-row"><div><p class="eyebrow">${esc(a.role)}</p><h2>${esc(a.name)}</h2><p class="app-subtitle">${esc(a.focus)}</p></div><a class="source-link" target="_blank" rel="noopener" href="${esc(assetFor(a.id)?.sourceUrl||a.store)}">Страница приложения ↗</a></div><div class="app-meta"><span class="pill ${a.core?'core':''}">${a.core?'Основной референс':'Смежный референс'}</span><span class="pill">${esc(a.scale)}</span><span class="pill">${esc(a.apply)}</span></div><div class="gallery">${shown.map((s,i)=>`<figure class="screen-card"><button class="screen-open" data-shot="${start+i}" aria-label="Увеличить: ${esc(s.title)}"><img src="${esc(imgPath(s))}" alt="${esc(s.description||s.title)}" loading="${i?'lazy':'eager'}"><span class="zoom-hint">Увеличить ⤢</span></button><figcaption>${String(start+i+1).padStart(2,'0')} / ${esc(s.title)}<span>${esc(s.description||'Официальный промоскриншот')}</span></figcaption></figure>`).join('')}</div><div class="gallery-controls"><p>${shots.length?'Официальные промоскриншоты · '+(start+1)+'–'+Math.min(start+pageSize,shots.length)+' из '+shots.length:'Изображения для этого приложения не получены'}<br>Нажмите на экран, чтобы рассмотреть его крупнее.</p><div><button id="gallery-prev" ${galleryPage===0?'disabled':''}>← Назад</button><button id="gallery-next" ${start+pageSize>=shots.length?'disabled':''}>Далее →</button></div></div><div class="insights"><div class="take"><h3>Что берём для ЛЦТ</h3><p>${esc(a.take)}</p></div><div><h3>Что ценят пользователи</h3><p>${esc(a.praise)}</p></div><div><h3>Ограничение / антипример</h3><p>${esc(a.pain)}</p></div></div><p class="evidence">Основания: ${a.links.map(([t,u])=>`<a href="${esc(u)}" target="_blank" rel="noopener">${esc(t)} ↗</a>`).join('')}<br>Публичный масштаб — из исследования 18.09.2026; установки не равны активной аудитории. Комментарии «что берём» — наша интерпретация.</p>`;
  $('#gallery-prev').onclick=()=>{galleryPage--;renderApp()};$('#gallery-next').onclick=()=>{galleryPage++;renderApp()};document.querySelectorAll('[data-shot]').forEach(b=>b.onclick=()=>openShot(Number(b.dataset.shot)));
 }
 apps.filter(a=>assetFor(a.id)).forEach((a,i)=>{const b=document.createElement('button');b.dataset.app=a.id;b.setAttribute('aria-pressed',i===0);b.innerHTML=`${esc(a.name)}<small>${a.core?String(i+1).padStart(2,'0'):'↗'}</small>`;b.onclick=()=>{currentApp=a;galleryPage=0;renderApp()};$(a.core?'#core-apps':'#adjacent-apps').append(b)});
@@ -32,16 +32,258 @@ function openShot(i){lightIndex=i;showShot();$('#image-dialog').showModal()}
 $('#close-image').onclick=()=>$('#image-dialog').close();$('#image-prev').onclick=()=>{lightIndex--;showShot()};$('#image-next').onclick=()=>{lightIndex++;showShot()};$('#image-dialog').addEventListener('click',e=>{if(e.target===$('#image-dialog'))$('#image-dialog').close()});$('#image-dialog').addEventListener('keydown',e=>{if(e.key==='ArrowLeft'&&lightIndex>0){lightIndex--;showShot()}if(e.key==='ArrowRight'&&lightIndex<screenshots().length-1){lightIndex++;showShot()}});
 
 const scenarios=[
- {id:'happy',label:'Точное совпадение',title:'Узнать бутылку у полки',context:'Человек видит незнакомое российское вино. Ему нужна карточка из каталога, а не регистрация или анкета вкуса.',steps:[['start','Открыть сканер'],['camera','Снять этикетку'],['preview','Проверить фото'],['result','Проверить вино и год'],['catalog','Открыть описание']],check:'Фотография приводит к существующей карточке каталога. Производитель, название и год различимы до перехода.',level:'Основа публичного брифа',ref:'Vivino: короткий путь от фото; Wine-Searcher: точный объект.'},
- {id:'vintage',label:'Похожие винтажи',title:'Название совпало. А год?',context:'Этикетки разных лет похожи. Год на фотографии может быть неразборчивым — автоматический выбор был бы преждевременным.',steps:[['preview','Проверить фото'],['candidates','Сравнить варианты'],['result','Подтвердить год'],['catalog','Открыть точную карточку']],check:'Пользователь видит различия кандидатов и может выбрать «Ни одно». Неизвестный год не подставляется автоматически.',level:'UX-рекомендация',ref:'Wine-Searcher / CellarTracker: различение винтажа; жалобы на ошибки года.'},
- {id:'missing',label:'Нет совпадения',title:'Вино не удалось найти',context:'Отсутствие результата может означать плохой снимок, ошибку поиска или пробел каталога. Приложение не должно уверенно утверждать причину.',steps:[['preview','Отправить фото'],['missing','Получить честный ответ'],['search','Попробовать название'],['missing','Увидеть отсутствие результата']],check:'Нет вымышленной карточки или принудительного ближайшего совпадения. Есть новый снимок и ручной поиск.',level:'UX-рекомендация',ref:'Vivino: ручной поиск; отзывы о редких винах и покрытии каталога.'},
- {id:'badphoto',label:'Блик / плохое фото',title:'Помочь сделать читаемый снимок',context:'Блик закрыл название. Вместо необъяснимого «ошибка» даём конкретный совет и сохраняем возможность загрузить другое фото.',steps:[['camera','Снять этикетку'],['preview','Заметить проблему'],['badphoto','Получить подсказку'],['camera','Переснять']],check:'Можно вернуться к камере без начала сценария с нуля. Пользователь понимает, что изменить: угол, свет или расстояние.',level:'UX-рекомендация',ref:'Сканеры этикеток: качество входного изображения. Детектор блика — отдельная техническая гипотеза.'},
- {id:'permission',label:'Камера запрещена',title:'Продолжить без доступа к камере',context:'Человек отказал в разрешении. Он всё ещё может выбрать фотографию из галереи или искать по названию.',steps:[['start','Нажать «Сканировать»'],['permission','Увидеть альтернативы'],['preview','Выбрать готовое фото'],['result','Продолжить поиск']],check:'Отказ в разрешении не блокирует сервис. Нет бесконечного повторения системного запроса.',level:'UX-рекомендация',ref:'Мобильный путь камеры: явные альтернативные входы. Системный диалог здесь не имитируется.'},
- {id:'network',label:'Сеть недоступна',title:'Повторить запрос с тем же фото',context:'Связь в магазине пропала после съёмки. Человек не должен повторять фотографирование.',steps:[['preview','Отправить снимок'],['offline','Увидеть сбой связи'],['loading','Повторить запрос'],['result','Получить результат']],check:'Фото остаётся в текущей сессии. Повтор отправляет тот же снимок; автоматическое бесконечное ожидание не требуется.',level:'UX-рекомендация',ref:'Завершённый мобильный сценарий; это наш проектный вывод, не заявленная функция конкурента.'},
- {id:'wrong',label:'Нашлось не то',title:'Исправить уже показанный результат',context:'Модель выбрала похожую этикетку другого вина. Пользователь заметил это по названию или году.',steps:[['result','Проверить совпадение'],['candidates','Нажать «Не то вино»'],['search','Выбрать «Ни одно»'],['result','Найти по названию']],check:'Исправление доступно прямо из результата. Исходное фото не теряется; можно выбрать другой вариант или ручной поиск.',level:'UX-рекомендация',ref:'Vivino / Oeni: жалобы на неверные метаданные; не заставлять доверять ошибке.'},
- {id:'back',label:'Вернуться к снимку',title:'Проверить результат ещё раз',context:'В карточке человек сомневается: возможно, на этикетке был другой год. Возврат должен сохранять исходный контекст.',steps:[['catalog','Читать карточку'],['result','Вернуться к результату'],['preview','Сверить исходное фото'],['candidates','Выбрать другой вариант']],check:'Возврат не открывает пустую камеру. Фото и текущий кандидат сохраняются до нового скана.',level:'UX-рекомендация',ref:'Непрерывность мобильного пути. История между сессиями — отдельная дополнительная функция.'}
+ {
+  "id": "happy",
+  "label": "Точное совпадение",
+  "title": "Узнать вино у полки",
+  "context": "Уверенное совпадение сразу открывает карточку. Обязательного подтверждения фото, вина или года нет.",
+  "steps": [
+   [
+    "start",
+    "Открыть сканер"
+   ],
+   [
+    "camera",
+    "Снять этикетку"
+   ],
+   [
+    "loading",
+    "Дождаться поиска"
+   ],
+   [
+    "result",
+    "Получить карточку"
+   ]
+  ],
+  "check": "После затвора не нужен ещё один клик, чтобы увидеть вино. Исправление доступно из карточки.",
+  "level": "Подтверждено Q&A",
+  "ref": "Q&A 07:59–09:47, 47:58–48:22. Shazam: одно основное действие."
+ },
+ {
+  "id": "vintage",
+  "label": "Неоднозначный ответ",
+  "title": "Несколько похожих этикеток",
+  "context": "Сервис не уверен в единственном результате. Показываем ближайшие варианты вместо сообщения «ничего не найдено».",
+  "steps": [
+   [
+    "camera",
+    "Снять этикетку"
+   ],
+   [
+    "loading",
+    "Поиск"
+   ],
+   [
+    "candidates",
+    "Сравнить варианты"
+   ],
+   [
+    "result",
+    "Открыть выбранное вино"
+   ]
+  ],
+  "check": "Можно различить названия и винодельни, выбрать кандидат или «Ни одно». Проценты не выдуманы.",
+  "level": "Подтверждено Q&A",
+  "ref": "Q&A 48:30–49:25. Pl@ntNet / Merlin: сравнение кандидатов."
+ },
+ {
+  "id": "shelf",
+  "label": "Бутылка на полке",
+  "title": "Соседние бутылки не мешают сценарию",
+  "context": "В кадре могут быть части соседних бутылок. Цель поиска — центральная бутылка целиком.",
+  "steps": [
+   [
+    "camera",
+    "Поместить бутылку по центру"
+   ],
+   [
+    "loading",
+    "Найти совпадение"
+   ],
+   [
+    "result",
+    "Открыть карточку"
+   ]
+  ],
+  "check": "Подсказка не требует пустого фона. На макете видны соседние бутылки.",
+  "level": "Подтверждено Q&A",
+  "ref": "Q&A 55:07–55:49. Рамка — наша UX-адаптация."
+ },
+ {
+  "id": "slow",
+  "label": "Долгий поиск",
+  "title": "Ожидание не превращается в тупик",
+  "context": "Сложный снимок обрабатывается дольше. Показываем сохранённое фото, статус и отмену.",
+  "steps": [
+   [
+    "camera",
+    "Снять фото"
+   ],
+   [
+    "loading",
+    "Поиск"
+   ],
+   [
+    "waiting",
+    "Продолжительное ожидание"
+   ],
+   [
+    "result",
+    "Получить карточку"
+   ]
+  ],
+  "check": "Отмена останавливает демопереход и сохраняет снимок. Повтор не требует съёмки.",
+  "level": "UX-рекомендация",
+  "ref": "Q&A 26:41–29:55: точность важнее скорости. Конкретный UX ожидания — наше решение."
+ },
+ {
+  "id": "missing",
+  "label": "Нет совпадения",
+  "title": "Не нашли подходящее вино",
+  "context": "Не удалось найти подходящие варианты. Причину не выдаём за установленный факт.",
+  "steps": [
+   [
+    "camera",
+    "Снять фото"
+   ],
+   [
+    "missing",
+    "Увидеть отсутствие совпадения"
+   ],
+   [
+    "search",
+    "Попробовать название"
+   ]
+  ],
+  "check": "Нет выдуманной карточки. Есть ручной поиск и новый снимок.",
+  "level": "UX-рекомендация",
+  "ref": "Q&A: в закрытом тесте все вина есть в каталоге. Этот сценарий нужен для реального использования."
+ },
+ {
+  "id": "badphoto",
+  "label": "Блик / плохое фото",
+  "title": "Помочь переснять этикетку",
+  "context": "Название закрыто бликом. Показываем конкретную подсказку, что изменить.",
+  "steps": [
+   [
+    "camera",
+    "Снять фото"
+   ],
+   [
+    "badphoto",
+    "Получить совет"
+   ],
+   [
+    "camera",
+    "Переснять"
+   ]
+  ],
+  "check": "Пользователь понимает, как изменить свет или ракурс. Детектор качества не заявлен готовым.",
+  "level": "UX-рекомендация",
+  "ref": "Реальные условия съёмки из Q&A. Автоматическое выявление блика — гипотеза реализации."
+ },
+ {
+  "id": "permission",
+  "label": "Камера запрещена",
+  "title": "Продолжить через галерею",
+  "context": "Отказ в доступе к камере не закрывает путь к карточке.",
+  "steps": [
+   [
+    "start",
+    "Открыть сканер"
+   ],
+   [
+    "permission",
+    "Выбрать альтернативу"
+   ],
+   [
+    "loading",
+    "Отправить фото"
+   ],
+   [
+    "result",
+    "Открыть карточку"
+   ]
+  ],
+  "check": "Выбор фото и ручной поиск доступны без повторного запроса разрешения.",
+  "level": "UX-рекомендация",
+  "ref": "Наше UX-решение для мобильного веба; системный диалог не имитируем."
+ },
+ {
+  "id": "network",
+  "label": "Сеть недоступна",
+  "title": "Повторить с тем же снимком",
+  "context": "Связь пропала после съёмки. Исходное фото остаётся в текущем поиске.",
+  "steps": [
+   [
+    "camera",
+    "Снять фото"
+   ],
+   [
+    "offline",
+    "Сбой сети"
+   ],
+   [
+    "loading",
+    "Повторить запрос"
+   ],
+   [
+    "result",
+    "Получить результат"
+   ]
+  ],
+  "check": "Повтор запроса не требует снова фотографировать. Нет обещания офлайн-распознавания.",
+  "level": "UX-рекомендация",
+  "ref": "Shazam: сохранение незавершённой попытки. Здесь адаптировано как ручной повтор в текущей сессии."
+ },
+ {
+  "id": "wrong",
+  "label": "Нашлось не то",
+  "title": "Исправить ошибку модели",
+  "context": "Пользователь заметил неверное название или винодельню. Исправление рядом с результатом.",
+  "steps": [
+   [
+    "result",
+    "Увидеть карточку"
+   ],
+   [
+    "candidates",
+    "Нажать «Не это вино?»"
+   ],
+   [
+    "search",
+    "Найти вручную"
+   ]
+  ],
+  "check": "Есть кандидаты, исходное фото и ручной поиск. Ошибка не запирает пользователя в карточке.",
+  "level": "UX-рекомендация",
+  "ref": "Жалобы на ложные совпадения у сканеров: качественный мотив из отзывов, не статистика."
+ },
+ {
+  "id": "back",
+  "label": "Сверить фото",
+  "title": "Вернуться к исходному снимку",
+  "context": "Фото можно сверить с карточкой по желанию, не начиная поиск заново.",
+  "steps": [
+   [
+    "result",
+    "Открыть карточку"
+   ],
+   [
+    "preview",
+    "Сверить снимок"
+   ],
+   [
+    "result",
+    "Вернуться к карточке"
+   ]
+  ],
+  "check": "Возврат сохраняет выбранное вино. Фото не становится обязательным экраном до результата.",
+  "level": "UX-рекомендация",
+  "ref": "Наше решение: проверяемость ответа без лишнего шага в основном пути."
+ }
 ];
-let scenario=scenarios[0],screen='start',selectedYear='2023',loadTimer=null;
+let scenario=scenarios[0],screen='start',selectedYear='2023',loadTimer=null,photoReturn='result';
 const label=()=>`<div class="sample-label"><span>ДЕМОНСТРАЦИОННАЯ ЭТИКЕТКА</span><strong>Демо-вино</strong><small>Каберне · 2023</small></div>`;
 const photo=()=>`<div class="photo-demo">${label()}</div>`;
 const action=(t,next,kind='')=>`<button class="mobile-action ${kind}" data-go="${next}">${t}</button>`;
@@ -63,32 +305,13 @@ function renderScenario(){
  document.querySelectorAll('[data-scenario]').forEach(b=>{let on=b.dataset.scenario===scenario.id;b.classList.toggle('active',on);b.setAttribute('aria-pressed',on)});
  $('#flow-explanation').innerHTML=`<p class="eyebrow">${esc(scenario.level)}</p><h3>${esc(scenario.title)}</h3><p>${esc(scenario.context)}</p><ol class="step-list">${scenario.steps.map(([id,t])=>`<li class="${screen===id?'current':''}">${esc(t)}</li>`).join('')}</ol><div class="criterion"><strong>Как проверим</strong>${esc(scenario.check)}</div><p class="evidence">${esc(scenario.ref)}</p>`;
 }
-function setScreen(next){clearTimeout(loadTimer);screen=next;renderPhone();renderScenario()}
-function beginScan(){setScreen('loading');loadTimer=setTimeout(()=>setScreen(scenario.id==='vintage'?'candidates':scenario.id==='missing'?'missing':scenario.id==='badphoto'?'badphoto':scenario.id==='network'?'offline':'result'),700)}
-function renderPhone(){
- let content='',title='';
- if(screen==='start')content=`<div class="mobile-top"><span class="wordmark">Свое вино</span><span class="muted">Демо</span></div><div class="mobile-kicker">Найти в каталоге</div><h3>Что за вино<br>перед вами?</h3><p>Сфотографируйте этикетку — найдём карточку с описанием.</p>${photo()}<div class="mobile-spacer"></div>${action('Сканировать этикетку',scenario.id==='permission'?'permission':'camera')}${action('Выбрать фото','preview','secondary')}${action('Найти по названию','search','plain')}`;
- else if(screen==='camera')content=`<div class="mobile-top"><button class="mobile-back" data-go="start">← Назад</button><span class="muted">Камера · демо</span></div><h3>Этикетка целиком</h3><p>Держите телефон ровно. Проверьте резкость и блики.</p><div class="camera-demo">${label()}</div><p class="muted">В макете используется демонстрационная этикетка.</p><div class="mobile-spacer"></div>${action('Снять фото','preview')}${action('Выбрать из галереи','preview','secondary')}`;
- else if(screen==='preview')content=`<div class="mobile-top"><button class="mobile-back" data-go="camera">← Переснять</button><span class="muted">Ваш снимок</span></div><h3>Название читается?</h3>${photo()}<p>Проверьте, что этикетка не обрезана, а название и год видны.</p><div class="mobile-spacer"></div>${action('Найти вино','scan')}${action('Сделать другой снимок','camera','secondary')}${scenario.id==='back'?action('Выбрать другой вариант','candidates','plain'):''}`;
- else if(screen==='loading')content=`<div class="mobile-top"><span class="wordmark">Поиск</span></div>${photo()}<div class="scan-line"></div><h3>Ищем в каталоге</h3><p>Сопоставляем этикетку с карточками вин.</p><div class="mobile-spacer"></div>${action('Отменить','preview','secondary')}`;
- else if(screen==='candidates')content=`<div class="mobile-top"><button class="mobile-back" data-go="preview">← Фото</button><span class="muted">Демо-результаты</span></div><h3>Уточните год</h3><p>Нашли похожие этикетки. Сравните год на бутылке.</p>${['2023','2022'].map(y=>`<button class="candidate" data-year="${y}"><span class="year">${y}</span><strong>Демо-вино</strong><small>Демо-винодельня · Каберне</small></button>`).join('')}<div class="mobile-notice">Если год не читается, не выбирайте его наугад.</div><div class="mobile-spacer"></div>${action('Ни одно не подходит','search','secondary')}${action('Переснять этикетку','camera','plain')}`;
- else if(screen==='result')content=`<div class="mobile-top"><button class="mobile-back" data-go="preview">← Фото</button><span class="muted">Результат · демо</span></div><div class="mobile-kicker">Проверьте совпадение</div><h3>Демо-вино<br>Каберне ${selectedYear}</h3>${photo()}<p><strong>Демо-винодельня</strong><br>Кубань · красное сухое</p><p class="muted">В реальном продукте здесь — сведения найденной записи каталога.</p><div class="mobile-spacer"></div>${action('Открыть описание','catalog')}${action('Не то вино','candidates','secondary')}`;
- else if(screen==='catalog')content=`<div class="mobile-top"><button class="mobile-back" data-go="result">← Результат</button><span class="muted">Каталог · демо</span></div><div class="mobile-kicker">Карточка «Свое Вино»</div><h3>Демо-вино<br>Каберне ${selectedYear}</h3><p>Демо-винодельня</p><dl class="fact-list"><div><dt>Регион</dt><dd>Кубань</dd></div><div><dt>Тип</dt><dd>Красное сухое</dd></div><div><dt>Год</dt><dd>${selectedYear}</dd></div><div><dt>Крепость</dt><dd>Нет данных</dd></div></dl><div class="mobile-notice">Учебный пример. Эти сведения не взяты из реального каталога.</div><p class="muted">В рабочей версии: описание и ссылка/ID существующей карточки. Нет данных — не дописываем их моделью.</p><div class="mobile-spacer"></div>${action('Посмотреть исходное фото','preview','secondary')}${action('Сканировать другое вино','start','plain')}`;
- else if(screen==='missing')content=`<div class="mobile-top"><button class="mobile-back" data-go="preview">← Фото</button></div><h3>Не удалось найти совпадение</h3><p>Попробуйте другое фото или введите название. Возможно, нужного вина пока нет в каталоге.</p>${photo()}<div class="mobile-spacer"></div>${action('Найти по названию','search')}${action('Сделать другое фото','camera','secondary')}`;
- else if(screen==='badphoto')content=`<div class="mobile-top"><button class="mobile-back" data-go="preview">← Фото</button></div><h3>Попробуйте другой снимок</h3><p>Если этикетка бликует, немного поверните бутылку. Название и год должны читаться.</p>${photo()}<div class="mobile-spacer"></div>${action('Переснять','camera')}${action('Выбрать фото','preview','secondary')}${action('Найти по названию','search','plain')}`;
- else if(screen==='permission')content=`<div class="mobile-top"><button class="mobile-back" data-go="start">← Назад</button></div><h3>Нет доступа<br>к камере</h3><p>Можно выбрать готовое фото или найти вино по названию.</p><div class="mobile-notice">Чтобы сделать новый снимок, разрешите доступ к камере в настройках устройства или браузера.</div><div class="mobile-spacer"></div>${action('Выбрать готовое фото','preview')}${action('Найти по названию','search','secondary')}${action('Как разрешить камеру','settings','plain')}`;
- else if(screen==='settings')content=`<div class="mobile-top"><button class="mobile-back" data-go="permission">← Назад</button></div><h3>Доступ к камере</h3><p>В рабочем приложении здесь будет инструкция для вашей платформы: iOS, Android или браузера.</p><p>В этом макете настройки устройства не меняются.</p><div class="mobile-spacer"></div>${action('Демо: доступ разрешён','camera')}${action('Выбрать фото','preview','secondary')}`;
- else if(screen==='offline')content=`<div class="mobile-top"><button class="mobile-back" data-go="preview">← Фото</button></div><h3>Не удалось связаться с сервисом</h3><p>Проверьте соединение и повторите. Ваш снимок остался в текущем поиске.</p>${photo()}<div class="mobile-spacer"></div>${action('Повторить запрос','retry')}${action('Вернуться к снимку','preview','secondary')}`;
- else if(screen==='search')content=`<div class="mobile-top"><button class="mobile-back" data-go="preview">← К фото</button><span class="muted">Поиск · демо</span></div><h3>Название<br>или производитель</h3><label for="wine-query" class="muted">Запрос</label><input id="wine-query" value="Демо-вино" aria-describedby="search-demo"><p id="search-demo" class="muted" style="margin-top:10px">Демо: запрос не отправляется в реальный каталог.</p><div class="mobile-spacer"></div>${action('Искать','manual')}${action('Сканировать этикетку','camera','secondary')}`;
- $('#phone-content').innerHTML=`<div class="mobile-page">${content}</div>`;
- const n=notes[screen];$('#screen-notes').innerHTML=`<span class="screen-number">Экран макета · UX-разбор</span><h3>${esc(n[0])}</h3><ul>${n[1].map(t=>`<li>${esc(t)}</li>`).join('')}</ul>`;
- $('#phone-content').querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>{const next=b.dataset.go;if(next==='scan')beginScan();else if(next==='retry'){setScreen('loading');loadTimer=setTimeout(()=>setScreen('result'),700)}else if(next==='manual')setScreen(scenario.id==='missing'?'missing':'candidates');else setScreen(next)});
- $('#phone-content').querySelectorAll('[data-year]').forEach(b=>b.onclick=()=>{selectedYear=b.dataset.year;setScreen('result')});
-}
-scenarios.forEach((s,i)=>{const b=document.createElement('button');b.dataset.scenario=s.id;b.textContent=s.label;b.setAttribute('aria-pressed',i===0);b.onclick=()=>{scenario=s;selectedYear='2023';setScreen(s.steps[0][0])};$('#scenario-picker').append(b)});
-$('#restart').onclick=()=>{selectedYear='2023';setScreen(scenario.steps[0][0])};
+function setScreen(next){clearTimeout(loadTimer);if(next==='preview')photoReturn=['result','catalog','candidates'].includes(screen)?screen:'cancelled';screen=next;renderPhone();renderScenario()}
+function beginScan(retry=false){selectedYear='2023';detailTab='overview';setScreen('loading');loadTimer=setTimeout(()=>setScreen(retry?'result':scenario.id==='slow'?'waiting':scenario.id==='vintage'?'candidates':scenario.id==='missing'?'missing':scenario.id==='badphoto'?'badphoto':scenario.id==='network'?'offline':'result'),1200)}
+function renderPhone(){}
+scenarios.forEach((s,i)=>{const b=document.createElement('button');b.dataset.scenario=s.id;b.textContent=s.label;b.setAttribute('aria-pressed',i===0);b.onclick=()=>{scenario=s;selectedYear='2023';detailTab='overview';searched=false;setScreen(s.steps[0][0])};$('#scenario-picker').append(b)});
+$('#restart').onclick=()=>{selectedYear='2023';detailTab='overview';searched=false;setScreen(scenario.steps[0][0])};
 
-$('#decision-content').innerHTML=`<div class="map-grid"><article class="decision-block"><p class="eyebrow">Сначала</p><h3>Работающий сканер</h3><ol><li><strong>Фото → карточка каталога</strong><span>Подтверждено публичной задачей. Результат связан с существующей записью.</span></li><li><strong>Проверка названия и года</strong><span>Наша UX-рекомендация: различимые кандидаты, отказ от неверного результата.</span></li><li><strong>Исправление и ручной поиск</strong><span>Наша UX-рекомендация: не создавать тупик при ошибке модели.</span></li><li><strong>Факты и источник</strong><span>Описание из каталога; неизвестное остаётся неизвестным.</span></li><li><strong>Восстановление после сбоев</strong><span>Галерея, разрешения, повтор запроса с тем же снимком.</span></li></ol></article><article class="decision-block optional"><p class="eyebrow">После устойчивого ядра</p><h3>Причина вернуться</h3><ol><li><strong>История сканов</strong><span>Найти бутылку, которую видел вчера.</span></li><li><strong>«Хочу попробовать»</strong><span>Сохранить без обязательной оценки.</span></li><li><strong>Личная заметка</strong><span>Впечатление отдельно от фактов.</span></li><li><strong>Сравнение двух вин</strong><span>Только по доступным полям, с видимым годом.</span></li><li><strong>Экспорт личных данных</strong><span>Если начинаем хранить историю — не запирать её внутри продукта.</span></li></ol></article><article class="decision-block later"><p class="eyebrow">Отдельные гипотезы</p><h3>Пока не усложняем</h3><ol><li><strong>3D-погреб</strong><span>Сильный InVintory-сценарий, но другая задача.</span></li><li><strong>Социальная лента</strong><span>Не нужна, чтобы распознать этикетку.</span></li><li><strong>Маркетплейс</strong><span>Торговые блоки могут вытеснить поиск.</span></li><li><strong>AI-сомелье</strong><span>Не должен подменять данные каталога.</span></li><li><strong>Рейтинги и гастропары</strong><span>Нужны источники и отдельное основание в ТЗ или пользовательском исследовании.</span></li></ol></article></div><div class="pattern-list"><h3>Пять полезных паттернов</h3>${[
+$('#decision-content').innerHTML=`<div class="map-grid"><article class="decision-block"><p class="eyebrow">Сначала</p><h3>Работающий сканер</h3><ol><li><strong>Фото → карточка каталога</strong><span>Q&A: уверенное совпадение сразу открывает карточку. Фото, название, винодельня.</span></li><li><strong>Неоднозначность и исправление</strong><span>Ближайшие кандидаты при неуверенности, исправление доступно из карточки.</span></li><li><strong>Исправление и ручной поиск</strong><span>Наша UX-рекомендация: не создавать тупик при ошибке модели.</span></li><li><strong>Факты и источник</strong><span>Описание из каталога; неизвестное остаётся неизвестным.</span></li><li><strong>Восстановление после сбоев</strong><span>Галерея, разрешения, повтор запроса с тем же снимком.</span></li></ol></article><article class="decision-block optional"><p class="eyebrow">После устойчивого ядра</p><h3>Причина вернуться</h3><ol><li><strong>История сканов</strong><span>Найти бутылку, которую видел вчера.</span></li><li><strong>«Хочу попробовать»</strong><span>Сохранить без обязательной оценки.</span></li><li><strong>Личная заметка</strong><span>Впечатление отдельно от фактов.</span></li><li><strong>Сравнение двух вин</strong><span>Только по доступным полям, с видимым годом.</span></li><li><strong>Экспорт личных данных</strong><span>Если начинаем хранить историю — не запирать её внутри продукта.</span></li></ol></article><article class="decision-block later"><p class="eyebrow">Отдельные гипотезы</p><h3>Пока не усложняем</h3><ol><li><strong>3D-погреб</strong><span>Сильный InVintory-сценарий, но другая задача.</span></li><li><strong>Социальная лента</strong><span>Не нужна, чтобы распознать этикетку.</span></li><li><strong>Корзина и покупка</strong><span>Q&A: платформа информационная, покупка происходит в магазине.</span></li><li><strong>AI-сомелье</strong><span>Не должен подменять данные каталога.</span></li><li><strong>Рейтинги и гастропары</strong><span>Уже есть на платформе. Не дублируем их как отдельную бонусную механику.</span></li></ol></article></div><div class="pattern-list"><h3>Пять полезных паттернов</h3>${[
  ['Vivino','Камера → быстрый результат','Поставить поиск по фотографии в центр первого экрана.','Перегруженный торговлей результат и уверенно неверные факты.'],
  ['Wine-Searcher','Точный объект поиска','Показывать год и производителя рядом с названием.','Подмена конкретного вина похожим брендом.'],
  ['CellarTracker','Структура и происхождение','Разделить вино, винтаж, экземпляр и личную заметку.','Сложная анкета перед первым полезным результатом.'],
