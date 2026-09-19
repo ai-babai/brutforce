@@ -1,13 +1,14 @@
 {
   "url": "https://reps.maks.dzap.pw/mascots/",
-  "iteration": 2,
-  "source_commit": "2466768",
-  "release": "/srv/lct/maks/mascot-lab/releases/mascots-20260919-2466768",
+  "iteration": 3,
+  "source_commit": "4028d56",
+  "release": "/srv/lct/maks/mascot-lab/releases/mascots-20260919-4028d56",
   "archive_commit": "8ad6deb5ad13db0090974f84a146d24407d76a4f",
   "validation": {
-    "local": "12 prototype combinations, report 320/1440, six image dialogs: no JS errors, failed requests or horizontal page overflow",
-    "caddy": "Full configuration validated before reload",
-    "view_sha256_before_and_after": "970cdfbcd6ef800efe09ce12361837202ecd7ff2a37696fc5e4414a5b53f0d33",
-    "view_unchanged": true
-  }
+    "local": "Three concept toggles, image modal, width selector at 320/390/1440; no JS or HTTP errors and no horizontal overflow",
+    "public": "Published HTML matches source; /view response unchanged",
+    "deployment": "Atomic symlink switch; no Caddy configuration changes"
+  },
+  "previous_release": "/srv/lct/maks/mascot-lab/releases/mascots-20260919-2466768",
+  "new_page": "https://reps.maks.dzap.pw/mascots/physical.html"
 }
