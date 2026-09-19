@@ -485,6 +485,13 @@
       "title": "Поле поиска имеет цельную рамку и отступ до результатов",
       "source": "apps/web/src/design.test.tsx",
       "spec": "apps/web/design-specs.md"
+    },
+    {
+      "id": "DESIGN-021",
+      "area": "design",
+      "title": "Бутылка welcome обрезана hero и находится под текстом по Atlas",
+      "source": "apps/web/src/design.test.tsx",
+      "spec": "apps/web/design-specs.md"
     }
   ]
 }
