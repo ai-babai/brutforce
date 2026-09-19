@@ -587,7 +587,7 @@
     {
       "id": "REPORT-001",
       "area": "report",
-      "title": "Столбец сценариев закреплён при горизонтальной прокрутке",
+      "title": "Столбец сценариев и названия разделов закреплены при прокрутке",
       "source": "apps/web/src/report.test.ts",
       "spec": "reports/README.md"
     },
