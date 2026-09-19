@@ -33,6 +33,20 @@
 
 .component-card:has(.scan-variants) .component-examples{grid-template-columns:1fr}.element-specimen:has(.scan-variants){aspect-ratio:auto;height:auto;max-height:none;overflow:visible;align-items:stretch}.scan-variants .scan-entry{box-sizing:border-box}
 
+/* v3.7: manual search and card save action. */
+.product-search{gap:0;padding:0 0 0 14px;min-height:52px}
+.phone .product-search input{padding:12px 8px}
+.product-search button{width:48px;height:48px;color:#742c46;border-radius:10px}
+.product-search:focus-within{border-color:#742c46;box-shadow:0 0 0 2px #742c4640}
+.phone .product-search input:focus-visible{outline:0}
+.product-screen .search-meta{margin:16px 0 24px}
+.save-wine-button{display:inline-flex;align-items:center;justify-content:flex-end;gap:5px;min-width:0;min-height:48px;padding:7px 2px 7px 6px;border:0;border-radius:8px;background:transparent;color:#742c46;font-size:11px;font-weight:600;white-space:nowrap;flex-shrink:0}
+.save-wine-button:hover{background:#f6eef2}
+.save-wine-button .ui-icon{width:19px;height:19px;stroke-width:1.7}
+.save-wine-button.is-saved .ui-icon path:last-child{fill:currentColor}
+.save-wine-button:focus-visible{outline:3px solid #b87390;outline-offset:2px}
+@media(max-width:390px){.result-screen .product-top{gap:2px}.result-screen .product-top>span{font-size:11px}.save-wine-button{gap:3px;padding-left:2px;font-size:10px}.save-wine-button .ui-icon{width:18px;height:18px}}
+
 /* v3.4: restore the original main action, replace only the trailing arrow. */
 .scan-primary{display:grid;grid-template-columns:42px minmax(0,1fr) 28px;gap:12px;padding:17px 16px;min-height:82px;border-radius:18px;text-align:left;box-shadow:0 5px 12px #742c4614}
 .scan-primary-camera{display:flex;align-items:center;justify-content:center;width:42px;height:42px;border-radius:13px;background:#ffffff16}.scan-primary-camera .ui-icon{width:24px;height:24px}
@@ -78,3 +92,5 @@ body:has(.phone.is-camera){overflow:hidden}.phone.is-camera .camera-view .target
 .phone.is-camera .camera-gallery:hover{background:#49404a}.phone.is-camera .camera-gallery:focus-visible{outline:2px solid #fff;outline-offset:2px}
 .phone.is-camera .control-balance{width:88px}
 @media(max-width:340px){.phone.is-camera .camera-controls{gap:10px}}
+
+.phone .product-search button:focus-visible{outline:none;box-shadow:none;background:#eadee6}.phone .product-search input:focus-visible{outline:none;box-shadow:none}
