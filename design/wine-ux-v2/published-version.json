@@ -1,0 +1,20 @@
+{
+  "version": "2.0",
+  "url": "https://reps.maks.dzap.pw/v2/#flows",
+  "source_commit": "8cb02e5",
+  "release": "/srv/lct/maks/wine-ux-v2/releases/v2-20260920-8cb02e5",
+  "current": "/srv/lct/maks/wine-ux-v2/current",
+  "date": "2026-09-20",
+  "validation": {
+    "browser": "Local and public Chrome: all 16 states at 320/390x844; 10 scenario outcomes; cancel/retry; candidate year retained through source-photo return; result tabs; bookmark toggle; manual query hit/miss; image decode; no JS or resource HTTP errors.",
+    "responsive": "Camera shutter visible at 320x568 and 844x390. Report sections checked at 1440,390,320 with no horizontal page overflow. Screenshots visually inspected for typography, hierarchy, full mascot bottle and action visibility.",
+    "deployment": "Separate /v2/ route and independent static release. Caddy config validated before reload. No updates to previous static directories.",
+    "not_tested": "Real camera, real recognition, physical Android/iOS devices and production data are outside this static mockup."
+  },
+  "unchanged_sha256": {
+    "/view": "970cdfbcd6ef800efe09ce12361837202ecd7ff2a37696fc5e4414a5b53f0d33",
+    "/mascots/journeys.html": "19d03a833da6b25ad8d15f5f972935305ecde4d41f2fd7180c209f2cdbf1f1c6",
+    "/mascots/glass.html": "51e99137b99a3a83b65caa46594e67e79671c0c45582d2b74832f7ddc8f31daa"
+  },
+  "issue": "https://github.com/ai-babai/brutforce/issues/23"
+}
