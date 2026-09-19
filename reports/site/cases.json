@@ -506,6 +506,20 @@
       "title": "Бутылка welcome обрезана hero и находится под текстом по Atlas",
       "source": "apps/web/src/design.test.tsx",
       "spec": "apps/web/design-specs.md"
+    },
+    {
+      "id": "API-019",
+      "area": "api",
+      "title": "V1 routes work; retired API paths return JSON 404",
+      "source": "apps/api/main_test.go",
+      "spec": "contracts/api-versioning.md"
+    },
+    {
+      "id": "UI-025",
+      "area": "ui",
+      "title": "Application uses v1 catalog, upload and search contracts",
+      "source": "apps/web/src/api.test.ts",
+      "spec": "contracts/api-versioning.md"
     }
   ]
 }

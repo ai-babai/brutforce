@@ -6,7 +6,7 @@ with it.
 
 - Use only synthetic `DEMO` wine data. Private uploads are allowed only through
   the documented `UPLOAD_DIR` store. The embedded read-only catalog and its
-  `GET /api/catalog` route follow
+  `GET /v1/catalog` route follow
   [`contracts/demo-catalog.md`](../../contracts/demo-catalog.md); do not add
   real catalog exports, upload GET/list routes, secrets, or request-body
   logging.

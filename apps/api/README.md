@@ -9,7 +9,7 @@ the demo flow, but a stored receipt only gates the synthetic response.
 
 [`catalog.json`](catalog.json) is the read-only, embedded demo catalog. It has
 eight synthetic red-dry wines with stable IDs; it is not a database, supplier
-feed, or claim about real wine records. `GET /api/catalog` returns its complete
+feed, or claim about real wine records. `GET /v1/catalog` returns its complete
 ordered candidate list as `{ "demo": true, "candidates": [...] }`. The same
 catalog is used by search, so catalog and search candidate IDs always match.
 
@@ -29,7 +29,7 @@ at `GET /api/schema/demo-search.schema.json`. API versioning and the boundary
 with the future contest endpoint are described in
 [`contracts/api-versioning.md`](../../contracts/api-versioning.md).
 
-`POST /api/search` accepts a JSON object no larger than 64 KiB:
+`POST /v1/search` accepts a JSON object no larger than 64 KiB:
 
 ```json
 {"scenario":"exact","query":"каберне"}
@@ -67,14 +67,16 @@ candidates and selects the first one. `uncertain` returns the first two catalog
 candidates without `selectedId`; `none` returns an empty list; `error` returns
 HTTP 503 and `{ "demo": true, "error": { "code", "message" } }`.
 Invalid JSON/input/scenario returns HTTP 400. Unsupported methods return HTTP
-405. Unknown `/api/...` paths return JSON HTTP 404. No compatibility promise is
-made beyond this demo contract.
+405. Unknown `/v1/...` paths return JSON HTTP 404. The old business routes
+`/api/health`, `/api/catalog`, `/api/photos`, and `/api/search` also return
+JSON HTTP 404; they are not aliases. No compatibility promise is made beyond
+this demo contract.
 
-`GET /api/health` returns `{ "ok": true, "demo": true }`.
+`GET /v1/health` returns `{ "ok": true, "demo": true }`.
 
 ## Private upload receipt
 
-`POST /api/photos` accepts `multipart/form-data` with exactly one required
+`POST /v1/photos` accepts `multipart/form-data` with exactly one required
 `photo` file field. Its content, not the client filename or declared MIME type,
 is checked with `image.DecodeConfig`; accepted formats are JPEG, PNG, and GIF.
 The photo content limit is 10 MiB and the default pixel limit is 25,000,000.
@@ -110,7 +112,7 @@ The upload directory is separate from the embedded read-only `catalog.json`:
 the former contains private user photos and receipts, while the latter contains
 only versioned synthetic demo records. Neither has a public file route.
 
-`POST /api/search` with an unknown valid-format `photoId` returns HTTP 404
+`POST /v1/search` with an unknown valid-format `photoId` returns HTTP 404
 `photo_not_found`; a malformed ID returns HTTP 400 `invalid_photo_id`.
 
 ## Runtime
@@ -148,10 +150,11 @@ quality:
 | API-012 | upload without `UPLOAD_DIR` | HTTP 503 `storage_unavailable` |
 | API-013 | unknown valid-format `photoId` | HTTP 404 `photo_not_found` |
 | API-014 | configured storage budget exhausted | HTTP 503 `storage_full` |
-| API-015 | embedded catalog | eight unique stable synthetic records and matching `GET /api/catalog` response |
+| API-015 | embedded catalog | eight unique stable synthetic records and matching `GET /v1/catalog` response |
 | API-016 | name, winery, and year query | exact search filters the same embedded catalog and selects its first match |
 | API-017 | documentation route or bundled asset | `GET /api/docs` and its local Swagger assets work; its own errors remain JSON API errors |
 | API-018 | embedded OpenAPI and canonical schema | OpenAPI 3.1 documents exactly four implemented endpoint methods and the embedded schema matches the contract source |
+| API-019 | versioned routes with `WEB_ROOT` configured | `/v1` business routes work; legacy business routes and unknown `/v1` paths are JSON 404, never SPA HTML |
 
 Run: `go test -count=1 ./...`.
 
