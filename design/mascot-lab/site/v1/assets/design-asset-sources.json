@@ -1,0 +1,6 @@
+{
+  "font": "Onest, Google Fonts (SIL OFL)",
+  "fontCss": "https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700;800&display=swap",
+  "icons": "@tabler/icons 3.46.0, MIT",
+  "iconSource": "https://www.npmjs.com/package/@tabler/icons/v/3.46.0"
+}

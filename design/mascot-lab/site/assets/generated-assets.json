@@ -1,0 +1,17 @@
+{
+  "date": "2026-09-19",
+  "tool": "image_gen.imagegen",
+  "character": "Пёс-детектив по пользовательскому референсу; производные от поз первой итерации",
+  "assets": [
+    {
+      "file": "detective-alpha.png",
+      "input": "v1/assets/mascot/guide.png",
+      "prompt": "Create a transparent PNG cutout of this friendly dog detective. Preserve the same character and outfit. Three-quarter portrait looking left, holding the magnifier. Transparent background, no text, no frame."
+    },
+    {
+      "file": "search-alpha.png",
+      "input": "v1/assets/mascot/search.png",
+      "prompt": "Create a transparent PNG cutout of this same seated dog detective studying his notebook with a magnifying glass. Preserve the character, clothes and calm focused pose. Full body including paws and tail. Transparent background, no text, no frame."
+    }
+  ]
+}

@@ -1,0 +1,187 @@
+{
+  "collectedAt": "2026-09-18",
+  "region": "US",
+  "note": "Official native-app promotional screenshots from Apple App Store and Google Play. Each image was visually checked for visible product UI. Feature graphics, icons, videos, editorial images, and hands-on captures are excluded.",
+  "items": [
+    {
+      "file": "plantnet-android-1.png",
+      "app": "Pl@ntNet",
+      "platform": "android",
+      "type": "official-store-screenshot",
+      "sourceUrl": "https://play.google.com/store/apps/details?id=org.plantnet&hl=en&gl=US",
+      "originalUrl": "https://play-lh.googleusercontent.com/pVmLL01L-ImX0Ko4UCNPw0npZ0AB3Z8keNs0Ksa8v7yoUwi6UNONZhoQOFOZELpuGVKPep7VwhuyQjZ7P0GP",
+      "visibleUi": "Identification entry screen with camera action, gallery shortcut, filters, and bottom navigation."
+    },
+    {
+      "file": "plantnet-android-2.png",
+      "app": "Pl@ntNet",
+      "platform": "android",
+      "type": "official-store-screenshot",
+      "sourceUrl": "https://play.google.com/store/apps/details?id=org.plantnet&hl=en&gl=US",
+      "originalUrl": "https://play-lh.googleusercontent.com/opV_aXweb0S3YEfIy9JhVH9jZcIkUrCa9RpwvyvuoVUv7eGYdfY2BUeAvvv5CefBtmwU_wxglhPaAb_LKq590QE",
+      "visibleUi": "Ranked identification results with reference images, percentage-like scores, confirm actions, and navigation."
+    },
+    {
+      "file": "plantnet-ios-1.png",
+      "app": "Pl@ntNet",
+      "platform": "ios",
+      "type": "official-store-screenshot",
+      "sourceUrl": "https://apps.apple.com/us/app/plantnet/id600547573",
+      "originalUrl": "https://is1-ssl.mzstatic.com/image/thumb/Purple123/v4/27/ca/02/27ca021f-d4e1-29e6-74fb-2159ca528bcf/mzl.xsxlbwlg.png/392x696bb.png",
+      "visibleUi": "Observation detail with plant photos, validation action, and bottom navigation."
+    },
+    {
+      "file": "plantnet-ios-2.png",
+      "app": "Pl@ntNet",
+      "platform": "ios",
+      "type": "official-store-screenshot",
+      "sourceUrl": "https://apps.apple.com/us/app/plantnet/id600547573",
+      "originalUrl": "https://is1-ssl.mzstatic.com/image/thumb/Purple123/v4/e2/3f/87/e23f87a2-c54c-291c-6f50-9e865336e1e3/mzl.ngdwmvqg.png/392x696bb.png",
+      "visibleUi": "Identification result list with photo comparisons, confidence display, and confirm action."
+    },
+    {
+      "file": "picturethis-android-1.jpg",
+      "app": "PictureThis",
+      "platform": "android",
+      "type": "official-store-screenshot",
+      "sourceUrl": "https://play.google.com/store/apps/details?id=cn.danatech.xingseus&hl=en&gl=US",
+      "originalUrl": "https://play-lh.googleusercontent.com/9vSPEx6dCGUhT51-mMOissC6YHK0riY_Yk8VV328PRnwxF9gsThQjIsLBeKMwbbwcN26keL0lDi910_6uiHRkA",
+      "visibleUi": "Camera identification screen shown inside a device frame with shutter control and live label."
+    },
+    {
+      "file": "picturethis-android-2.jpg",
+      "app": "PictureThis",
+      "platform": "android",
+      "type": "official-store-screenshot",
+      "sourceUrl": "https://play.google.com/store/apps/details?id=cn.danatech.xingseus&hl=en&gl=US",
+      "originalUrl": "https://play-lh.googleusercontent.com/OLfo9_d_MYOJbB9pskqm294aaUYRLMomlzuv3pCALCCXwIkn19_EecnPASj2tqyiLaYZrAHEp3TnnNbNRYF8beM",
+      "visibleUi": "Identification result and basic plant information shown inside a device frame."
+    },
+    {
+      "file": "picturethis-ios-1.jpg",
+      "app": "PictureThis",
+      "platform": "ios",
+      "type": "official-store-screenshot",
+      "sourceUrl": "https://apps.apple.com/us/app/picturethis-plant-identifier/id1252497129",
+      "originalUrl": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/04/e9/0f/04e90f16-0e2f-ff82-6e02-60842a0653d2/PT_100772_English-_U7f8e_U56fd_IPHONE65_01.jpg/320x480bb.jpg",
+      "visibleUi": "Plant result page with identity, image gallery, tabs, and basic information."
+    },
+    {
+      "file": "picturethis-ios-2.jpg",
+      "app": "PictureThis",
+      "platform": "ios",
+      "type": "official-store-screenshot",
+      "sourceUrl": "https://apps.apple.com/us/app/picturethis-plant-identifier/id1252497129",
+      "originalUrl": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/c0/92/36/c09236d0-19c4-598c-ee5b-ee2ece92cdf7/0x0ss.png/320x480bb.jpg",
+      "visibleUi": "Plant diagnosis camera with before/after view, issue chips, shutter, and completion action."
+    },
+    {
+      "file": "merlin-android-1.png",
+      "app": "Merlin Bird ID",
+      "platform": "android",
+      "type": "official-store-screenshot",
+      "sourceUrl": "https://play.google.com/store/apps/details?id=com.labs.merlinbirdid.app&hl=en&gl=US",
+      "originalUrl": "https://play-lh.googleusercontent.com/qin3tHW-Ar1RZBWcDs7KWxUivkJDBH2n-P1tVlyB330XRpl1Mu-njsHJBFoN-jdfDAPrfguAyJkCA7eGxpqn",
+      "visibleUi": "Live Sound ID candidate list with spectrogram, recording state, and ranked species."
+    },
+    {
+      "file": "merlin-android-2.png",
+      "app": "Merlin Bird ID",
+      "platform": "android",
+      "type": "official-store-screenshot",
+      "sourceUrl": "https://play.google.com/store/apps/details?id=com.labs.merlinbirdid.app&hl=en&gl=US",
+      "originalUrl": "https://play-lh.googleusercontent.com/Nhhj79quMU1u_dKTNJZGjlz7FvO1PoBSso_ya3QV4Jy_t3sFElhjvDr_dlOsHKcbEue9lzyIA__ek-8oZDVAGQ",
+      "visibleUi": "Photo ID crop and guidance screen with image replacement and next actions."
+    },
+    {
+      "file": "merlin-ios-1.png",
+      "app": "Merlin Bird ID",
+      "platform": "ios",
+      "type": "official-store-screenshot",
+      "sourceUrl": "https://apps.apple.com/us/app/merlin-bird-id-by-cornell-lab/id773457673",
+      "originalUrl": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/e6/c7/b7/e6c7b78b-36b9-617e-97af-829ec6675c69/078e6700-6b93-4c27-a6c5-0988f9e1c859_3.png/392x696bb.png",
+      "visibleUi": "Live Sound ID result list with spectrogram, candidates, recording duration, and stop control."
+    },
+    {
+      "file": "merlin-ios-2.png",
+      "app": "Merlin Bird ID",
+      "platform": "ios",
+      "type": "official-store-screenshot",
+      "sourceUrl": "https://apps.apple.com/us/app/merlin-bird-id-by-cornell-lab/id773457673",
+      "originalUrl": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/a6/24/e8/a624e8da-eba5-3cb5-a026-3a6148f890e9/0c5ac0e2-35e1-4190-be75-a3cfdab4caa7_6.png/392x696bb.png",
+      "visibleUi": "Photo ID crop and guidance screen with subject framing and close action."
+    },
+    {
+      "file": "shazam-android-1.jpg",
+      "app": "Shazam",
+      "platform": "android",
+      "type": "official-store-screenshot",
+      "sourceUrl": "https://play.google.com/store/apps/details?id=com.shazam.android&hl=en&gl=US",
+      "originalUrl": "https://play-lh.googleusercontent.com/XY3XvvB-KXO1q3piByNYO4wRhjWCqo8U0irZH36XGE3xQwsLe6Ajl7drxtBJlkjNpqVIGWfmOpb0qQTsPm8ewlw",
+      "visibleUi": "Listening screen and recognized-track card shown in overlapping Android device frames."
+    },
+    {
+      "file": "shazam-android-2.jpg",
+      "app": "Shazam",
+      "platform": "android",
+      "type": "official-store-screenshot",
+      "sourceUrl": "https://play.google.com/store/apps/details?id=com.shazam.android&hl=en&gl=US",
+      "originalUrl": "https://play-lh.googleusercontent.com/Gj4bkI3pbcm_PcTSBSYcU5G16Hhn7jyMDaUGgpJ-Emw13u_5LYgj6PVVDraZ7EvufNM822MKxwDrsHwUK6fPD7o",
+      "visibleUi": "Library screen with recent recognized songs and persistent navigation."
+    },
+    {
+      "file": "shazam-ios-1.png",
+      "app": "Shazam",
+      "platform": "ios",
+      "type": "official-store-screenshot",
+      "sourceUrl": "https://apps.apple.com/us/app/shazam-find-music-concerts/id284993459",
+      "originalUrl": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/f2/50/b1/f250b1b9-7e39-d161-c52b-6d65efc14315/b772946c-7391-483b-9702-bdb275b1ac76_en-US_2.Track_Page.png/392x696bb.png",
+      "visibleUi": "Recognized track page shown in an iPhone frame, with playback and related content."
+    },
+    {
+      "file": "shazam-ios-2.png",
+      "app": "Shazam",
+      "platform": "ios",
+      "type": "official-store-screenshot",
+      "sourceUrl": "https://apps.apple.com/us/app/shazam-find-music-concerts/id284993459",
+      "originalUrl": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/b0/30/92/b0309254-f714-9906-b773-a237ce54cb85/09a77b86-59c7-41d2-8406-33476a4f1ec3_en-US_6.My_Music.png/392x696bb.png",
+      "visibleUi": "My Music library screen with saved Shazams and prominent recognition shortcut."
+    },
+    {
+      "file": "yuka-android-1.jpg",
+      "app": "Yuka",
+      "platform": "android",
+      "type": "official-store-screenshot",
+      "sourceUrl": "https://play.google.com/store/apps/details?id=io.yuka.android&hl=en&gl=US",
+      "originalUrl": "https://play-lh.googleusercontent.com/SvXwHVtssSRVO2H4qIi8EA3D36tuewr8hdF7Q_Xn1RW1aKZ5y09w32ftsvzRIrK7juNs51X498i1xW5dz6GN",
+      "visibleUi": "Food product result with score, negatives, positives, and expandable details."
+    },
+    {
+      "file": "yuka-android-2.jpg",
+      "app": "Yuka",
+      "platform": "android",
+      "type": "official-store-screenshot",
+      "sourceUrl": "https://play.google.com/store/apps/details?id=io.yuka.android&hl=en&gl=US",
+      "originalUrl": "https://play-lh.googleusercontent.com/kOGVm3oRrBm3QKaHiF2RoS8ejlywJzHmdKpBEnmaIumEY0gGrF2MQtp_8sXDeCQAzja0hAWBLyBtPxH0RTRw_w",
+      "visibleUi": "Cosmetic product result with score and ingredient risk breakdown."
+    },
+    {
+      "file": "yuka-ios-1.jpg",
+      "app": "Yuka",
+      "platform": "ios",
+      "type": "official-store-screenshot",
+      "sourceUrl": "https://apps.apple.com/us/app/yuka-food-cosmetic-scanner/id1092799236",
+      "originalUrl": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/96/0b/ac/960bac4a-5fbd-a0d8-1aff-6ce281f4e788/01.jpg/320x480bb.jpg",
+      "visibleUi": "Food product result with numerical rating and good/bad factor breakdown."
+    },
+    {
+      "file": "yuka-ios-2.jpg",
+      "app": "Yuka",
+      "platform": "ios",
+      "type": "official-store-screenshot",
+      "sourceUrl": "https://apps.apple.com/us/app/yuka-food-cosmetic-scanner/id1092799236",
+      "originalUrl": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/07/58/25/075825c1-a993-3598-8a6c-456b790cf17c/02.jpg/320x480bb.jpg",
+      "visibleUi": "Cosmetic result with score and ingredient risk list."
+    }
+  ]
+}

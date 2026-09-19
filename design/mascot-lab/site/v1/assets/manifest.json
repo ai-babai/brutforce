@@ -1,0 +1,301 @@
+{
+  "snapshotDate": "2026-09-18",
+  "source": "Apple iTunes Search API (US storefront)",
+  "sourceApiPattern": "https://itunes.apple.com/lookup?id={appleId}&country=us",
+  "assetType": "Official App Store marketing screenshots; not hands-on product captures",
+  "localRendition": "Apple CDN 800x0w JPEG rendition; Highball uses the API-listed 392x696 source converted losslessly by macOS to JPEG container",
+  "apps": [
+    {
+      "id": "vivino",
+      "appleId": 414461255,
+      "name": "Vivino: Drink The Right Wine",
+      "sourceUrl": "https://apps.apple.com/us/app/vivino-drink-the-right-wine/id414461255?uo=4",
+      "screenshots": [
+        {
+          "file": "vivino/vivino-02.jpg",
+          "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/cd/da/60/cdda6048-aacf-7cdb-88f7-54244a18d8f1/3.jpg/320x480bb.jpg",
+          "title": "Камера и этикетка",
+          "description": "Рамка сканера вокруг одной бутылки. Главный вход в сценарий."
+        },
+        {
+          "file": "vivino/vivino-04.jpg",
+          "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/d6/25/20/d625203d-c903-f01e-6f98-4b48ed0f5664/4.jpg/320x480bb.jpg",
+          "title": "Карточка вина",
+          "description": "Рейтинг и персональное совпадение; это разные типы оценок."
+        },
+        {
+          "file": "vivino/vivino-03.jpg",
+          "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/10/b6/73/10b6736a-9cac-3e52-1661-abb2fb4b337b/5.jpg/320x480bb.jpg",
+          "title": "Профиль вкуса",
+          "description": "Предпочтения по стилям, регионам и сортам винограда."
+        },
+        {
+          "file": "vivino/vivino-05.jpg",
+          "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/84/33/08/8433083e-b89a-34aa-ca56-86dab1d660ef/2.jpg/320x480bb.jpg",
+          "title": "Отзывы сообщества",
+          "description": "Карточки мнений как социальное доказательство."
+        },
+        {
+          "file": "vivino/vivino-01.jpg",
+          "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/40/ff/73/40ff73b3-377c-3b3b-b410-bd35ebdd8b27/1.jpg/320x480bb.jpg",
+          "title": "Обещание продукта",
+          "description": "Рейтинг бутылки и визуальный ассортимент; рекламный первый кадр."
+        }
+      ]
+    },
+    {
+      "id": "invintory",
+      "appleId": 1434754695,
+      "name": "InVintory: Wine Cellar Manager",
+      "sourceUrl": "https://apps.apple.com/us/app/invintory-wine-cellar-manager/id1434754695?uo=4",
+      "screenshots": [
+        {
+          "file": "invintory/invintory-02.jpg",
+          "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/7a/14/9b/7a149b0e-f292-fb6f-9d9c-1903d37eea6f/02-collection-value-market-prices.png/320x480bb.jpg",
+          "title": "Обзор коллекции",
+          "description": "Количество бутылок, стоимость и отдельные погреба."
+        },
+        {
+          "file": "invintory/invintory-04.jpg",
+          "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/31/b4/f7/31b4f7cc-f6b7-2e8b-fb71-8b1ce6f0e473/04-scan-label-import-collection.png/320x480bb.jpg",
+          "title": "Сканирование этикетки",
+          "description": "Съёмка передней или задней стороны бутылки."
+        },
+        {
+          "file": "invintory/invintory-05.jpg",
+          "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/13/88/98/13889867-804d-11d9-40f4-70c58eb9203c/05-vinlocate.png/320x480bb.jpg",
+          "title": "Где лежит бутылка",
+          "description": "Подсветка позиции в сетке: визуал помогает найти предмет."
+        },
+        {
+          "file": "invintory/invintory-01.jpg",
+          "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/d4/06/41/d406417f-e4c9-2b81-a553-c6fdeedacf12/01-title.png/320x480bb.jpg",
+          "title": "Визуальный погреб",
+          "description": "Трёхмерная сетка хранения и логотипы изданий."
+        },
+        {
+          "file": "invintory/invintory-03.jpg",
+          "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/8a/65/7c/8a657cb2-0e1d-3e72-6cb5-b2278b526ae6/03-testimonials.png/320x480bb.jpg",
+          "title": "Отзывы о продукте",
+          "description": "Промокадр с наградой и цитатами, не рабочий экран."
+        }
+      ]
+    },
+    {
+      "id": "oeni",
+      "appleId": 6445827140,
+      "name": "Oeni: #1 Wine Cellar Manager",
+      "sourceUrl": "https://apps.apple.com/us/app/oeni-1-wine-cellar-manager/id6445827140?uo=4",
+      "screenshots": [
+        {
+          "file": "oeni/oeni-01.jpg",
+          "url": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/d4/20/65/d4206534-c6e3-dbbb-4580-3bd5828023fd/0ee0d19a-94c5-4725-8bf8-12a36bb7cc5e_EN_-_5.5_-_1242_x_2208_pixels_-_screenshot_27@3x.png/392x696bb.png",
+          "title": "Моя коллекция",
+          "description": "Количество, стоимость, фильтры готовности и карточки вин."
+        },
+        {
+          "file": "oeni/oeni-02.jpg",
+          "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/91/7b/17/917b17be-117e-f588-cdab-8bced8f3db85/3594d6d0-a5fc-4fe6-9547-7c49c0aa25f2_EN_-_5.5_-_1242_x_2208_pixels_-_screenshot_28@3x.png/392x696bb.png",
+          "title": "Выбор к блюду",
+          "description": "Поиск блюда и категории еды для гастропары."
+        },
+        {
+          "file": "oeni/oeni-03.jpg",
+          "url": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/b4/af/04/b4af0490-4ef9-add6-3181-eec4cd84c543/a1a96de8-37f0-4df1-bcbf-d982e5010b2f_EN_-_5.5_-_1242_x_2208_pixels_-_screenshot_29@3x.png/392x696bb.png",
+          "title": "Когда открыть",
+          "description": "Рекомендация бутылки с фазой зрелости и винтажом."
+        },
+        {
+          "file": "oeni/oeni-04.jpg",
+          "url": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/80/86/4a/80864a9c-ad25-8a02-a623-ebec533b2463/d442e5ad-7e9c-44f5-8927-719a9abc7cba_EN_-_5.5_-_1242_x_2208_pixels_-_screenshot_30@3x.png/392x696bb.png",
+          "title": "Состояние погреба",
+          "description": "Статистика зрелости и стоимости коллекции."
+        }
+      ]
+    },
+    {
+      "id": "cellartracker",
+      "appleId": 6446102275,
+      "name": "CellarTracker: #1 Wine Tracker",
+      "sourceUrl": "https://apps.apple.com/us/app/cellartracker-1-wine-tracker/id6446102275?uo=4",
+      "screenshots": [
+        {
+          "file": "cellartracker/cellartracker-01.jpg",
+          "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/a9/03/91/a9039118-cd16-bff4-41e6-16ef806d66e6/4c20c8cf-ff34-48b8-a554-d944fd7143dc_iphone_5.5_-_001.png/392x696bb.png",
+          "title": "Главные действия",
+          "description": "Добавление, поиск, скан и заметка на домашнем экране."
+        },
+        {
+          "file": "cellartracker/cellartracker-02.jpg",
+          "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/bc/4e/fa/bc4efacc-6f22-6cf5-4857-ae82e56fbc2f/d1bbf6ae-1837-4f2a-a598-34da18634164_iphone_5.5_-_002.png/392x696bb.png",
+          "title": "Список бутылок",
+          "description": "Метаданные вина и расположение внутри коллекции."
+        },
+        {
+          "file": "cellartracker/cellartracker-03.jpg",
+          "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/12/3d/2a/123d2a5b-062c-af8c-602c-05731f773994/786ef2e8-5164-448d-abe4-ee7b9d8e9aec_iphone_5.5_-_003.png/392x696bb.png",
+          "title": "Подробная карточка",
+          "description": "Отзывы, покупка и добавление бутылок в коллекцию."
+        },
+        {
+          "file": "cellartracker/cellartracker-04.jpg",
+          "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/77/0a/b9/770ab9bf-3251-ebb4-944d-dfbf323bc28f/80e27586-7f94-4a15-8588-53b3a2836f2d_iphone_5.5_-_004.png/392x696bb.png",
+          "title": "Активность сообщества",
+          "description": "Лента записей о вине и заметок других людей."
+        },
+        {
+          "file": "cellartracker/cellartracker-05.jpg",
+          "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/8a/c0/72/8ac0727e-b439-8452-80e0-43359bd47218/984c2a8e-4094-4281-8115-a6ac59477b5f_iphone_5.5_-_005.png/392x696bb.png",
+          "title": "Дегустационные заметки",
+          "description": "Отзывы с содержательным текстом и комментариями."
+        }
+      ]
+    },
+    {
+      "id": "wine-searcher",
+      "appleId": 599836194,
+      "name": "Wine-Searcher",
+      "sourceUrl": "https://apps.apple.com/us/app/wine-searcher/id599836194?uo=4",
+      "screenshots": [
+        {
+          "file": "wine-searcher/wine-searcher-03.jpg",
+          "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/2e/4c/2c/2e4c2c53-bb68-cf69-f860-e2c7ae5e9e4c/Slide_3.png/320x480bb.jpg",
+          "title": "Сканер этикетки",
+          "description": "Вид камеры с направляющей для бутылки."
+        },
+        {
+          "file": "wine-searcher/wine-searcher-04.jpg",
+          "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/89/4c/53/894c5333-0f7e-4049-22d2-1ef1f1556085/Slide_4.png/320x480bb.jpg",
+          "title": "Цены и продавцы",
+          "description": "Сравнение предложений конкретного вина и года."
+        },
+        {
+          "file": "wine-searcher/wine-searcher-05.jpg",
+          "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/13/db/bc/13dbbc84-317a-699c-242d-51e692e819cd/Slide_5.png/320x480bb.jpg",
+          "title": "Карточка и оценки",
+          "description": "Пользовательские звёзды и агрегированная оценка критиков."
+        },
+        {
+          "file": "wine-searcher/wine-searcher-02.jpg",
+          "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/69/e4/55/69e455b6-4441-2a45-addc-e8d6178bad5f/Slide_2.png/320x480bb.jpg",
+          "title": "Обзор возможностей",
+          "description": "Домашний экран: сканирование, цены и история."
+        },
+        {
+          "file": "wine-searcher/wine-searcher-01.jpg",
+          "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/33/f6/34/33f634ba-1617-45a5-90db-09cf8cdc8148/Slide_1.png/320x480bb.jpg",
+          "title": "Масштаб каталога",
+          "description": "Рекламный кадр о числе предложений вина и других напитков."
+        }
+      ]
+    },
+    {
+      "id": "mixel",
+      "appleId": 1280464759,
+      "name": "Mixel - Cocktail Recipes",
+      "sourceUrl": "https://apps.apple.com/us/app/mixel-cocktail-recipes/id1280464759?uo=4",
+      "screenshots": [
+        {
+          "file": "mixel/mixel-01.jpg",
+          "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource123/v4/86/c2/f7/86c2f72a-4539-444c-6d10-6cc44e6774c0/2cf5bc83-cf6b-4b86-95d3-f95e6703524c_5.5_1@1x.png/392x696bb.png",
+          "title": "Рецепт коктейля",
+          "description": "Ингредиенты, способ приготовления, оценка и pixel art."
+        },
+        {
+          "file": "mixel/mixel-02.jpg",
+          "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource113/v4/b1/a3/c9/b1a3c9a6-40fd-ac7c-6a4f-72af0c068111/05909b8d-8117-4c2d-92e2-9bf6339b0a50_5.5_2@1x.png/392x696bb.png",
+          "title": "Редактор рецепта",
+          "description": "Настройка изображения напитка и его компонентов."
+        },
+        {
+          "file": "mixel/mixel-03.jpg",
+          "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource123/v4/58/a7/af/58a7afb3-11c3-5092-f351-1249765a64b9/b41120ec-3c6b-423b-8f34-7e424d845ec2_5.5_3@1x.png/392x696bb.png",
+          "title": "Что есть дома",
+          "description": "Визуальная полка с доступными ингредиентами."
+        },
+        {
+          "file": "mixel/mixel-04.jpg",
+          "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource113/v4/4d/c3/c2/4dc3c2ea-c7a4-f1c3-d439-744200ff8b47/2b437c3c-35c1-4f5b-b120-88c002ed2e27_5.5_4@1x.png/392x696bb.png",
+          "title": "Что можно приготовить",
+          "description": "Варианты коктейлей, привязанные к содержимому бара."
+        },
+        {
+          "file": "mixel/mixel-05.jpg",
+          "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource123/v4/7e/cf/6a/7ecf6aa5-430d-f28f-5ef4-f002a596fc77/06aa2207-a223-465b-b259-647f52228c72_5.5_6@1x.png/392x696bb.png",
+          "title": "Отзывы и закладки",
+          "description": "Оценки, распределение голосов, комментарии и сохранение."
+        }
+      ]
+    },
+    {
+      "id": "highball",
+      "appleId": 973319934,
+      "name": "Highball by Studio Neat",
+      "sourceUrl": "https://apps.apple.com/us/app/highball-by-studio-neat/id973319934?uo=4",
+      "screenshots": [
+        {
+          "file": "highball/highball-01.jpg",
+          "url": "https://is1-ssl.mzstatic.com/image/thumb/Purple3/v4/ee/d8/77/eed87776-c54f-20a3-0a26-3bcd1fc0289d/pr_source.png/392x696bb.png",
+          "title": "Сохранённые рецепты",
+          "description": "Цвет помогает различать карточки в списке."
+        },
+        {
+          "file": "highball/highball-02.jpg",
+          "url": "https://is1-ssl.mzstatic.com/image/thumb/Purple5/v4/61/fe/86/61fe8604-ec31-86e5-2dc9-597af255f81b/pr_source.png/392x696bb.png",
+          "title": "Редактор карточки",
+          "description": "Меры, ингредиенты и заметки для Old Fashioned."
+        },
+        {
+          "file": "highball/highball-03.jpg",
+          "url": "https://is1-ssl.mzstatic.com/image/thumb/Purple3/v4/2d/5d/3e/2d5d3e72-ee9f-1649-4cf0-3635ae345c98/pr_source.png/392x696bb.png",
+          "title": "Карточка для обмена",
+          "description": "Margarita: рецепт, иллюстрация и QR-код."
+        },
+        {
+          "file": "highball/highball-04.jpg",
+          "url": "https://is1-ssl.mzstatic.com/image/thumb/Purple3/v4/d0/b5/cc/d0b5cc1b-afab-f54e-5f4a-bc8ead6d8d19/pr_source.png/392x696bb.png",
+          "title": "Импорт из фото",
+          "description": "Выбор изображений с распознаванием карточек рецептов."
+        }
+      ]
+    },
+    {
+      "id": "untappd",
+      "appleId": 449141888,
+      "name": "Untappd: Find Drinks You Love",
+      "sourceUrl": "https://apps.apple.com/us/app/untappd-find-drinks-you-love/id449141888?uo=4",
+      "screenshots": [
+        {
+          "file": "untappd/untappd-01.jpg",
+          "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/c5/3f/80/c53f80ed-f80a-4992-b131-c31a3b4febb9/Slide_1.jpeg/320x480bb.jpg",
+          "title": "Найти рядом",
+          "description": "Поиск, карта, события, места, магазин и badges на одном экране."
+        },
+        {
+          "file": "untappd/untappd-02.jpg",
+          "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/bc/05/06/bc0506ba-28b0-f0ac-1d16-89e506554a6d/Slide_2.jpeg/320x480bb.jpg",
+          "title": "Лента впечатлений",
+          "description": "Check-in с фото, оценками и комментариями."
+        },
+        {
+          "file": "untappd/untappd-03.jpg",
+          "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/90/2d/b0/902db0ac-9106-33b1-696a-696937306f5e/Slide_3.jpeg/320x480bb.jpg",
+          "title": "Обновления меню",
+          "description": "Уведомления о новых напитках у заведений."
+        },
+        {
+          "file": "untappd/untappd-04.jpg",
+          "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/aa/6b/d6/aa6bd634-27f0-975a-bd1a-c3ce351b8fe9/Slide_4.jpeg/320x480bb.jpg",
+          "title": "Карточка заведения",
+          "description": "Check-in, меню, события и список напитков."
+        },
+        {
+          "file": "untappd/untappd-05.jpg",
+          "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/4f/dd/fc/4fddfc4f-40bd-041a-a554-11d7eaf4d3ef/Slide_5.jpeg/320x480bb.jpg",
+          "title": "Запись о напитке",
+          "description": "Оценка, друзья, место и вкусовые характеристики."
+        }
+      ]
+    }
+  ]
+}

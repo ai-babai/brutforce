@@ -1,0 +1,40 @@
+{
+  "captured_at": "2026-09-19T20:46:00+03:00",
+  "site": "Свое Вино от РСХБ",
+  "method": "Codex in-app browser, read-only navigation; screenshots captured before any age-confirmation action",
+  "access_notes": [
+    "Direct Playwright/Chrome requests from the local network returned HTTP 403 from the site's WAF.",
+    "The in-app browser loaded the public pages. The 18+ modal appeared after a short delay on catalog and wine-detail pages; it was not confirmed or bypassed.",
+    "The homepage screenshot was captured before the delayed age modal appeared and shows the public hero composition."
+  ],
+  "screenshots": [
+    {
+      "file": "svoe-desktop-home-age-gate.png",
+      "url": "https://vino-svoe.ru/",
+      "viewport": "1440x1000",
+      "observation": "Full-bleed vineyard environment, large editorial headline, and a translucent foreground content panel; imagery is treated as spatial composition rather than an icon."
+    },
+    {
+      "file": "svoe-desktop-wines-age-gate.png",
+      "url": "https://vino-svoe.ru/wines",
+      "viewport": "1440x1000",
+      "observation": "Age gate over the catalog. The underlying page shows a left filter column, product grid and a top-level catalog/search area. The modal was not accepted."
+    },
+    {
+      "file": "svoe-mobile-ii-vino.png",
+      "url": "https://vino-svoe.ru/wines/ii-vino",
+      "viewport": "390x844",
+      "observation": "Mobile wine-detail page behind the 18+ sheet: compact brand/search/menu header, centered wine name and producer, rating pill, and a large visual product area. The modal was not accepted."
+    }
+  ],
+  "indexed_page_evidence": [
+    {
+      "url": "https://vino-svoe.ru/wines",
+      "verified_text": "The public catalog exposes two primary photo-search actions: 'Сканировать' and 'Загрузить фото', followed by filters and wine cards."
+    },
+    {
+      "url": "https://vino-svoe.ru/wines/ii-vino",
+      "verified_text": "The wine card leads with the wine name, producer and rating, then region, grape varieties, category/color, serving temperature, strength, food pairings, description and similar wines."
+    }
+  ]
+}

@@ -1,0 +1,69 @@
+{
+  "captured_at": "2026-09-19",
+  "purpose": "UI composition research; reference only, not for product redistribution",
+  "items": [
+    {
+      "file": "finch-user-widget.jpeg",
+      "product": "Finch",
+      "screen": "iOS home-screen widget with the user's dressed birb in its room",
+      "source_type": "user screenshot",
+      "source_page": "https://www.reddit.com/r/finch/comments/1gnox59/finchie_widget/",
+      "asset_url": "https://i.redd.it/17i94tqh4zzd1.jpeg",
+      "author": "u/fancy-grapes",
+      "notes": "Post and comments explicitly discuss the widget helping users remember to open Finch."
+    },
+    {
+      "file": "duolingo-user-lesson-complete.jpg",
+      "product": "Duolingo",
+      "screen": "User-captured lesson-complete result panel with a large surreal Duo variant; lower controls are not visible in the source image",
+      "source_type": "user screenshot",
+      "source_page": "https://www.reddit.com/r/duolingo/comments/1i2r3wm/whats_your_favourite_lesson_complete_screen/",
+      "asset_url": "https://i.redd.it/sxgqna05hdde1.jpg",
+      "author": "u/Spotocker",
+      "notes": "The thread contains strong positive and negative reactions to the intentionally excessive character treatment."
+    },
+    {
+      "file": "finch-appstore-2.jpg",
+      "product": "Finch",
+      "screen": "Goal list over an illustrated forest scene shared by two birbs",
+      "source_type": "official App Store screenshot",
+      "source_page": "https://apps.apple.com/us/app/finch-self-care-pet/id1528595748",
+      "asset_url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/e8/ca/ee/e8caee25-4118-702c-c751-02a9ce6b8c66/iPhone_social_large_02.jpg/1242x2208bb.jpg",
+      "version_seen": "3.73.206"
+    },
+    {
+      "file": "study_bunny-appstore-1.png",
+      "product": "Study Bunny",
+      "screen": "Primary timer screen: bunny sits inside the study-room scene behind the timer controls",
+      "source_type": "official App Store screenshot",
+      "source_page": "https://apps.apple.com/us/app/study-bunny-focus-timer/id1478345385",
+      "asset_url": "https://is1-ssl.mzstatic.com/image/thumb/Purple112/v4/fb/ba/60/fbba602c-bda7-da73-4b23-053be73803d6/pr_source.png/392x696bb.png",
+      "version_seen": "60.06"
+    },
+    {
+      "file": "study_bunny-appstore-6.png",
+      "product": "Study Bunny",
+      "screen": "Paused focus state: bunny rises from the bottom and delivers the motivational message",
+      "source_type": "official App Store screenshot",
+      "source_page": "https://apps.apple.com/us/app/study-bunny-focus-timer/id1478345385",
+      "asset_url": "https://is1-ssl.mzstatic.com/image/thumb/Purple122/v4/38/71/f1/3871f167-1266-caf6-20bc-5f81e9c53cd2/pr_source.png/392x696bb.png",
+      "version_seen": "60.06"
+    },
+    {
+      "file": "headspace-appstore-4.png",
+      "product": "Headspace",
+      "screen": "Course detail: the face is the horizon of the large hero illustration, above the course data and CTA",
+      "source_type": "official App Store screenshot",
+      "source_page": "https://apps.apple.com/us/app/headspace-sleep-meditation/id493145008",
+      "version_seen": "8.32.1"
+    },
+    {
+      "file": "khan_kids-appstore-1.jpg",
+      "product": "Khan Academy Kids",
+      "screen": "Learning activity with characters inhabiting the scene around the actual task surface",
+      "source_type": "official App Store screenshot",
+      "source_page": "https://apps.apple.com/us/app/khan-academy-kids/id1378467217",
+      "version_seen": "9.0.1"
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "date": "2026-09-18",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "type": "browser-capture",
+  "note": "Entry screens only; no photo uploads or camera/microphone access.",
+  "items": [
+    {
+      "file": "plantnet.png",
+      "url": "https://identify.plantnet.org/"
+    },
+    {
+      "file": "picturethis.png",
+      "url": "https://www.picturethisai.com/identify"
+    },
+    {
+      "file": "yuka.png",
+      "url": "https://yuka.io/en/"
+    }
+  ]
+}

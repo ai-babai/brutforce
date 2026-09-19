@@ -1,0 +1,198 @@
+body.mascot-preview {
+  width: 100%;
+  min-width: 0;
+  height: 100vh;
+  height: 100dvh;
+  margin: 0;
+  overflow: hidden;
+  background: #fff;
+}
+.mascot-lab-link { display:flex; align-items:center; padding:14px 18px; color:#742c46; text-decoration:none; font:600 14px Onest,sans-serif; white-space:nowrap; }
+.mascot-tip-image,.mascot-hero-image,.mascot-search-image,.mascot-missing-image { mix-blend-mode:multiply; }
+
+body.mascot-preview > .masthead,
+body.mascot-preview > .main-nav,
+body.mascot-preview > .changelog,
+body.mascot-preview > footer,
+body.mascot-preview > dialog,
+body.mascot-preview #flows > .section-intro,
+body.mascot-preview #flows > .design-summary,
+body.mascot-preview #flows > .research-jump,
+body.mascot-preview #flows > .scenario-picker,
+body.mascot-preview #flows .flow-explanation,
+body.mascot-preview #flows .screen-notes,
+body.mascot-preview #flows .prototype-label,
+body.mascot-preview #flows .demo-caption,
+body.mascot-preview #flows #restart {
+  display: none !important;
+}
+
+body.mascot-preview > main {
+  width: 100%;
+  max-width: none;
+  height: 100vh;
+  height: 100dvh;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+}
+
+body.mascot-preview > main > .view {
+  display: none !important;
+}
+
+body.mascot-preview > main > #flows {
+  display: block !important;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body.mascot-preview #flows .flow-layout,
+body.mascot-preview #flows .prototype-stage {
+  display: block;
+  width: 100%;
+  max-width: none;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body.mascot-preview #flows .phone {
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  min-height: 0;
+  overflow: hidden;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+body.mascot-preview #flows .phone:not(.is-camera) #phone-content {
+  height: calc(100dvh - 35px);
+  min-height: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+
+body.mascot-preview #flows .phone:not(.is-camera) .product-screen {
+  min-height: calc(100dvh - 35px);
+}
+
+.mascot-start-tip {
+  flex: 0 0 72px !important;
+  width: 72px !important;
+  height: 72px !important;
+  padding: 0 !important;
+  overflow: hidden;
+  border-radius: 16px !important;
+  background: #f4edf1 !important;
+}
+
+.mascot-tip-image {
+  width: 72px;
+  height: 72px;
+  object-fit: contain;
+}
+
+.mascot-hero-image {
+  position: absolute;
+  z-index: 1;
+  right: 9px;
+  bottom: 3px;
+  width: 155px;
+  height: 155px;
+  object-fit: contain;
+  mix-blend-mode: multiply;
+}
+
+.mascot-search-status {
+  min-height: 64px;
+  margin-top: 12px !important;
+}
+
+.mascot-search-image {
+  width: 56px;
+  height: 56px;
+  margin-right: 3px;
+  object-fit: contain;
+}
+
+body.mascot-preview[data-mascot-mode="hero"] .mascot-search-status {
+  min-height: 96px;
+}
+
+body.mascot-preview[data-mascot-mode="hero"] .mascot-search-image {
+  width: 90px;
+  height: 90px;
+  margin-right: 7px;
+}
+
+.mascot-missing-symbol {
+  width: 80px !important;
+  height: 80px !important;
+  padding: 0 !important;
+  overflow: visible !important;
+  border-radius: 18px !important;
+  background: #f4edf1 !important;
+}
+
+.mascot-missing-image {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+}
+
+body.mascot-preview[data-mascot-mode="hero"] .mascot-missing-symbol,
+body.mascot-preview[data-mascot-mode="hero"] .mascot-missing-image {
+  width: 120px !important;
+  height: 120px !important;
+}
+
+body.mascot-preview[data-mascot-mode="hero"] .mascot-missing-symbol {
+  margin-bottom: 8px;
+}
+
+@media (max-width: 340px) {
+  .mascot-hero-image {
+    right: -2px;
+    width: 140px;
+    height: 140px;
+  }
+
+  body.mascot-preview[data-mascot-mode="hero"] .mascot-search-image {
+    width: 76px;
+    height: 76px;
+  }
+
+  body.mascot-preview[data-mascot-mode="hero"] .mascot-search-status {
+    min-height: 82px;
+  }
+}
+
+@media (max-height: 700px) {
+  body.mascot-preview #flows .phone:not(.is-camera) #phone-content {
+    overflow-y: auto;
+  }
+
+  .mascot-start-tip,
+  .mascot-tip-image {
+    width: 60px !important;
+    height: 60px !important;
+    flex-basis: 60px !important;
+  }
+
+  body.mascot-preview[data-mascot-mode="hero"] .mascot-search-image {
+    width: 72px;
+    height: 72px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body.mascot-preview .recognition-line,
+  body.mascot-preview .spinner {
+    animation: none !important;
+  }
+}
