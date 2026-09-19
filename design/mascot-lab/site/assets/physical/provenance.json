@@ -1,0 +1,19 @@
+{
+  "tool": "image_gen.imagegen",
+  "reference": "../detective-alpha.png",
+  "assets": [
+    {
+      "file": "in-paws.png",
+      "prompt": "Use case: stylized-concept. Reference image is the established dog detective; preserve his face, fur, checked hat, tweed coat and burgundy scarf. Create one elegant coherent illustration for the center of a mobile wine-search UI. The dog is waist-up behind a small portrait photograph printed on thick ivory paper. He physically holds the two lower corners with his paws; paws visibly wrap over paper edges with believable contact shadows. The print shows a realistic dark wine bottle with a plain cream label photographed on a muted warm grey background. The photo is clearly a printed object in the dog's world, not a freestanding bottle, not a floating UI tile. Paper is nearly front-facing and large enough to see the bottle clearly. Dog looks down toward print with interested calm expression. No magnifying glass, no extra objects, no table, no UI, no text. Single composition: dog head above paper, paws around edges, paper centered below. Soft warm studio light shared by character and paper, refined realistic 3D texture matching reference, generous clean ivory background #fffaf4. Square illustration. Avoid busy background, thick wooden frame, overly cute gestures, hand deformities."
+    },
+    {
+      "file": "on-desk.png",
+      "prompt": "Use case: stylized-concept. Use reference for identity of established dog detective. Preserve his face, fur, checked cap, tweed coat and burgundy scarf. A coherent elegant scene for a mobile wine photo search: dog behind a small pale oak worktop, looking attentively at a large portrait photograph propped upright in a simple burgundy-backed clipboard on the worktop. Dog at right, clipboard at left, one paw rests naturally on the upper side edge of clipboard, other holds magnifier beside the photograph without covering it. The photo shows a realistic dark wine bottle with plain cream label on warm gray background. It must read clearly as a printed photograph, not a live bottle floating in scene. All objects share physically plausible perspective, one soft warm studio light, grounded contact shadows. Clipboard face nearly frontal; photograph occupies most of clipboard. Compact composition, dog head no more than 1.5 times width of print. Minimal ivory #fffaf4 background, no room furniture, no extra decorations, no text, no UI. Refined tactile 3D rendered scene matching dog texture. Wide 4:3 composition, generous top breathing room, bottom edge is tabletop."
+    }
+  ],
+  "sourcePages": {
+    "pikmin": "https://pikminbloom.com/news/mar26-challengeanywhere",
+    "finch": "https://help.finchcare.com/hc/en-us/articles/37942847416973-Placing-Items-Besides-Birdhouse-Door"
+  },
+  "note": "Static generated demo photographs, not original user photos. Concepts only."
+}
