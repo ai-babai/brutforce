@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="style.css?v=3">
   <link rel="stylesheet" href="assets/fonts/onest.css">
   <link rel="stylesheet" href="design.css?v=3.8-mascot-draft">
+  <link rel="stylesheet" href="mascot.css?v=3.9-mascot-frames-draft">
 </head>
 <body>
   <header class="masthead"><a href="#references" class="brand" aria-label="Wine UX Atlas, главная">W<span> / </span>UX</a><div class="heading"><h1>Вино. Экраны. Сценарии.</h1><p>Мировые референсы → решение для ЛЦТ / РСХБ</p></div><span class="edition">Исследование<br>18 сентября 2026</span></header>
@@ -15,7 +16,8 @@
     <button data-view="components" aria-pressed="false">02 <span>Коллекция элементов</span></button>
     <button data-view="flows" aria-pressed="false">03 <span>Сценарии и макет</span></button>
     <button data-view="decisions" aria-pressed="false">04 <span>Что берём в продукт</span></button>
-    <button data-view="sources" aria-pressed="false">05 <span>Источники и границы</span></button>
+    <button data-view="mascot" aria-pressed="false">05 <span>Маскот и адаптации</span></button>
+    <button data-view="sources" aria-pressed="false">06 <span>Источники и границы</span></button>
   </nav>
   <main>
     <section id="references" class="view">
@@ -39,6 +41,10 @@
       <div class="section-intro"><div><p class="eyebrow">Решения для первой версии</p><h2>Заимствуем механику, а не всё приложение</h2></div><p>Популярность продукта не доказывает качество каждого его экрана. Эти решения — наш синтез публичных экранов и пользовательских отзывов.</p></div>
       <div id="detector-research"></div><div id="decision-content"></div>
     </section>
+    <section id="mascot" class="view" hidden>
+      <div class="section-intro"><div><p class="eyebrow">Исследование и дизайн-гипотеза</p><h2>Пёс-следопыт<br>в мобильном сценарии</h2></div><p>Отдельная примерка персонажа: доказательства, ограничения и экранные адаптации. Это концепт Atlas, не изменение приложения.</p></div>
+      <div id="mascot-content"></div>
+    </section>
     <section id="sources" class="view" hidden>
       <div class="section-intro"><div><p class="eyebrow">Как читать этот атлас</p><h2>Что мы видели, а что предлагаем</h2></div></div>
       <div class="source-grid"><article><h3>Реальные изображения</h3><p>Официальные изображения со страниц приложений в App Store. Это промоскриншоты разработчиков: они показывают выбранные экраны, иногда с рекламными подписями и компоновкой. Это не запись нашего тестирования установленного приложения.</p><p>Снимки сохраняются локально вместе со ссылками на оригиналы. Дата сбора — 18 сентября 2026. Версия интерфейса на промоматериале может отличаться от текущей версии приложения.</p></article><article><h3>Отзывы пользователей</h3><p>Reddit, WineBerserkers и отзывы в сторах из предшествующего исследования. Свидетельства качественные, не репрезентативный опрос. Историческая похвала и свежая критика могут относиться к разным версиям.</p><p>«Что берём» и комментарии к экранам — наша оценка пригодности для задачи. Это не цитаты пользователей.</p></article><article><h3>Требования ЛЦТ</h3><p>Основание обновления: секция Q&A организаторов. Обязательный минимум карточки: название, фото, винодельня. Мобильный веб допустим; при неуверенности показываются ближайшие варианты. Полный текст ТЗ и актуальный оценочный скрипт этим не заменяются.</p><a target="_blank" rel="noopener" href="https://i.moscow/hackaton/lct/3a9c0c2e86184425bd73d4cedbf6565a">Официальная карточка задачи ↗</a></article><article><h3>Наш прототип</h3><p>Схематичный мобильный интерфейс для обсуждения сценариев. Все вина, поля и результаты — демонстрационные. Макет не обращается к модели и не измеряет качество распознавания.</p><p>Не используем вымышленные проценты уверенности. Время анимации не является обещанием скорости сервиса.</p></article></div>
@@ -46,7 +52,8 @@
     </section>
   </main>
 <details class="changelog" id="changelog">
-<summary>История изменений <span>19.09.2026 · 3.8 draft</span></summary>
+<summary>История изменений <span>19.09.2026 · 3.9 draft</span></summary>
+<article><h3>Версия 3.9 · Отдельный раздел маскота · черновик</h3><p>Исследование перенесено в самостоятельный раздел. Раскадровка теперь показывает экранные адаптации в корпусе телефона: старт, камера, ожидание, кандидаты, восстановление и результат. Причина: обсуждать не абстрактную иллюстрацию, а её место в интерфейсе. В приложение и публичный релиз не внесено.</p></article>
 <article><h3>Версия 3.8 · Маскот · черновик</h3><p>Добавлено исследование 15 референсов и интерактивная раскадровка трёх новых концепт-поз пса-следопыта. Он остаётся вне камеры, списка кандидатов и карточки вина; допустим на входе, при долгом ожидании и восстановлении. Причина: персонаж должен снижать тревогу, а не заслонять работу. В приложение и публичный релиз не внесено.</p></article>
 <article><h3>Версия 3.7 · Поиск и сохранение · черновик</h3><p>Параметры синхронизированы с UI-023/024 опубликованного приложения: поле 52 px с винной лупой и общим фокусом, закладка 92×48 px справа в шапке карточки. Намерение: цельный поиск и компактное сохранение. Не опубликовано.</p></article>
 <article><h3>Версия 3.6 · Черновик камеры</h3><p>Камера занимает видимую область вкладки. Превью сжимается, затвор остаётся доступен; в landscape действия справа. Подсказка вынесена под изображение, «Выбрать фото» получило белую подпись на тёмной кнопке. Причина: панели Android-браузера скрывали съёмку. Публикация не выполнена.</p></article>
@@ -65,7 +72,7 @@
 </details>
   <footer><span>ЛЦТ / Свое Вино · UX research atlas</span><span>Q&A + референсы · концепт мобильного веба</span></footer>
   <dialog id="image-dialog"><div class="dialog-bar"><div id="image-title"></div><button id="close-image" aria-label="Закрыть изображение">Закрыть ×</button></div><img id="large-image" alt=""><div class="dialog-bottom"><button id="image-prev" aria-label="Предыдущий скриншот">← Назад</button><a id="image-source" target="_blank" rel="noopener">Оригинал ↗</a><button id="image-next" aria-label="Следующий скриншот">Далее →</button></div></dialog>
-  <script src="assets/manifest.js"></script><script src="assets/icons.js"></script><script src="app.js?v=3"></script><script src="design.js?v=3.7-draft"></script>
-  <script src="research.js?v=3.8-mascot-draft"></script>
+  <script src="assets/manifest.js"></script><script src="assets/icons.js"></script><script src="app.js?v=3.9-mascot-frames-draft"></script><script src="design.js?v=3.9-mascot-frames-draft"></script>
+  <script src="research.js?v=3.9-mascot-frames-draft"></script>
 </body>
 </html>
