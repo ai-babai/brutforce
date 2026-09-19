@@ -1,14 +1,14 @@
 {
   "url": "https://reps.maks.dzap.pw/mascots/",
-  "iteration": 4,
-  "source_commit": "52fc752",
-  "release": "/srv/lct/maks/mascot-lab/releases/mascots-20260919-52fc752",
+  "iteration": "4.1",
+  "source_commit": "b92c85a",
+  "release": "/srv/lct/maks/mascot-lab/releases/mascots-20260919-b92c85a",
   "archive_commit": "8ad6deb5ad13db0090974f84a146d24407d76a4f",
   "validation": {
     "local": "6 prototype scenes at 320/390; report at 320/390/1440; 8 reference dialogs; helper dismissal, cancel, original photo and camera routes; no JS/HTTP errors or horizontal overflow",
-    "public": "HTML matches source; /view response unchanged; browser verification repeated on public URL",
-    "deployment": "Atomic symlink switch; previous releases preserved, no Caddy config change"
+    "public": "Six same-origin iframe scenes visible; images decoded inside home/loading/cellar/missing; nested camera/result visible. /mascots header SAMEORIGIN; /view retains DENY.",
+    "deployment": "Caddy route-only deferred X-Frame-Options SAMEORIGIN override; full config validated before reload; changelog release switched atomically."
   },
-  "previous_release": "/srv/lct/maks/mascot-lab/releases/mascots-20260919-4028d56",
+  "previous_release": "/srv/lct/maks/mascot-lab/releases/mascots-20260919-52fc752",
   "new_page": "https://reps.maks.dzap.pw/mascots/journeys.html"
 }
