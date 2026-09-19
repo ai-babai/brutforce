@@ -450,6 +450,13 @@
       "title": "Приватные upload недоступны, ответы имеют защитные заголовки",
       "source": "apps/api/request_security_test.go",
       "spec": "docs/product/security-spec.md"
+    },
+    {
+      "id": "UI-022",
+      "area": "ui",
+      "title": "Нижняя кнопка Сканер открывает камеру или запасной путь",
+      "source": "apps/web/src/navigation.test.tsx",
+      "spec": "docs/product/behavior-spec.md"
     }
   ]
 }
