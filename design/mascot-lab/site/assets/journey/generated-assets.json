@@ -1,0 +1,22 @@
+{
+  "tool": "image_gen.imagegen",
+  "date": "2026-09-19",
+  "assets": [
+    {
+      "file": "cellar.png",
+      "input": "../detective-alpha.png",
+      "prompt": "Use case: stylized-concept. Established dog detective reference identity: preserve beagle face, tricolor fur, checked deerstalker, brown tweed coat and burgundy scarf. Create a restrained wide 3:2 wine cellar vignette for a mobile wine-search loading UI. The dog small-medium at center-right walks slowly along a single row of pale oak wine cubbies, holding a small ivory index card and comparing it to bottles with an attentive expression. Shelves fill left and background, dark burgundy bottles have plain cream labels, absolutely no writing. A few well-spaced bottles, ordered quiet composition, not clutter. Dog feet touch warm stone floor; shelves and character share coherent perspective, soft warm light, contact shadows. Sophisticated tactile 3D illustration matching the reference, not a horror basement, no sparkles, no treasure mystery game. Wide scene with depth but readable at 340 pixels wide; silhouette and one meaningful action. Warm ivory upper background, muted oak and burgundy palette. No text, no UI, no magnifier blocking face. The user must perceive 'searching the wine shelves'."
+    },
+    {
+      "file": "peek.png",
+      "input": "../detective-alpha.png",
+      "prompt": "Use case: stylized-concept. Create transparent PNG of the established beagle detective from reference, preserving fur colors, checked deerstalker cap, brown tweed coat, burgundy scarf, friendly thoughtful face. New pose for UI edge peek: dog leans diagonally into frame from the RIGHT, upper torso and head only, head slightly tilted toward LEFT, looking down-left attentively. One white paw reaches forward down-left and rests on an imaginary horizontal panel edge; fingers curl slightly over that imagined edge. The other paw remains near chest. No magnifying glass, no objects, no border, no paper, no text. Visible cutout torso bottom is cleanly hidden when composed behind a horizontal UI panel. Face calm and subtle, not exuberant. Soft warm consistent lighting, high-quality tactile 3D as reference. Genuine transparent background; no white background, no checkerboard graphic. Keep character fully within canvas so actual cropping can be made by UI."
+    },
+    {
+      "file": "counter.png",
+      "input": "peek.png",
+      "prompt": "Create a new transparent cutout of this dog detective in a different pose: front-facing head with two white paws at the bottom, as if peeking over a desk. Keep the same face, ears, hat. No chest, no coat visible, only head and paws. Paws at equal height. Fully transparent background like the reference cutout. No glow or shadows outside the character. Crisp cutout."
+    }
+  ],
+  "notes": "Two earlier counter candidates with background haze rejected. Only approved static assets included. Wine bottles and shelves are generated scenery, not actual catalog."
+}

@@ -1,0 +1,37 @@
+{
+  "researched_at": "2026-09-19",
+  "items": [
+    {
+      "file": "loading.jpeg",
+      "sha256": "3bc2d32d40ef9e2b79fc073e194d863e4ce6efc23526fc6c8f21e793379dfc55",
+      "dimensions": "602x1308",
+      "classification": "real product screenshot; third-party flow archive",
+      "page_url": "https://www.lazyweb.com/flow/duolingo/start-lesson",
+      "asset_url": "https://zlfyzdmohcskkucuunmk.supabase.co/storage/v1/object/public/screenshots/uploaded_duolingo/compare/2026-02-20/1771692126944_F669D391-31AE-416A-98DB-D6CC1DA97BC1_1_105_c.jpeg"
+    },
+    {
+      "file": "widgets.png",
+      "sha256": "0bd9b9ff8d8ef77c8bb7efb9cbd1014531ef002398d6d673b532fb9c2fd95ce5",
+      "dimensions": "1196x786",
+      "classification": "official Duolingo blog promotional/design composite",
+      "page_url": "https://blog.duolingo.com/widget-feature/",
+      "asset_url": "https://storage.ghost.io/c/7a/33/7a33d0f4-927d-4fe8-a6bf-96131b5e76d4/content/images/2023/08/widgets.png"
+    },
+    {
+      "file": "error.jpg",
+      "sha256": "533a40fa5b8847045b7e3022ca4bb8dff70881f6544b36b09982d8655771b9a7",
+      "dimensions": "554x1200",
+      "classification": "user/shared screenshot; exact author, date, and app version unverified",
+      "page_url": "https://x.com/i/trending/1856886095553970319",
+      "asset_url": "https://pbs.twimg.com/media/GcS98gkWwAAYzm5.jpg"
+    },
+    {
+      "file": "lesson-complete.png",
+      "sha256": "46f9fffc5fb480e0e9ae1e1dcab28db986713eb2d380d9209fccca7fd451f527",
+      "dimensions": "863x1536",
+      "classification": "product screenshot reproduced by design press; older UI",
+      "page_url": "https://page-online.de/kreation/wie-duolingo-mit-illustrationen-das-lernen-neu-erfindet/",
+      "asset_url": "https://page-online.de/app/uploads/2023/08/Duolingo_Screenshot_lesson-863x1536.png"
+    }
+  ]
+}
