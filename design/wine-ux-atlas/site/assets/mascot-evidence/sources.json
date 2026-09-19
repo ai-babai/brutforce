@@ -1,0 +1,201 @@
+{
+  "collectedAt": "2026-09-19",
+  "note": "Public research references. Store promo compositions, historical screens and web captures are labeled separately. Rights remain with original owners.",
+  "assets": [
+    {
+      "file": "ru-sberkids-assistant-ui.webp",
+      "sourceUrl": "https://www.rustore.ru/catalog/app/ru.sberbank.sberkids",
+      "originalUrl": "https://static.rustore.ru/imgproxy/mXIN53M3VBHpGHHS4cqFRoCjm6nGcPAJO7qNgjW9hJY/preset%3Aweb_scr_prt_162/plain/https%3A//static.rustore.ru/2025/10/30/71/apk/672703/content/SCREENSHOT/af2f10ae-8a86-411e-a87b-2d8536366428.jpg%40webp",
+      "observed": "OFFICIAL STORE / PRODUCT UI PROMO. SberKids screen labeled 'virtual assistant SberKot'; phone UI shows card/balance and assistant input, with a translucent cat silhouette and paws. Functional interaction is explicit, though the full cat model is partly transparent. Visually inspected 2026-09-19."
+    },
+    {
+      "file": "ru-lingualeo-play-02.webp",
+      "sourceUrl": "https://play.google.com/store/apps/details?hl=ru&id=com.lingualeo.android",
+      "originalUrl": "https://play-lh.googleusercontent.com/pwHda5IJKiJRRcFhBn0f9DNgSGLIm9U1t6mSfVmtkxtkx8GWgFK7anpIGlhHjirzsnVrCOOIg6No5v6LJunK3A=w1052-h592",
+      "observed": "OFFICIAL STORE / PRODUCT UI PROMO. Leo appears inside the grammar-course header, wearing purple glasses and reading a purple book. This is a concrete in-app placement and pose. Visually inspected 2026-09-19."
+    },
+    {
+      "file": "ru-lingualeo-play-03.webp",
+      "sourceUrl": "https://play.google.com/store/apps/details?hl=ru&id=com.lingualeo.android",
+      "originalUrl": "https://play-lh.googleusercontent.com/kqqLIVCAu8tS0-wsJKUVxW_Z7A6v36oR6XG0PBN_q98SHeiWYel6ZE3UvNvda_u6xx6fFil2X9vT7FxIf7gDMw=w1052-h592",
+      "observed": "OFFICIAL STORE / PRODUCT UI PROMO. Progress profile shows level, XP and 'Leo satiety 100%'; direct evidence that feeding/satiety is tied to progress. No lion body is visible in this frame. Visually inspected 2026-09-19."
+    },
+    {
+      "file": "ru-dodo-play-02.webp",
+      "sourceUrl": "https://play.google.com/store/apps/details?hl=ru&id=ru.dodopizza.app",
+      "originalUrl": "https://play-lh.googleusercontent.com/R6mRaJv3L9KU751CYuYIw1lNFa8w6q0IS0VT_xPVt5pYBMeDjtz3HwgLjPHsIRJYRUvn0QOacpRogyNGMTxDPQ=w1052-h592",
+      "observed": "OFFICIAL STORE / CURRENT PRODUCT UI PROMO. Dodo-coin loyalty redemption screen. No mascot visible; useful only to contrast current transactional UI with the mascot-led campaign. Visually inspected 2026-09-19."
+    },
+    {
+      "file": "ru-dodo-ar-game-campaign.jpg",
+      "sourceUrl": "https://akarussia.ru/wp-content/uploads/2024/10/2020_mdg_ar_mr_vr_pov_keysy_akar.pdf",
+      "originalUrl": "https://akarussia.ru/wp-content/uploads/2024/10/2020_mdg_ar_mr_vr_pov_keysy_akar.pdf#page=52",
+      "observed": "CAMPAIGN, NOT CURRENT APP UI. AKAR casebook page 52 documents Dodo Pizza's 2019 Instagram AR game: three real Story screenshots show the orange bird mascot flying/jumping above buildings and being controlled by shouting. Rendered from the official industry casebook PDF at 150 DPI; visually inspected 2026-09-19."
+    },
+    {
+      "file": "ru-yappy-games-ui.webp",
+      "sourceUrl": "https://www.rustore.ru/catalog/app/ru.ritmmedia.yappy",
+      "originalUrl": "https://static.rustore.ru/imgproxy/tNUm2Od6wFNpDxyYwqSORYoI8fYjT6lpewlpUoUMRdA/preset%3Aweb_scr_prt_162/plain/https%3A//static.rustore.ru/apk/365759/content/SCREENSHOT/5b030637-76a7-4196-a1e9-4a6ba1ca36e9.jpg%40webp",
+      "observed": "OFFICIAL STORE / PRODUCT UI PROMO. In-app games screen with small stylized creatures and match/block UI. The screenshot does not identify any creature as Myatny, so do not caption it as a mascot appearance. It only verifies games are embedded in Yappy. Visually inspected 2026-09-19."
+    },
+    {
+      "file": "ru-yappy-mascot-social.jpg",
+      "sourceUrl": "https://t.me/s/yappy_official_channel",
+      "originalUrl": "https://cdn4.telesco.pe/file/aIyvqY0tihdF5LgVJHmBWxXrheEN4REs-paOnPae-ZCNfqLatxu9ZSHFaYTOymsvp6df1-TLNi3mAo6lxGvcIFOOmN2Reg3E336iIKMbKD6pPYIhm21b4L-U90Ycc4I2Nep3CLcuCfWD_9DrImoQi5iFN0GoE4sD2fO4Z1-osJeUrKO44iAlXYVdVvgdzSKXyxcKc0O0RA_K7ENXoV9HW-m9LiNwT_KaZcGPsC5T7_nrnXPIy6Eo9zd6L3fjBvENFN4YgqHRuQMjjhS1xtjvcLVuZ8CSUuXuhoABrh6vsecE7NXgLOnLDOydCY-eo3nikA7ZWZ1FpHeo0X48HazZWA.jpg",
+      "observed": "OFFICIAL SOCIAL AVATAR / BRAND ASSET, NOT APP UI. Mint-green cropped bear/head form with a black Yappy face mark. The official channel speaks in Myatny's voice, but this avatar alone is abstract and should be paired with textual identification. Visually inspected 2026-09-19."
+    },
+    {
+      "product": "Duolingo",
+      "character": "Duo",
+      "sourceUrl": "https://blog.duolingo.com/widget-feature/",
+      "originalUrl": "https://storage.ghost.io/c/7a/33/7a33d0f4-927d-4fe8-a6bf-96131b5e76d4/content/images/2023/08/widgets.png",
+      "localFile": "assets/mascot-evidence/world-duolingo-widget-matrix.png",
+      "observedContent": "Official widget state matrix on a dark background. Two incomplete-streak rows show Duo becoming sleepy, sick, alarmed, angry and engulfed by fire under reminders such as 'Time to practice!' and 'Last chance!'. A completed-streak row shows relaxed or celebratory poses beneath a flame-and-123 streak counter.",
+      "evidenceType": "Official product artwork captured from the official feature page"
+    },
+    {
+      "product": "Duolingo",
+      "character": "Duo",
+      "sourceUrl": "https://blog.duolingo.com/widget-feature/",
+      "originalUrl": "https://storage.ghost.io/c/7a/33/7a33d0f4-927d-4fe8-a6bf-96131b5e76d4/content/images/2023/08/widgets--1-.png",
+      "localFile": "assets/mascot-evidence/world-duolingo-widget-poses.png",
+      "observedContent": "Official grid of home-screen widget variants. Duo occupies most of each tile below the 123-day streak counter and short prompt; poses escalate across calm, peeking, determined, crying, melting, burning and red-eyed threatening states as practice urgency increases.",
+      "evidenceType": "Official product artwork captured from the official feature page"
+    },
+    {
+      "product": "Discord",
+      "character": "Wumpus",
+      "sourceUrl": "https://discord.com/blog/you-bar",
+      "originalUrl": "https://cdn.prod.website-files.com/5f9072399b2640f14d6a2bf4/6a2332d69dbeedfe7d0cbc92_image4-p-1600.jpg",
+      "localFile": "assets/mascot-evidence/world-discord-you-bar.jpg",
+      "observedContent": "Official mobile You Bar visual. The phone UI shows a large astronaut Wumpus avatar at the left of a bottom profile bar labeled 'Wumpus' and 'Online', with a green presence dot and bell button. A full-body astronaut Wumpus stands below the phone and points upward toward the bar.",
+      "evidenceType": "Official mobile product visual captured from Discord's product-design article"
+    },
+    {
+      "product": "Headspace",
+      "character": "Headspace character system",
+      "sourceUrl": "https://apps.apple.com/us/iphone/story/id1355149172",
+      "originalUrl": "https://is1-ssl.mzstatic.com/image/thumb/Features113/v4/b4/9f/1d/b49f1d34-d74d-b3f5-4656-923b494f8c43/pr_source.png/1185x1989bb.webp",
+      "localFile": "assets/mascot-evidence/world-headspace-story-characters.webp",
+      "observedContent": "Real Headspace mobile pack screen from Apple's editorial story. A large abstract character collage fills the top card for the 'Change' pack; below are '10 sessions', explanatory copy, technique buttons for Body Scan and Noting, '+ Add to my packs', and the primary 'Begin pack' action.",
+      "evidenceType": "App UI screenshot hosted by Apple in an editorial feature about Headspace design"
+    },
+    {
+      "product": "Waze",
+      "character": "Wazer Moods",
+      "sourceUrl": "https://www.waze.com/discuss/t/notice-anything-different-brand-refresh-has-been-launched/111319",
+      "originalUrl": "https://web-assets.waze.com/discuss/prod/original/3X/d/6/d651c6609b9bb24a9b52b0e6808bf8adfee57886.png",
+      "localFile": "assets/mascot-evidence/world-waze-moods-brand-refresh.png",
+      "observedContent": "Official Waze brand-refresh launch visual. Four differently styled Wazer mood characters sit among road-block shapes: a sunglasses character, a hard-hat mood inside a map pin, a prickly angry mood, and a laughing yellow speech-bubble mood. A construction barrier appears in a second map pin around the Waze wordmark.",
+      "evidenceType": "Official launch visual from Waze's own community announcement; visualizes the mood/icon language rather than a literal picker screen"
+    },
+    {
+      "product": "Reddit",
+      "character": "Snoo",
+      "sourceUrl": "https://redditforcommunity.com/",
+      "originalUrl": "https://redditforcommunity.com/hs-fs/hubfs/ChatChannels_Home%402x-1.png?height=564&name=ChatChannels_Home%402x-1.png&width=800",
+      "localFile": "assets/mascot-evidence/world-reddit-community-ui.png",
+      "observedContent": "Official Reddit for Community visual pairing a large 3D Snoo in a thinking pose with an angled mobile chat-channel UI. The phone surface shows the Reality TV Rewatch channel, usernames, avatars, timestamps, messages, a reply count, back navigation and share control.",
+      "evidenceType": "Official product-marketing visual with real mobile UI composition"
+    },
+    {
+      "product": "Reddit",
+      "character": "Snoo",
+      "sourceUrl": "https://imgur.com/gallery/reddit-mobile-loading-gif-svqXQmW",
+      "originalUrl": "https://i.imgur.com/uR1TrP8h.jpg",
+      "localFile": "assets/mascot-evidence/world-reddit-mobile-loading.jpg",
+      "observedContent": "User-captured frame from a Reddit mobile loading animation: a smiling white Snoo head is centered inside an orange-red circular loader against a nearly white full-screen background. This is an older loading treatment and is not evidence of the 2026 running-Snoo experiment.",
+      "evidenceType": "Public user-captured mobile loading visual hosted on Imgur"
+    },
+    {
+      "file": "/Users/skif/develop/brutforce-camera-viewport/design/wine-ux-atlas/site/assets/mascot-evidence/mobile-finch-goal-buddies.jpg",
+      "sourceUrl": "https://apps.apple.com/us/app/finch-self-care-pet/id1528595748",
+      "originalUrl": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/e8/ca/ee/e8caee25-4118-702c-c751-02a9ce6b8c66/iPhone_social_large_02.jpg/1290x2796bb.jpg",
+      "description": "Official Finch iPhone store screen for Goal Buddies. A gray finch and a smaller pink finch occupy the upper-middle of the in-app card, walking side by side, smiling and raising adjacent wings as if high-fiving. Below them, the Goal Buddies label and two circular bird portraits identify the pair. A white three-row task panel fills the lower third; each goal has an icon, text label, drag handle, and two color-coded completion circles aligned under the two portraits. The mascots visualize shared participation while task controls remain explicit and separate."
+    },
+    {
+      "file": "/Users/skif/develop/brutforce-camera-viewport/design/wine-ux-atlas/site/assets/mascot-evidence/mobile-finch-support.jpg",
+      "sourceUrl": "https://apps.apple.com/us/app/finch-self-care-pet/id1528595748",
+      "originalUrl": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/be/a7/84/bea784ad-4c13-e5fd-2108-1dc9827e05d9/iPhone_social_large_03.jpg/1290x2796bb.jpg",
+      "description": "Official Finch iPhone store screen for sending support. A gray finch stands centered in the upper half of a pink heart-patterned panel, eyes closed and smiling while hugging an oversized red heart against its torso. Recipient identity and a supportive message sit above the character. Six labeled circular action choices form a two-row grid below, with Valentines selected, followed by a full-width Send a Valentine button. The mascot supplies emotional preview and pose feedback, while the action selection and submission controls remain conventional buttons."
+    },
+    {
+      "file": "/Users/skif/develop/brutforce-camera-viewport/design/wine-ux-atlas/site/assets/mascot-evidence/mobile-study-bunny-home.png",
+      "sourceUrl": "https://apps.apple.com/us/app/study-bunny-focus-timer/id1478345385",
+      "originalUrl": "https://is1-ssl.mzstatic.com/image/thumb/Purple112/v4/fb/ba/60/fbba602c-bda7-da73-4b23-053be73803d6/pr_source.png/1290x2796bb.png",
+      "description": "Official Study Bunny iPhone store screen showing the main room. The gray bunny is large, stationary and centered in the lower-middle, seated on a patterned cushion in front of a waterfall scene. A coin balance occupies the top-left. A persistent vertical tool rail on the right contains menu, book, statistics, shop, music, checklist/cards, gift and settings icons. Decorative study objects line the bottom. The pet dominates the scene as an ambient companion without serving as an unlabeled navigation control."
+    },
+    {
+      "file": "/Users/skif/develop/brutforce-camera-viewport/design/wine-ux-atlas/site/assets/mascot-evidence/mobile-study-bunny-timer.png",
+      "sourceUrl": "https://apps.apple.com/us/app/study-bunny-focus-timer/id1478345385",
+      "originalUrl": "https://is1-ssl.mzstatic.com/image/thumb/Purple122/v4/92/69/d0/9269d019-31c3-3fe3-0784-2ff6ec96a79a/pr_source.png/1290x2796bb.png",
+      "description": "Official Study Bunny timer setup screen. The furnished room is darkened behind the active controls, and a tiny rabbit figure is visible on the timer slider thumb. Countdown mode and a large 35 mins readout occupy the upper half. A light-blue Color Tag sheet overlays the lower half with a close button, a 3-by-5 color grid and an optional subject text field. The mascot is reduced to a small positional indicator during the functional task, so timer and categorization inputs remain visually primary."
+    },
+    {
+      "file": "/Users/skif/develop/brutforce-camera-viewport/design/wine-ux-atlas/site/assets/mascot-evidence/mobile-pokemon-sleep-tracking.png",
+      "sourceUrl": "https://apps.apple.com/us/app/pok%C3%A9mon-sleep/id1579464667",
+      "originalUrl": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/62/46/fe/6246feb5-aa96-8186-65a4-f2ec3e57a129/d5ceaaf0-070a-48df-a5a3-e1c282c793da_Poke_U0301monSleep_store_1242x2208_5.5_EN_01.png/1242x2208bb.png",
+      "description": "Official Pokémon Sleep screen during an active sleep session. The current time and TRACKING SLEEP status are centered at the top on a blue background. A sleeping Pikachu is curled in profile at the exact visual center inside a large circular Poké Ball-like platform, eyes closed with its head resting on its forelegs and tail extending forward. Alarm time appears as a labeled rectangular control below, with relaxing-sound controls continuing lower on the screen. The resting mascot provides an immediate, glanceable confirmation of the app state without replacing the textual status."
+    },
+    {
+      "file": "/Users/skif/develop/brutforce-camera-viewport/design/wine-ux-atlas/site/assets/mascot-evidence/mobile-pokemon-sleep-research.png",
+      "sourceUrl": "https://apps.apple.com/us/app/pok%C3%A9mon-sleep/id1579464667",
+      "originalUrl": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/99/86/20/99862038-5693-bd9c-9f86-ad02bd22be9a/d2324c59-4cc2-4678-b17f-013c8394b4e3_Poke_U0301monSleep_store_1242x2208_5.5_EN_03.png/1242x2208bb.png",
+      "description": "Official Pokémon Sleep morning research scene. A huge sleeping Snorlax fills the central two-thirds of the field, mouth open and limbs relaxed. Pikachu sleeps on Snorlax's belly; Charmander lies above-right, Rattata below-left and Meowth below-right. White callout bubbles label the observed poses as Atop-Belly Sleep, Crackling Sleep, Face-Scratching Sleep and Curled-Up Sleep, with stars showing rarity. Date and resource counters remain at the top. Character placement itself becomes the results visualization, turning multiple sleep-style records into a spatial scene around the anchor mascot."
+    },
+    {
+      "file": "/Users/skif/develop/brutforce-camera-viewport/design/wine-ux-atlas/site/assets/mascot-evidence/mobile-khan-kids-library.png",
+      "sourceUrl": "https://apps.apple.com/us/app/khan-academy-kids/id1378467217",
+      "originalUrl": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/40/e6/21/40e6217c-1fc2-6a52-21d0-29ae11a7da4e/khankids_english_iphonex2.png/1290x2796bb.png",
+      "description": "Official Khan Academy Kids store composite centered on real in-app library and exercise UI. The largest tilted tablet panel shows the Library: circular category icons run horizontally near the top, each pairing a pictogram or character face with a text label, and book thumbnails appear in a grid below. Smaller cards above show a fox word-building exercise and a counting activity; Kodi appears as a small guide at the right edge of those exercises, while Kodi is also partially visible beside a large green check button in the left panel. The mascots sit at content edges and reinforce domain/context while the library navigation remains icon-plus-label based."
+    },
+    {
+      "file": "/Users/skif/develop/brutforce-camera-viewport/design/wine-ux-atlas/site/assets/mascot-evidence/mobile-khan-kids-reading.png",
+      "sourceUrl": "https://apps.apple.com/us/app/khan-academy-kids/id1378467217",
+      "originalUrl": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/40/77/43/4077437e-5ea5-3e2c-bda0-29f96f91a546/khankids_english_iphonex5.png/1290x2796bb.png",
+      "description": "Official Khan Academy Kids reading composite. A large tilted story page in the upper-right contains illustrated children and readable story text, with a circular back control at its lower-left corner. A second cropped activity panel at lower-left shows Kodi standing at the lower-right edge as an on-screen guide. Large a, b and c letter bubbles float around the activity panels. Reya, the pink red-panda character, strides across the bottom carrying a stack of books with an open-mouth smile, visually assigning the character to reading and phonics while leaving the actual story UI unobstructed."
+    },
+    {
+      "file": "/Users/skif/develop/brutforce-camera-viewport/design/wine-ux-atlas/site/assets/mascot-evidence/mobile-habitica-task-list.png",
+      "sourceUrl": "https://apps.apple.com/us/app/habitica-gamified-taskmanager/id994882113",
+      "originalUrl": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/90/93/93/90939344-d4f8-fe62-e394-ca90c1d35af2/3ba5d260-29bd-405e-a800-12f961ab8b53_1_mockup_6.5.png/1290x2796bb.png",
+      "description": "Official Habitica mobile task-list screen presented in a tilted phone. The user's pixel-art avatar is a compact square portrait at the upper-left of the app header, directly beside Level 53 and Rogue labels. Health, Experience and Mana bars span the header to the right, with currency/resource counts beneath. Full-width color-coded daily task rows occupy most of the screen, each with a large square completion target on the left. The character functions as persistent identity and status in the header while task execution remains a dense conventional list."
+    },
+    {
+      "file": "/Users/skif/develop/brutforce-camera-viewport/design/wine-ux-atlas/site/assets/mascot-evidence/mobile-habitica-pets.png",
+      "sourceUrl": "https://apps.apple.com/us/app/habitica-gamified-taskmanager/id994882113",
+      "originalUrl": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/61/6a/57/616a57c1-7ed4-0afe-bb9d-3726ad246d4b/101c1417-db8d-4b21-bb62-58e0896c6689_6_pets_6.5.png/1290x2796bb.png",
+      "description": "Official Habitica Pets & Mounts collection screen. A white mobile panel fills most of the image, with a back arrow, page title, overflow menu and 65 / 480 progress count in the header. A four-column grid names individual pixel pets; owned pets appear in color while missing entries are light-gray silhouettes, making collection state legible beyond text alone. Oversized icy-blue and orange pet sprites frame the bottom corners as decorative reward art without covering the upper collection controls."
+    },
+    {
+      "file": "ru-cuttherope-ui-01.webp",
+      "sourceUrl": "https://apps.apple.com/ru/app/cut-the-rope/id1024506959",
+      "originalUrl": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/ce/5c/bc/ce5cbcd5-4117-8aea-119f-51115b7b5e66/1-ru.png/600x1300bb.webp",
+      "observed": "OFFICIAL APP STORE / PRODUCT UI PROMO. Russian-localized gameplay screenshot says to cut the rope so Om Nom catches the candy. Om Nom appears in the level with his mouth open beneath the rope-and-candy puzzle; a larger reaction pose is composited at the bottom. Direct evidence that the character is the goal and feedback surface of the core interaction. Visually inspected 2026-09-19."
+    },
+    {
+      "file": "ru-cuttherope-ui-02.webp",
+      "sourceUrl": "https://apps.apple.com/ru/app/cut-the-rope/id1024506959",
+      "originalUrl": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/a0/55/50/a055502f-df8a-9361-7912-640f98f3aa17/2-ru.png/600x1300bb.webp",
+      "observed": "OFFICIAL APP STORE / PRODUCT UI PROMO. Russian-localized magic-box level says 'Режь с умом!' Om Nom waits on a platform while a candy moves among magician's hats; a larger curious Om Nom pose appears at left. Direct character-plus-gameplay evidence, not a campaign image. Visually inspected 2026-09-19."
+    },
+    {
+      "file": "assets/mascot-evidence/web-lingualeo-390.png",
+      "sourceUrl": "https://lingualeo.com/ru",
+      "observed": "Мобильный сайт: голова Лео стоит слева от жёлтой речевой плашки над выбором языка. Персонаж даёт локальную инструкцию, список остаётся обычными ссылками. Снимок после закрытия cookie-диалога, 19.09.2026.",
+      "method": "Chromium, 390×844, screenshot of public mobile website after cookie dismissal, 2026-09-19"
+    },
+    {
+      "file": "assets/mascot-evidence/web-duolingo-390.png",
+      "sourceUrl": "https://www.duolingo.com/",
+      "observed": "Мобильный сайт: Duo и ансамбль занимают верхнюю иллюстрацию, заголовок и зелёная кнопка «Начать» отделены ниже. Персонаж не является кнопкой. Снимок после отклонения cookies, 19.09.2026.",
+      "method": "Chromium, 390×844, screenshot of public mobile website after cookie dismissal, 2026-09-19"
+    },
+    {
+      "file": "assets/mascot-evidence/web-finch-390.png",
+      "sourceUrl": "https://finchcare.com/",
+      "observed": "Мобильный сайт: крупные персонажи обрамляют нижнюю часть первого экрана, кнопки сторов стоят отдельно выше. Показанные 5.0 / 500k+ — надпись лендинга, не проверенная нами текущая оценка стора. Снимок 19.09.2026.",
+      "method": "Chromium, 390×844, screenshot of public mobile website after cookie dismissal, 2026-09-19"
+    }
+  ]
+}
