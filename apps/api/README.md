@@ -23,6 +23,11 @@ image state. The six new records point to explicitly synthetic bottle SVGs.
 manual API clients. The canonical success-response schema is
 [`contracts/demo-search.schema.json`](../../contracts/demo-search.schema.json).
 This README defines endpoint behavior and error handling for the prototype.
+Interactive local documentation is available at `GET /api/docs`; it serves the
+OpenAPI 3.1 document at `GET /api/openapi.json` and its canonical search schema
+at `GET /api/schema/demo-search.schema.json`. API versioning and the boundary
+with the future contest endpoint are described in
+[`contracts/api-versioning.md`](../../contracts/api-versioning.md).
 
 `POST /api/search` accepts a JSON object no larger than 64 KiB:
 
@@ -145,6 +150,8 @@ quality:
 | API-014 | configured storage budget exhausted | HTTP 503 `storage_full` |
 | API-015 | embedded catalog | eight unique stable synthetic records and matching `GET /api/catalog` response |
 | API-016 | name, winery, and year query | exact search filters the same embedded catalog and selects its first match |
+| API-017 | documentation route or bundled asset | `GET /api/docs` and its local Swagger assets work; its own errors remain JSON API errors |
+| API-018 | embedded OpenAPI and canonical schema | OpenAPI 3.1 documents exactly four implemented endpoint methods and the embedded schema matches the contract source |
 
 Run: `go test -count=1 ./...`.
 

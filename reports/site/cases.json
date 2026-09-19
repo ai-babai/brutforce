@@ -116,6 +116,20 @@
       "spec": "contracts/demo-catalog.md"
     },
     {
+      "id": "API-017",
+      "area": "api",
+      "title": "Swagger UI и OpenAPI доступны только локальными API-маршрутами",
+      "source": "apps/api/docs_test.go",
+      "spec": "apps/api/docs/README.md"
+    },
+    {
+      "id": "API-018",
+      "area": "api",
+      "title": "OpenAPI описывает четыре реализованных endpoint и не расходится с канонической схемой",
+      "source": "apps/api/docs_test.go",
+      "spec": "contracts/api-versioning.md"
+    },
+    {
       "id": "UI-001",
       "area": "web",
       "title": "Welcome shows the scan entry",
