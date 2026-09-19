@@ -1,0 +1,9 @@
+{
+  "createdAt": "2026-09-19",
+  "method": "ImageGen, two new poses from the dog reference supplied by the user. Original user image is not copied into the repository.",
+  "scope": "Prototype illustrations only. Not deployed to the recognition application.",
+  "assets": [
+    {"file":"guide.png","description":"Half-body auburn-white beagle detective, looking left, lowered magnifying glass, checked cap, tan coat and burgundy scarf; no bottle.","prompt":"Create a clean new illustration of this same dog detective for a mobile website concept. Same auburn-white beagle face, floppy ears, checked detective cap, tan coat and burgundy scarf. Half-body portrait, arms and paws fully visible. He looks gently to the LEFT side of the picture and holds his magnifying glass lowered near his chest, ready to help. No bottle. Pure white background with no scenery, no text, no border, no gradient or vignette. Calm attentive adult-friendly expression. Keep reference identity and soft 3D style. Leave a small white margin around all edges."},
+    {"file":"search.png","description":"Seated detective examining a notebook with a magnifying glass; no bottle.","prompt":"Create a new pose of the dog detective from the supplied reference illustration. Keep his appearance, hat, coat, burgundy scarf and magnifying glass. Show him calmly seated, looking to his left at a small notebook he is holding. No bottle. One full-body character on a plain white background, clean composition, no text, no scenery. This illustration is for a user interface concept."}
+  ]
+}
