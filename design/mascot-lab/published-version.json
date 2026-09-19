@@ -1,14 +1,14 @@
 {
   "url": "https://reps.maks.dzap.pw/mascots/",
-  "iteration": "5",
-  "source_commit": "72dad21",
-  "release": "/srv/lct/maks/mascot-lab/releases/mascots-20260919-72dad21",
+  "iteration": "6-research",
+  "source_commit": "10f0b6a",
+  "release": "/srv/lct/maks/mascot-lab/releases/mascots-20260920-10f0b6a",
   "archive_commit": "8ad6deb5ad13db0090974f84a146d24407d76a4f",
   "validation": {
-    "local": "Seven iframe states; nested camera/result visible. Two art styles, three home compositions, 320/390x780; dismissal/reopen, cancel/retry, images decoded; no JS/HTTP errors or horizontal overflow. Screenshots visually inspected.",
-    "public": "Same full browser checks passed after publication, including content inside same-origin iframes. /mascots SAMEORIGIN and /view DENY retained.",
-    "deployment": "Static release switched atomically; no Caddy reload. Main /view index SHA256 unchanged: 970cdfbcd6ef800efe09ce12361837202ecd7ff2a37696fc5e4414a5b53f0d33."
+    "local": "Study checked at 1440,390,320; all art variants and CSS material/blur controls; decoded images; no JS/HTTP errors or horizontal overflow. Screenshots inspected.",
+    "public": "1440 plus separate 390/320 browser checks passed. Mobile image decode uses eager loading to avoid waiting on offscreen lazy assets. Main /view index SHA256 unchanged.",
+    "scope": "Research page, saved art refinement, navigation links only. Main Atlas and existing mascot prototypes unchanged."
   },
-  "previous_release": "/srv/lct/maks/mascot-lab/releases/mascots-20260919-b92c85a",
-  "new_page": "https://reps.maks.dzap.pw/mascots/journeys.html"
+  "previous_release": "/srv/lct/maks/mascot-lab/releases/mascots-20260919-72dad21",
+  "new_page": "https://reps.maks.dzap.pw/mascots/glass.html"
 }
