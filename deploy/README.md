@@ -14,5 +14,7 @@
 → HTTPS smoke. Не менять чужие сайты и не публиковать исходные конкурсные материалы.
 
 Откат: переключить current на предыдущий каталог и restart brutforce-demo.
-Для первого релиза: остановить brutforce-demo, убрать только demo.caddy,
+Для первого релиза: остановить brutforce-demo, убрать только z-brutforce-demo.caddy,
 восстановить резервную копию maks-reports.caddy, validate и reload Caddy.
+
+Файл demo.caddy устанавливается как /etc/caddy/sites-enabled/z-brutforce-demo.caddy: общий snippet загружается раньше из lct-previews.caddy.
