@@ -1,0 +1,141 @@
+{
+  "schemaVersion": 1,
+  "id": "20260919T084059Z-fast",
+  "label": "Fast API + UI state checks",
+  "createdAt": "2026-09-19T08:40:59.178Z",
+  "revision": "working-tree",
+  "status": "failed",
+  "command": "/opt/homebrew/opt/go/bin/go test -count=1 -json ./...; npm --prefix apps/web test -- --reporter=json",
+  "caveat": "Synthetic demo contract and UI-state checks. Not an OCR, visual-search, or contest-quality benchmark.",
+  "cases": [
+    {
+      "id": "API-001",
+      "title": "Exact response orders candidates and selects Cabernet",
+      "status": "passed",
+      "durationMs": 0,
+      "reason": "Go test TestAPI001ExactSelectsCabernet: pass"
+    },
+    {
+      "id": "API-002",
+      "title": "Uncertain response has candidates and no selection",
+      "status": "passed",
+      "durationMs": 0,
+      "reason": "Go test TestAPI002UncertainReturnsCandidatesWithoutSelection: pass"
+    },
+    {
+      "id": "API-003",
+      "title": "No match returns an explicit empty candidates array",
+      "status": "passed",
+      "durationMs": 0,
+      "reason": "Go test TestAPI003NoneReturnsEmptyCandidates: pass"
+    },
+    {
+      "id": "API-004",
+      "title": "Synthetic backend failure is structured HTTP 503",
+      "status": "passed",
+      "durationMs": 0,
+      "reason": "Go test TestAPI004ErrorIsStructured503: pass"
+    },
+    {
+      "id": "API-005",
+      "title": "Manual name query filters case-insensitively",
+      "status": "passed",
+      "durationMs": 0,
+      "reason": "Go test TestAPI005ManualQueryFiltersCaseInsensitively: pass"
+    },
+    {
+      "id": "API-006",
+      "title": "Invalid input is a structured HTTP 400",
+      "status": "passed",
+      "durationMs": 0,
+      "reason": "Go test TestAPI006InvalidInputIs400: pass"
+    },
+    {
+      "id": "API-007",
+      "title": "Method and unknown API route are JSON 4xx",
+      "status": "passed",
+      "durationMs": 0,
+      "reason": "Go test TestAPI007MethodAndUnknownAPIRouteReturnJSON4xx: pass"
+    },
+    {
+      "id": "API-008",
+      "title": "Health endpoint marks synthetic demo state",
+      "status": "passed",
+      "durationMs": 0,
+      "reason": "Go test TestAPI008Health: pass"
+    },
+    {
+      "id": "UI-001",
+      "title": "Welcome shows the scan entry",
+      "status": "passed",
+      "durationMs": 98,
+      "reason": "Vitest: mobile behavior demo UI-001 -> UI-002 opens the simulated camera and explains device behavior"
+    },
+    {
+      "id": "UI-002",
+      "title": "Scan entry opens simulated camera guidance",
+      "status": "passed",
+      "durationMs": 98,
+      "reason": "Vitest: mobile behavior demo UI-001 -> UI-002 opens the simulated camera and explains device behavior"
+    },
+    {
+      "id": "UI-003",
+      "title": "Camera permission denial exposes gallery fallback",
+      "status": "passed",
+      "durationMs": 33,
+      "reason": "Vitest: mobile behavior demo UI-003 shows gallery fallback when permission is denied"
+    },
+    {
+      "id": "UI-004",
+      "title": "Searching state is cancellable",
+      "status": "passed",
+      "durationMs": 64,
+      "reason": "Vitest: mobile behavior demo UI-004 can cancel and retry the same search"
+    },
+    {
+      "id": "UI-005",
+      "title": "Cancelled search stays retryable",
+      "status": "passed",
+      "durationMs": 64,
+      "reason": "Vitest: mobile behavior demo UI-004 can cancel and retry the same search; assertion checks the cancelled UI-005 state."
+    },
+    {
+      "id": "UI-006",
+      "title": "Uncertain result exposes correction candidates",
+      "status": "failed",
+      "durationMs": 1079,
+      "reason": "Vitest: mobile behavior demo UI-006 lets the user correct an uncertain result"
+    },
+    {
+      "id": "UI-007",
+      "title": "Exact result opens synthetic source-backed details",
+      "status": "failed",
+      "durationMs": 1063,
+      "reason": "Vitest: mobile behavior demo UI-007 renders an exact card and source description"
+    },
+    {
+      "id": "UI-008",
+      "title": "Manual search route is available",
+      "status": "error",
+      "reason": "Vitest suite ended with code 1; this case has no individual result."
+    },
+    {
+      "id": "UI-009",
+      "title": "Empty API result remains recoverable",
+      "status": "passed",
+      "durationMs": 57,
+      "reason": "Vitest: mobile behavior demo UI-009 handles an empty result from the API"
+    },
+    {
+      "id": "UI-010",
+      "title": "Service error remains recoverable",
+      "status": "passed",
+      "durationMs": 53,
+      "reason": "Vitest: mobile behavior demo UI-010 rejects a selectedId that does not match a candidate"
+    }
+  ],
+  "artifacts": [
+    "data/runs/20260919T084059Z-fast.api-go.jsonl",
+    "data/runs/20260919T084059Z-fast.web-vitest.json"
+  ]
+}

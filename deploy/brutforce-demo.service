@@ -1,0 +1,19 @@
+[Unit]
+Description=BrutForce mobile behavior demo
+After=network.target
+
+[Service]
+User=lct
+Group=lct
+WorkingDirectory=/srv/lct/maks/behavior-demo/current
+Environment=ADDRESS=127.0.0.1:8097
+Environment=WEB_ROOT=/srv/lct/maks/behavior-demo/current/web
+ExecStart=/srv/lct/maks/behavior-demo/current/brutforce-api
+Restart=on-failure
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+
+[Install]
+WantedBy=multi-user.target

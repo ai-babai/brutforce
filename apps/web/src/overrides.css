@@ -1,0 +1,6 @@
+.photo{width:100%;padding:0;border:0}
+.photo-dialog{position:fixed;inset:0;background:#21181edb;display:grid;place-items:center;padding:24px;z-index:10}
+.photo-dialog img{max-width:min(720px,94vw);max-height:85dvh;object-fit:contain;border-radius:18px;background:#eee5ea}
+.photo-dialog button{position:absolute;top:20px;right:20px;width:48px;height:48px;border:0;border-radius:50%;background:white;color:var(--wine)}
+.missing-image{height:100%;min-height:86px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;background:#e8dfe5;color:#806b78;text-align:center;font-size:10px;line-height:1.35;border-radius:10px}.missing-image svg{width:24px;height:24px}.result-hero>.missing-image{min-height:225px}
+.app-shell{min-height:100dvh;background:var(--paper)}.app{width:100%;min-height:100dvh;background:var(--paper)}.app .page,.app .camera-page{min-height:100dvh;max-width:480px;margin:0 auto}.demo-shell,.demo-controls,.phone,.demo-banner{all:unset}

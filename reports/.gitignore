@@ -1,0 +1,5 @@
+# The root excludes generic data/ directories. Run snapshots are deliberate,
+# reviewable report artifacts and must stay versioned.
+!site/
+!site/data/
+!site/data/**

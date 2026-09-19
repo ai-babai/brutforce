@@ -1,0 +1,15 @@
+reps.maks.dzap.pw {
+    import lct_preview_headers
+    redir /behavior /behavior/ 308
+    handle_path /behavior/* {
+        root * /srv/lct/maks/behavior-demo/current/reports
+        file_server
+    }
+    handle {
+        root * /srv/lct/maks/reports/current
+        redir / /view 302
+        redir /view/ /view 308
+        rewrite /view /index.html
+        file_server
+    }
+}

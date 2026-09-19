@@ -1,0 +1,55 @@
+{
+  "schemaVersion": 1,
+  "runId": "20260919T084728Z-fast-6c9e1a11",
+  "recordedAt": "2026-09-19T08:47:30.469Z",
+  "files": [
+    {
+      "path": "data/runs/20260919T084728Z-fast-6c9e1a11.json",
+      "sha256": "5bb2693267622f05aba98227604d8829a083226aad7cd79473d2662d85fcc95d"
+    },
+    {
+      "path": "data/runs/20260919T084728Z-fast-6c9e1a11.api-go.jsonl",
+      "sha256": "68725272c7dc346df16cf05a5add30cb2c011321898a4dba1b8757f7fa4e68d8"
+    },
+    {
+      "path": "data/runs/20260919T084728Z-fast-6c9e1a11.web-vitest.json",
+      "sha256": "8904bb47781cb5b0d25ff036e87f979aa5ae19ecce3fb1d468cd4aaea70a5757"
+    },
+    {
+      "path": "data/runs/20260919T084728Z-fast-6c9e1a11.sources/cases.json",
+      "sha256": "6fac7470251d3e8926b8c5397839a4b3ef524fa08f65080ffcd52c912613cd37"
+    },
+    {
+      "path": "data/runs/20260919T084728Z-fast-6c9e1a11.sources/behavior-spec.md",
+      "sha256": "768b55425b10d8de7d54166f2e2560532e2840caf9b711933a4cea415546a660"
+    },
+    {
+      "path": "data/runs/20260919T084728Z-fast-6c9e1a11.sources/main.go",
+      "sha256": "0df896fcfd14949050ba71798cb3d62925aaf7619757a1d0cf277fa85c170b90"
+    },
+    {
+      "path": "data/runs/20260919T084728Z-fast-6c9e1a11.sources/main_test.go",
+      "sha256": "d6ab56dd2ece70eb7775b5cfadb72bf2cacf0896b586254510c616e10881b3fb"
+    },
+    {
+      "path": "data/runs/20260919T084728Z-fast-6c9e1a11.sources/App.tsx",
+      "sha256": "056f4067595d76969d7b7bfc3d5477ecfb65aa62b7416ccea7d6c2108349b260"
+    },
+    {
+      "path": "data/runs/20260919T084728Z-fast-6c9e1a11.sources/api.ts",
+      "sha256": "dc31af9722c5f4a6af52ae6a6523d6fa10145aa54f39efbde19e31400407064d"
+    },
+    {
+      "path": "data/runs/20260919T084728Z-fast-6c9e1a11.sources/types.ts",
+      "sha256": "c995fb2d5a222eeeb4628d3bad4aa3617b5457b7c3d6e60926bb8501fb529d8f"
+    },
+    {
+      "path": "data/runs/20260919T084728Z-fast-6c9e1a11.sources/styles.css",
+      "sha256": "2205ef31963514b0a661de131e0c0d39c9595c7bb03e302f4dd3a5f05bc60107"
+    },
+    {
+      "path": "data/runs/20260919T084728Z-fast-6c9e1a11.sources/App.test.tsx",
+      "sha256": "0ce0fcb7fd33e818692ce56693052f9019cd154aafd3dee12668348d0da831e4"
+    }
+  ]
+}

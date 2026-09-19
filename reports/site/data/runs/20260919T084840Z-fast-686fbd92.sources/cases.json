@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "title": "BrutForce runnable demo — behavior cases",
+  "caveat": "Synthetic demo checks API and UI state handling only; it is not a recognition benchmark.",
+  "cases": [
+    {"id":"API-001","area":"api","title":"Exact response orders candidates and selects Cabernet","source":"apps/api/README.md","spec":"docs/product/behavior-spec.md#demo-003"},
+    {"id":"API-002","area":"api","title":"Uncertain response has candidates and no selection","source":"apps/api/README.md","spec":"docs/product/behavior-spec.md#demo-004"},
+    {"id":"API-003","area":"api","title":"No match returns an explicit empty candidates array","source":"apps/api/README.md","spec":"docs/product/behavior-spec.md#demo-006"},
+    {"id":"API-004","area":"api","title":"Synthetic backend failure is structured HTTP 503","source":"apps/api/README.md","spec":"docs/product/behavior-spec.md#demo-009"},
+    {"id":"API-005","area":"api","title":"Manual name or winery query filters case-insensitively","source":"apps/api/README.md","spec":"docs/product/behavior-spec.md#demo-010"},
+    {"id":"API-006","area":"api","title":"Invalid input is a structured HTTP 400","source":"apps/api/README.md","spec":"docs/product/behavior-spec.md"},
+    {"id":"API-007","area":"api","title":"Method and unknown API route are JSON 4xx","source":"apps/api/README.md","spec":"docs/product/behavior-spec.md"},
+    {"id":"API-008","area":"api","title":"Health endpoint marks synthetic demo state","source":"apps/api/README.md","spec":"docs/product/behavior-spec.md"},
+    {"id":"API-009","area":"api","title":"WEB_ROOT serves static files and SPA fallback","source":"apps/api/README.md","spec":"reports/site/index.html"},
+    {"id":"UI-001","area":"web","title":"Welcome shows the scan entry","source":"apps/web/README.md; Wine UX Atlas","spec":"docs/product/behavior-spec.md#demo-001"},
+    {"id":"UI-002","area":"web","title":"Scan entry opens simulated camera guidance","source":"apps/web/README.md; Wine UX Atlas","spec":"docs/product/behavior-spec.md#demo-001"},
+    {"id":"UI-003","area":"web","title":"Camera permission denial exposes gallery fallback","source":"apps/web/README.md; Wine UX Atlas","spec":"docs/product/behavior-spec.md#demo-008"},
+    {"id":"UI-004","area":"web","title":"Searching state is cancellable","source":"apps/web/README.md; Wine UX Atlas","spec":"docs/product/behavior-spec.md#demo-005"},
+    {"id":"UI-005","area":"web","title":"Cancelled search stays retryable","source":"apps/web/README.md; Wine UX Atlas","spec":"docs/product/behavior-spec.md#demo-005"},
+    {"id":"UI-006","area":"web","title":"Uncertain result exposes correction candidates","source":"apps/web/README.md; Wine UX Atlas","spec":"docs/product/behavior-spec.md#demo-004"},
+    {"id":"UI-007","area":"web","title":"Exact result opens synthetic wine details","source":"apps/web/README.md; Wine UX Atlas","spec":"docs/product/behavior-spec.md#demo-003"},
+    {"id":"UI-008","area":"web","title":"Manual search route is available","source":"apps/web/README.md; Wine UX Atlas","spec":"docs/product/behavior-spec.md#demo-010"},
+    {"id":"UI-009","area":"web","title":"Empty API result remains recoverable","source":"apps/web/README.md; Wine UX Atlas","spec":"docs/product/behavior-spec.md#demo-006"},
+    {"id":"UI-010","area":"web","title":"Service error remains recoverable","source":"apps/web/README.md; Wine UX Atlas","spec":"docs/product/behavior-spec.md#demo-009"}
+    ,{"id":"UI-011","area":"web","title":"Non-image file is rejected before preview","source":"apps/web/src/App.test.tsx","spec":"docs/product/behavior-spec.md#demo-007"}
+  ]
+}

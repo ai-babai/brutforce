@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "runId": "20260919T084411Z-fast-502d2b3a",
+  "recordedAt": "2026-09-19T08:44:13.759Z",
+  "files": [
+    {
+      "path": "data/runs/20260919T084411Z-fast-502d2b3a.json",
+      "sha256": "e75bf9ed7e163e1a99f2065c859fc5a428b444a32a0b2b3661645a62e495010e"
+    },
+    {
+      "path": "data/runs/20260919T084411Z-fast-502d2b3a.api-go.jsonl",
+      "sha256": "bc175a7a7cdd697ea2cea6599611562245cff19c459c5c54e9c0d45fc5d7eb02"
+    },
+    {
+      "path": "data/runs/20260919T084411Z-fast-502d2b3a.web-vitest.json",
+      "sha256": "77bc215829c2b12645bc7e84544376bb2463955d82f75d090feb170e2a6b6cd2"
+    },
+    {
+      "path": "data/runs/20260919T084411Z-fast-502d2b3a.sources/cases.json",
+      "sha256": "8a053e0f7b29cfdde2ef6504193930a590975ab8028ab1eba4f762a2b7ec8573"
+    },
+    {
+      "path": "data/runs/20260919T084411Z-fast-502d2b3a.sources/behavior-spec.md",
+      "sha256": "cf7f2b51a4ca5ca18ded207b2945650eb21c84301bc8975f37f203967a3051a9"
+    },
+    {
+      "path": "data/runs/20260919T084411Z-fast-502d2b3a.sources/main_test.go",
+      "sha256": "d6ab56dd2ece70eb7775b5cfadb72bf2cacf0896b586254510c616e10881b3fb"
+    },
+    {
+      "path": "data/runs/20260919T084411Z-fast-502d2b3a.sources/App.test.tsx",
+      "sha256": "fda075a5df6dab8ae247dd51ab0f19ed415506f028e9a9997f2991e1c71f6753"
+    }
+  ]
+}
