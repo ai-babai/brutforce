@@ -8,6 +8,9 @@ Group=lct
 WorkingDirectory=/srv/lct/maks/behavior-demo/current
 Environment=ADDRESS=127.0.0.1:8097
 Environment=WEB_ROOT=/srv/lct/maks/behavior-demo/current/web
+Environment=UPLOAD_DIR=/srv/lct/data/maks/demo-photos
+Environment=UPLOAD_MAX_BYTES=209715200
+ReadWritePaths=/srv/lct/data/maks/demo-photos
 ExecStart=/srv/lct/maks/behavior-demo/current/brutforce-api
 Restart=on-failure
 NoNewPrivileges=true

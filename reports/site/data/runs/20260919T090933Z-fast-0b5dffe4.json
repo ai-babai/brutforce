@@ -1,0 +1,427 @@
+{
+  "schemaVersion": 2,
+  "id": "20260919T090933Z-fast-0b5dffe4",
+  "label": "Тайминги: API и UI",
+  "createdAt": "2026-09-19T09:09:33.217Z",
+  "revision": "working-tree",
+  "status": "failed",
+  "timing": {
+    "wallMs": -1789808969889,
+    "suites": [
+      {
+        "id": "api",
+        "label": "Go API suite",
+        "processWallMs": 172,
+        "reportedMs": null
+      },
+      {
+        "id": "ui",
+        "label": "Vitest UI suite",
+        "processWallMs": 3111,
+        "reportedMs": null
+      }
+    ]
+  },
+  "command": "go test -count=1 -json ./...; npm --prefix apps/web test -- --reporter=json",
+  "caveat": "Синтетический контракт demo и проверки состояний UI. Это не benchmark OCR, визуального поиска или конкурсного качества.",
+  "cases": [
+    {
+      "id": "API-001",
+      "area": "api",
+      "title": "Exact response orders candidates and selects Cabernet",
+      "source": "apps/api/README.md",
+      "spec": "docs/product/behavior-spec.md#demo-003",
+      "given": "сценарий exact",
+      "when": "POST /api/search",
+      "then": "выбран первый synthetic candidate",
+      "status": "error",
+      "reason": "Go suite ended with code 1; this case has no individual result."
+    },
+    {
+      "id": "API-002",
+      "area": "api",
+      "title": "Uncertain response has candidates and no selection",
+      "source": "apps/api/README.md",
+      "spec": "docs/product/behavior-spec.md#demo-004",
+      "given": "сценарий uncertain",
+      "when": "POST /api/search",
+      "then": "есть кандидаты, selectedId отсутствует",
+      "status": "error",
+      "reason": "Go suite ended with code 1; this case has no individual result."
+    },
+    {
+      "id": "API-003",
+      "area": "api",
+      "title": "No match returns an explicit empty candidates array",
+      "source": "apps/api/README.md",
+      "spec": "docs/product/behavior-spec.md#demo-006",
+      "given": "сценарий none",
+      "when": "POST /api/search",
+      "then": "candidates равен []",
+      "status": "error",
+      "reason": "Go suite ended with code 1; this case has no individual result."
+    },
+    {
+      "id": "API-004",
+      "area": "api",
+      "title": "Synthetic backend failure is structured HTTP 503",
+      "source": "apps/api/README.md",
+      "spec": "docs/product/behavior-spec.md#demo-009",
+      "given": "сценарий error",
+      "when": "POST /api/search",
+      "then": "HTTP 503 содержит structured error",
+      "status": "error",
+      "reason": "Go suite ended with code 1; this case has no individual result."
+    },
+    {
+      "id": "API-005",
+      "area": "api",
+      "title": "Manual name or winery query filters case-insensitively",
+      "source": "apps/api/README.md",
+      "spec": "docs/product/behavior-spec.md#demo-010",
+      "given": "текст названия или винодельни",
+      "when": "POST /api/search",
+      "then": "поиск без учёта регистра",
+      "status": "error",
+      "reason": "Go suite ended with code 1; this case has no individual result."
+    },
+    {
+      "id": "API-006",
+      "area": "api",
+      "title": "Invalid input is a structured HTTP 400",
+      "source": "apps/api/README.md",
+      "spec": "docs/product/behavior-spec.md",
+      "given": "некорректный JSON или scenario",
+      "when": "POST /api/search",
+      "then": "HTTP 400 JSON error",
+      "status": "error",
+      "reason": "Go suite ended with code 1; this case has no individual result."
+    },
+    {
+      "id": "API-007",
+      "area": "api",
+      "title": "Method and unknown API route are JSON 4xx",
+      "source": "apps/api/README.md",
+      "spec": "docs/product/behavior-spec.md",
+      "given": "неверный method или API path",
+      "when": "запрос к API",
+      "then": "JSON HTTP 405 либо 404",
+      "status": "error",
+      "reason": "Go suite ended with code 1; this case has no individual result."
+    },
+    {
+      "id": "API-008",
+      "area": "api",
+      "title": "Health endpoint marks synthetic demo state",
+      "source": "apps/api/README.md",
+      "spec": "docs/product/behavior-spec.md",
+      "given": "сервер доступен",
+      "when": "GET /api/health",
+      "then": "ok и demo равны true",
+      "status": "error",
+      "reason": "Go suite ended with code 1; this case has no individual result."
+    },
+    {
+      "id": "API-009",
+      "area": "api",
+      "title": "WEB_ROOT serves static files and SPA fallback",
+      "source": "apps/api/README.md",
+      "spec": "reports/site/index.html",
+      "given": "задан WEB_ROOT",
+      "when": "GET file или client route",
+      "then": "файл либо index.html отданы",
+      "status": "error",
+      "reason": "Go suite ended with code 1; this case has no individual result."
+    },
+    {
+      "id": "UI-001",
+      "area": "web",
+      "title": "Welcome shows the scan entry",
+      "source": "apps/web/README.md; Wine UX Atlas",
+      "spec": "docs/product/behavior-spec.md#demo-001",
+      "given": "стартовый экран",
+      "when": "пользователь начинает путь",
+      "then": "есть вход в сканирование",
+      "status": "failed",
+      "durationMs": 105,
+      "durationText": "105 мс",
+      "reason": "Vitest-проверка: не пройдена (mobile behavior demo UI-001 to UI-002 starts from welcome and separates camera from gallery)",
+      "output": "TestingLibraryElementError: Unable to find an element with the text: /Наведите на этикетку/i. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.\n\nIgnored nodes: comments, script, style\n\u001b[36m<body>\u001b[39m\n  \u001b[36m<div>\u001b[39m\n    \u001b[36m<main\u001b[39m\n      \u001b[33mclass\u001b[39m=\u001b[32m\"app-shell\"\u001b[39m\n    \u001b[36m>\u001b[39m\n      \u001b[36m<section\u001b[39m\n        \u001b[33mclass\u001b[39m=\u001b[32m\"app\"\u001b[39m\n        \u001b[33mdata-testid\u001b[39m=\u001b[32m\"app\"\u001b[39m\n      \u001b[36m>\u001b[39m\n        \u001b[36m<div\u001b[39m\n          \u001b[33mclass\u001b[39m=\u001b[32m\"page\"\u001b[39m\n          \u001b[33mid\u001b[39m=\u001b[32m\"UI-003\"\u001b[39m\n        \u001b[36m>\u001b[39m\n          \u001b[36m<header\u001b[39m\n            \u001b[33mclass\u001b[39m=\u001b[32m\"top\"\u001b[39m\n          \u001b[36m>\u001b[39m\n            \u001b[36m<button\u001b[39m\n              \u001b[33maria-label\u001b[39m=\u001b[32m\"Назад\"\u001b[39m\n            \u001b[36m>\u001b[39m\n              \u001b[36m<svg\u001b[39m\n                \u001b[33mfill\u001b[39m=\u001b[32m\"currentColor\"\u001b[39m\n                \u001b[33mheight\u001b[39m=\u001b[32m\"1em\"\u001b[39m\n                \u001b[33mviewBox\u001b[39m=\u001b[32m\"0 0 256 256\"\u001b[39m\n                \u001b[33mwidth\u001b[39m=\u001b[32m\"1em\"\u001b[39m\n                \u001b[33mxmlns\u001b[39m=\u001b[32m\"http://www.w3.org/2000/svg\"\u001b[39m\n              \u001b[36m>\u001b[39m\n                \u001b[36m<path\u001b[39m\n                  \u001b[33md\u001b[39m=\u001b[32m\"M224,128a8,8,0,0,1-8,8H59.31l58.35,58.34a8,8,0,0,1-11.32,11.32l-72-72a8,8,0,0,1,0-11.32l72-72a8,8,0,0,1,11.32,11.32L59.31,120H216A8,8,0,0,1,224,128Z\"\u001b[39m\n                \u001b[36m/>\u001b[39m\n              \u001b[36m</svg>\u001b[39m\n            \u001b[36m</button>\u001b[39m\n            \u001b[36m<b>\u001b[39m\n              \u001b[0mДоступ к камере\u001b[0m\n            \u001b[36m</b>\u001b[39m\n            \u001b[36m<span />\u001b[39m\n          \u001b[36m</header>\u001b[39m\n          \u001b[36m<div\u001b[39m\n            \u001b[33mclass\u001b[39m=\u001b[32m\"state-icon\"\u001b[39m\n          \u001b[36m>\u001b[39m\n            \u001b[36m<svg\u001b[39m\n              \u001b[33mfill\u001b[39m=\u001b[32m\"currentColor\"\u001b[39m\n              \u001b[33mheight\u001b[39m=\u001b[32m\"1em\"\u001b[39m\n              \u001b[33mviewBox\u001b[39m=\u001b[32m\"0 0 256 256\"\u001b[39m\n              \u001b[33mwidth\u001b[39m=\u001b[32m\"1em\"\u001b[39m\n              \u001b[33mxmlns\u001b[39m=\u001b[32m\"http://www.w3.org/2000/svg\"\u001b[39m\n            \u001b[36m>\u001b[39m\n              \u001b[36m<path\u001b[39m\n                \u001b[33md\u001b[39m=\u001b[32m\"M208,56H180.28L166.65,35.56A8,8,0,0,0,160,32H96a8,8,0,0,0-6.65,3.56L75.71,56H48A24,24,0,0,0,24,80V192a24,24,0,0,0,24,24H208a24,24,0,0,0,24-24V80A24,24,0,0,0,208,56Zm8,136a8,8,0,0,1-8,8H48a8,8,0,0,1-8-8V80a8,8,0,0,1,8-8H80a8,8,0,0,0,6.66-3.56L100.28,48h55.43l13.63,20.44A8,8,0,0,0,176,72h32a8,8,0,0,1,8,8ZM128,88a44,44,0,1,0,44,44A44.05,44.05,0,0,0,128,88Zm0,72a28,28,0,1,1,28-28A28,28,0,0,1,128,160Z\"\u001b[39m\n              \u001b[36m/>\u001b[39m\n            \u001b[36m</svg>\u001b[39m\n          \u001b[36m</div>\u001b[39m\n          \u001b[36m<h2>\u001b[39m\n            \u001b[0mКамера недоступна\u001b[0m\n          \u001b[36m</h2>\u001b[39m\n          \u001b[36m<p>\u001b[39m\n            \u001b[0mМожно продолжить с фотографией из галереи или найти вино по названию.\u001b[0m\n          \u001b[36m</p>\u001b[39m\n          \u001b[36m<button\u001b[39m\n            \u001b[33mclass\u001b[39m=\u001b[32m\"primary\"\u001b[39m\n          \u001b[36m>\u001b[39m\n            \u001b[36m<svg\u001b[39m\n              \u001b[33mfill\u001b[39m=\u001b[32m\"currentColor\"\u001b[39m\n              \u001b[33mheight\u001b[39m=\u001b[32m\"1em\"\u001b[39m\n              \u001b[33mviewBox\u001b[39m=\u001b[32m\"0 0 256 256\"\u001b[39m\n              \u001b[33mwidth\u001b[39m=\u001b[32m\"1em\"\u001b[39m\n              \u001b[33mxmlns\u001b[39m=\u001b[32m\"http://www.w3.org/2000/svg\"\u001b[39m\n            \u001b[36m>\u001b[39m\n              \u001b[36m<path\u001b[39m\n                \u001b[33md\u001b[39m=\u001b[32m\"M208,32H48A16,16,0,0,0,32,48V208a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V48A16,16,0,0,0,208,32ZM48,48H208v77.38l-24.69-24.7a16,16,0,0,0-22.62,0L53.37,208H48ZM208,208H76l96-96,36,36v60ZM96,120A24,24,0,1,0,72,96,24,24,0,0,0,96,120Zm0-32a8,8,0,1,1-8,8A8,8,0,0,1,96,88Z\"\u001b[39m\n              \u001b[36m/>\u001b[39m\n            \u001b[36m</svg>\u001b[39m\n            \u001b[0mВыбрать фото\u001b[0m\n          \u001b[36m</button>\u001b[39m\n          \u001b[36m<button\u001b[39m\n            \u001b[33mclass\u001b[39m=\u001b[32m\"secondary\"\u001b[39m\n          \u001b[36m>\u001b[39m\n            \u001b[0mНайти по названию\u001b[0m\n          \u001b[36m</button>\u001b[39m\n        \u001b[36m</div>\u001b[39m\n        \u001b[36m<input\u001b[39m\n          \u001b[33maccept\u001b[39m=\u001b[32m\"image/*\"\u001b[39m\n          \u001b[33maria-label\u001b[39m=\u001b[32m\"Снять фотографию этикетки\"\u001b[39m\n          \u001b[33mcapture\u001b[39m=\u001b[32m\"environment\"\u001b[39m\n          \u001b[33mclass\u001b[39m=\u001b[32m\"visually-hidden\"\u001b[39m\n          \u001b[33mtype\u001b[39m=\u001b[32m\"file\"\u001b[39m\n        \u001b[36m/>\u001b[39m\n        \u001b[36m<input\u001b[39m\n          \u001b[33maccept\u001b[39m=\u001b[32m\"image/*\"\u001b[39m\n          \u001b[33maria-label\u001b[39m=\u001b[32m\"Загрузить фотографию этикетки\"\u001b[39m\n          \u001b[33mclass\u001b[39m=\u001b[32m\"visually-hidden\"\u001b[39m\n          \u001b[33mtype\u001b[39m=\u001b[32m\"file\"\u001b[39m\n        \u001b[36m/>\u001b[39m\n      \u001b[36m</section>\u001b[39m\n    \u001b[36m</main>\u001b[39m\n  \u001b[36m</div>\u001b[39m\n\u001b[36m</body>\u001b[39m\n    at Object.getElementError (/Users/skif/develop/brutforce-behavior-demo/apps/web/node_modules/@testing-library/dom/dist/config.js:37:19)\n    at /Users/skif/develop/brutforce-behavior-demo/apps/web/node_modules/@testing-library/dom/dist/query-helpers.js:76:38\n    at /Users/skif/develop/brutforce-behavior-demo/apps/web/node_modules/@testing-library/dom/dist/query-helpers.js:52:17\n    at /Users/skif/develop/brutforce-behavior-demo/apps/web/node_modules/@testing-library/dom/dist/query-helpers.js:95:19\n    at /Users/skif/develop/brutforce-behavior-demo/apps/web/src/App.test.tsx:16:267\n    at file:///Users/skif/develop/brutforce-behavior-demo/apps/web/node_modules/@vitest/runner/dist/chunk-hooks.js:752:20",
+      "tests": [
+        {
+          "name": "mobile behavior demo UI-001 to UI-002 starts from welcome and separates camera from gallery",
+          "status": "failed",
+          "durationMs": 105,
+          "durationText": "105 мс",
+          "output": "TestingLibraryElementError: Unable to find an element with the text: /Наведите на этикетку/i. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.\n\nIgnored nodes: comments, script, style\n\u001b[36m<body>\u001b[39m\n  \u001b[36m<div>\u001b[39m\n    \u001b[36m<main\u001b[39m\n      \u001b[33mclass\u001b[39m=\u001b[32m\"app-shell\"\u001b[39m\n    \u001b[36m>\u001b[39m\n      \u001b[36m<section\u001b[39m\n        \u001b[33mclass\u001b[39m=\u001b[32m\"app\"\u001b[39m\n        \u001b[33mdata-testid\u001b[39m=\u001b[32m\"app\"\u001b[39m\n      \u001b[36m>\u001b[39m\n        \u001b[36m<div\u001b[39m\n          \u001b[33mclass\u001b[39m=\u001b[32m\"page\"\u001b[39m\n          \u001b[33mid\u001b[39m=\u001b[32m\"UI-003\"\u001b[39m\n        \u001b[36m>\u001b[39m\n          \u001b[36m<header\u001b[39m\n            \u001b[33mclass\u001b[39m=\u001b[32m\"top\"\u001b[39m\n          \u001b[36m>\u001b[39m\n            \u001b[36m<button\u001b[39m\n              \u001b[33maria-label\u001b[39m=\u001b[32m\"Назад\"\u001b[39m\n            \u001b[36m>\u001b[39m\n              \u001b[36m<svg\u001b[39m\n                \u001b[33mfill\u001b[39m=\u001b[32m\"currentColor\"\u001b[39m\n                \u001b[33mheight\u001b[39m=\u001b[32m\"1em\"\u001b[39m\n                \u001b[33mviewBox\u001b[39m=\u001b[32m\"0 0 256 256\"\u001b[39m\n                \u001b[33mwidth\u001b[39m=\u001b[32m\"1em\"\u001b[39m\n                \u001b[33mxmlns\u001b[39m=\u001b[32m\"http://www.w3.org/2000/svg\"\u001b[39m\n              \u001b[36m>\u001b[39m\n                \u001b[36m<path\u001b[39m\n                  \u001b[33md\u001b[39m=\u001b[32m\"M224,128a8,8,0,0,1-8,8H59.31l58.35,58.34a8,8,0,0,1-11.32,11.32l-72-72a8,8,0,0,1,0-11.32l72-72a8,8,0,0,1,11.32,11.32L59.31,120H216A8,8,0,0,1,224,128Z\"\u001b[39m\n                \u001b[36m/>\u001b[39m\n              \u001b[36m</svg>\u001b[39m\n            \u001b[36m</button>\u001b[39m\n            \u001b[36m<b>\u001b[39m\n              \u001b[0mДоступ к камере\u001b[0m\n            \u001b[36m</b>\u001b[39m\n            \u001b[36m<span />\u001b[39m\n          \u001b[36m</header>\u001b[39m\n          \u001b[36m<div\u001b[39m\n            \u001b[33mclass\u001b[39m=\u001b[32m\"state-icon\"\u001b[39m\n          \u001b[36m>\u001b[39m\n            \u001b[36m<svg\u001b[39m\n              \u001b[33mfill\u001b[39m=\u001b[32m\"currentColor\"\u001b[39m\n              \u001b[33mheight\u001b[39m=\u001b[32m\"1em\"\u001b[39m\n              \u001b[33mviewBox\u001b[39m=\u001b[32m\"0 0 256 256\"\u001b[39m\n              \u001b[33mwidth\u001b[39m=\u001b[32m\"1em\"\u001b[39m\n              \u001b[33mxmlns\u001b[39m=\u001b[32m\"http://www.w3.org/2000/svg\"\u001b[39m\n            \u001b[36m>\u001b[39m\n              \u001b[36m<path\u001b[39m\n                \u001b[33md\u001b[39m=\u001b[32m\"M208,56H180.28L166.65,35.56A8,8,0,0,0,160,32H96a8,8,0,0,0-6.65,3.56L75.71,56H48A24,24,0,0,0,24,80V192a24,24,0,0,0,24,24H208a24,24,0,0,0,24-24V80A24,24,0,0,0,208,56Zm8,136a8,8,0,0,1-8,8H48a8,8,0,0,1-8-8V80a8,8,0,0,1,8-8H80a8,8,0,0,0,6.66-3.56L100.28,48h55.43l13.63,20.44A8,8,0,0,0,176,72h32a8,8,0,0,1,8,8ZM128,88a44,44,0,1,0,44,44A44.05,44.05,0,0,0,128,88Zm0,72a28,28,0,1,1,28-28A28,28,0,0,1,128,160Z\"\u001b[39m\n              \u001b[36m/>\u001b[39m\n            \u001b[36m</svg>\u001b[39m\n          \u001b[36m</div>\u001b[39m\n          \u001b[36m<h2>\u001b[39m\n            \u001b[0mКамера недоступна\u001b[0m\n          \u001b[36m</h2>\u001b[39m\n          \u001b[36m<p>\u001b[39m\n            \u001b[0mМожно продолжить с фотографией из галереи или найти вино по названию.\u001b[0m\n          \u001b[36m</p>\u001b[39m\n          \u001b[36m<button\u001b[39m\n            \u001b[33mclass\u001b[39m=\u001b[32m\"primary\"\u001b[39m\n          \u001b[36m>\u001b[39m\n            \u001b[36m<svg\u001b[39m\n              \u001b[33mfill\u001b[39m=\u001b[32m\"currentColor\"\u001b[39m\n              \u001b[33mheight\u001b[39m=\u001b[32m\"1em\"\u001b[39m\n              \u001b[33mviewBox\u001b[39m=\u001b[32m\"0 0 256 256\"\u001b[39m\n              \u001b[33mwidth\u001b[39m=\u001b[32m\"1em\"\u001b[39m\n              \u001b[33mxmlns\u001b[39m=\u001b[32m\"http://www.w3.org/2000/svg\"\u001b[39m\n            \u001b[36m>\u001b[39m\n              \u001b[36m<path\u001b[39m\n                \u001b[33md\u001b[39m=\u001b[32m\"M208,32H48A16,16,0,0,0,32,48V208a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V48A16,16,0,0,0,208,32ZM48,48H208v77.38l-24.69-24.7a16,16,0,0,0-22.62,0L53.37,208H48ZM208,208H76l96-96,36,36v60ZM96,120A24,24,0,1,0,72,96,24,24,0,0,0,96,120Zm0-32a8,8,0,1,1-8,8A8,8,0,0,1,96,88Z\"\u001b[39m\n              \u001b[36m/>\u001b[39m\n            \u001b[36m</svg>\u001b[39m\n            \u001b[0mВыбрать фото\u001b[0m\n          \u001b[36m</button>\u001b[39m\n          \u001b[36m<button\u001b[39m\n            \u001b[33mclass\u001b[39m=\u001b[32m\"secondary\"\u001b[39m\n          \u001b[36m>\u001b[39m\n            \u001b[0mНайти по названию\u001b[0m\n          \u001b[36m</button>\u001b[39m\n        \u001b[36m</div>\u001b[39m\n        \u001b[36m<input\u001b[39m\n          \u001b[33maccept\u001b[39m=\u001b[32m\"image/*\"\u001b[39m\n          \u001b[33maria-label\u001b[39m=\u001b[32m\"Снять фотографию этикетки\"\u001b[39m\n          \u001b[33mcapture\u001b[39m=\u001b[32m\"environment\"\u001b[39m\n          \u001b[33mclass\u001b[39m=\u001b[32m\"visually-hidden\"\u001b[39m\n          \u001b[33mtype\u001b[39m=\u001b[32m\"file\"\u001b[39m\n        \u001b[36m/>\u001b[39m\n        \u001b[36m<input\u001b[39m\n          \u001b[33maccept\u001b[39m=\u001b[32m\"image/*\"\u001b[39m\n          \u001b[33maria-label\u001b[39m=\u001b[32m\"Загрузить фотографию этикетки\"\u001b[39m\n          \u001b[33mclass\u001b[39m=\u001b[32m\"visually-hidden\"\u001b[39m\n          \u001b[33mtype\u001b[39m=\u001b[32m\"file\"\u001b[39m\n        \u001b[36m/>\u001b[39m\n      \u001b[36m</section>\u001b[39m\n    \u001b[36m</main>\u001b[39m\n  \u001b[36m</div>\u001b[39m\n\u001b[36m</body>\u001b[39m\n    at Object.getElementError (/Users/skif/develop/brutforce-behavior-demo/apps/web/node_modules/@testing-library/dom/dist/config.js:37:19)\n    at /Users/skif/develop/brutforce-behavior-demo/apps/web/node_modules/@testing-library/dom/dist/query-helpers.js:76:38\n    at /Users/skif/develop/brutforce-behavior-demo/apps/web/node_modules/@testing-library/dom/dist/query-helpers.js:52:17\n    at /Users/skif/develop/brutforce-behavior-demo/apps/web/node_modules/@testing-library/dom/dist/query-helpers.js:95:19\n    at /Users/skif/develop/brutforce-behavior-demo/apps/web/src/App.test.tsx:16:267\n    at file:///Users/skif/develop/brutforce-behavior-demo/apps/web/node_modules/@vitest/runner/dist/chunk-hooks.js:752:20"
+        }
+      ]
+    },
+    {
+      "id": "UI-002",
+      "area": "web",
+      "title": "Scan entry opens simulated camera guidance",
+      "source": "apps/web/README.md; Wine UX Atlas",
+      "spec": "docs/product/behavior-spec.md#demo-001",
+      "given": "пользователь выбрал сканирование",
+      "when": "переход UI",
+      "then": "есть камера/выбор файла",
+      "status": "failed",
+      "durationMs": 105,
+      "durationText": "105 мс",
+      "reason": "Vitest-проверка: не пройдена (mobile behavior demo UI-001 to UI-002 starts from welcome and separates camera from gallery)",
+      "output": "TestingLibraryElementError: Unable to find an element with the text: /Наведите на этикетку/i. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.\n\nIgnored nodes: comments, script, style\n\u001b[36m<body>\u001b[39m\n  \u001b[36m<div>\u001b[39m\n    \u001b[36m<main\u001b[39m\n      \u001b[33mclass\u001b[39m=\u001b[32m\"app-shell\"\u001b[39m\n    \u001b[36m>\u001b[39m\n      \u001b[36m<section\u001b[39m\n        \u001b[33mclass\u001b[39m=\u001b[32m\"app\"\u001b[39m\n        \u001b[33mdata-testid\u001b[39m=\u001b[32m\"app\"\u001b[39m\n      \u001b[36m>\u001b[39m\n        \u001b[36m<div\u001b[39m\n          \u001b[33mclass\u001b[39m=\u001b[32m\"page\"\u001b[39m\n          \u001b[33mid\u001b[39m=\u001b[32m\"UI-003\"\u001b[39m\n        \u001b[36m>\u001b[39m\n          \u001b[36m<header\u001b[39m\n            \u001b[33mclass\u001b[39m=\u001b[32m\"top\"\u001b[39m\n          \u001b[36m>\u001b[39m\n            \u001b[36m<button\u001b[39m\n              \u001b[33maria-label\u001b[39m=\u001b[32m\"Назад\"\u001b[39m\n            \u001b[36m>\u001b[39m\n              \u001b[36m<svg\u001b[39m\n                \u001b[33mfill\u001b[39m=\u001b[32m\"currentColor\"\u001b[39m\n                \u001b[33mheight\u001b[39m=\u001b[32m\"1em\"\u001b[39m\n                \u001b[33mviewBox\u001b[39m=\u001b[32m\"0 0 256 256\"\u001b[39m\n                \u001b[33mwidth\u001b[39m=\u001b[32m\"1em\"\u001b[39m\n                \u001b[33mxmlns\u001b[39m=\u001b[32m\"http://www.w3.org/2000/svg\"\u001b[39m\n              \u001b[36m>\u001b[39m\n                \u001b[36m<path\u001b[39m\n                  \u001b[33md\u001b[39m=\u001b[32m\"M224,128a8,8,0,0,1-8,8H59.31l58.35,58.34a8,8,0,0,1-11.32,11.32l-72-72a8,8,0,0,1,0-11.32l72-72a8,8,0,0,1,11.32,11.32L59.31,120H216A8,8,0,0,1,224,128Z\"\u001b[39m\n                \u001b[36m/>\u001b[39m\n              \u001b[36m</svg>\u001b[39m\n            \u001b[36m</button>\u001b[39m\n            \u001b[36m<b>\u001b[39m\n              \u001b[0mДоступ к камере\u001b[0m\n            \u001b[36m</b>\u001b[39m\n            \u001b[36m<span />\u001b[39m\n          \u001b[36m</header>\u001b[39m\n          \u001b[36m<div\u001b[39m\n            \u001b[33mclass\u001b[39m=\u001b[32m\"state-icon\"\u001b[39m\n          \u001b[36m>\u001b[39m\n            \u001b[36m<svg\u001b[39m\n              \u001b[33mfill\u001b[39m=\u001b[32m\"currentColor\"\u001b[39m\n              \u001b[33mheight\u001b[39m=\u001b[32m\"1em\"\u001b[39m\n              \u001b[33mviewBox\u001b[39m=\u001b[32m\"0 0 256 256\"\u001b[39m\n              \u001b[33mwidth\u001b[39m=\u001b[32m\"1em\"\u001b[39m\n              \u001b[33mxmlns\u001b[39m=\u001b[32m\"http://www.w3.org/2000/svg\"\u001b[39m\n            \u001b[36m>\u001b[39m\n              \u001b[36m<path\u001b[39m\n                \u001b[33md\u001b[39m=\u001b[32m\"M208,56H180.28L166.65,35.56A8,8,0,0,0,160,32H96a8,8,0,0,0-6.65,3.56L75.71,56H48A24,24,0,0,0,24,80V192a24,24,0,0,0,24,24H208a24,24,0,0,0,24-24V80A24,24,0,0,0,208,56Zm8,136a8,8,0,0,1-8,8H48a8,8,0,0,1-8-8V80a8,8,0,0,1,8-8H80a8,8,0,0,0,6.66-3.56L100.28,48h55.43l13.63,20.44A8,8,0,0,0,176,72h32a8,8,0,0,1,8,8ZM128,88a44,44,0,1,0,44,44A44.05,44.05,0,0,0,128,88Zm0,72a28,28,0,1,1,28-28A28,28,0,0,1,128,160Z\"\u001b[39m\n              \u001b[36m/>\u001b[39m\n            \u001b[36m</svg>\u001b[39m\n          \u001b[36m</div>\u001b[39m\n          \u001b[36m<h2>\u001b[39m\n            \u001b[0mКамера недоступна\u001b[0m\n          \u001b[36m</h2>\u001b[39m\n          \u001b[36m<p>\u001b[39m\n            \u001b[0mМожно продолжить с фотографией из галереи или найти вино по названию.\u001b[0m\n          \u001b[36m</p>\u001b[39m\n          \u001b[36m<button\u001b[39m\n            \u001b[33mclass\u001b[39m=\u001b[32m\"primary\"\u001b[39m\n          \u001b[36m>\u001b[39m\n            \u001b[36m<svg\u001b[39m\n              \u001b[33mfill\u001b[39m=\u001b[32m\"currentColor\"\u001b[39m\n              \u001b[33mheight\u001b[39m=\u001b[32m\"1em\"\u001b[39m\n              \u001b[33mviewBox\u001b[39m=\u001b[32m\"0 0 256 256\"\u001b[39m\n              \u001b[33mwidth\u001b[39m=\u001b[32m\"1em\"\u001b[39m\n              \u001b[33mxmlns\u001b[39m=\u001b[32m\"http://www.w3.org/2000/svg\"\u001b[39m\n            \u001b[36m>\u001b[39m\n              \u001b[36m<path\u001b[39m\n                \u001b[33md\u001b[39m=\u001b[32m\"M208,32H48A16,16,0,0,0,32,48V208a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V48A16,16,0,0,0,208,32ZM48,48H208v77.38l-24.69-24.7a16,16,0,0,0-22.62,0L53.37,208H48ZM208,208H76l96-96,36,36v60ZM96,120A24,24,0,1,0,72,96,24,24,0,0,0,96,120Zm0-32a8,8,0,1,1-8,8A8,8,0,0,1,96,88Z\"\u001b[39m\n              \u001b[36m/>\u001b[39m\n            \u001b[36m</svg>\u001b[39m\n            \u001b[0mВыбрать фото\u001b[0m\n          \u001b[36m</button>\u001b[39m\n          \u001b[36m<button\u001b[39m\n            \u001b[33mclass\u001b[39m=\u001b[32m\"secondary\"\u001b[39m\n          \u001b[36m>\u001b[39m\n            \u001b[0mНайти по названию\u001b[0m\n          \u001b[36m</button>\u001b[39m\n        \u001b[36m</div>\u001b[39m\n        \u001b[36m<input\u001b[39m\n          \u001b[33maccept\u001b[39m=\u001b[32m\"image/*\"\u001b[39m\n          \u001b[33maria-label\u001b[39m=\u001b[32m\"Снять фотографию этикетки\"\u001b[39m\n          \u001b[33mcapture\u001b[39m=\u001b[32m\"environment\"\u001b[39m\n          \u001b[33mclass\u001b[39m=\u001b[32m\"visually-hidden\"\u001b[39m\n          \u001b[33mtype\u001b[39m=\u001b[32m\"file\"\u001b[39m\n        \u001b[36m/>\u001b[39m\n        \u001b[36m<input\u001b[39m\n          \u001b[33maccept\u001b[39m=\u001b[32m\"image/*\"\u001b[39m\n          \u001b[33maria-label\u001b[39m=\u001b[32m\"Загрузить фотографию этикетки\"\u001b[39m\n          \u001b[33mclass\u001b[39m=\u001b[32m\"visually-hidden\"\u001b[39m\n          \u001b[33mtype\u001b[39m=\u001b[32m\"file\"\u001b[39m\n        \u001b[36m/>\u001b[39m\n      \u001b[36m</section>\u001b[39m\n    \u001b[36m</main>\u001b[39m\n  \u001b[36m</div>\u001b[39m\n\u001b[36m</body>\u001b[39m\n    at Object.getElementError (/Users/skif/develop/brutforce-behavior-demo/apps/web/node_modules/@testing-library/dom/dist/config.js:37:19)\n    at /Users/skif/develop/brutforce-behavior-demo/apps/web/node_modules/@testing-library/dom/dist/query-helpers.js:76:38\n    at /Users/skif/develop/brutforce-behavior-demo/apps/web/node_modules/@testing-library/dom/dist/query-helpers.js:52:17\n    at /Users/skif/develop/brutforce-behavior-demo/apps/web/node_modules/@testing-library/dom/dist/query-helpers.js:95:19\n    at /Users/skif/develop/brutforce-behavior-demo/apps/web/src/App.test.tsx:16:267\n    at file:///Users/skif/develop/brutforce-behavior-demo/apps/web/node_modules/@vitest/runner/dist/chunk-hooks.js:752:20",
+      "tests": [
+        {
+          "name": "mobile behavior demo UI-001 to UI-002 starts from welcome and separates camera from gallery",
+          "status": "failed",
+          "durationMs": 105,
+          "durationText": "105 мс",
+          "output": "TestingLibraryElementError: Unable to find an element with the text: /Наведите на этикетку/i. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.\n\nIgnored nodes: comments, script, style\n\u001b[36m<body>\u001b[39m\n  \u001b[36m<div>\u001b[39m\n    \u001b[36m<main\u001b[39m\n      \u001b[33mclass\u001b[39m=\u001b[32m\"app-shell\"\u001b[39m\n    \u001b[36m>\u001b[39m\n      \u001b[36m<section\u001b[39m\n        \u001b[33mclass\u001b[39m=\u001b[32m\"app\"\u001b[39m\n        \u001b[33mdata-testid\u001b[39m=\u001b[32m\"app\"\u001b[39m\n      \u001b[36m>\u001b[39m\n        \u001b[36m<div\u001b[39m\n          \u001b[33mclass\u001b[39m=\u001b[32m\"page\"\u001b[39m\n          \u001b[33mid\u001b[39m=\u001b[32m\"UI-003\"\u001b[39m\n        \u001b[36m>\u001b[39m\n          \u001b[36m<header\u001b[39m\n            \u001b[33mclass\u001b[39m=\u001b[32m\"top\"\u001b[39m\n          \u001b[36m>\u001b[39m\n            \u001b[36m<button\u001b[39m\n              \u001b[33maria-label\u001b[39m=\u001b[32m\"Назад\"\u001b[39m\n            \u001b[36m>\u001b[39m\n              \u001b[36m<svg\u001b[39m\n                \u001b[33mfill\u001b[39m=\u001b[32m\"currentColor\"\u001b[39m\n                \u001b[33mheight\u001b[39m=\u001b[32m\"1em\"\u001b[39m\n                \u001b[33mviewBox\u001b[39m=\u001b[32m\"0 0 256 256\"\u001b[39m\n                \u001b[33mwidth\u001b[39m=\u001b[32m\"1em\"\u001b[39m\n                \u001b[33mxmlns\u001b[39m=\u001b[32m\"http://www.w3.org/2000/svg\"\u001b[39m\n              \u001b[36m>\u001b[39m\n                \u001b[36m<path\u001b[39m\n                  \u001b[33md\u001b[39m=\u001b[32m\"M224,128a8,8,0,0,1-8,8H59.31l58.35,58.34a8,8,0,0,1-11.32,11.32l-72-72a8,8,0,0,1,0-11.32l72-72a8,8,0,0,1,11.32,11.32L59.31,120H216A8,8,0,0,1,224,128Z\"\u001b[39m\n                \u001b[36m/>\u001b[39m\n              \u001b[36m</svg>\u001b[39m\n            \u001b[36m</button>\u001b[39m\n            \u001b[36m<b>\u001b[39m\n              \u001b[0mДоступ к камере\u001b[0m\n            \u001b[36m</b>\u001b[39m\n            \u001b[36m<span />\u001b[39m\n          \u001b[36m</header>\u001b[39m\n          \u001b[36m<div\u001b[39m\n            \u001b[33mclass\u001b[39m=\u001b[32m\"state-icon\"\u001b[39m\n          \u001b[36m>\u001b[39m\n            \u001b[36m<svg\u001b[39m\n              \u001b[33mfill\u001b[39m=\u001b[32m\"currentColor\"\u001b[39m\n              \u001b[33mheight\u001b[39m=\u001b[32m\"1em\"\u001b[39m\n              \u001b[33mviewBox\u001b[39m=\u001b[32m\"0 0 256 256\"\u001b[39m\n              \u001b[33mwidth\u001b[39m=\u001b[32m\"1em\"\u001b[39m\n              \u001b[33mxmlns\u001b[39m=\u001b[32m\"http://www.w3.org/2000/svg\"\u001b[39m\n            \u001b[36m>\u001b[39m\n              \u001b[36m<path\u001b[39m\n                \u001b[33md\u001b[39m=\u001b[32m\"M208,56H180.28L166.65,35.56A8,8,0,0,0,160,32H96a8,8,0,0,0-6.65,3.56L75.71,56H48A24,24,0,0,0,24,80V192a24,24,0,0,0,24,24H208a24,24,0,0,0,24-24V80A24,24,0,0,0,208,56Zm8,136a8,8,0,0,1-8,8H48a8,8,0,0,1-8-8V80a8,8,0,0,1,8-8H80a8,8,0,0,0,6.66-3.56L100.28,48h55.43l13.63,20.44A8,8,0,0,0,176,72h32a8,8,0,0,1,8,8ZM128,88a44,44,0,1,0,44,44A44.05,44.05,0,0,0,128,88Zm0,72a28,28,0,1,1,28-28A28,28,0,0,1,128,160Z\"\u001b[39m\n              \u001b[36m/>\u001b[39m\n            \u001b[36m</svg>\u001b[39m\n          \u001b[36m</div>\u001b[39m\n          \u001b[36m<h2>\u001b[39m\n            \u001b[0mКамера недоступна\u001b[0m\n          \u001b[36m</h2>\u001b[39m\n          \u001b[36m<p>\u001b[39m\n            \u001b[0mМожно продолжить с фотографией из галереи или найти вино по названию.\u001b[0m\n          \u001b[36m</p>\u001b[39m\n          \u001b[36m<button\u001b[39m\n            \u001b[33mclass\u001b[39m=\u001b[32m\"primary\"\u001b[39m\n          \u001b[36m>\u001b[39m\n            \u001b[36m<svg\u001b[39m\n              \u001b[33mfill\u001b[39m=\u001b[32m\"currentColor\"\u001b[39m\n              \u001b[33mheight\u001b[39m=\u001b[32m\"1em\"\u001b[39m\n              \u001b[33mviewBox\u001b[39m=\u001b[32m\"0 0 256 256\"\u001b[39m\n              \u001b[33mwidth\u001b[39m=\u001b[32m\"1em\"\u001b[39m\n              \u001b[33mxmlns\u001b[39m=\u001b[32m\"http://www.w3.org/2000/svg\"\u001b[39m\n            \u001b[36m>\u001b[39m\n              \u001b[36m<path\u001b[39m\n                \u001b[33md\u001b[39m=\u001b[32m\"M208,32H48A16,16,0,0,0,32,48V208a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V48A16,16,0,0,0,208,32ZM48,48H208v77.38l-24.69-24.7a16,16,0,0,0-22.62,0L53.37,208H48ZM208,208H76l96-96,36,36v60ZM96,120A24,24,0,1,0,72,96,24,24,0,0,0,96,120Zm0-32a8,8,0,1,1-8,8A8,8,0,0,1,96,88Z\"\u001b[39m\n              \u001b[36m/>\u001b[39m\n            \u001b[36m</svg>\u001b[39m\n            \u001b[0mВыбрать фото\u001b[0m\n          \u001b[36m</button>\u001b[39m\n          \u001b[36m<button\u001b[39m\n            \u001b[33mclass\u001b[39m=\u001b[32m\"secondary\"\u001b[39m\n          \u001b[36m>\u001b[39m\n            \u001b[0mНайти по названию\u001b[0m\n          \u001b[36m</button>\u001b[39m\n        \u001b[36m</div>\u001b[39m\n        \u001b[36m<input\u001b[39m\n          \u001b[33maccept\u001b[39m=\u001b[32m\"image/*\"\u001b[39m\n          \u001b[33maria-label\u001b[39m=\u001b[32m\"Снять фотографию этикетки\"\u001b[39m\n          \u001b[33mcapture\u001b[39m=\u001b[32m\"environment\"\u001b[39m\n          \u001b[33mclass\u001b[39m=\u001b[32m\"visually-hidden\"\u001b[39m\n          \u001b[33mtype\u001b[39m=\u001b[32m\"file\"\u001b[39m\n        \u001b[36m/>\u001b[39m\n        \u001b[36m<input\u001b[39m\n          \u001b[33maccept\u001b[39m=\u001b[32m\"image/*\"\u001b[39m\n          \u001b[33maria-label\u001b[39m=\u001b[32m\"Загрузить фотографию этикетки\"\u001b[39m\n          \u001b[33mclass\u001b[39m=\u001b[32m\"visually-hidden\"\u001b[39m\n          \u001b[33mtype\u001b[39m=\u001b[32m\"file\"\u001b[39m\n        \u001b[36m/>\u001b[39m\n      \u001b[36m</section>\u001b[39m\n    \u001b[36m</main>\u001b[39m\n  \u001b[36m</div>\u001b[39m\n\u001b[36m</body>\u001b[39m\n    at Object.getElementError (/Users/skif/develop/brutforce-behavior-demo/apps/web/node_modules/@testing-library/dom/dist/config.js:37:19)\n    at /Users/skif/develop/brutforce-behavior-demo/apps/web/node_modules/@testing-library/dom/dist/query-helpers.js:76:38\n    at /Users/skif/develop/brutforce-behavior-demo/apps/web/node_modules/@testing-library/dom/dist/query-helpers.js:52:17\n    at /Users/skif/develop/brutforce-behavior-demo/apps/web/node_modules/@testing-library/dom/dist/query-helpers.js:95:19\n    at /Users/skif/develop/brutforce-behavior-demo/apps/web/src/App.test.tsx:16:267\n    at file:///Users/skif/develop/brutforce-behavior-demo/apps/web/node_modules/@vitest/runner/dist/chunk-hooks.js:752:20"
+        }
+      ]
+    },
+    {
+      "id": "UI-003",
+      "area": "web",
+      "title": "Camera permission denial exposes gallery fallback",
+      "source": "apps/web/README.md; Wine UX Atlas",
+      "spec": "docs/product/behavior-spec.md#demo-008",
+      "given": "камера запрещена",
+      "when": "пользователь начинает путь",
+      "then": "доступны fallback действия",
+      "status": "passed",
+      "durationMs": 26,
+      "durationText": "26 мс",
+      "reason": "Vitest-проверка: пройдена (mobile behavior demo UI-003 offers fallbacks after permission denial)",
+      "output": "",
+      "tests": [
+        {
+          "name": "mobile behavior demo UI-003 offers fallbacks after permission denial",
+          "status": "passed",
+          "durationMs": 26,
+          "durationText": "26 мс",
+          "output": ""
+        }
+      ]
+    },
+    {
+      "id": "UI-004",
+      "area": "web",
+      "title": "Searching state is cancellable",
+      "source": "apps/web/README.md; Wine UX Atlas",
+      "spec": "docs/product/behavior-spec.md#demo-005",
+      "given": "поиск не завершился",
+      "when": "пользователь отменяет",
+      "then": "видно отменённое состояние",
+      "status": "passed",
+      "durationMs": 43,
+      "durationText": "43 мс",
+      "reason": "Vitest-проверка: пройдена (mobile behavior demo UI-004 shows deterministic long wait and allows cancel)",
+      "output": "",
+      "tests": [
+        {
+          "name": "mobile behavior demo UI-004 shows deterministic long wait and allows cancel",
+          "status": "passed",
+          "durationMs": 43,
+          "durationText": "43 мс",
+          "output": ""
+        }
+      ]
+    },
+    {
+      "id": "UI-005",
+      "area": "web",
+      "title": "Cancelled search stays retryable",
+      "source": "apps/web/README.md; Wine UX Atlas",
+      "spec": "docs/product/behavior-spec.md#demo-005",
+      "given": "поиск отменён",
+      "when": "пользователь повторяет",
+      "then": "сценарий и query сохранены",
+      "status": "passed",
+      "durationMs": 76,
+      "durationText": "76 мс",
+      "reason": "Vitest-проверка: пройдена (mobile behavior demo UI-005 retry preserves scenario and query)",
+      "output": "",
+      "tests": [
+        {
+          "name": "mobile behavior demo cancelled stale response cannot leave UI-005",
+          "status": "passed",
+          "durationMs": 72,
+          "durationText": "72 мс",
+          "output": ""
+        },
+        {
+          "name": "mobile behavior demo UI-005 retry preserves scenario and query",
+          "status": "passed",
+          "durationMs": 76,
+          "durationText": "76 мс",
+          "output": ""
+        }
+      ]
+    },
+    {
+      "id": "UI-006",
+      "area": "web",
+      "title": "Uncertain result exposes correction candidates",
+      "source": "apps/web/README.md; Wine UX Atlas",
+      "spec": "docs/product/behavior-spec.md#demo-004",
+      "given": "API вернул кандидатов",
+      "when": "пользователь исправляет ответ",
+      "then": "можно выбрать другой результат",
+      "status": "passed",
+      "durationMs": 100,
+      "durationText": "100 мс",
+      "reason": "Vitest-проверка: пройдена (mobile behavior demo UI-006 opens original photo, corrects result, and does not reuse another wine image)",
+      "output": "",
+      "tests": [
+        {
+          "name": "mobile behavior demo UI-006 opens original photo, corrects result, and does not reuse another wine image",
+          "status": "passed",
+          "durationMs": 100,
+          "durationText": "100 мс",
+          "output": ""
+        }
+      ]
+    },
+    {
+      "id": "UI-007",
+      "area": "web",
+      "title": "Exact result opens synthetic wine details",
+      "source": "apps/web/README.md; Wine UX Atlas",
+      "spec": "docs/product/behavior-spec.md#demo-003",
+      "given": "mocked API вернул exact shape",
+      "when": "React применяет ответ",
+      "then": "видны synthetic details",
+      "status": "failed",
+      "durationMs": 1020,
+      "durationText": "1020 мс",
+      "reason": "Vitest-проверка: не пройдена (mobile behavior demo upload preview reaches UI-007 with a numeric year)",
+      "output": "Error: Unable to find role=\"heading\" and name \"Каберне Совиньон\"\n\nIgnored nodes: comments, script, style\n\u001b[36m<body>\u001b[39m\n  \u001b[36m<div>\u001b[39m\n    \u001b[36m<main\u001b[39m\n      \u001b[33mclass\u001b[39m=\u001b[32m\"app-shell\"\u001b[39m\n    \u001b[36m>\u001b[39m\n      \u001b[36m<section\u001b[39m\n        \u001b[33mclass\u001b[39m=\u001b[32m\"app\"\u001b[39m\n        \u001b[33mdata-testid\u001b[39m=\u001b[32m\"app\"\u001b[39m\n      \u001b[36m>\u001b[39m\n        \u001b[36m<div\u001b[39m\n          \u001b[33mclass\u001b[39m=\u001b[32m\"page\"\u001b[39m\n          \u001b[33mid\u001b[39m=\u001b[32m\"UI-010\"\u001b[39m\n        \u001b[36m>\u001b[39m\n          \u001b[36m<header\u001b[39m\n            \u001b[33mclass\u001b[39m=\u001b[32m\"top\"\u001b[39m\n          \u001b[36m>\u001b[39m\n            \u001b[36m<button\u001b[39m\n              \u001b[33maria-label\u001b[39m=\u001b[32m\"Назад\"\u001b[39m\n            \u001b[36m>\u001b[39m\n              \u001b[36m<svg\u001b[39m\n                \u001b[33mfill\u001b[39m=\u001b[32m\"currentColor\"\u001b[39m\n                \u001b[33mheight\u001b[39m=\u001b[32m\"1em\"\u001b[39m\n                \u001b[33mviewBox\u001b[39m=\u001b[32m\"0 0 256 256\"\u001b[39m\n                \u001b[33mwidth\u001b[39m=\u001b[32m\"1em\"\u001b[39m\n                \u001b[33mxmlns\u001b[39m=\u001b[32m\"http://www.w3.org/2000/svg\"\u001b[39m\n              \u001b[36m>\u001b[39m\n                \u001b[36m<path\u001b[39m\n                  \u001b[33md\u001b[39m=\u001b[32m\"M224,128a8,8,0,0,1-8,8H59.31l58.35,58.34a8,8,0,0,1-11.32,11.32l-72-72a8,8,0,0,1,0-11.32l72-72a8,8,0,0,1,11.32,11.32L59.31,120H216A8,8,0,0,1,224,128Z\"\u001b[39m\n                \u001b[36m/>\u001b[39m\n              \u001b[36m</svg>\u001b[39m\n            \u001b[36m</button>\u001b[39m\n            \u001b[36m<b>\u001b[39m\n              \u001b[0mОшибка поиска\u001b[0m\n            \u001b[36m</b>\u001b[39m\n            \u001b[36m<span />\u001b[39m\n          \u001b[36m</header>\u001b[39m\n          \u001b[36m<div\u001b[39m\n            \u001b[33mclass\u001b[39m=\u001b[32m\"state-icon\"\u001b[39m\n          \u001b[36m>\u001b[39m\n            \u001b[36m<svg\u001b[39m\n              \u001b[33mfill\u001b[39m=\u001b[32m\"currentColor\"\u001b[39m\n              \u001b[33mheight\u001b[39m=\u001b[32m\"1em\"\u001b[39m\n              \u001b[33mviewBox\u001b[39m=\u001b[32m\"0 0 256 256\"\u001b[39m\n              \u001b[33mwidth\u001b[39m=\u001b[32m\"1em\"\u001b[39m\n              \u001b[33mxmlns\u001b[39m=\u001b[32m\"http://www.w3.org/2000/svg\"\u001b[39m\n            \u001b[36m>\u001b[39m\n              \u001b[36m<path\u001b[39m\n                \u001b[33md\u001b[39m=\u001b[32m\"M205.66,194.34a8,8,0,0,1-11.32,11.32L128,139.31,61.66,205.66a8,8,0,0,1-11.32-11.32L116.69,128,50.34,61.66A8,8,0,0,1,61.66,50.34L128,116.69l66.34-66.35a8,8,0,0,1,11.32,11.32L139.31,128Z\"\u001b[39m\n              \u001b[36m/>\u001b[39m\n            \u001b[36m</svg>\u001b[39m\n          \u001b[36m</div>\u001b[39m\n          \u001b[36m<h2>\u001b[39m\n            \u001b[0mНе удалось выполнить поиск\u001b[0m\n          \u001b[36m</h2>\u001b[39m\n          \u001b[36m<p>\u001b[39m\n            \u001b[0mСервис не ответил. Ваш снимок остаётся на этом устройстве.\u001b[0m\n          \u001b[36m</p>\u001b[39m\n          \u001b[36m<button\u001b[39m\n            \u001b[33mclass\u001b[39m=\u001b[32m\"primary\"\u001b[39m\n          \u001b[36m>\u001b[39m\n            \u001b[0mПовторить запрос\u001b[0m\n          \u001b[36m</button>\u001b[39m\n          \u001b[36m<button\u001b[39m\n            \u001b[33mclass\u001b[39m=\u001b[32m\"secondary\"\u001b[39m\n          \u001b[36m>\u001b[39m\n            \u001b[0mНа главную\u001b[0m\n          \u001b[36m</button>\u001b[39m\n        \u001b[36m</div>\u001b[39m\n        \u001b[36m<input\u001b[39m\n          \u001b[33maccept\u001b[39m=\u001b[32m\"image/*\"\u001b[39m\n          \u001b[33maria-label\u001b[39m=\u001b[32m\"Снять фотографию этикетки\"\u001b[39m\n          \u001b[33mcapture\u001b[39m=\u001b[32m\"environment\"\u001b[39m\n          \u001b[33mclass\u001b[39m=\u001b[32m\"visually-hidden\"\u001b[39m\n          \u001b[33mtype\u001b[39m=\u001b[32m\"file\"\u001b[39m\n        \u001b[36m/>\u001b[39m\n        \u001b[36m<input\u001b[39m\n          \u001b[33maccept\u001b[39m=\u001b[32m\"image/*\"\u001b[39m\n          \u001b[33maria-label\u001b[39m=\u001b[32m\"Загрузить фотографию этикетки\"\u001b[39m\n          \u001b[33mclass\u001b[39m=\u001b[32m\"visually-hidden\"\u001b[39m\n          \u001b[33mtype\u001b[39m=\u001b[32m\"file\"\u001b[39m\n        \u001b[36m/>\u001b[39m\n      \u001b[36m</section>\u001b[39m\n    \u001b[36m</main>\u001b[39m\n  \u001b[36m</div>\u001b[39m\n\u001b[36m</body>\u001b[39m\n    at waitForWrapper (/Users/skif/develop/brutforce-behavior-demo/apps/web/node_modules/@testing-library/dom/dist/wait-for.js:163:27)\n    at /Users/skif/develop/brutforce-behavior-demo/apps/web/src/App.test.tsx:18:325\n    at file:///Users/skif/develop/brutforce-behavior-demo/apps/web/node_modules/@vitest/runner/dist/chunk-hooks.js:752:20",
+      "tests": [
+        {
+          "name": "mobile behavior demo upload preview reaches UI-007 with a numeric year",
+          "status": "failed",
+          "durationMs": 1020,
+          "durationText": "1020 мс",
+          "output": "Error: Unable to find role=\"heading\" and name \"Каберне Совиньон\"\n\nIgnored nodes: comments, script, style\n\u001b[36m<body>\u001b[39m\n  \u001b[36m<div>\u001b[39m\n    \u001b[36m<main\u001b[39m\n      \u001b[33mclass\u001b[39m=\u001b[32m\"app-shell\"\u001b[39m\n    \u001b[36m>\u001b[39m\n      \u001b[36m<section\u001b[39m\n        \u001b[33mclass\u001b[39m=\u001b[32m\"app\"\u001b[39m\n        \u001b[33mdata-testid\u001b[39m=\u001b[32m\"app\"\u001b[39m\n      \u001b[36m>\u001b[39m\n        \u001b[36m<div\u001b[39m\n          \u001b[33mclass\u001b[39m=\u001b[32m\"page\"\u001b[39m\n          \u001b[33mid\u001b[39m=\u001b[32m\"UI-010\"\u001b[39m\n        \u001b[36m>\u001b[39m\n          \u001b[36m<header\u001b[39m\n            \u001b[33mclass\u001b[39m=\u001b[32m\"top\"\u001b[39m\n          \u001b[36m>\u001b[39m\n            \u001b[36m<button\u001b[39m\n              \u001b[33maria-label\u001b[39m=\u001b[32m\"Назад\"\u001b[39m\n            \u001b[36m>\u001b[39m\n              \u001b[36m<svg\u001b[39m\n                \u001b[33mfill\u001b[39m=\u001b[32m\"currentColor\"\u001b[39m\n                \u001b[33mheight\u001b[39m=\u001b[32m\"1em\"\u001b[39m\n                \u001b[33mviewBox\u001b[39m=\u001b[32m\"0 0 256 256\"\u001b[39m\n                \u001b[33mwidth\u001b[39m=\u001b[32m\"1em\"\u001b[39m\n                \u001b[33mxmlns\u001b[39m=\u001b[32m\"http://www.w3.org/2000/svg\"\u001b[39m\n              \u001b[36m>\u001b[39m\n                \u001b[36m<path\u001b[39m\n                  \u001b[33md\u001b[39m=\u001b[32m\"M224,128a8,8,0,0,1-8,8H59.31l58.35,58.34a8,8,0,0,1-11.32,11.32l-72-72a8,8,0,0,1,0-11.32l72-72a8,8,0,0,1,11.32,11.32L59.31,120H216A8,8,0,0,1,224,128Z\"\u001b[39m\n                \u001b[36m/>\u001b[39m\n              \u001b[36m</svg>\u001b[39m\n            \u001b[36m</button>\u001b[39m\n            \u001b[36m<b>\u001b[39m\n              \u001b[0mОшибка поиска\u001b[0m\n            \u001b[36m</b>\u001b[39m\n            \u001b[36m<span />\u001b[39m\n          \u001b[36m</header>\u001b[39m\n          \u001b[36m<div\u001b[39m\n            \u001b[33mclass\u001b[39m=\u001b[32m\"state-icon\"\u001b[39m\n          \u001b[36m>\u001b[39m\n            \u001b[36m<svg\u001b[39m\n              \u001b[33mfill\u001b[39m=\u001b[32m\"currentColor\"\u001b[39m\n              \u001b[33mheight\u001b[39m=\u001b[32m\"1em\"\u001b[39m\n              \u001b[33mviewBox\u001b[39m=\u001b[32m\"0 0 256 256\"\u001b[39m\n              \u001b[33mwidth\u001b[39m=\u001b[32m\"1em\"\u001b[39m\n              \u001b[33mxmlns\u001b[39m=\u001b[32m\"http://www.w3.org/2000/svg\"\u001b[39m\n            \u001b[36m>\u001b[39m\n              \u001b[36m<path\u001b[39m\n                \u001b[33md\u001b[39m=\u001b[32m\"M205.66,194.34a8,8,0,0,1-11.32,11.32L128,139.31,61.66,205.66a8,8,0,0,1-11.32-11.32L116.69,128,50.34,61.66A8,8,0,0,1,61.66,50.34L128,116.69l66.34-66.35a8,8,0,0,1,11.32,11.32L139.31,128Z\"\u001b[39m\n              \u001b[36m/>\u001b[39m\n            \u001b[36m</svg>\u001b[39m\n          \u001b[36m</div>\u001b[39m\n          \u001b[36m<h2>\u001b[39m\n            \u001b[0mНе удалось выполнить поиск\u001b[0m\n          \u001b[36m</h2>\u001b[39m\n          \u001b[36m<p>\u001b[39m\n            \u001b[0mСервис не ответил. Ваш снимок остаётся на этом устройстве.\u001b[0m\n          \u001b[36m</p>\u001b[39m\n          \u001b[36m<button\u001b[39m\n            \u001b[33mclass\u001b[39m=\u001b[32m\"primary\"\u001b[39m\n          \u001b[36m>\u001b[39m\n            \u001b[0mПовторить запрос\u001b[0m\n          \u001b[36m</button>\u001b[39m\n          \u001b[36m<button\u001b[39m\n            \u001b[33mclass\u001b[39m=\u001b[32m\"secondary\"\u001b[39m\n          \u001b[36m>\u001b[39m\n            \u001b[0mНа главную\u001b[0m\n          \u001b[36m</button>\u001b[39m\n        \u001b[36m</div>\u001b[39m\n        \u001b[36m<input\u001b[39m\n          \u001b[33maccept\u001b[39m=\u001b[32m\"image/*\"\u001b[39m\n          \u001b[33maria-label\u001b[39m=\u001b[32m\"Снять фотографию этикетки\"\u001b[39m\n          \u001b[33mcapture\u001b[39m=\u001b[32m\"environment\"\u001b[39m\n          \u001b[33mclass\u001b[39m=\u001b[32m\"visually-hidden\"\u001b[39m\n          \u001b[33mtype\u001b[39m=\u001b[32m\"file\"\u001b[39m\n        \u001b[36m/>\u001b[39m\n        \u001b[36m<input\u001b[39m\n          \u001b[33maccept\u001b[39m=\u001b[32m\"image/*\"\u001b[39m\n          \u001b[33maria-label\u001b[39m=\u001b[32m\"Загрузить фотографию этикетки\"\u001b[39m\n          \u001b[33mclass\u001b[39m=\u001b[32m\"visually-hidden\"\u001b[39m\n          \u001b[33mtype\u001b[39m=\u001b[32m\"file\"\u001b[39m\n        \u001b[36m/>\u001b[39m\n      \u001b[36m</section>\u001b[39m\n    \u001b[36m</main>\u001b[39m\n  \u001b[36m</div>\u001b[39m\n\u001b[36m</body>\u001b[39m\n    at waitForWrapper (/Users/skif/develop/brutforce-behavior-demo/apps/web/node_modules/@testing-library/dom/dist/wait-for.js:163:27)\n    at /Users/skif/develop/brutforce-behavior-demo/apps/web/src/App.test.tsx:18:325\n    at file:///Users/skif/develop/brutforce-behavior-demo/apps/web/node_modules/@vitest/runner/dist/chunk-hooks.js:752:20"
+        },
+        {
+          "name": "mobile behavior demo UI-007 exposes the simulated source description",
+          "status": "passed",
+          "durationMs": 67,
+          "durationText": "67 мс",
+          "output": ""
+        }
+      ]
+    },
+    {
+      "id": "UI-008",
+      "area": "web",
+      "title": "Manual search route is available",
+      "source": "apps/web/README.md; Wine UX Atlas",
+      "spec": "docs/product/behavior-spec.md#demo-010",
+      "given": "пользователь ищет вручную",
+      "when": "отправлен scenario none",
+      "then": "доступен экран no-match",
+      "status": "passed",
+      "durationMs": 65,
+      "durationText": "65 мс",
+      "reason": "Vitest-проверка: пройдена (mobile behavior demo UI-008 sends none and UI-009 offers recovery)",
+      "output": "",
+      "tests": [
+        {
+          "name": "mobile behavior demo UI-008 sends none and UI-009 offers recovery",
+          "status": "passed",
+          "durationMs": 65,
+          "durationText": "65 мс",
+          "output": ""
+        }
+      ]
+    },
+    {
+      "id": "UI-009",
+      "area": "web",
+      "title": "Empty API result remains recoverable",
+      "source": "apps/web/README.md; Wine UX Atlas",
+      "spec": "docs/product/behavior-spec.md#demo-006",
+      "given": "API вернул пустых кандидатов",
+      "when": "React применяет ответ",
+      "then": "доступно восстановление",
+      "status": "passed",
+      "durationMs": 65,
+      "durationText": "65 мс",
+      "reason": "Vitest-проверка: пройдена (mobile behavior demo UI-008 sends none and UI-009 offers recovery)",
+      "output": "",
+      "tests": [
+        {
+          "name": "mobile behavior demo UI-008 sends none and UI-009 offers recovery",
+          "status": "passed",
+          "durationMs": 65,
+          "durationText": "65 мс",
+          "output": ""
+        }
+      ]
+    },
+    {
+      "id": "UI-010",
+      "area": "web",
+      "title": "Service error remains recoverable",
+      "source": "apps/web/README.md; Wine UX Atlas",
+      "spec": "docs/product/behavior-spec.md#demo-009",
+      "given": "selectedId отсутствует в candidates",
+      "when": "React валидирует ответ",
+      "then": "видна recoverable error",
+      "status": "passed",
+      "durationMs": 53,
+      "durationText": "53 мс",
+      "reason": "Vitest-проверка: пройдена (mobile behavior demo UI-010 rejects selectedId absent from candidates)",
+      "output": "",
+      "tests": [
+        {
+          "name": "mobile behavior demo UI-010 rejects selectedId absent from candidates",
+          "status": "passed",
+          "durationMs": 53,
+          "durationText": "53 мс",
+          "output": ""
+        }
+      ]
+    },
+    {
+      "id": "UI-011",
+      "area": "web",
+      "title": "Non-image file is rejected before preview",
+      "source": "apps/web/src/App.test.tsx",
+      "spec": "docs/product/behavior-spec.md#demo-007",
+      "status": "passed",
+      "durationMs": 22,
+      "durationText": "22 мс",
+      "reason": "Vitest-проверка: пройдена (mobile behavior demo UI-011 rejects a non-image before API use)",
+      "output": "",
+      "tests": [
+        {
+          "name": "mobile behavior demo UI-011 rejects a non-image before API use",
+          "status": "passed",
+          "durationMs": 22,
+          "durationText": "22 мс",
+          "output": ""
+        }
+      ]
+    }
+  ],
+  "artifacts": [
+    "data/runs/20260919T090933Z-fast-0b5dffe4.api-go.jsonl",
+    "data/runs/20260919T090933Z-fast-0b5dffe4.web-vitest.json"
+  ],
+  "sources": [
+    "data/runs/20260919T090933Z-fast-0b5dffe4.sources/cases.json",
+    "data/runs/20260919T090933Z-fast-0b5dffe4.sources/behavior-spec.md",
+    "data/runs/20260919T090933Z-fast-0b5dffe4.sources/main.go",
+    "data/runs/20260919T090933Z-fast-0b5dffe4.sources/main_test.go",
+    "data/runs/20260919T090933Z-fast-0b5dffe4.sources/App.tsx",
+    "data/runs/20260919T090933Z-fast-0b5dffe4.sources/api.ts",
+    "data/runs/20260919T090933Z-fast-0b5dffe4.sources/types.ts",
+    "data/runs/20260919T090933Z-fast-0b5dffe4.sources/styles.css",
+    "data/runs/20260919T090933Z-fast-0b5dffe4.sources/App.test.tsx"
+  ]
+}

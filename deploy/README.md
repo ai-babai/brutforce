@@ -7,7 +7,8 @@
 Сервер Sigma, сервис brutforce-demo.service от lct, порт 127.0.0.1:8097.
 Релизы: /srv/lct/maks/behavior-demo/releases/<revision>; current — символическая ссылка.
 Содержимое релиза: brutforce-api (Linux amd64), web/ (Vite dist), reports/ (статический отчёт).
-Фото не передаются API и не сохраняются на сервере. Данные результата синтетические.
+Фото сохраняются приватно в /srv/lct/data/maks/demo-photos (lct, 0700; файлы 0600), вне релизов и web root. Лимит хранилища 200 MiB; автоудаления нет. Данные распознавания пока синтетические. См. contracts/photo-upload.md.
+Перед запуском новой unit: install -d -o lct -g lct -m 0700 /srv/lct/data/maks/demo-photos. UPLOAD_DIR и ReadWritePaths должны указывать на этот каталог.
 
 Порядок: быстрые спеки → сборка → локальный браузерный smoke → перенос нового каталога
 → переключение current → запуск/перезапуск только brutforce-demo → Caddy validate/reload
