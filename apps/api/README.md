@@ -147,3 +147,6 @@ quality:
 | API-016 | name, winery, and year query | exact search filters the same embedded catalog and selects its first match |
 
 Run: `go test -count=1 ./...`.
+
+## Public input security
+See [Security Specs](../../docs/product/security-spec.md) for input, upload concurrency/rate, storage and service resource limits. Search POST requires application/json and at most256 query characters. Uploads are decoded after dimension checks; originals remain private and untrusted.

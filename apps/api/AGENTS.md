@@ -16,3 +16,5 @@ with it.
 - Keep dependencies in the Go standard library unless a later approved task
   changes this boundary.
 - `go test -count=1 ./...` is the required fast verification command.
+
+- Preserve [Security Specs](../../docs/product/security-spec.md). Never call DecodeAll or process stored originals without resource bounds. A successful upload is not a malware-clean verdict.

@@ -394,6 +394,62 @@
       "title": "Текущий раздел и footer оформлены по Atlas",
       "source": "apps/web/src/design.test.tsx",
       "spec": "apps/web/design-specs.md"
+    },
+    {
+      "id": "SEC-001",
+      "area": "security",
+      "title": "Файл с подменённым типом не принимается как изображение",
+      "source": "apps/api/security_test.go",
+      "spec": "docs/product/security-spec.md"
+    },
+    {
+      "id": "SEC-002",
+      "area": "security",
+      "title": "Обрезанное изображение отклоняется после полной декодировки",
+      "source": "apps/api/security_test.go",
+      "spec": "docs/product/security-spec.md"
+    },
+    {
+      "id": "SEC-003",
+      "area": "security",
+      "title": "Изображение с чрезмерными размерами отклоняется до сохранения",
+      "source": "apps/api/security_test.go",
+      "spec": "docs/product/security-spec.md"
+    },
+    {
+      "id": "SEC-004",
+      "area": "security",
+      "title": "Неверный multipart и слишком большой файл отклоняются",
+      "source": "apps/api/security_test.go",
+      "spec": "docs/product/security-spec.md"
+    },
+    {
+      "id": "SEC-005",
+      "area": "security",
+      "title": "Одновременные upload ограничены с Retry-After",
+      "source": "apps/api/security_test.go",
+      "spec": "docs/product/security-spec.md"
+    },
+    {
+      "id": "SEC-006",
+      "area": "security",
+      "title": "Поисковый запрос ограничен, валиден в UTF-8 и не отражается",
+      "source": "apps/api/request_security_test.go",
+      "spec": "docs/product/security-spec.md"
+    },
+    {
+      "id": "SEC-007",
+      "area": "security",
+      "title": "Записи API имеют границы типа, origin и частоты запросов",
+      "source": "apps/api/request_security_test.go",
+      "spec": "docs/product/security-spec.md"
+    },
+    {
+      "id": "SEC-008",
+      "area": "security",
+      "title": "Приватные upload недоступны, ответы имеют защитные заголовки",
+      "source": "apps/api/request_security_test.go",
+      "spec": "docs/product/security-spec.md"
     }
   ]
 }
