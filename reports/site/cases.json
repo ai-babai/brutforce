@@ -289,6 +289,13 @@
       "title": "Затвор и подсказки доступны на коротком экране",
       "source": "Скриншоты Макса: Android Яндекс Браузер, 19.09.2026",
       "spec": "docs/product/behavior-spec.md"
+    },
+    {
+      "id": "DESIGN-012",
+      "area": "design",
+      "title": "Рамка камеры не пересекает подсказку",
+      "source": "Скриншот Макса 19.09.2026: рамка проходит через текст",
+      "spec": "docs/product/behavior-spec.md#camera-hint"
     }
   ]
 }
