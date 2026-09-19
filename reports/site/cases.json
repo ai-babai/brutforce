@@ -296,6 +296,20 @@
       "title": "Рамка камеры не пересекает подсказку",
       "source": "Скриншот Макса 19.09.2026: рамка проходит через текст",
       "spec": "docs/product/behavior-spec.md#camera-hint"
+    },
+    {
+      "id": "DESIGN-013",
+      "area": "design",
+      "title": "Иконки scanner и target совпадают с SVG макета",
+      "source": "Утверждённый Wine UX Atlas + скриншот Макса 19.09.2026",
+      "spec": "apps/web/design-specs.md"
+    },
+    {
+      "id": "DESIGN-014",
+      "area": "design",
+      "title": "Нижняя подсказка соответствует композиции макета",
+      "source": "Утверждённый Wine UX Atlas + скриншот Макса 19.09.2026",
+      "spec": "apps/web/design-specs.md"
     }
   ]
 }

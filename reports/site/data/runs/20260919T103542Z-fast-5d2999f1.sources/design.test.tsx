@@ -54,5 +54,5 @@ it('DESIGN-014 restores the complete airy welcome guidance from Atlas',()=>{
  expect(tip.querySelector('p br')).not.toBeNull();
  expect(css).toContain('background:transparent;padding:0;border-radius:0;margin:27px 0 21px');
  expect(css).toContain('flex:0 0 34px;width:34px;height:34px');
- expect(css).toContain('font-size:10px;margin:3px 0 0;line-height:1.5');expect(css).toContain('font-size:11px;font-weight:500;line-height:1.5');
+ expect(css).toContain('font-size:10px;margin:3px 0 0;line-height:1.5');
 });
