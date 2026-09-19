@@ -102,6 +102,20 @@
       "spec": "docs/product/behavior-spec.md"
     },
     {
+      "id": "API-015",
+      "area": "api",
+      "title": "Встроенный каталог содержит восемь synthetic записей",
+      "source": "apps/api/main_test.go",
+      "spec": "contracts/demo-catalog.md"
+    },
+    {
+      "id": "API-016",
+      "area": "api",
+      "title": "Поиск фильтрует каталог по названию, винодельне и году",
+      "source": "apps/api/main_test.go",
+      "spec": "contracts/demo-catalog.md"
+    },
+    {
       "id": "UI-001",
       "area": "web",
       "title": "Welcome shows the scan entry",
@@ -135,6 +149,48 @@
       "title": "Cancelled search stays retryable",
       "source": "apps/web/README.md; Wine UX Atlas",
       "spec": "docs/product/behavior-spec.md#demo-005"
+    },
+    {
+      "id": "UI-016",
+      "area": "web",
+      "title": "Нижняя навигация открывает каталог, фильтрует его и сбрасывает прокрутку раздела",
+      "source": "apps/web/src/navigation.test.tsx",
+      "spec": "apps/web/design-specs.md"
+    },
+    {
+      "id": "UI-017",
+      "area": "web",
+      "title": "Сохранённая карточка восстанавливается после reload",
+      "source": "apps/web/src/navigation.test.tsx",
+      "spec": "apps/web/design-specs.md"
+    },
+    {
+      "id": "UI-018",
+      "area": "web",
+      "title": "Удаление сохранённого вина возвращает полезное пустое состояние",
+      "source": "apps/web/src/navigation.test.tsx",
+      "spec": "apps/web/design-specs.md"
+    },
+    {
+      "id": "UI-019",
+      "area": "web",
+      "title": "Повреждённые или дублирующиеся сохранения не ломают запуск",
+      "source": "apps/web/src/navigation.test.tsx",
+      "spec": "apps/web/design-specs.md"
+    },
+    {
+      "id": "UI-020",
+      "area": "web",
+      "title": "Уход из каталога отменяет запрос и late response не меняет раздел",
+      "source": "apps/web/src/navigation.test.tsx",
+      "spec": "apps/web/design-specs.md"
+    },
+    {
+      "id": "UI-021",
+      "area": "web",
+      "title": "Ошибка browser storage не выдаётся за сохранение",
+      "source": "apps/web/src/navigation.test.tsx",
+      "spec": "apps/web/design-specs.md"
     },
     {
       "id": "UI-006",
@@ -323,6 +379,20 @@
       "area": "design",
       "title": "Камера и затвор помещаются внутри настольной рамки",
       "source": "Запрос Макса: рамка только на широком экране, 19.09.2026",
+      "spec": "apps/web/design-specs.md"
+    },
+    {
+      "id": "DESIGN-017",
+      "area": "design",
+      "title": "Нижняя навигация вне прокручиваемой области",
+      "source": "apps/web/src/design.test.tsx",
+      "spec": "apps/web/design-specs.md"
+    },
+    {
+      "id": "DESIGN-018",
+      "area": "design",
+      "title": "Текущий раздел и footer оформлены по Atlas",
+      "source": "apps/web/src/design.test.tsx",
       "spec": "apps/web/design-specs.md"
     }
   ]

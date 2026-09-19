@@ -5,6 +5,18 @@ predictable synthetic outcomes for frontend integration; it does not recognize
 images or query a real wine catalog. It can retain a private uploaded image for
 the demo flow, but a stored receipt only gates the synthetic response.
 
+## Embedded synthetic catalog
+
+[`catalog.json`](catalog.json) is the read-only, embedded demo catalog. It has
+eight synthetic red-dry wines with stable IDs; it is not a database, supplier
+feed, or claim about real wine records. `GET /api/catalog` returns its complete
+ordered candidate list as `{ "demo": true, "candidates": [...] }`. The same
+catalog is used by search, so catalog and search candidate IDs always match.
+
+Only the established Cabernet has the existing concept-bottle image. Merlot
+intentionally has an empty `image` field so the client can show its missing
+image state. The six new records point to explicitly synthetic bottle SVGs.
+
 ## Boundary and contract
 
 **Producer:** this HTTP server. **Consumers:** the local demo frontend and
@@ -21,7 +33,8 @@ This README defines endpoint behavior and error handling for the prototype.
 `scenario` is optional and defaults to `exact`. Its allowed values are
 `exact`, `uncertain`, `none`, and `error`. `query`, when supplied, must be a
 string and filters candidate names and wineries with a case-insensitive
-substring match. It is only meaningful for the default/exact flow. `photoId`
+substring match; a year string such as `"2023"` filters the same catalog. It is
+only meaningful for the default/exact flow. `photoId`
 is optional; when supplied, it must be an existing private upload receipt. It
 does not enable image recognition.
 
@@ -44,8 +57,8 @@ Successful responses have this shape:
 }
 ```
 
-The candidates are ordered Cabernet 2023, then Merlot 2022. `exact` returns
-the matching candidates and selects the first one. `uncertain` returns both
+The catalog begins Cabernet 2023, then Merlot 2022. `exact` returns matching
+candidates and selects the first one. `uncertain` returns the first two catalog
 candidates without `selectedId`; `none` returns an empty list; `error` returns
 HTTP 503 and `{ "demo": true, "error": { "code", "message" } }`.
 Invalid JSON/input/scenario returns HTTP 400. Unsupported methods return HTTP
@@ -88,6 +101,10 @@ does not delete existing images automatically; a full budget returns HTTP 503
 `storage_full`. `UPLOAD_MAX_PIXELS` optionally replaces the 25,000,000-pixel
 default. Invalid/oversize/non-image uploads return HTTP 400.
 
+The upload directory is separate from the embedded read-only `catalog.json`:
+the former contains private user photos and receipts, while the latter contains
+only versioned synthetic demo records. Neither has a public file route.
+
 `POST /api/search` with an unknown valid-format `photoId` returns HTTP 404
 `photo_not_found`; a malformed ID returns HTTP 400 `invalid_photo_id`.
 
@@ -126,5 +143,7 @@ quality:
 | API-012 | upload without `UPLOAD_DIR` | HTTP 503 `storage_unavailable` |
 | API-013 | unknown valid-format `photoId` | HTTP 404 `photo_not_found` |
 | API-014 | configured storage budget exhausted | HTTP 503 `storage_full` |
+| API-015 | embedded catalog | eight unique stable synthetic records and matching `GET /api/catalog` response |
+| API-016 | name, winery, and year query | exact search filters the same embedded catalog and selects its first match |
 
 Run: `go test -count=1 ./...`.

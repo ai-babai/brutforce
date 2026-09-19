@@ -1,0 +1,103 @@
+{
+  "schemaVersion": 1,
+  "runId": "20260919T105054Z-fast-b34b65cc",
+  "recordedAt": "2026-09-19T10:50:57.967Z",
+  "files": [
+    {
+      "path": "data/runs/20260919T105054Z-fast-b34b65cc.json",
+      "sha256": "28382cd5a9fc22a26d73f1e606981dba57c7d6586736236746fa2b49230b92fd"
+    },
+    {
+      "path": "data/runs/20260919T105054Z-fast-b34b65cc.api-go.jsonl",
+      "sha256": "de47f9a7c42b201be6fb66931656feb030a1e1b17f622dd26ce173b4f1397d04"
+    },
+    {
+      "path": "data/runs/20260919T105054Z-fast-b34b65cc.web-vitest.json",
+      "sha256": "5574200cb20ad039cfbfc1601c86b29d5825dbd53a749963592fc9f7aa6b972d"
+    },
+    {
+      "path": "data/runs/20260919T105054Z-fast-b34b65cc.sources/cases.json",
+      "sha256": "8e3d279767e7ea81c8cad1af6fb0eb25ebb168cc9d67cd66e10f384d2ba23526"
+    },
+    {
+      "path": "data/runs/20260919T105054Z-fast-b34b65cc.sources/behavior-spec.md",
+      "sha256": "d2e83f3a4fce4ac56f8a537cdc80c8dd9f0b8a944896a138856967635f689a15"
+    },
+    {
+      "path": "data/runs/20260919T105054Z-fast-b34b65cc.sources/demo-catalog.md",
+      "sha256": "2be1a0901286b951fbc3301a5b134c271a8866a1a812bafe4048a6644419fdd0"
+    },
+    {
+      "path": "data/runs/20260919T105054Z-fast-b34b65cc.sources/main.go",
+      "sha256": "59ab22bdd0261883079f14992f23974b6f02285bd7f08c1fe5a37e8f791c6ac6"
+    },
+    {
+      "path": "data/runs/20260919T105054Z-fast-b34b65cc.sources/uploads.go",
+      "sha256": "c530eb8d0e4d8a055ae9e6abf2f7205fbe663fee345f6beb2c49570c90a848ba"
+    },
+    {
+      "path": "data/runs/20260919T105054Z-fast-b34b65cc.sources/catalog.json",
+      "sha256": "042944ad783a095d8726708b7bb25eb784e1ab008cf354f23c5f6ded05b008f9"
+    },
+    {
+      "path": "data/runs/20260919T105054Z-fast-b34b65cc.sources/main_test.go",
+      "sha256": "fe24d8a833865f40ca718961639f689d3dc0b50c5581a6028a382744dfa68345"
+    },
+    {
+      "path": "data/runs/20260919T105054Z-fast-b34b65cc.sources/App.tsx",
+      "sha256": "fcc552da2376867535084ddbfac264c90f90f2e21325d2d67ff4ef57c44148bc"
+    },
+    {
+      "path": "data/runs/20260919T105054Z-fast-b34b65cc.sources/api.ts",
+      "sha256": "05150dfcbc855b647d3d5bba2372d5af150be9d7ec99df150e824f5a74557688"
+    },
+    {
+      "path": "data/runs/20260919T105054Z-fast-b34b65cc.sources/types.ts",
+      "sha256": "067160f2002f9fc436c0ce88cd10542dadbd2f52edfeb6aa9d1403c59ec24b2d"
+    },
+    {
+      "path": "data/runs/20260919T105054Z-fast-b34b65cc.sources/styles.css",
+      "sha256": "14096a1ba8e05c0e60ad650a17bc605511b4ff19c9a46db81d2fd6a21e39d145"
+    },
+    {
+      "path": "data/runs/20260919T105054Z-fast-b34b65cc.sources/overrides.css",
+      "sha256": "2b51e9ac599aaec1f6649c7fa382145e6d335ace8ff256564aa6efae1259adc6"
+    },
+    {
+      "path": "data/runs/20260919T105054Z-fast-b34b65cc.sources/App.test.tsx",
+      "sha256": "20a92a37b25cebbb1942f2d16a8ca91fd7efd0dfbf20139624399c444979e1ef"
+    },
+    {
+      "path": "data/runs/20260919T105054Z-fast-b34b65cc.sources/design.test.tsx",
+      "sha256": "8a0051751b93af69d62a66061bc25e4c668b2e6b40e873023a1d9cb5adef686c"
+    },
+    {
+      "path": "data/runs/20260919T105054Z-fast-b34b65cc.sources/navigation.test.tsx",
+      "sha256": "b2993907b89724cc9ad0b90ea9cf3536423488ff6a10ecf56f1fad9c99069e7c"
+    },
+    {
+      "path": "data/runs/20260919T105054Z-fast-b34b65cc.sources/design-specs.md",
+      "sha256": "1cfe648fc1b828a6dec44a25d7c3b9e62981c7d001bfd57ac4bf94b270c103ab"
+    },
+    {
+      "path": "data/runs/20260919T105054Z-fast-b34b65cc.sources/AtlasIcons.tsx",
+      "sha256": "6436b3c6da996624282d499fa8eee99a6115316c335aaf1027654b48e069e750"
+    },
+    {
+      "path": "data/runs/20260919T105054Z-fast-b34b65cc.sources/InstallApp.tsx",
+      "sha256": "d9cd75e5c45c68ff61fa04c4367ba8d1dde7e1c8a3e3e4984e3c01b94e8aa0f4"
+    },
+    {
+      "path": "data/runs/20260919T105054Z-fast-b34b65cc.sources/pwa.test.tsx",
+      "sha256": "ad911dfe86510fb66c19715bfc5d46bc9d418a1a593ae2f05ab5b3696545c9b3"
+    },
+    {
+      "path": "data/runs/20260919T105054Z-fast-b34b65cc.sources/manifest.webmanifest",
+      "sha256": "b81001b08550e936b3c6d741c4721c54bdb38ca85fc8d05c4eae664cd85062fa"
+    },
+    {
+      "path": "data/runs/20260919T105054Z-fast-b34b65cc.sources/index.html",
+      "sha256": "ad2e3c87de1c42aeaebd96290745fe54f1476192b910ce1f263724a29838c6e4"
+    }
+  ]
+}

@@ -37,12 +37,10 @@ export function App({initialScenario='exact',simulatePermissionDenied=false}:{in
   const videoRef=useRef<HTMLVideoElement>(null);
   const canvasRef=useRef<HTMLCanvasElement>(null);
   const streamRef=useRef<MediaStream | undefined>(undefined);
-  const contentRef=useRef<HTMLDivElement>(null);
 
   const stopCamera=()=>{streamRef.current?.getTracks().forEach(track=>track.stop());streamRef.current=undefined};
   useEffect(()=>()=>{abort.current?.abort();catalogAbort.current?.abort();stopCamera();if(waitTimer.current)clearTimeout(waitTimer.current)},[]);
   useEffect(()=>()=>{if(photo?.startsWith('blob:')) URL.revokeObjectURL(photo)},[photo]);
-  useEffect(()=>{if(contentRef.current)contentRef.current.scrollTop=0},[screen]);
   useEffect(()=>{if(screen!=='camera'||permissionDenied)return;let active=true;(async()=>{try{if(!navigator.mediaDevices?.getUserMedia)throw new Error();const stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'}},audio:false});if(!active){stream.getTracks().forEach(t=>t.stop());return}streamRef.current=stream;if(videoRef.current){videoRef.current.srcObject=stream;await videoRef.current.play()}}catch{if(active)setScreen('permission')}})();return()=>{active=false;stopCamera()}},[screen,permissionDenied]);
   const validPhoto=(file:File)=>['image/jpeg','image/png','image/gif'].includes(file.type)&&file.size<=10*1024*1024;
   const pickPhoto=(file?:File)=>{if(!file)return;if(!validPhoto(file)){setScreen('badphoto');return}stopCamera();setPhotoFile(file);setReceipt(undefined);setPhoto(URL.createObjectURL(file));uploadThenSearch(file,scenario)};
@@ -79,7 +77,7 @@ export function App({initialScenario='exact',simulatePermissionDenied=false}:{in
   const showNav=!['camera','loading','waiting'].includes(screen)&&!expandedPhoto;
 
   return <main className="app-shell">
-    <section className="app" data-testid="app"><div className="app-content" ref={contentRef}>
+    <section className="app" data-testid="app"><div className="app-content">
       {screen==='welcome'&&<Page id="UI-001"><header className="brand"><span>своё</span>вино</header><div className="hero"><div><h1>Что за вино<br/>перед вами?</h1><p>Сфотографируйте этикетку. Откроем карточку вина.</p></div><img src={fallback} alt="Вымышленная бутылка вина для демонстрации"/></div><div className="actions"><button className="primary scan-button" onClick={openCamera}><Camera/><span><b>Сканировать вино</b><small>Наведите на этикетку</small></span><AtlasScan/></button><div className="split-actions"><button onClick={()=>galleryRef.current?.click()}><ImageSquare/>Выбрать фото</button><button onClick={openSearch}><MagnifyingGlass/>По названию</button></div></div><Tip/><InstallApp/><ProductFooter/></Page>}
       {screen==='camera'&&<div className="camera-page" id="UI-002"><div className="camera-header"><Top title="Сканировать этикетку" onBack={back}/><p>{lightTip?'Поверните этикетку так, чтобы убрать блик.':'Наведите на этикетку. Название должно быть читаемым.'}</p></div><div className="camera-preview"><div className="viewfinder"><video ref={videoRef} playsInline muted aria-label="Изображение с камеры"/><div className="camera-frame"/></div><span className="neighbor-hint">Нужная бутылка по центру</span></div><canvas ref={canvasRef} hidden/><div className="camera-actions"><button className="light-tip" onClick={()=>setLightTip(v=>!v)}>Подсказка о свете</button><button className="shutter" aria-label="Снять фото" onClick={capture}><span/></button><button className="text-button" onClick={()=>galleryRef.current?.click()}>Выбрать фото</button></div></div>}
       {screen==='permission'&&<Page id="UI-003"><Top title="Доступ к камере" onBack={back}/><StateIcon><Camera/></StateIcon><h2>Камера недоступна</h2><p>Можно продолжить с фотографией из галереи или найти вино по названию.</p><button className="primary" onClick={()=>galleryRef.current?.click()}><ImageSquare/>Выбрать фото</button><button className="secondary" onClick={()=>setScreen('settings')}>Как разрешить камеру</button><button className="text-button" onClick={openSearch}>Найти по названию</button></Page>}
