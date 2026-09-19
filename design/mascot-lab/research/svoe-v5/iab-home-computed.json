@@ -1,0 +1,118 @@
+{
+  "body": {
+    "background": "rgba(0, 0, 0, 0)",
+    "color": "rgb(0, 0, 0)",
+    "font": "system-ui, -apple-system, sans-serif"
+  },
+  "buttons": [
+    {
+      "bg": "rgba(255, 255, 255, 0.9)",
+      "class": "core-header__mob-search-btn no-tablet no-desktop",
+      "color": "rgb(44, 42, 40)",
+      "font": "system-ui, -apple-system, sans-serif",
+      "height": "66px",
+      "padding": "8px",
+      "radius": "999px",
+      "size": "16px",
+      "text": "Найти своё вино"
+    },
+    {
+      "bg": "rgb(255, 255, 255)",
+      "class": "ymaps3--button ymaps3--control-button",
+      "color": "rgb(0, 0, 0)",
+      "font": "system-ui, -apple-system, sans-serif",
+      "height": "30px",
+      "padding": "8px",
+      "radius": "8px",
+      "size": "13.3333px",
+      "text": "Открыть Яндекс Карты"
+    },
+    {
+      "bg": "rgb(143, 61, 66)",
+      "class": "ui-button ui-button_primary ui-button_large ui-button_rectangular",
+      "color": "rgb(255, 255, 255)",
+      "font": "system-ui, -apple-system, sans-serif",
+      "height": "56px",
+      "padding": "0px 16px",
+      "radius": "16px",
+      "size": "13.3333px",
+      "text": "Подтверждаю"
+    }
+  ],
+  "headings": [
+    {
+      "class": "intro__title core-container",
+      "color": "rgb(44, 42, 40)",
+      "font": "\"Playfair Display\"",
+      "lineHeight": "52.5px",
+      "size": "42px",
+      "text": "Открой культуру  российского вина",
+      "weight": "500"
+    },
+    {
+      "class": "container-description__title no-mobile",
+      "color": "rgb(44, 42, 40)",
+      "font": "\"Playfair Display\"",
+      "lineHeight": "52.5px",
+      "size": "42px",
+      "text": "Истории в бокале",
+      "weight": "500"
+    },
+    {
+      "class": "home-regions__title",
+      "color": "rgb(44, 42, 40)",
+      "font": "\"Playfair Display\"",
+      "lineHeight": "45px",
+      "size": "36px",
+      "text": "Винодельческие регионы России",
+      "weight": "500"
+    },
+    {
+      "class": "block__title",
+      "color": "rgb(44, 42, 40)",
+      "font": "\"Playfair Display\"",
+      "lineHeight": "45px",
+      "size": "36px",
+      "text": "Свои вина",
+      "weight": "500"
+    },
+    {
+      "class": "wine-item__title",
+      "color": "rgb(44, 42, 40)",
+      "font": "system-ui, -apple-system, sans-serif",
+      "lineHeight": "24px",
+      "size": "16px",
+      "text": "Симбиоз",
+      "weight": "600"
+    },
+    {
+      "class": "wine-item__title",
+      "color": "rgb(44, 42, 40)",
+      "font": "system-ui, -apple-system, sans-serif",
+      "lineHeight": "24px",
+      "size": "16px",
+      "text": "ИИ ВИНО",
+      "weight": "600"
+    },
+    {
+      "class": "wine-item__title",
+      "color": "rgb(44, 42, 40)",
+      "font": "system-ui, -apple-system, sans-serif",
+      "lineHeight": "24px",
+      "size": "16px",
+      "text": "ИИ ВИНО",
+      "weight": "600"
+    },
+    {
+      "class": "wine-item__title",
+      "color": "rgb(44, 42, 40)",
+      "font": "system-ui, -apple-system, sans-serif",
+      "lineHeight": "24px",
+      "size": "16px",
+      "text": "Гренаш",
+      "weight": "600"
+    }
+  ],
+  "title": "Свое Вино от РСХБ",
+  "url": "https://vino-svoe.ru/"
+}

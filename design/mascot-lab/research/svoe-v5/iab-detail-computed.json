@@ -1,0 +1,86 @@
+{
+  "headings": [
+    {
+      "class": "wine-main-title-block__title",
+      "color": "rgb(44, 42, 40)",
+      "font": "\"Playfair Display\"",
+      "lineHeight": "45px",
+      "size": "36px",
+      "text": "ИИ ВИНО",
+      "weight": "500"
+    },
+    {
+      "class": "wine-main-title-block__title",
+      "color": "rgb(44, 42, 40)",
+      "font": "\"Playfair Display\"",
+      "lineHeight": "45px",
+      "size": "36px",
+      "text": "ИИ ВИНО",
+      "weight": "500"
+    },
+    {
+      "class": "wine-public-rating__title",
+      "color": "rgb(44, 42, 40)",
+      "font": "\"Playfair Display\"",
+      "lineHeight": "25px",
+      "size": "20px",
+      "text": "Поставь свою оценку",
+      "weight": "500"
+    },
+    {
+      "class": "wine-similar__title",
+      "color": "rgb(44, 42, 40)",
+      "font": "\"Playfair Display\"",
+      "lineHeight": "40px",
+      "size": "32px",
+      "text": "Похожие вина",
+      "weight": "500"
+    },
+    {
+      "class": "wine-item__title",
+      "color": "rgb(44, 42, 40)",
+      "font": "system-ui, -apple-system, sans-serif",
+      "lineHeight": "24px",
+      "size": "16px",
+      "text": "Симбиоз",
+      "weight": "600"
+    },
+    {
+      "class": "wine-item__title",
+      "color": "rgb(44, 42, 40)",
+      "font": "system-ui, -apple-system, sans-serif",
+      "lineHeight": "24px",
+      "size": "16px",
+      "text": "Гренаш",
+      "weight": "600"
+    }
+  ],
+  "surfaces": [
+    {
+      "bg": "rgb(253, 249, 237)",
+      "class": "wine-hero-block__info",
+      "padding": "32px 24px",
+      "radius": "24px"
+    },
+    {
+      "bg": "rgb(255, 255, 255)",
+      "class": "wine-detail-info__detail-image",
+      "padding": "0px",
+      "radius": "16px"
+    },
+    {
+      "bg": "rgb(255, 255, 255)",
+      "class": "wine-detail-info__detail-image-item wine-detail-info__detail-image",
+      "padding": "0px",
+      "radius": "16px"
+    },
+    {
+      "bg": "rgba(0, 0, 0, 0)",
+      "class": "wine-detail-info__detail-image wine-detail-info__detail-image_color",
+      "padding": "0px",
+      "radius": "16px"
+    }
+  ],
+  "title": "Вино красное сухое ИИ ВИНО WINEPARK из винограда сорта Каберне Совиньон региона Крым | Свое Вино от РСХБ",
+  "url": "https://vino-svoe.ru/wines/ii-vino"
+}

@@ -1,0 +1,342 @@
+{
+  "header": [
+    {
+      "backdrop": "none",
+      "bg": "rgba(0, 0, 0, 0)",
+      "class": "core-header-wrapper",
+      "height": "0px",
+      "radius": "0px"
+    },
+    {
+      "backdrop": "none",
+      "bg": "rgba(0, 0, 0, 0)",
+      "class": "core-header",
+      "height": "84px",
+      "radius": "0px"
+    },
+    {
+      "backdrop": "blur(10px)",
+      "bg": "rgba(239, 219, 198, 0.3)",
+      "class": "core-header__wrapper",
+      "height": "40px",
+      "radius": "100px"
+    },
+    {
+      "backdrop": "none",
+      "bg": "rgba(0, 0, 0, 0)",
+      "class": "core-header__top",
+      "height": "40px",
+      "radius": "0px"
+    },
+    {
+      "backdrop": "none",
+      "bg": "rgba(0, 0, 0, 0)",
+      "class": "core-header-nav core-header__desktop-nav no-mobile no-tablet no-lg",
+      "height": "24px",
+      "radius": "0px"
+    },
+    {
+      "backdrop": "none",
+      "bg": "rgba(0, 0, 0, 0)",
+      "class": "core-header-nav-link core-header-nav__link",
+      "height": "24px",
+      "radius": "0px"
+    },
+    {
+      "backdrop": "none",
+      "bg": "rgba(0, 0, 0, 0)",
+      "class": "core-header-nav-link core-header-nav__link",
+      "height": "24px",
+      "radius": "0px"
+    },
+    {
+      "backdrop": "none",
+      "bg": "rgba(0, 0, 0, 0)",
+      "class": "core-header-nav-link core-header-nav__link",
+      "height": "24px",
+      "radius": "0px"
+    }
+  ],
+  "headings": [
+    {
+      "class": "intro__title core-container",
+      "color": "rgb(44, 42, 40)",
+      "font": "\"Playfair Display\"",
+      "lineHeight": "70px",
+      "size": "56px",
+      "text": "Открой культуру  российского вина",
+      "weight": "400"
+    },
+    {
+      "class": "container-description__title no-mobile",
+      "color": "rgb(44, 42, 40)",
+      "font": "\"Playfair Display\"",
+      "lineHeight": "52.5px",
+      "size": "42px",
+      "text": "Истории в бокале",
+      "weight": "500"
+    },
+    {
+      "class": "home-regions__title",
+      "color": "rgb(44, 42, 40)",
+      "font": "\"Playfair Display\"",
+      "lineHeight": "52.5px",
+      "size": "42px",
+      "text": "Винодельческие регионы России",
+      "weight": "500"
+    },
+    {
+      "class": "block__title",
+      "color": "rgb(44, 42, 40)",
+      "font": "\"Playfair Display\"",
+      "lineHeight": "52.5px",
+      "size": "42px",
+      "text": "Свои вина",
+      "weight": "500"
+    },
+    {
+      "class": "wine-item__title",
+      "color": "rgb(44, 42, 40)",
+      "font": "system-ui, -apple-system, sans-serif",
+      "lineHeight": "24px",
+      "size": "16px",
+      "text": "Симбиоз",
+      "weight": "600"
+    },
+    {
+      "class": "wine-item__title",
+      "color": "rgb(44, 42, 40)",
+      "font": "system-ui, -apple-system, sans-serif",
+      "lineHeight": "24px",
+      "size": "16px",
+      "text": "ИИ ВИНО",
+      "weight": "600"
+    }
+  ],
+  "links": [
+    {
+      "bg": "rgb(143, 61, 66)",
+      "class": "ui-button ui-button_primary ui-button_large ui-button_rectangular container-description__action no-mobile no-tablet",
+      "color": "rgb(255, 255, 255)",
+      "font": "system-ui, -apple-system, sans-serif",
+      "height": "56px",
+      "padding": "0px 16px",
+      "radius": "16px",
+      "size": "16px",
+      "text": "Почитать"
+    },
+    {
+      "bg": "rgb(143, 61, 66)",
+      "class": "ui-button ui-button_primary ui-button_large ui-button_rectangular no-desktop",
+      "color": "rgb(255, 255, 255)",
+      "font": "system-ui, -apple-system, sans-serif",
+      "height": "56px",
+      "padding": "0px 16px",
+      "radius": "16px",
+      "size": "16px",
+      "text": "Почитать"
+    },
+    {
+      "bg": "rgb(143, 61, 66)",
+      "class": "ui-button ui-button_primary ui-button_large ui-button_rectangular home-region-info__btn-link",
+      "color": "rgb(255, 255, 255)",
+      "font": "system-ui, -apple-system, sans-serif",
+      "height": "56px",
+      "padding": "0px 16px",
+      "radius": "16px",
+      "size": "16px",
+      "text": "На карте"
+    },
+    {
+      "bg": "rgba(249, 241, 241, 0.996)",
+      "class": "ui-button ui-button_tertiary ui-button_large ui-button_rectangular home-region-info__btn-link",
+      "color": "rgb(143, 61, 66)",
+      "font": "system-ui, -apple-system, sans-serif",
+      "height": "56px",
+      "padding": "0px 16px",
+      "radius": "16px",
+      "size": "16px",
+      "text": "Вина региона"
+    },
+    {
+      "bg": "rgb(253, 249, 237)",
+      "class": "wine-item wine-item_m",
+      "color": "rgb(0, 0, 238)",
+      "font": "system-ui, -apple-system, sans-serif",
+      "height": "551px",
+      "padding": "20px",
+      "radius": "32px",
+      "size": "16px",
+      "text": "СимбиозWINEPARK"
+    },
+    {
+      "bg": "rgb(253, 249, 237)",
+      "class": "wine-item wine-item_m",
+      "color": "rgb(0, 0, 238)",
+      "font": "system-ui, -apple-system, sans-serif",
+      "height": "551px",
+      "padding": "20px",
+      "radius": "32px",
+      "size": "16px",
+      "text": "4.67ИИ ВИНОWINEPARK"
+    },
+    {
+      "bg": "rgb(253, 249, 237)",
+      "class": "wine-item wine-item_m",
+      "color": "rgb(0, 0, 238)",
+      "font": "system-ui, -apple-system, sans-serif",
+      "height": "551px",
+      "padding": "20px",
+      "radius": "32px",
+      "size": "16px",
+      "text": "5.00ИИ ВИНОWINEPARK"
+    },
+    {
+      "bg": "rgb(253, 249, 237)",
+      "class": "wine-item wine-item_m",
+      "color": "rgb(0, 0, 238)",
+      "font": "system-ui, -apple-system, sans-serif",
+      "height": "551px",
+      "padding": "20px",
+      "radius": "32px",
+      "size": "16px",
+      "text": "5.00Гренаш WINEPARK"
+    },
+    {
+      "bg": "rgb(253, 249, 237)",
+      "class": "wine-item wine-item_m",
+      "color": "rgb(0, 0, 238)",
+      "font": "system-ui, -apple-system, sans-serif",
+      "height": "551px",
+      "padding": "20px",
+      "radius": "32px",
+      "size": "16px",
+      "text": "3.00Саперави ДВА ДУБКАСенетх"
+    },
+    {
+      "bg": "rgb(253, 249, 237)",
+      "class": "wine-item wine-item_m",
+      "color": "rgb(0, 0, 238)",
+      "font": "system-ui, -apple-system, sans-serif",
+      "height": "551px",
+      "padding": "20px",
+      "radius": "32px",
+      "size": "16px",
+      "text": "Красностоп ДВА ДУБКАСенетх"
+    },
+    {
+      "bg": "rgb(253, 249, 237)",
+      "class": "wine-item wine-item_m",
+      "color": "rgb(0, 0, 238)",
+      "font": "system-ui, -apple-system, sans-serif",
+      "height": "551px",
+      "padding": "20px",
+      "radius": "32px",
+      "size": "16px",
+      "text": "Глу-Глу СенетхСенетх"
+    },
+    {
+      "bg": "rgb(253, 249, 237)",
+      "class": "wine-item wine-item_m",
+      "color": "rgb(0, 0, 238)",
+      "font": "system-ui, -apple-system, sans-serif",
+      "height": "551px",
+      "padding": "20px",
+      "radius": "32px",
+      "size": "16px",
+      "text": "Хихви СуетаСенетх"
+    },
+    {
+      "bg": "rgb(253, 249, 237)",
+      "class": "wine-item wine-item_m",
+      "color": "rgb(0, 0, 238)",
+      "font": "system-ui, -apple-system, sans-serif",
+      "height": "551px",
+      "padding": "20px",
+      "radius": "32px",
+      "size": "16px",
+      "text": "5.00Мцване СуетаСенетх"
+    },
+    {
+      "bg": "rgb(253, 249, 237)",
+      "class": "wine-item wine-item_m",
+      "color": "rgb(0, 0, 238)",
+      "font": "system-ui, -apple-system, sans-serif",
+      "height": "551px",
+      "padding": "20px",
+      "radius": "32px",
+      "size": "16px",
+      "text": "Вионье ДВА ДУБКАСенетх"
+    },
+    {
+      "bg": "rgb(253, 249, 237)",
+      "class": "wine-item wine-item_m",
+      "color": "rgb(0, 0, 238)",
+      "font": "system-ui, -apple-system, sans-serif",
+      "height": "551px",
+      "padding": "20px",
+      "radius": "32px",
+      "size": "16px",
+      "text": "4.00Рислинг ДВА ДУБКАСенетх"
+    },
+    {
+      "bg": "rgb(253, 249, 237)",
+      "class": "wine-item wine-item_m",
+      "color": "rgb(0, 0, 238)",
+      "font": "system-ui, -apple-system, sans-serif",
+      "height": "551px",
+      "padding": "20px",
+      "radius": "32px",
+      "size": "16px",
+      "text": "Вионье Нюаж Зеро ДозажСенетх"
+    },
+    {
+      "bg": "rgb(143, 61, 66)",
+      "class": "ui-button ui-button_primary ui-button_large ui-button_rectangular block__action",
+      "color": "rgb(255, 255, 255)",
+      "font": "system-ui, -apple-system, sans-serif",
+      "height": "56px",
+      "padding": "0px 16px",
+      "radius": "16px",
+      "size": "16px",
+      "text": "Найти своё"
+    },
+    {
+      "bg": "rgb(143, 61, 66)",
+      "class": "ui-button ui-button_primary ui-button_large ui-button_rectangular block__action",
+      "color": "rgb(255, 255, 255)",
+      "font": "system-ui, -apple-system, sans-serif",
+      "height": "56px",
+      "padding": "0px 16px",
+      "radius": "16px",
+      "size": "16px",
+      "text": "Все события"
+    },
+    {
+      "bg": "rgb(143, 61, 66)",
+      "class": "ui-button ui-button_primary ui-button_large ui-button_rectangular block__action",
+      "color": "rgb(255, 255, 255)",
+      "font": "system-ui, -apple-system, sans-serif",
+      "height": "56px",
+      "padding": "0px 16px",
+      "radius": "16px",
+      "size": "16px",
+      "text": "Все винные туры"
+    },
+    {
+      "bg": "rgb(143, 61, 66)",
+      "class": "ui-button ui-button_primary ui-button_large ui-button_rectangular block__action block__action_articles",
+      "color": "rgb(255, 255, 255)",
+      "font": "system-ui, -apple-system, sans-serif",
+      "height": "56px",
+      "padding": "0px 16px",
+      "radius": "16px",
+      "size": "16px",
+      "text": "Перейти в истории"
+    }
+  ],
+  "viewport": [
+    1440,
+    1000
+  ]
+}

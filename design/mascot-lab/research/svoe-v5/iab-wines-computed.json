@@ -1,0 +1,42 @@
+{
+  "cards": [
+    {
+      "bg": "rgb(253, 249, 237)",
+      "class": "wine-item wine-item_s wines-list__list-item",
+      "height": "421px",
+      "padding": "16px",
+      "radius": "16px"
+    },
+    {
+      "bg": "rgb(253, 249, 237)",
+      "class": "wine-item wine-item_s wines-list__list-item",
+      "height": "421px",
+      "padding": "16px",
+      "radius": "16px"
+    },
+    {
+      "bg": "rgb(253, 249, 237)",
+      "class": "wine-item wine-item_s wines-list__list-item",
+      "height": "421px",
+      "padding": "16px",
+      "radius": "16px"
+    },
+    {
+      "bg": "rgb(253, 249, 237)",
+      "class": "wine-item wine-item_s wines-list__list-item",
+      "height": "421px",
+      "padding": "16px",
+      "radius": "16px"
+    }
+  ],
+  "gate": [
+    {
+      "bg": "rgb(143, 61, 66)",
+      "class": "ui-button ui-button_primary ui-button_large ui-button_rectangular",
+      "height": "56px",
+      "radius": "16px"
+    }
+  ],
+  "title": "Свои вина",
+  "url": "https://vino-svoe.ru/wines"
+}

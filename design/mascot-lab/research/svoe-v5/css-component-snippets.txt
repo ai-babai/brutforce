@@ -1,0 +1,58 @@
+/* core-header__wrapper */
+.core-header__wrapper[data-v-f0b9d254] {-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);background-color:#efdbc64d;border-radius:100px;flex-direction:column;align-self:stretch;height:40px;margin-top:24px;padding:10px 24px;transition:margin .3s ease-in-out,padding .3s ease-in-out,height .4s cubic-bezier(.68,-.3,.265,1.15),-webkit-backdrop-filter .3s ease-in-out .2s,backdrop-filter .3s ease-in-out .2s,border-radius .3s ease-in-out .2s;display:flex;overflow:hidden}
+.core-header__wrapper[data-v-f0b9d254] {padding:10px 16px}
+.core-header__wrapper--open[data-v-f0b9d254] {-webkit-backdrop-filter:blur(50px);backdrop-filter:blur(50px);border-radius:24px;height:calc(100vh - 62px);margin:8px -16px 0;padding:24px;transition:margin .3s ease-in-out,padding .3s ease-in-out,height .4s cubic-bezier(.34,1.1,.64,1),-webkit-backdrop-filter .1s ease-out,backdrop-filter .1s ease-out,border-radius .1s ease-out}
+/* ui-button_primary */
+.ui-button_primary[data-v-c553e61c] {color:#fff;background-color:#8f3d42;border:2px solid #8f3d42}
+.ui-button_primary[data-v-c553e61c]:hover {background-color:#ab494f;border-color:#ab494f}
+.ui-button_primary[data-v-c553e61c]:active {background-color:#723135;border-color:#723135}
+.ui-button_primary.ui-button_disabled[data-v-c553e61c] {color:#fff;opacity:.3;background-color:#8f3d42;border-color:#8f3d42}
+/* ui-button_tertiary */
+.ui-button_tertiary[data-v-c553e61c] {color:#8f3d42;background-color:#0000}
+.ui-button_tertiary[data-v-c553e61c]:hover {background-color:#f9f1f1}
+.ui-button_tertiary[data-v-c553e61c]:active {background-color:#edd4d6}
+.ui-button_tertiary.ui-button_disabled[data-v-c553e61c] {color:#8f3d42;opacity:.3}
+/* ui-button_large */
+.ui-button_large[data-v-c553e61c] {border-radius:16px;height:56px;padding:0 16px}
+.ui-button_large.ui-button_round[data-v-c553e61c] {background-color:#7b3528;border:none;border-radius:999px;height:44px;padding:8px 16px}
+.ui-button_large .ui-button__slot[data-v-c553e61c] {font-size:16px;font-weight:600;line-height:20px}
+/* ui-button_rectangular */
+/* intro__title */
+.intro__title[data-v-ab3a60f3] {text-align:center;color:#2c2a28;font-variant-numeric:lining-nums proportional-nums;padding:40px 0;font-family:Playfair Display;font-size:42px;font-style:normal;font-weight:500;line-height:125%}
+.intro__title[data-v-ab3a60f3] {font-size:56px;font-weight:400;line-height:70px}
+/* wine-item_m */
+.wine-item_m[data-v-68dafa7e] {border-radius:32px;gap:12px;padding:20px}
+.wine-item_m .wine-item__rating-icon[data-v-68dafa7e] {flex:0 0 20px;width:20px;height:20px}
+.wine-item_m .wine-item__rating[data-v-68dafa7e] {gap:6px;padding:6px 12px 6px 10px}
+.wine-item_m .wine-item__rating .wine-item__rating-text[data-v-68dafa7e] {color:#8f3d42}
+.wine-item_m .wine-item__rating .wine-item__rating-icon[data-v-68dafa7e] {transform:scale(1.6)translateY(-2px)}
+.wine-item_m .wine-item__rating-text[data-v-68dafa7e] {color:#2c2a28;font-family:system-ui,-apple-system,sans-serif;font-size:16px;font-style:normal;font-weight:600;line-height:20px}
+.wine-item_m .wine-item__container-text[data-v-68dafa7e] {height:73px;min-height:73px}
+.wine-item_m .wine-item__manufacturer[data-v-68dafa7e] {color:#aea9a5;text-overflow:-o-ellipsis-lastline;text-overflow:ellipsis;-webkit-line-clamp:1;-webkit-box-orient:vertical;max-height:21px;font-family:system-ui,-apple-system,sans-serif;font-size:14px;font-style:normal;font-weight:400;line-height:150%;display:-webkit-box;overflow:hidden}
+/* wine-item_s */
+.wine-item_s[data-v-68dafa7e] {border-radius:16px;gap:16px;padding:16px}
+.wine-item_s .wine-item__rating-icon[data-v-68dafa7e] {flex:0 0 16px;width:16px;height:16px}
+.wine-item_s .wine-item__rating[data-v-68dafa7e] {gap:4px;padding:4px 10px 4px 6px}
+.wine-item_s .wine-item__rating_public[data-v-68dafa7e] {padding:4px 10px 4px 8px}
+.wine-item_s .wine-item__rating_public .wine-item__rating-text[data-v-68dafa7e] {color:#8f3d42}
+.wine-item_s .wine-item__rating-text[data-v-68dafa7e] {color:#2c2a28;font-family:system-ui,-apple-system,sans-serif;font-size:12px;font-style:normal;font-weight:600;line-height:16px}
+.wine-item_s .wine-item__container-text[data-v-68dafa7e] {height:69.5px;min-height:69.5px}
+.wine-item_s .wine-item__manufacturer[data-v-68dafa7e] {color:#aea9a5;text-overflow:-o-ellipsis-lastline;text-overflow:ellipsis;-webkit-line-clamp:1;-webkit-box-orient:vertical;max-height:17.5px;font-family:system-ui,-apple-system,sans-serif;font-size:14px;font-style:normal;font-weight:400;line-height:125%;display:-webkit-box;overflow:hidden}
+/* wine-hero-block__info */
+.wine-hero-block__info[data-v-a62ad019] {background-color:#fdf9ed;border-radius:40px 0 0 40px;flex-direction:column;gap:24px;padding:48px 124px 48px 72px;display:flex}
+.wine-hero-block__info[data-v-a62ad019] {padding:32px 108px 32px 56px}
+.wine-hero-block__info[data-v-a62ad019] {border-radius:24px;padding:32px 24px}
+/* modal-adult-confirmation__content */
+/* home-intro */
+/* container-description */
+.container-description[data-v-ab3a60f3] {box-sizing:border-box;flex-direction:column;flex:none;gap:12px;display:flex}
+.container-description[data-v-ab3a60f3] {flex:0 0 352px;padding-right:32px}
+.container-description__chips[data-v-ab3a60f3] {order:4;gap:8px;display:flex}
+.container-description__chips[data-v-ab3a60f3] {order:1}
+.container-description__title[data-v-ab3a60f3] {color:#2c2a28;font-variant-numeric:lining-nums proportional-nums;order:1;font-family:Playfair Display;font-size:42px;font-style:normal;font-weight:500;line-height:125%;display:block}
+.container-description__description[data-v-ab3a60f3] {color:#2c2a28;order:2;font-family:system-ui,-apple-system,sans-serif;font-size:18px;font-style:normal;font-weight:400;line-height:150%}
+.container-description__action[data-v-ab3a60f3] {order:3;align-self:flex-start}
+.container-description__action[data-v-ab3a60f3] {width:180px;margin-top:auto}
+/* home-region-info__btn-link */
+.home-region-info__btn-link[data-v-2e6fa1cc] {width:160px}
+.home-region-info__btn-link[data-v-2e6fa1cc] {width:calc(50% - 4px)}

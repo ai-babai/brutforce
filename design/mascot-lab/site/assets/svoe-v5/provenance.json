@@ -1,0 +1,15 @@
+{
+  "captured": "2026-09-19",
+  "source": "https://vino-svoe.ru",
+  "screenshots": {
+    "iab-wines-desktop-1440x1000.jpg": "/wines before delayed age gate; no confirmation",
+    "iab-wine-detail-mobile-390x844.jpg": "/wines/ii-vino before delayed age gate; no confirmation",
+    "iab-home-desktop-1440x1000.jpg": "/ with visible unconfirmed 18+ overlay",
+    "iab-home-mobile-390x844.jpg": "/ with visible unconfirmed 18+ bottom sheet"
+  },
+  "assets": {
+    "PlayfairDisplay-VariableFont_wght.woff2": "https://vino-svoe.ru/fonts/Playfair/PlayfairDisplay-VariableFont_wght.woff2",
+    "svoe-vino-logo.svg": "https://vino-svoe.ru/svg/logo/svoe-vino-logo.svg"
+  },
+  "use": "Reference research and isolated static brand-fitting study only; not product implementation."
+}

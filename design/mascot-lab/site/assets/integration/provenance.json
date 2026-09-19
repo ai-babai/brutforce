@@ -1,0 +1,33 @@
+{
+  "reference": "Original dog detective supplied by user; 3D home compositions restyled into soft 2D using their PNGs as references.",
+  "assets": [
+    {
+      "file": "home-counter.png",
+      "prompt": "Use case: stylized-concept. Reference is the established dog detective: keep same beagle face, brown-white fur, checked deerstalker cap, tweed coat and burgundy scarf. Create one cohesive wide 3:2 illustration for the HOME SCREEN of a refined wine label scanner. A large real dark wine bottle with burgundy foil and clean cream front label stands LEFT on a narrow pale oak counter. Dog waist-up stands RIGHT behind same counter, gently holding the bottle neck with one paw and gesturing to its unobstructed front label with the other. Bottle is a physical object, NOT a printed photo, NOT a frame. Bottle label is large and faces camera, bottle and dog head comparable visual weight. Coherent perspective, restrained tactile 3D style from reference, warm soft light, natural contact shadows. Ivory plain backdrop #fffaf4, no room scenery, no clutter, no magnifier, no text, no UI, no floating components. Calm knowledgeable expression looking at the bottle. Show the entire bottle with cap and base and both contact points. Body cropped by the counter at bottom; minimal margins, readable at 340px wide. Balanced elegant composition, adult wine context.",
+      "kind": "Generated composition study, not a screenshot or real product photo",
+      "tool": "image_gen",
+      "date": "2026-09-19"
+    },
+    {
+      "file": "home-hold.png",
+      "prompt": "Use case: stylized-concept. Reference is our beagle wine detective. Preserve same face proportions, checked brown deerstalker, tweed coat, burgundy scarf, realistic soft fur and sophisticated 3D illustration. Create a 3:2 wide clean hero illustration for mobile wine scanning. Dog waist-up at RIGHT holding one large physical dark wine bottle in both paws across lower chest, bottle upright at slight diagonal toward LEFT, cream label facing viewer completely clear, burgundy foil. Dog studies bottle rather than staring at camera. Bottle dominates center-left, head upper-right; two objects form a SINGLE connected triangular silhouette. No magnifier, no table, no picture frame, no props, no text, no UI, no room. Plain warm ivory background #fffaf4. Soft diffused studio lighting, believable paws supporting bottle bottom and shoulder without covering label. Entire bottle visible, consistent scale and perspective, bottle almost as tall as dog's head plus torso. Calm adult wine-discovery aesthetic, not drinking or celebratory. Avoid baby-like head proportions. This is a continuous hero scene placed above a burgundy scan button, not an icon.",
+      "kind": "Generated composition study, not a screenshot or real product photo",
+      "tool": "image_gen",
+      "date": "2026-09-19"
+    },
+    {
+      "file": "home-counter-2d.png",
+      "prompt": "Restyle the attached wine detective illustration as sophisticated soft 2D editorial art for the Russian wine catalogue Svoye Vino. Preserve EXACT composition: beagle on RIGHT, physical wine bottle on LEFT, both on same pale counter, one paw holds neck and another gestures to the blank cream label. Preserve beagle identity, long brown ears, white muzzle, checked deerstalker, coat and burgundy scarf. CHANGE ONLY rendering/art direction: flat hand-painted gouache-like shapes, delicate understated pencil contours, muted warm tan, oatmeal, dusty burgundy #8f3d42, charcoal #2c2a28. Background plain warm ivory #fdf9ed. Very restrained paper grain, two or three broad tone areas per object, simplified sparse hat checks, NO individual fur strands, NO photorealism, NO 3D gloss, NO big shiny toy eyes, NO gradients mimicking 3D. Calm intelligent adult editorial character, natural face proportions. Soft 2D dark bottle, cream label, burgundy cap, entire bottle visible. Keep 3:2 landscape and all subject positions, scale, counter height. No text, no logo, no UI, no extra objects. Suitable alongside Playfair Display and restrained botanical line art. Output one complete cohesive illustration, not comparison sheet.",
+      "kind": "Generated composition study, not a screenshot or real product photo",
+      "tool": "image_gen",
+      "date": "2026-09-19"
+    },
+    {
+      "file": "home-hold-2d.png",
+      "prompt": "Restyle first reference (dog holding wine bottle) into soft muted 2D editorial gouache illustration matching the SECOND reference's painted style. Preserve first reference composition exactly: bottle LEFT tilted slightly, beagle RIGHT, paws support bottle base and shoulder, label unobscured, no counter. Same brown/white beagle face, deerstalker, tweed coat, burgundy scarf. Simplify hat checks, remove realistic fur strands and reflective glass. Broad hand-painted shapes, restrained fine contours, warm oatmeal/tan, dusty burgundy #8f3d42, charcoal #2c2a28, ivory #fdf9ed background. Less texture than reference two. Calm intelligent adult editorial character. Bottle dark with cream blank label, cap burgundy. 3:2 landscape, complete bottle in frame, no text/logo/UI/extra props. Definitely 2D, no 3D rendering.",
+      "kind": "Generated composition study, not a screenshot or real product photo",
+      "tool": "image_gen",
+      "date": "2026-09-19"
+    }
+  ]
+}
