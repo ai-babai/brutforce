@@ -1,0 +1,96 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "BrutForce synthetic demo API",
+    "version": "1.1.0",
+    "description": "Versioned demo API plus the separately bounded contest prediction adapter. Synthetic demo routes do not perform recognition; the contest adapter reports recognition_unavailable until a real recognizer is wired."
+  },
+  "paths": {
+    "/v1/health": {
+      "get": {
+        "operationId": "getHealth",
+        "summary": "Read synthetic demo health",
+        "responses": {
+          "200": {"description": "Demo server is available.", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/Health"}}}},
+          "405": {"$ref": "#/components/responses/APIError"}
+        }
+      }
+    },
+    "/v1/catalog": {
+      "get": {
+        "operationId": "getCatalog",
+        "summary": "Read the embedded synthetic wine catalog",
+        "responses": {
+          "200": {"description": "Ordered synthetic candidates.", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/SearchResponse"}}}},
+          "405": {"$ref": "#/components/responses/APIError"}
+        }
+      }
+    },
+    "/v1/photos": {
+      "post": {
+        "operationId": "uploadPhoto",
+        "summary": "Store one private demo photo and return a receipt",
+        "description": "Accepts one JPEG, PNG, or GIF file in multipart field `photo`. A receipt only gates synthetic search; it does not perform recognition.",
+        "requestBody": {"required": true, "content": {"multipart/form-data": {"schema": {"type": "object", "required": ["photo"], "properties": {"photo": {"type": "string", "format": "binary", "description": "JPEG, PNG, or GIF; maximum 10 MiB."}}}}}},
+        "responses": {
+          "201": {"description": "Private receipt created.", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/PhotoReceipt"}}}},
+          "400": {"$ref": "#/components/responses/APIError"},
+          "403": {"$ref": "#/components/responses/APIError"},
+          "415": {"$ref": "#/components/responses/APIError"},
+          "429": {"$ref": "#/components/responses/APIError"},
+          "503": {"$ref": "#/components/responses/APIError"},
+          "405": {"$ref": "#/components/responses/APIError"}
+        }
+      }
+    },
+    "/v1/search": {
+      "post": {
+        "operationId": "searchDemoCatalog",
+        "summary": "Run a synthetic catalog search",
+        "description": "`scenario` defaults to `exact`; `error` is a deliberate synthetic 503. `photoId`, if supplied, must be a receipt from POST /v1/photos.",
+        "requestBody": {"required": true, "content": {"application/json": {"schema": {"$ref": "#/components/schemas/SearchRequest"}, "example": {"scenario": "exact", "query": "каберне"}}}},
+        "responses": {
+          "200": {"description": "Synthetic search result.", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/SearchResponse"}}}},
+          "400": {"$ref": "#/components/responses/APIError"},
+          "403": {"$ref": "#/components/responses/APIError"},
+          "404": {"$ref": "#/components/responses/APIError"},
+          "415": {"$ref": "#/components/responses/APIError"},
+          "429": {"$ref": "#/components/responses/APIError"},
+          "503": {"$ref": "#/components/responses/APIError"},
+          "405": {"$ref": "#/components/responses/APIError"}
+        }
+      }
+    },
+    "/v1/eval/predict": {
+      "post": {
+        "operationId": "predictContestSlug",
+        "summary": "Return one recognizer-selected contest slug",
+        "description": "Accepts exactly one JPEG, PNG, GIF, or WebP file in multipart field `image`, determines its format by decoding bytes, and never writes it to the demo upload store. The default executable has no recognizer and returns recognition_unavailable.",
+        "requestBody": {"required": true, "content": {"multipart/form-data": {"schema": {"type": "object", "required": ["image"], "additionalProperties": false, "properties": {"image": {"type": "string", "format": "binary", "description": "Maximum 10 MiB; maximum 25,000,000 pixels; format is determined from content."}}}}}},
+        "responses": {
+          "200": {"description": "Exact nonempty slug returned by the configured recognizer.", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/EvalPrediction"}}}},
+          "400": {"$ref": "#/components/responses/EvalError"},
+          "405": {"$ref": "#/components/responses/EvalError"},
+          "429": {"$ref": "#/components/responses/EvalError"},
+          "503": {"$ref": "#/components/responses/EvalError"},
+          "504": {"$ref": "#/components/responses/EvalError"}
+        }
+      }
+    }
+  },
+  "components": {
+    "responses": {
+      "APIError": {"description": "Structured synthetic-demo API error.", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/APIError"}}}},
+      "EvalError": {"description": "Structured contest adapter error.", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/EvalError"}}}}
+    },
+    "schemas": {
+      "Health": {"type": "object", "required": ["ok", "demo"], "properties": {"ok": {"const": true}, "demo": {"const": true}}},
+      "SearchRequest": {"type": "object", "properties": {"scenario": {"type": ["string", "null"], "enum": [null, "", "exact", "uncertain", "none", "error"], "default": "exact"}, "query": {"type": ["string", "null"], "maxLength": 256}, "photoId": {"type": ["string", "null"], "pattern": "^[0-9a-f]{32}$"}}, "additionalProperties": false},
+      "SearchResponse": {"$ref": "/api/schema/demo-search.schema.json"},
+      "PhotoReceipt": {"type": "object", "required": ["id", "createdAt", "bytes", "mime", "width", "height"], "properties": {"id": {"type": "string", "pattern": "^[0-9a-f]{32}$"}, "createdAt": {"type": "string", "format": "date-time"}, "bytes": {"type": "integer", "minimum": 1}, "mime": {"type": "string", "enum": ["image/jpeg", "image/png", "image/gif"]}, "width": {"type": "integer", "minimum": 1}, "height": {"type": "integer", "minimum": 1}}},
+      "APIError": {"type": "object", "required": ["demo", "candidates", "error"], "properties": {"demo": {"const": true}, "candidates": {"type": ["array", "null"]}, "error": {"type": "object", "required": ["code", "message"], "properties": {"code": {"type": "string"}, "message": {"type": "string"}}}}},
+      "EvalPrediction": {"type": "object", "required": ["slug"], "properties": {"slug": {"type": "string", "minLength": 1}}, "additionalProperties": false},
+      "EvalError": {"type": "object", "required": ["error"], "properties": {"error": {"type": "object", "required": ["code", "message"], "properties": {"code": {"type": "string"}, "message": {"type": "string"}}}}, "additionalProperties": false}
+    }
+  }
+}

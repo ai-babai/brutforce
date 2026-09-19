@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "title": "BrutForce runnable demo — behavior cases",
-  "caveat": "Synthetic demo checks API and UI state handling only; it is not a recognition benchmark.",
+  "caveat": "Demo behavior, design/security and isolated contest HTTP contract; not a recognition-quality benchmark.",
   "cases": [
     {
       "id": "API-001",
@@ -520,6 +520,97 @@
       "title": "Application uses v1 catalog, upload and search contracts",
       "source": "apps/web/src/api.test.ts",
       "spec": "contracts/api-versioning.md"
+    },
+    {
+      "id": "EVAL-001",
+      "area": "eval",
+      "title": "Ответ содержит точный slug распознавателя без нормализации",
+      "source": "apps/api/eval_predict_test.go",
+      "spec": "contracts/eval-predict.md"
+    },
+    {
+      "id": "EVAL-002",
+      "area": "eval",
+      "title": "WebP принимается по содержимому даже с расширением jpg",
+      "source": "apps/api/eval_predict_test.go",
+      "spec": "contracts/eval-predict.md"
+    },
+    {
+      "id": "EVAL-003",
+      "area": "eval",
+      "title": "Неверный multipart и запрещённые запросы отклоняются",
+      "source": "apps/api/eval_predict_test.go",
+      "spec": "contracts/eval-predict.md"
+    },
+    {
+      "id": "EVAL-004",
+      "area": "eval",
+      "title": "Неверный метод и неизвестный API-адрес возвращают JSON-ошибку",
+      "source": "apps/api/eval_predict_test.go",
+      "spec": "contracts/eval-predict.md"
+    },
+    {
+      "id": "EVAL-005",
+      "area": "eval",
+      "title": "Без модели возвращается явная ошибка, а не выдуманное вино",
+      "source": "apps/api/eval_predict_test.go",
+      "spec": "contracts/eval-predict.md"
+    },
+    {
+      "id": "EVAL-006",
+      "area": "eval",
+      "title": "Распознаватель получает дедлайн и отмену запроса",
+      "source": "apps/api/eval_predict_test.go",
+      "spec": "contracts/eval-predict.md"
+    },
+    {
+      "id": "EVAL-007",
+      "area": "eval",
+      "title": "Размер файла, число пикселей и декодирование проверяются до распознавания",
+      "source": "apps/api/eval_predict_test.go",
+      "spec": "contracts/eval-predict.md"
+    },
+    {
+      "id": "EVAL-008",
+      "area": "eval",
+      "title": "Последовательные запросы не сохраняют фото и не расходуют лимит демо",
+      "source": "apps/api/eval_predict_test.go",
+      "spec": "contracts/eval-predict.md"
+    },
+    {
+      "id": "EVAL-009",
+      "area": "eval",
+      "title": "Число одновременных распознаваний ограничено отдельно",
+      "source": "apps/api/eval_predict_test.go",
+      "spec": "contracts/eval-predict.md"
+    },
+    {
+      "id": "REPORT-001",
+      "area": "report",
+      "title": "Столбец сценариев закреплён при горизонтальной прокрутке",
+      "source": "apps/web/src/report.test.ts",
+      "spec": "reports/README.md"
+    },
+    {
+      "id": "REPORT-002",
+      "area": "report",
+      "title": "Свежие решения идут первыми, старые — последними",
+      "source": "apps/web/src/report.test.ts",
+      "spec": "reports/README.md"
+    },
+    {
+      "id": "REPORT-003",
+      "area": "report",
+      "title": "Верхняя сводка показывает только последний прогон",
+      "source": "apps/web/src/report.test.ts",
+      "spec": "reports/README.md"
+    },
+    {
+      "id": "SEC-009",
+      "area": "security",
+      "title": "Demo upload allowlist remains unchanged after contest WebP support",
+      "source": "apps/api/security_test.go",
+      "spec": "contracts/eval-predict.md"
     }
   ]
 }

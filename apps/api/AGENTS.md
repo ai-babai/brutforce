@@ -13,8 +13,10 @@ with it.
 - The server is a prototype boundary only. Upload receipt persistence exists,
   and the embedded synthetic catalog is readable, but recognition, OCR, real
   catalog lookup, authentication, and analytics remain deliberate stubs.
-- Keep dependencies in the Go standard library unless a later approved task
-  changes this boundary.
+- Keep dependencies in the Go standard library except the approved
+  `golang.org/x/image/webp` decoder used only by the contest adapter. It lets
+  `POST /v1/eval/predict` identify actual WebP bytes regardless of filename;
+  the demo upload allowlist remains JPEG/PNG/GIF.
 - `go test -count=1 ./...` is the required fast verification command.
 
 - Preserve [Security Specs](../../docs/product/security-spec.md). Never call DecodeAll or process stored originals without resource bounds. A successful upload is not a malware-clean verdict.

@@ -29,6 +29,22 @@ at `GET /api/schema/demo-search.schema.json`. API versioning and the boundary
 with the future contest endpoint are described in
 [`contracts/api-versioning.md`](../../contracts/api-versioning.md).
 
+## Contest adapter
+
+`POST /v1/eval/predict` is a separate, stateless contest boundary documented
+by [`contracts/eval-predict.md`](../../contracts/eval-predict.md). It accepts
+one bounded multipart `image`, detects JPEG/PNG/GIF/WebP from bytes rather than
+the filename, and returns only `{ "slug": "..." }` when an injected
+recognizer returns a nonempty exact slug. It never uses `UPLOAD_DIR`, the
+synthetic catalog, or the demo search result.
+
+The executable intentionally wires no recognizer, so a valid decoded image
+returns JSON HTTP 503 `recognition_unavailable`; it never fabricates a slug.
+`EVAL_MAX_CONCURRENT` controls this route's independent concurrency cap
+(default 4). Run its contract checks with
+`go test -count=1 -run '^TestEVAL' ./...`. They prove the HTTP boundary and
+the stub hand-off only, not recognition quality.
+
 `POST /v1/search` accepts a JSON object no larger than 64 KiB:
 
 ```json
@@ -153,7 +169,7 @@ quality:
 | API-015 | embedded catalog | eight unique stable synthetic records and matching `GET /v1/catalog` response |
 | API-016 | name, winery, and year query | exact search filters the same embedded catalog and selects its first match |
 | API-017 | documentation route or bundled asset | `GET /api/docs` and its local Swagger assets work; its own errors remain JSON API errors |
-| API-018 | embedded OpenAPI and canonical schema | OpenAPI 3.1 documents exactly four implemented endpoint methods and the embedded schema matches the contract source |
+| API-018 | embedded OpenAPI and canonical schema | OpenAPI 3.1 documents the demo endpoints plus the separately defined contest adapter; the embedded schema matches the contract source |
 | API-019 | versioned routes with `WEB_ROOT` configured | `/v1` business routes work; legacy business routes and unknown `/v1` paths are JSON 404, never SPA HTML |
 
 Run: `go test -count=1 ./...`.
