@@ -1,0 +1,65 @@
+base
+.core-header__wrapper[data-v-f0b9d254] {-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);background-color:#efdbc64d;border-radius:100px;flex-direction:column;align-self:stretch;height:40px;margin-top:24px;padding:10px 24px;transition:margin .3s ease-in-out,padding .3s ease-in-out,height .4s cubic-bezier(.68,-.3,.265,1.15),-webkit-backdrop-filter .3s ease-in-out .2s,backdrop-filter .3s ease-in-out .2s,border-radius .3s ease-in-out .2s;display:flex;overflow:hidden}
+
+@media only screen and (width<=767px)
+.core-header__wrapper[data-v-f0b9d254] {padding:10px 16px}
+
+base
+.core-header__wrapper--open[data-v-f0b9d254] {-webkit-backdrop-filter:blur(50px);backdrop-filter:blur(50px);border-radius:24px;height:calc(100vh - 62px);margin:8px -16px 0;padding:24px;transition:margin .3s ease-in-out,padding .3s ease-in-out,height .4s cubic-bezier(.34,1.1,.64,1),-webkit-backdrop-filter .1s ease-out,backdrop-filter .1s ease-out,border-radius .1s ease-out}
+
+base
+.core-header__mob-search-btn[data-v-f0b9d254] {color:#2c2a28;-webkit-backdrop-filter:blur(5px);backdrop-filter:blur(5px);box-sizing:border-box;background:#ffffffe6;border:1px solid #fff;border-radius:999px;align-items:center;padding:8px;font-family:system-ui,-apple-system,sans-serif;font-size:16px;font-style:normal;font-weight:400;line-height:150%;transition:transform .3s cubic-bezier(.68,-.55,.265,1.55);display:flex;position:fixed;bottom:24px;left:24px;right:24px;transform:translateY(90px);box-shadow:0 1px 2px #6c550f1a,0 4px 4px #6c550f0d,0 0 20px #6c550f1a}
+
+base
+.core-header__mob-search-btn_show[data-v-f0b9d254] {transform:translateY(0)}
+
+base
+.core-header__mob-search-btn-container[data-v-f0b9d254] {background-color:#8f3d42}
+
+base
+.core-header__mob-search-btn-container[data-v-f0b9d254],.core-header__mob-search-camera-wrapper[data-v-f0b9d254] {border-radius:999px;justify-content:center;align-items:center;width:48px;height:48px;display:flex}
+
+base
+.core-header__mob-search-btn-icon[data-v-f0b9d254] {color:#fff}
+
+base
+.core-header__mob-search-btn-text[data-v-f0b9d254] {text-align:center;flex-grow:1}
+
+base
+.home-chip[data-v-06648d4b] {box-sizing:border-box;color:#2c2a28;cursor:pointer;background-color:#fdf9edcc;border:1px solid #ffffff4d;border-radius:999px;justify-content:center;align-items:center;height:32px;padding:0 12px;font-family:system-ui,-apple-system,sans-serif;font-size:16px;font-style:normal;font-weight:400;line-height:150%;display:inline-flex}
+
+base
+.home-chip_active[data-v-06648d4b] {color:#fff;-webkit-backdrop-filter:blur(5px);backdrop-filter:blur(5px);cursor:default;background-color:#8f3d42}
+
+base
+.container-smooth[data-v-ab3a60f3] {box-sizing:border-box;-webkit-backdrop-filter:blur(5px);backdrop-filter:blur(5px);background-color:#efdbc6ba;border-radius:40px;flex-direction:column;gap:16px;width:100%;margin:0 auto;padding:24px;display:flex}
+
+@media only screen and (width>=768px)
+.container-smooth[data-v-ab3a60f3] {gap:24px;max-width:calc(100% - 48px);padding:48px}
+
+@media only screen and (width>=1024px)
+.container-smooth[data-v-ab3a60f3] {flex-direction:row;width:1200px;padding:48px 0 48px 48px}
+
+base
+.container-smooth__slider[data-v-ab3a60f3] {margin-left:-24px;margin-right:-24px}
+
+@media only screen and (width>=768px)
+.container-smooth__slider[data-v-ab3a60f3] {margin-left:-48px;margin-right:-48px}
+
+@media only screen and (width>=1024px)
+.container-smooth__slider[data-v-ab3a60f3] {align-self:stretch;max-width:calc(100% - 352px);margin:-48px 0 -48px -24px}
+
+base
+.wine-tooltip[data-v-68dafa7e] {box-sizing:border-box;-webkit-backdrop-filter:blur(2.5px);backdrop-filter:blur(2.5px);background:#fefdfa;border-radius:8px;flex-direction:column;width:256px;padding:8px 12px;display:flex;box-shadow:0 6px 12px #2c2a2812,0 0 6px #2c2a280f,0 0 2px #2c2a280f}
+
+base
+.wine-tooltip__btn[data-v-68dafa7e] {color:#aea9a5;cursor:pointer;width:16px;height:16px;position:absolute;top:8px;right:12px}
+
+base
+.wine-tooltip__title[data-v-68dafa7e] {font-weight:600}
+
+base
+.wine-tooltip__description[data-v-68dafa7e],.wine-tooltip__title[data-v-68dafa7e] {color:#2c2a28;font-family:system-ui,-apple-system,sans-serif;font-size:14px;font-style:normal;line-height:20px}
+
+base
+.wine-tooltip__description[data-v-68dafa7e] {font-weight:400}

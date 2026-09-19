@@ -1,0 +1,12 @@
+{
+  "css_checked": "2026-09-20",
+  "screenshots_captured": "2026-09-19",
+  "website": "https://vino-svoe.ru/",
+  "files": {
+    "desktop-home-story-glass-1440x1000.png": "Browser capture of homepage before delayed age gate; some story images had not loaded. Used to inspect panel only.",
+    "mobile-wine-detail-header-390x844.jpg": "Browser capture of /wines/ii-vino before delayed age gate; used for header and product hierarchy.",
+    "mobile-age-sheet-390x844.jpg": "Browser capture of homepage with unconfirmed age gate; used for opaque sheet and blurred backdrop.",
+    "exact-rules.txt": "Selected current public CSS rules including media context. Components are not all visually traversed."
+  },
+  "limits": "No fresh browser walkthrough on September 20. No screenshot of open menu or floating dock. No age gate confirmation. Bench is a labeled simplified CSS reconstruction, not a website screenshot."
+}

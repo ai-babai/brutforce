@@ -1,0 +1,8 @@
+{
+  "date": "2026-09-20",
+  "file": "hold-2d-v2.png",
+  "reference": "../integration/home-hold-2d.png",
+  "tool": "image_gen",
+  "prompt": "Refine this exact beagle holding a wine bottle illustration into an unmistakably TWO-DIMENSIONAL elegant editorial drawing for a refined wine website. Preserve pose, identity, bottle angle and scale, eye direction, brown and white markings, deerstalker, coat and burgundy scarf. Label blank and clearly facing viewer, paws supporting base and shoulder not covering label. Replace realistic fur and brocade textures with broad flat gouache shapes and very fine warm brown contour lines; coat plain oatmeal with only seams, hat only 5-6 understated checks, no tiny patterns. Muted dusty tan, ivory #fdf9ed, dusty burgundy #8f3d42. No 3D shading, no glossy highlights, no fur strands, no big toy pupils. Subtle two-tone shadows only, handmade softly irregular contours, calm intelligent expression. Plain ivory background, no grain overlay, no UI or text, no new props, no frame, no table. Wide 3:2 composition, entire bottle visible. Distinctively flat illustration with restrained adult editorial warmth, not a paint filter over 3D.",
+  "decision": "User prefers bottle-in-paws composition; 2D vs 3D undecided. Earlier assets preserved."
+}
