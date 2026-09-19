@@ -90,3 +90,11 @@ renderComponents();renderPhone();
 if(!location.hash)navTo('flows');
 
 window.addEventListener("hashchange",()=>{const id=location.hash.slice(1);if(["references","components","flows","decisions","sources"].includes(id))navTo(id)});
+
+// visualViewport also covers browsers where dynamic viewport units lag toolbar changes.
+function syncCameraViewport(){
+ document.documentElement.style.setProperty('--camera-viewport-height',`${window.visualViewport?.height || window.innerHeight}px`);
+}
+syncCameraViewport();
+window.addEventListener('resize',syncCameraViewport);
+window.visualViewport?.addEventListener('resize',syncCameraViewport);

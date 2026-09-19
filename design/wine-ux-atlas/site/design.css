@@ -39,3 +39,34 @@
 .scan-primary-copy{min-width:0}.scan-primary .scan-primary-copy strong{font-size:14px;line-height:1.35;letter-spacing:-.1px}.scan-primary-copy small{font-size:11px;line-height:1.5;margin-top:4px;color:#efdae3}
 .scan-primary-mark{display:flex;align-items:center;justify-content:center}.scan-primary-mark .ui-icon{width:28px;height:28px;stroke-width:1.55}
 @media(max-width:360px){.scan-primary{grid-template-columns:36px minmax(0,1fr) 28px;gap:9px;padding:15px 12px}.scan-primary-camera{width:36px;height:40px}.scan-primary .scan-primary-copy strong{font-size:13px}.scan-primary-copy small{font-size:10px}.scan-primary-mark .ui-icon{width:28px;height:28px}}
+
+/* 3.6 draft: camera fills the visible tab, without Fullscreen API. */
+.phone.is-camera{position:fixed;inset:0;z-index:1000;width:100%;height:100vh;height:100dvh;height:var(--camera-viewport-height,100dvh);min-height:0;border:0;border-radius:0;box-shadow:none;overflow:hidden;transform:none}
+.phone.is-camera .phone-status{display:none}
+.phone.is-camera #phone-content{height:100%;min-height:0}
+.phone.is-camera .camera-screen{box-sizing:border-box;width:100%;height:100%;min-height:0;display:grid;grid-template-rows:auto auto minmax(0,1fr) auto;gap:8px;padding:max(4px,env(safe-area-inset-top)) max(12px,env(safe-area-inset-right)) max(8px,env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left));overflow:hidden}
+.phone.is-camera .camera-toolbar{padding:0;min-height:48px;gap:8px;min-width:0}
+.phone.is-camera .camera-toolbar>span{min-width:0;text-align:center;overflow-wrap:anywhere}
+.phone.is-camera .camera-guidance{position:static;transform:none;min-width:0;max-width:100%;margin:0;padding:0 4px;font-size:12px;line-height:1.4;white-space:normal;overflow-wrap:anywhere;text-align:center}
+.phone.is-camera .camera-view{min-height:0;min-width:0;margin:0;align-self:stretch}
+.phone.is-camera .camera-view .target-bottle{max-height:100%;height:100%;width:auto;max-width:100%;object-fit:contain}
+.phone.is-camera .camera-view .neighbor{height:90%;max-height:100%;top:0}
+.phone.is-camera .viewfinder{inset:12px}
+.phone.is-camera .camera-demo-badge{left:12px;right:auto;bottom:12px;max-width:calc(100% - 24px);box-sizing:border-box;transform:none;white-space:normal}
+.phone.is-camera .camera-bottom{padding:0;min-width:0}
+.phone.is-camera .camera-bottom>span{display:none}
+.phone.is-camera .camera-controls{margin:0;gap:16px;min-height:66px;justify-content:center}
+.phone.is-camera .camera-controls .icon-button,.phone.is-camera .control-balance{width:48px;height:48px;flex:none}
+.phone.is-camera .shutter{width:66px;height:66px;flex:none}
+.phone.is-camera .camera-bottom small{display:block;margin-top:4px;line-height:1.3}
+@media(max-height:480px){.phone.is-camera .camera-screen{gap:4px}.phone.is-camera .camera-bottom small{display:none}}
+@media(orientation:landscape) and (max-height:600px){
+.phone.is-camera .camera-screen{grid-template-columns:minmax(0,1fr) 88px;grid-template-rows:auto auto minmax(0,1fr);column-gap:12px}
+.phone.is-camera .camera-toolbar{grid-column:1/-1}
+.phone.is-camera .camera-guidance{grid-column:1;grid-row:2}
+.phone.is-camera .camera-view{grid-column:1;grid-row:3}
+.phone.is-camera .camera-bottom{grid-column:2;grid-row:2/4;align-self:center}
+.phone.is-camera .camera-controls{flex-direction:column;gap:12px}.phone.is-camera .control-balance{display:none}.phone.is-camera .camera-bottom small{display:none}
+}
+
+body:has(.phone.is-camera){overflow:hidden}.phone.is-camera .camera-view .target-bottle{position:absolute;inset:0;margin:auto;transform:none;object-fit:contain}
