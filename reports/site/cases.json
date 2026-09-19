@@ -457,6 +457,34 @@
       "title": "Нижняя кнопка Сканер открывает камеру или запасной путь",
       "source": "apps/web/src/navigation.test.tsx",
       "spec": "docs/product/behavior-spec.md"
+    },
+    {
+      "id": "UI-023",
+      "area": "ui",
+      "title": "Закладка в шапке карточки сохраняет и удаляет вино",
+      "source": "apps/web/src/navigation.test.tsx",
+      "spec": "docs/product/behavior-spec.md"
+    },
+    {
+      "id": "DESIGN-019",
+      "area": "design",
+      "title": "Компактная закладка в шапке без широкой рамки",
+      "source": "apps/web/src/design.test.tsx",
+      "spec": "apps/web/design-specs.md"
+    },
+    {
+      "id": "UI-024",
+      "area": "ui",
+      "title": "Поиск запускается кнопкой и клавишей Enter",
+      "source": "apps/web/src/navigation.test.tsx",
+      "spec": "docs/product/behavior-spec.md"
+    },
+    {
+      "id": "DESIGN-020",
+      "area": "design",
+      "title": "Поле поиска имеет цельную рамку и отступ до результатов",
+      "source": "apps/web/src/design.test.tsx",
+      "spec": "apps/web/design-specs.md"
     }
   ]
 }
