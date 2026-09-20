@@ -19,6 +19,11 @@ const base=process.env.DESIGN_URL||'http://localhost:8768/';
   for(const scene of ['start','loading','waiting','missing','offline','search','result','candidates','permission','badphoto','unreadable','servererror','saved','gallery','preview','settings']){
    await open(scene);await check(scene);
    assert.equal(await page.locator('.v2-mascot-scene,.mascot-secondary-scene').count(),['start','loading','waiting','missing','offline','search'].includes(scene)?1:0,scene);
+   // Regression: selected artwork must have real transparency, not a baked paper rectangle.
+   if(width===390&&['start','loading','waiting','missing','offline','search'].includes(scene)){
+    const alpha=await page.locator('.v2-mascot-scene img,.mascot-secondary-scene img').evaluate(img=>{const c=document.createElement('canvas');c.width=img.naturalWidth;c.height=img.naturalHeight;const ctx=c.getContext('2d');ctx.drawImage(img,0,0);const d=ctx.getImageData(0,0,c.width,c.height).data;let clear=0,solid=0;for(let i=3;i<d.length;i+=4){if(d[i]===0)clear++;if(d[i]>=250)solid++;}return {clear,solid,total:d.length/4};});
+    assert(alpha.clear>alpha.total*.05,scene+' needs transparent background');assert(alpha.solid>alpha.total*.1,scene+' preserves opaque artwork');
+   }
    assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),scene+' document overflow');
    assert(await page.locator('#phone-content').evaluate(e=>e.scrollWidth<=e.clientWidth+1),scene+' phone overflow');
   }

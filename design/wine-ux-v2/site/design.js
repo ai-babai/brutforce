@@ -8,7 +8,7 @@ const productButton=(text,go,icon='arrow-right',secondary=false)=>`<button class
 const productText=(text,go)=>`<button class="product-text" data-go="${go}">${text}</button>`;
 const missingActions=()=>`<div class="product-bottom-actions missing-actions"><button class="product-button" data-go="search">${missingOrigin==='manual'?'Изменить запрос':'Найти по названию'}</button><button class="product-button is-secondary" data-go="camera">Переснять этикетку</button></div>`;
 const capturePanel=(small=false)=>`<div class="capture-panel ${small?'is-small':''}">${scenario.id==='shelf'?bottleImage('capture-neighbor left')+bottleImage('capture-neighbor right'):''}${bottleImage()}<span class="capture-label">${uiIcon('photo')} Ваш снимок · демо</span></div>`;
-const mascotAsset=(kind)=>`assets/v2/mascot-${kind==='counter'?'counter-thoughtful':kind==='walk'?'walk':kind==='offline'?'offline':'cellar'}-2d.png`;
+const mascotAsset=(kind)=>`assets/v2/mascot-${kind==='counter'?'counter-thoughtful':kind==='walk'?'walk':kind==='offline'?'offline':'cellar'}-2d-alpha.png`;
 const mascotScene=(kind)=>`<div class="mascot-secondary-scene mascot-scene-${kind}" aria-hidden="true"><img src="${mascotAsset(kind)}" alt="" width="1536" height="1024"></div>`;
 const preservedPhoto=()=>`<button class="comparison-origin preserved-photo" data-go="preview"><span class="origin-photo">${bottleImage()}</span><span><strong>Ваш снимок сохранён</strong><small>Открыть этикетку</small></span>${uiIcon('zoom-in')}</button>`;
 let detailTab='overview', cameraFlash=false, searched=false;

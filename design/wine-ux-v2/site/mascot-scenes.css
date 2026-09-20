@@ -1,5 +1,5 @@
 /* Secondary scenes have a job in the flow; product data stays unobscured. */
-.mascot-secondary-scene{position:relative;flex:none;margin:12px -12px 0;overflow:hidden;pointer-events:none;mix-blend-mode:multiply}
+.mascot-secondary-scene{position:relative;flex:none;margin:12px -12px 0;overflow:hidden;pointer-events:none;mix-blend-mode:normal}
 .mascot-secondary-scene img{display:block;width:100%;height:auto;object-fit:contain}
 .mascot-scene-cellar{margin:12px -12px 0}
 .mascot-scene-cellar img,.mascot-scene-walk img{max-height:220px}
@@ -17,7 +17,6 @@
 .product-screen[data-state=search] .product-search{flex-shrink:0}
 @media(max-width:350px){.mascot-scene-cellar img,.mascot-scene-counter img{max-height:180px}.mascot-scene-browse img{max-height:210px}}
 body.mascot-preview .mobile-report-select{display:none!important}
-.mascot-secondary-scene{mask-image:linear-gradient(to right,transparent,#000 5%,#000 95%,transparent),linear-gradient(to bottom,transparent,#000 6%,#000 95%,transparent);mask-composite:intersect;-webkit-mask-image:linear-gradient(to right,transparent,#000 5%,#000 95%,transparent),linear-gradient(to bottom,transparent,#000 6%,#000 95%,transparent);-webkit-mask-composite:source-in}
 .product-screen[data-state=missing] .mascot-scene-counter{margin-top:auto}
 .product-screen[data-state=missing] .product-bottom-actions{margin-top:0}
 .mascot-extension{margin-top:40px;padding-top:24px;border-top:1px solid #ded4c8}.mascot-extension h3{font:500 32px var(--serif)}.mascot-extension>p{font-size:14px;line-height:1.6;max-width:850px;color:#746e68}.mascot-extension-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:28px}.mascot-extension figure{margin:0}.mascot-extension img{width:100%;aspect-ratio:3/2;object-fit:contain;mix-blend-mode:multiply}.mascot-extension h4{font:600 18px var(--sans);margin:12px 0}.mascot-extension figcaption p{font-size:14px;line-height:1.6;color:#746e68}.mascot-extension button{min-height:44px}@media(max-width:760px){.mascot-extension-grid{grid-template-columns:1fr}}

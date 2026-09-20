@@ -44,3 +44,7 @@ Maks's red annotations were found by sigma-ops in Hermes Telegram context, linke
 This handoff updates mockups only. BDD session should adapt actual recognition candidates, file context and query state, then run its application checks. No report publication is included in this change.
 
 Run tests/flows.cjs and tests/migration.cjs with the documented Playwright runtime. UX-M01..10 verify cancel/delete/resume identity, success/error arriving behind preview, query/list/scroll return, original versus newly selected identity, distinct error states, reshoot, catalog/Saved save/delete, Home/Search/Saved navigation, explicit camera entry, wide frame, exact heading and the simplified home logo row. Existing flow checks remain and include the new report states. Parent and independent GPT-5.6 browser review cover visual geometry; tests do not claim physical-device or real camera/network validation.
+
+## Follow-up: alpha across every selected mascot scene
+
+Maks approved the same treatment for all illustrations. Use `-2d-alpha.png` variants for hold (home), walk (loading/waiting), cellar (empty manual search), counter-thoughtful (no match), offline (network unavailable). Keep scene objects and opaque whites; remove the baked rectangular paper backdrop. Preserve alpha in app WebP exports. See tokens.json and mascot-scenes.md. This is an asset correction, not a new user step or state.

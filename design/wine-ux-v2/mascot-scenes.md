@@ -37,3 +37,7 @@ The entire scene opens the retained photo, and back returns to cancelled. Retry 
 Maks approved removing the baked rectangular background from the bottle-in-paws scene. New asset: `site/assets/v2/mascot-hold-2d-alpha.png` (1536×1024 RGBA). Original `mascot-hold-2d.png` is preserved. Built-in imagegen edit used the original as reference, requesting only background removal, unchanged pose/bottle/blank label/white fur/soft 2D style, true alpha, no glow or decorative backdrop. The final illustration sits directly on the existing `#fbf6ec` home surface; no additional UI backdrop is needed.
 
 Browser canvas inspection confirmed 875,609 fully transparent pixels; reviewed compositing against the actual cream surface. Alpha should be preserved during delivery/conversion; do not export as JPEG, flatten onto a paper-colored rectangle, or use blend modes to simulate transparency.
+
+## All selected scenes use alpha — 2026-09-20
+
+Maks clarified that background removal applies to the entire selected mascot set. `cellar`, `walk`, `counter-thoughtful`, and `offline` now have sibling `mascot-<name>-2d-alpha.png` assets. Home already uses alpha. Built-in imagegen removes only blank paper outside the scene, preserving dog expression, shelves, bottles, barrels, counter, plants and painted cellar context. Original RGB illustrations remain for history. Preserve transparency when converting to WebP; do not flatten or use blend modes. No added screens or behavioral changes.
