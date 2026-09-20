@@ -2,7 +2,7 @@ type MascotSceneName = 'home' | 'walk' | 'counter' | 'browse' | 'offline';
 
 const mascotAssets: Record<MascotSceneName, { src: string; alt: string }> = {
   home: {
-    src: '/assets/v2/mascot-hold-2d.webp',
+    src: '/assets/v2/mascot-hold-2d-alpha.webp',
     alt: 'Пёс-детектив держит бутылку, этикетка обращена к вам',
   },
   walk: {

@@ -468,7 +468,7 @@
     {
       "id": "UI-022",
       "area": "ui",
-      "title": "Нижняя кнопка Сканер открывает камеру или запасной путь",
+      "title": "Главная возвращает на старт без камеры; съёмка запускается явной кнопкой",
       "source": "apps/web/src/navigation.test.tsx",
       "spec": "docs/product/behavior-spec.md"
     },

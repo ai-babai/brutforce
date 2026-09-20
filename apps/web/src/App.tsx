@@ -8,7 +8,7 @@ import {
   MagnifyingGlass,
   X,
 } from "@phosphor-icons/react";
-import { IconBookmark, IconScan, IconSearch } from "@tabler/icons-react";
+import { IconBookmark, IconHome, IconSearch } from "@tabler/icons-react";
 import { getCatalog, InvalidPhotoError, searchWine, uploadPhoto } from "./api";
 import type { Candidate, PhotoReceipt, Scenario } from "./types";
 import { AtlasScan, AtlasFocus } from "./AtlasIcons";
@@ -339,6 +339,12 @@ export function App({
     setCatalogOpen(false);
     setScreen("search");
   };
+  const openSearchFromNav = () => {
+    leaveWork();
+    setSection("search");
+    setSearchOrigin("normal");
+    setScreen("search");
+  };
   const back = () => {
     leaveWork();
     setSection("scanner");
@@ -554,7 +560,6 @@ export function App({
               <div className="welcome-intro">
                 <header className="brand v2-brand">
                   <V2Logo />
-                  <span className="quiet-badge">Поиск по этикетке</span>
                 </header>
                 <div className="hero">
                   <div>
@@ -1127,8 +1132,8 @@ export function App({
         {showNav && (
           <BottomNav
             section={section}
-            onScan={newCapture}
-            onSearch={openSearch}
+            onHome={back}
+            onSearch={openSearchFromNav}
             onSaved={openSaved}
           />
         )}
@@ -1249,12 +1254,12 @@ function WineList({
 }
 function BottomNav({
   section,
-  onScan,
+  onHome,
   onSearch,
   onSaved,
 }: {
   section: "scanner" | "search" | "saved";
-  onScan: () => void;
+  onHome: () => void;
   onSearch: () => void;
   onSaved: () => void;
 }) {
@@ -1262,10 +1267,10 @@ function BottomNav({
     <nav className="bottom-nav" aria-label="Основная навигация">
       <button
         aria-current={section === "scanner" ? "page" : undefined}
-        onClick={onScan}
+        onClick={onHome}
       >
-        <IconScan />
-        <span>Сканер</span>
+        <IconHome />
+        <span>Главная</span>
       </button>
       <button
         aria-current={section === "search" ? "page" : undefined}

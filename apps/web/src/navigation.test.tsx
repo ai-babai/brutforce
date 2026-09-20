@@ -20,6 +20,14 @@ const merlot = {
   description: "Мягкое вино.",
 };
 const catalog = { demo: true, candidates: [cabernet, merlot] };
+const receipt = {
+  id: "0123456789abcdef0123456789abcdef",
+  createdAt: "2026-09-20T12:00:00Z",
+  bytes: 5,
+  mime: "image/jpeg",
+  width: 100,
+  height: 100,
+};
 const response = (data: unknown) => ({ ok: true, json: async () => data });
 
 afterEach(() => {
@@ -41,7 +49,7 @@ describe("catalog navigation and saved wines", () => {
     render(<App />);
     const nav = screen.getByRole("navigation", { name: "Основная навигация" });
     const content = document.querySelector(".app-content") as HTMLDivElement;
-    expect(screen.getByRole("button", { name: "Сканер" })).toHaveAttribute(
+    expect(screen.getByRole("button", { name: "Главная" })).toHaveAttribute(
       "aria-current",
       "page",
     );
@@ -65,31 +73,88 @@ describe("catalog navigation and saved wines", () => {
     expect(nav).toBeVisible();
   });
 
-  it("UI-022 bottom Scanner starts a fresh camera capture and falls back after a denial", async () => {
+  it("UI-022 bottom Home returns to the start screen without starting camera capture", async () => {
+    const getUserMedia = vi.fn();
+    Object.defineProperty(navigator, "mediaDevices", {
+      configurable: true,
+      value: { getUserMedia },
+    });
+    localStorage.setItem("wine-demo-saved-v1", JSON.stringify([cabernet]));
+    mockCatalog();
+    render(<App />);
+    await openCatalog();
+    await userEvent.click(screen.getByRole("button", { name: "Главная" }));
+    expect(screen.getByRole("heading", { name: /Какое вино/i })).toBeVisible();
+    expect(getUserMedia).not.toHaveBeenCalled();
+    await userEvent.click(screen.getByRole("button", { name: "Сохранённое" }));
+    expect(screen.getByRole("button", { name: /Каберне Совиньон/i })).toBeVisible();
+    await userEvent.click(screen.getByRole("button", { name: "Поиск" }));
+    await userEvent.type(screen.getByLabelText(/Название вина/i), "Мерло");
+    await userEvent.click(screen.getByRole("button", { name: "Главная" }));
+    await userEvent.click(screen.getByRole("button", { name: "Поиск" }));
+    expect(screen.getByLabelText(/Название вина/i)).toHaveValue("Мерло");
+  });
+
+  it("UI-022 explicit scan CTA starts camera capture and retains denial fallback", async () => {
     const getUserMedia = vi.fn(() => new Promise<MediaStream>(() => {}));
     Object.defineProperty(navigator, "mediaDevices", {
       configurable: true,
       value: { getUserMedia },
     });
     const first = render(<App />);
-    await userEvent.click(screen.getByRole("button", { name: "Сканер" }));
+    await userEvent.click(screen.getByRole("button", { name: /Сканировать вино/i }));
     expect(await screen.findByLabelText(/Изображение с камеры/i)).toBeVisible();
     expect(getUserMedia).toHaveBeenCalledOnce();
-    expect(
-      screen.queryByRole("navigation", { name: "Основная навигация" }),
-    ).not.toBeInTheDocument();
     first.unmount();
     render(<App simulatePermissionDenied />);
     await userEvent.click(screen.getByRole("button", { name: "Сохранённое" }));
-    await userEvent.click(screen.getByRole("button", { name: "Сканер" }));
+    await userEvent.click(screen.getByRole("button", { name: "Главная" }));
+    expect(screen.getByRole("heading", { name: /Какое вино/i })).toBeVisible();
+    await userEvent.click(screen.getByRole("button", { name: /Сканировать вино/i }));
     expect(
       screen.getByRole("heading", { name: "Камера недоступна" }),
     ).toBeVisible();
-    await userEvent.click(screen.getByRole("button", { name: "Поиск" }));
-    await userEvent.click(screen.getByRole("button", { name: "Сканер" }));
+  });
+
+  it("UI-022 keeps a completed scan photo when Home opens without camera", async () => {
+    const getUserMedia = vi.fn();
+    Object.defineProperty(navigator, "mediaDevices", {
+      configurable: true,
+      value: { getUserMedia },
+    });
+    vi.stubGlobal("URL", {
+      ...URL,
+      createObjectURL: vi.fn(() => "blob:retained-photo"),
+      revokeObjectURL: vi.fn(),
+    });
+    vi.stubGlobal(
+      "fetch",
+      vi
+        .fn()
+        .mockResolvedValueOnce(response(receipt))
+        .mockResolvedValueOnce({
+          ok: true,
+          json: async () => ({
+            demo: true,
+            candidates: [cabernet],
+            selectedId: cabernet.id,
+          }),
+        }),
+    );
+    render(<App />);
+    await userEvent.upload(
+      screen.getByLabelText(/Загрузить фотографию/i),
+      new File(["photo"], "wine.jpg", { type: "image/jpeg" }),
+    );
     expect(
-      screen.getByRole("heading", { name: "Камера недоступна" }),
+      await screen.findByRole("heading", { name: cabernet.name }),
     ).toBeVisible();
+    await userEvent.click(screen.getByRole("button", { name: "Главная" }));
+    expect(
+      screen.getByRole("img", { name: "Загруженная фотография этикетки" }),
+    ).toBeVisible();
+    expect(screen.getByRole("button", { name: "Продолжить поиск" })).toBeVisible();
+    expect(getUserMedia).not.toHaveBeenCalled();
   });
 
   it("UI-017 saves one validated catalog snapshot and restores it after reload", async () => {

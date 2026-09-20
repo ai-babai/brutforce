@@ -148,7 +148,7 @@ describe('selected Wine UX 2.0 design contract', () => {
 
   it('DESIGN-018 marks the active product section and retains the product footer', () => {
     render(<App />);
-    expect(screen.getByRole('button', { name: 'Сканер' })).toHaveAttribute('aria-current', 'page');
+    expect(screen.getByRole('button', { name: 'Главная' })).toHaveAttribute('aria-current', 'page');
     expect(screen.getByText('Информация о российских винах')).toBeVisible();
     expect(css).toContain('.bottom-nav{gap:4px;padding:8px 12px max(10px,env(safe-area-inset-bottom));border-top-color:#e9dfd3;background:#fefdfa}');
     expect(css).toContain('.bottom-nav button{min-height:48px;gap:4px;border-radius:12px;color:#746e68;font:500 11px/1.2 Onest,sans-serif}');
@@ -171,7 +171,12 @@ describe('selected Wine UX 2.0 design contract', () => {
     Object.defineProperty(navigator, 'mediaDevices', { configurable: true, value: { getUserMedia: vi.fn(() => new Promise(() => {})) } });
     render(<App />);
     expect(screen.getByAltText('Своё Вино')).toHaveAttribute('src', '/assets/v2/svoe-vino-logo.svg');
-    expect(screen.getByAltText('Пёс-детектив держит бутылку, этикетка обращена к вам')).toHaveAttribute('src', '/assets/v2/mascot-hold-2d.webp');
+    expect(screen.getByAltText('Пёс-детектив держит бутылку, этикетка обращена к вам')).toHaveAttribute('src', '/assets/v2/mascot-hold-2d-alpha.webp');
+    expect(screen.queryByText('Поиск по этикетке')).not.toBeInTheDocument();
+    const homeArt = readFileSync(join(process.cwd(), 'public/assets/v2/mascot-hold-2d-alpha.webp'));
+    expect(homeArt.toString('ascii', 12, 16)).toBe('VP8X');
+    expect(homeArt[20] & 0x10).toBe(0x10); // WebP extended-format alpha flag.
+    expect(css).toContain('mix-blend-mode:normal');
     fireEvent.click(screen.getByRole('button', { name: /Сканировать вино/i }));
     expect(document.querySelector('#UI-002 .mascot-scene')).toBeNull();
     cleanup();
@@ -186,7 +191,7 @@ describe('selected Wine UX 2.0 design contract', () => {
     cleanup();
     render(<><V2Logo /><MascotScene scene="walk" /><MascotScene scene="counter" /><MascotScene scene="browse" /><MascotScene scene="offline" /></>);
     expect(document.querySelectorAll('.mascot-scene[aria-hidden="true"]')).toHaveLength(4);
-    for (const asset of ['mascot-hold-2d.webp', 'mascot-walk-2d.webp', 'mascot-counter-thoughtful-2d.webp', 'mascot-cellar-2d.webp', 'mascot-offline-2d.webp']) expect(readFileSync(join(process.cwd(), 'public/assets/v2', asset)).byteLength).toBeGreaterThan(50_000);
+    for (const asset of ['mascot-hold-2d-alpha.webp', 'mascot-walk-2d.webp', 'mascot-counter-thoughtful-2d.webp', 'mascot-cellar-2d.webp', 'mascot-offline-2d.webp']) expect(readFileSync(join(process.cwd(), 'public/assets/v2', asset)).byteLength).toBeGreaterThan(50_000);
     expect(css).toContain('#UI-001 .hero>.mascot-scene{position:relative;right:auto;bottom:auto;width:100%;height:220px');
     expect(css).toContain('#UI-001 .tip{margin-top:18px;margin-bottom:15px;padding:10px 12px;border:1px solid #eadfd4');
     expect(css).not.toContain('concept-bottle.png');

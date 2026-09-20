@@ -21,3 +21,7 @@ unchanged from the same selected asset directory.
 ## No-match refinement — issue #24
 
 Design source `b7609f7`, `mascot-counter-thoughtful-2d.png`, SHA256 `31534d9bda26343f70dd09c4b313187cde9bf5649d092d062c040d14742b6ed0`. Runtime `mascot-counter-thoughtful-2d.webp`, converted with cwebp -q90 without visual edits. Replaces the smiling counter scene at runtime; previous asset remains in Git.
+
+## Transparent home art — issue #24
+
+Source design `4c0c601`, `mascot-hold-2d-alpha.png`, SHA256 `f0ea361d856964e5eef82d9f4ed6eb4bd41ec2581b91b60aa441d991af03a239`. Runtime `mascot-hold-2d-alpha.webp`, encoded with `cwebp -q 90 -alpha_q 100`; webpmux confirms transparency,1536×1024. No creative edits during conversion. Old opaque asset retained.
