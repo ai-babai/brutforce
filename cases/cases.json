@@ -230,7 +230,7 @@
     {
       "id": "UI-009",
       "area": "web",
-      "title": "Empty API result remains recoverable",
+      "title": "Нет совпадений: поиск по названию после фото и возврат к запросу",
       "source": "apps/web/README.md; Wine UX Atlas",
       "spec": "docs/product/behavior-spec.md#demo-006"
     },

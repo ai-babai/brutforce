@@ -247,7 +247,7 @@ export function App({
       clearWaitTimer(controller);
       const list = data.candidates;
       setCandidates(list);
-      if (next === "none" || !list.length) {
+      if (!list.length) {
         setScreen("missing");
         return;
       }
@@ -987,27 +987,31 @@ export function App({
                   setScreen("search");
                 }}
               />
-              <StateIcon>
-                <MagnifyingGlass />
-              </StateIcon>
               <h2>Вино не найдено</h2>
-              <p>
-                Попробуйте другое название или новый снимок. Возможно, карточки
-                пока нет в каталоге.
-              </p>
-              {!lastRequest.current.hasPhoto && <MascotScene scene="counter" />}
-              <button
-                className="primary"
-                onClick={() => {
-                  setSection("search");
-                  setScreen("search");
-                }}
-              >
-                Изменить запрос
-              </button>
-              <button className="secondary" onClick={newCapture}>
-                Снять этикетку
-              </button>
+              <p>Подходящего совпадения не нашлось.</p>
+              <MascotScene scene="counter" />
+              {lastRequest.current.hasPhoto ? (
+                <div className="missing-actions">
+                  <button className="primary" onClick={openSearch}>
+                    Найти по названию
+                  </button>
+                  <button className="secondary" onClick={newCapture}>
+                    Переснять этикетку
+                  </button>
+                </div>
+              ) : (
+                <div className="missing-actions">
+                  <button
+                    className="primary"
+                    onClick={() => {
+                      setSection("search");
+                      setScreen("search");
+                    }}
+                  >
+                    Изменить запрос
+                  </button>
+                </div>
+              )}
             </Page>
           )}
           {screen === "error" && (

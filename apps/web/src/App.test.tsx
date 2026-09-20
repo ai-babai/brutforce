@@ -444,10 +444,69 @@ describe("mobile behavior demo", () => {
       screen.getByRole("button", { name: /Сканировать этикетку/i }),
     ).toBeVisible();
   });
-  it("UI-008 sends none and UI-009 offers recovery", async () => {
-    mock({ demo: true, candidates: [] });
+  it("UI-009 photo no-match offers manual search and reshoot without candidates", async () => {
+    vi.spyOn(HTMLMediaElement.prototype, "play").mockResolvedValue();
+    vi.stubGlobal("URL", {
+      ...URL,
+      createObjectURL: vi.fn(() => "blob:no-match"),
+      revokeObjectURL: vi.fn(),
+    });
+    vi.stubGlobal(
+      "fetch",
+      vi
+        .fn()
+        .mockResolvedValueOnce(response(receipt))
+        .mockResolvedValueOnce(response({ demo: true, candidates: [] })),
+    );
     render(<App initialScenario="none" />);
-    await submitManual("Редкое вино");
+    await userEvent.upload(
+      screen.getByLabelText(/Загрузить фотографию/i),
+      new File(["photo"], "wine.jpg", { type: "image/jpeg" }),
+    );
+    await waitFor(() =>
+      expect(screen.getByRole("heading", { name: "Вино не найдено" })).toBeVisible(),
+    );
+    const manual = screen.getByRole("button", { name: "Найти по названию" });
+    const reshoot = screen.getByRole("button", { name: "Переснять этикетку" });
+    expect(manual).toHaveClass("primary");
+    expect(reshoot).toHaveClass("secondary");
+    expect(screen.queryByRole("button", { name: /Каберне Совиньон/i })).not.toBeInTheDocument();
+    await userEvent.click(reshoot);
+    expect(await screen.findByLabelText(/Изображение с камеры/i)).toBeVisible();
+  });
+  it("UI-009 manual no-match after a scan keeps the editable query without its photo", async () => {
+    vi.stubGlobal("URL", {
+      ...URL,
+      createObjectURL: vi.fn(() => "blob:prior-scan"),
+      revokeObjectURL: vi.fn(),
+    });
+    let searches = 0;
+    vi.stubGlobal(
+      "fetch",
+      vi.fn((url) =>
+        Promise.resolve(
+          url === "/v1/photos"
+            ? response(receipt)
+            : url === "/v1/catalog"
+              ? response({ demo: true, candidates: [candidate] })
+              : response(
+                  ++searches === 1
+                    ? exact
+                    : { demo: true, candidates: [] },
+                ),
+        ),
+      ),
+    );
+    render(<App />);
+    await userEvent.upload(
+      screen.getByLabelText(/Загрузить фотографию/i),
+      new File(["photo"], "wine.jpg", { type: "image/jpeg" }),
+    );
+    await screen.findByRole("heading", { name: "Каберне Совиньон" });
+    await userEvent.click(screen.getByRole("button", { name: /Не это вино/i }));
+    await userEvent.click(screen.getByRole("button", { name: "Ни одно не подходит" }));
+    await userEvent.type(screen.getByLabelText(/Название вина/i), "Редкое вино");
+    await userEvent.click(screen.getByRole("button", { name: "Искать" }));
     await waitFor(() =>
       expect(
         screen.getByRole("heading", { name: "Вино не найдено" }),
@@ -456,12 +515,28 @@ describe("mobile behavior demo", () => {
     expect(fetch).toHaveBeenCalledWith(
       "/v1/search",
       expect.objectContaining({
-        body: JSON.stringify({ scenario: "none", query: "Редкое вино" }),
+        body: JSON.stringify({ scenario: "exact", query: "Редкое вино" }),
       }),
     );
+    expect(screen.queryByRole("button", { name: "Переснять этикетку" })).not.toBeInTheDocument();
+    await userEvent.click(screen.getByRole("button", { name: "Изменить запрос" }));
+    expect(screen.getByLabelText(/Название вина/i)).toHaveValue("Редкое вино");
+    expect(screen.queryByRole("button", { name: /Открыть исходную фотографию/i })).not.toBeInTheDocument();
     expect(
-      screen.getByRole("button", { name: "Изменить запрос" }),
-    ).toBeVisible();
+      vi.mocked(fetch).mock.calls.filter(([url]) => url === "/v1/search"),
+    ).toHaveLength(2);
+  });
+  it("UI-009 keeps returned candidates in the uncertain path", async () => {
+    mock({ demo: true, candidates: [candidate] });
+    render(<App initialScenario="none" />);
+    await submitManual("Каберне");
+    await waitFor(() =>
+      expect(
+        screen.getByRole("heading", { name: /несколько похожих/i }),
+      ).toBeVisible(),
+    );
+    expect(screen.getByRole("button", { name: /Каберне Совиньон/i })).toBeVisible();
+    expect(screen.queryByRole("heading", { name: "Вино не найдено" })).not.toBeInTheDocument();
   });
   it("UI-010 rejects selectedId absent from candidates", async () => {
     mock({ ...exact, selectedId: "missing" });

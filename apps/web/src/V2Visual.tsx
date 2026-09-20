@@ -10,7 +10,7 @@ const mascotAssets: Record<MascotSceneName, { src: string; alt: string }> = {
     alt: '',
   },
   counter: {
-    src: '/assets/v2/mascot-counter-2d.webp',
+    src: '/assets/v2/mascot-counter-thoughtful-2d.webp',
     alt: '',
   },
   browse: {

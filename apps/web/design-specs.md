@@ -29,7 +29,7 @@ The selected Wine UX v2 assets come from design revision `29874e7`; approved nav
 - `UI-006`: original-photo comparison and ranked candidates.
 - `UI-007`: wine identity, correction, overview, description, and source.
 - `UI-008`: manual search.
-- `UI-009`: no catalog result and recovery.
+- `UI-009`: no match. A photo search offers full-width `Найти по названию` and `Переснять этикетку` actions (56 px minimum height, 16 px radius, 10 px gap); a text search offers `Изменить запрос` and returns to the same editable query without a retained photo. The copy states only that no suitable match was found and does not infer a missing catalog entry or image quality.
 - `UI-010`: upload/search/contract error and retry.
 - `UI-011`: rejected local file type/size or a server-rejected unreadable image. No unsupported diagnosis of blur/glare.
 - `UI-016`: three-section navigation and initial catalog browse/filter.
@@ -57,7 +57,7 @@ DESIGN-014: в выбранной v2 редакции подсказка — т�
 
 ## Welcome: selected mascot composition
 
-DESIGN-022: `UI-001` uses the selected Wine UX 2.0 logo, a continuous `#fbf6ec` field from page top through the header and hero, Playfair display headline, cream mascot panel, and bordered guidance card. The header has no rounded, translucent, or colored pill surface; its existing vertical dimensions remain unchanged. The home scene uses the selected 2D dog holding a bottle and keeps its descriptive alt text. The functional secondary scenes use the same selected edition: walk during photo search, counter for no match, cellar for an empty manual search, and offline for a connection failure. These images are decorative and hidden from assistive technology.
+DESIGN-022: `UI-001` uses the selected Wine UX 2.0 logo, a continuous `#fbf6ec` field from page top through the header and hero, Playfair display headline, cream mascot panel, and bordered guidance card. The header has no rounded, translucent, or colored pill surface; its existing vertical dimensions remain unchanged. The home scene uses the selected 2D dog holding a bottle and keeps its descriptive alt text. The functional secondary scenes use the same selected edition: walk during photo search, thoughtful counter for no match, cellar for an empty manual search, and offline for a connection failure. These images are decorative and hidden from assistive technology. In `UI-009`, the counter scene is placed before the action panel in normal flow and does not overlap action labels.
 
 The mascot is never rendered over the real camera, permission guidance, gallery/native file picker, expanded photograph, candidates, saved wines, or wine facts. The local app stores 90-quality WebP renditions of the 1536×1024 selected assets. Their original source SHA-256 values and conversion command are recorded in `assets-v2-provenance.md`; artwork source is selected design revision `29874e7`.
 

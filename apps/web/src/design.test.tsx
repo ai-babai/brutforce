@@ -186,9 +186,14 @@ describe('selected Wine UX 2.0 design contract', () => {
     cleanup();
     render(<><V2Logo /><MascotScene scene="walk" /><MascotScene scene="counter" /><MascotScene scene="browse" /><MascotScene scene="offline" /></>);
     expect(document.querySelectorAll('.mascot-scene[aria-hidden="true"]')).toHaveLength(4);
-    for (const asset of ['mascot-hold-2d.webp', 'mascot-walk-2d.webp', 'mascot-counter-2d.webp', 'mascot-cellar-2d.webp', 'mascot-offline-2d.webp']) expect(readFileSync(join(process.cwd(), 'public/assets/v2', asset)).byteLength).toBeGreaterThan(50_000);
+    for (const asset of ['mascot-hold-2d.webp', 'mascot-walk-2d.webp', 'mascot-counter-thoughtful-2d.webp', 'mascot-cellar-2d.webp', 'mascot-offline-2d.webp']) expect(readFileSync(join(process.cwd(), 'public/assets/v2', asset)).byteLength).toBeGreaterThan(50_000);
     expect(css).toContain('#UI-001 .hero>.mascot-scene{position:relative;right:auto;bottom:auto;width:100%;height:220px');
     expect(css).toContain('#UI-001 .tip{margin-top:18px;margin-bottom:15px;padding:10px 12px;border:1px solid #eadfd4');
     expect(css).not.toContain('concept-bottle.png');
+  });
+
+  it('DESIGN-022 gives photo no-match actions the approved full-width geometry', () => {
+    expect(css).toContain('#UI-009 .missing-actions{display:grid;gap:10px}');
+    expect(css).toContain('#UI-009 .missing-actions .primary,#UI-009 .missing-actions .secondary{min-height:56px;border-radius:16px;text-align:center}');
   });
 });

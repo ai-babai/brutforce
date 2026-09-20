@@ -17,3 +17,7 @@ changed. The original source SHA-256 values are retained below for review.
 
 `svoe-vino-logo.svg` and `PlayfairDisplay-VariableFont_wght.woff2` are copied
 unchanged from the same selected asset directory.
+
+## No-match refinement — issue #24
+
+Design source `b7609f7`, `mascot-counter-thoughtful-2d.png`, SHA256 `31534d9bda26343f70dd09c4b313187cde9bf5649d092d062c040d14742b6ed0`. Runtime `mascot-counter-thoughtful-2d.webp`, converted with cwebp -q90 without visual edits. Replaces the smiling counter scene at runtime; previous asset remains in Git.
