@@ -11,7 +11,8 @@
       "const": true
     },
     "selectedId": {
-      "type": "string"
+      "type": "string",
+      "description": "Выбор сервиса среди candidates; несколько результатов фото UI показывает списком для явного выбора пользователем (FE-035)."
     },
     "candidates": {
       "type": "array",

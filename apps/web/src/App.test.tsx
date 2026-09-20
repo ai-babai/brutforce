@@ -409,7 +409,7 @@ describe("mobile behavior demo", () => {
       (searchCalls[0][1] as RequestInit).body,
     );
   });
-  it("SR-008 manual candidates keep full accessible names and no photo-result badge", async () => {
+  it("UI-006 SR-008 manual candidates keep full accessible names and no photo-result badge", async () => {
     mock(uncertain);
     render(<App initialScenario="uncertain" />);
     await submitManual("Мерло");
