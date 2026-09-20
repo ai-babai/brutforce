@@ -191,7 +191,15 @@ describe('selected Wine UX 2.0 design contract', () => {
     cleanup();
     render(<><V2Logo /><MascotScene scene="walk" /><MascotScene scene="counter" /><MascotScene scene="browse" /><MascotScene scene="offline" /></>);
     expect(document.querySelectorAll('.mascot-scene[aria-hidden="true"]')).toHaveLength(4);
-    for (const asset of ['mascot-hold-2d-alpha.webp', 'mascot-walk-2d.webp', 'mascot-counter-thoughtful-2d.webp', 'mascot-cellar-2d.webp', 'mascot-offline-2d.webp']) expect(readFileSync(join(process.cwd(), 'public/assets/v2', asset)).byteLength).toBeGreaterThan(50_000);
+    for (const asset of ['mascot-hold-2d-alpha.webp', 'mascot-walk-2d-alpha.webp', 'mascot-counter-thoughtful-2d-alpha.webp', 'mascot-cellar-2d-alpha.webp', 'mascot-offline-2d-alpha.webp']) {
+      const bytes = readFileSync(join(process.cwd(), 'public/assets/v2', asset));
+      expect(bytes.byteLength).toBeGreaterThan(50_000);
+      expect(bytes.toString('ascii', 12, 16)).toBe('VP8X');
+      expect(bytes[20] & 0x10).toBe(0x10);
+    }
+    for (const image of document.querySelectorAll('.mascot-scene img')) expect(image.getAttribute('src')).toMatch(/-alpha\.webp$/);
+    expect(css).not.toMatch(/mix-blend-mode:\s*multiply/);
+    expect(css).not.toMatch(/(?:-webkit-)?mask-image:/);
     expect(css).toContain('#UI-001 .hero>.mascot-scene{position:relative;right:auto;bottom:auto;width:100%;height:220px');
     expect(css).toContain('#UI-001 .tip{margin-top:18px;margin-bottom:15px;padding:10px 12px;border:1px solid #eadfd4');
     expect(css).not.toContain('concept-bottle.png');

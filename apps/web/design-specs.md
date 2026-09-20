@@ -89,3 +89,6 @@ DESIGN-020: Поле `UI-008` — единый контейнер с рамко�
 ### Уточнение главной и навигации — Issue #24, 20.09.2026
 
 В шапке только логотип с подписью банка, без отдельного «Поиск по этикетке». Нижняя панель: Главная (домик), Поиск, Сохранённое; активный пункт соответствует разделу. Главная не является кнопкой камеры. Маскот главной использует `mascot-hold-2d-alpha.webp` с настоящей прозрачностью, на общем фоне #fbf6ec, без смешивания цветов; старый файл не удаляется из истории. DESIGN-022 проверяет выбранный asset и alpha-флаг WebP, отсутствие подписи; геометрия проверяется отдельно в браузере.
+
+### All mascot scenes: real transparency (design 4a3615f)
+Given home, manual search, waiting, no-match or offline, the selected mascot uses an alpha WebP. Transparent source background is preserved; opaque character and props remain visible. Normal composition, no multiply or CSS mask to simulate transparency. No behavioral changes.

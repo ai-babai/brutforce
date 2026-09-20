@@ -6,19 +6,19 @@ const mascotAssets: Record<MascotSceneName, { src: string; alt: string }> = {
     alt: 'Пёс-детектив держит бутылку, этикетка обращена к вам',
   },
   walk: {
-    src: '/assets/v2/mascot-walk-2d.webp',
+    src: '/assets/v2/mascot-walk-2d-alpha.webp',
     alt: '',
   },
   counter: {
-    src: '/assets/v2/mascot-counter-thoughtful-2d.webp',
+    src: '/assets/v2/mascot-counter-thoughtful-2d-alpha.webp',
     alt: '',
   },
   browse: {
-    src: '/assets/v2/mascot-cellar-2d.webp',
+    src: '/assets/v2/mascot-cellar-2d-alpha.webp',
     alt: '',
   },
   offline: {
-    src: '/assets/v2/mascot-offline-2d.webp',
+    src: '/assets/v2/mascot-offline-2d-alpha.webp',
     alt: '',
   },
 };
