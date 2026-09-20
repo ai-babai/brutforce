@@ -9,6 +9,8 @@ const base=process.env.DESIGN_URL||'http://localhost:8768/';
  const state=()=>page.locator('#phone-content .product-screen').getAttribute('data-state');
  const check=async(id)=>assert.equal(await state(),id);
  const section=async(id)=>page.locator(`[data-section="${id}"]`).click();
+ // UX-M09: the home brand context is part of one warm canvas, not a glass capsule.
+ await open('start');const homeMaterial=await page.locator('.start-screen .brand-row').evaluate(e=>{const s=getComputedStyle(e);return {background:s.backgroundColor,borderRadius:s.borderRadius,filter:s.backdropFilter}});assert.equal(homeMaterial.background,'rgba(0, 0, 0, 0)');assert.equal(homeMaterial.borderRadius,'0px');assert.equal(homeMaterial.filter,'none');assert.equal(await page.locator('.start-screen .start-hero').evaluate(e=>getComputedStyle(e).backgroundColor),'rgb(251, 246, 236)');
  // UX-M01: cancel/delete stops pending work, and resume uses the retained snapshot.
  await open('offline');const photo=await page.evaluate(()=>lastPhotoId);await go('retry');assert.equal(await page.evaluate(()=>lastPhotoId),photo);await go('cancel');await check('start');await go('delete-photo');await page.waitForTimeout(1400);await check('start');assert.equal(await page.locator('.resume-photo').count(),0);assert.equal(await page.evaluate(()=>hasPhoto),false);
  // UX-M02: success arrives behind preview; dismissing it shows fresh result immediately, no second search.
@@ -30,5 +32,5 @@ const base=process.env.DESIGN_URL||'http://localhost:8768/';
  for(const size of [{width:320,height:568},{width:844,height:390}]){await page.setViewportSize(size);const box=await page.locator('.shutter').boundingBox();assert(box.y>=0&&box.y+box.height<=size.height);}
  // UX-M08: wide report keeps the camera inside the agreed phone frame.
  await page.setViewportSize({width:1440,height:1000});await page.goto(base+'?screen=camera&scenario=shelf#flows');const phone=await page.locator('.phone').boundingBox();assert(phone.width<500&&phone.width>280);assert.notEqual(await page.locator('.phone').evaluate(e=>getComputedStyle(e).position),'fixed');assert(parseFloat(await page.locator('.phone').evaluate(e=>getComputedStyle(e).borderRadius))>=30);
- assert.deepEqual(errors,[]);console.log('PASS UX-M01..08: context, late response, search scroll, correction identity, error taxonomy, saved/nav, phone frame and title');
+ assert.deepEqual(errors,[]);console.log('PASS UX-M01..09: unified home surface, context, late response, search scroll, correction identity, error taxonomy, saved/nav, phone frame and title');
  }finally{await browser.close()}})().catch(e=>{console.error(e);process.exitCode=1});

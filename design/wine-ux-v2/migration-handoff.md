@@ -12,6 +12,7 @@
 6. unreadable = image file cannot be opened, never sent to search in this demo. badphoto = explicit trustworthy quality signal that the label is unreadable; no assumed glare cause. missing = no match with unknown cause. Each has a different explanation and recovery. New valid file/reshoot can leave an error state.
 7. Preserve Scanner / Search / Saved bottom navigation. Hide on camera. Save/remove is demonstrated with existing synthetic card identities. The wide report camera stays inside the phone frame; mobile/landscape camera keeps its viewport controls. Actual application local records (wine-demo-saved-v1) must be preserved by the application session; the mockup's in-memory Set is NOT a storage migration.
 8. Exact home heading: 'Какое вино перед вами?'. Same wording in the specimen and tokens.
+9. Home uses one opaque warm canvas (`#fbf6ec`) from the logo context through the mascot scene. The logo and its descriptor remain, but the home brand row is not a capsule, has no blur, border, or visual seam. This rule applies only to home; context bars on other screens are unchanged.
 
 ## Canonical design sources
 

@@ -23,3 +23,7 @@ Secondary 2D mascot integration: see [composition, prompts and verification](mas
 Current selected edition: [scope, transition decisions and immutable archive](selected-edition.md). Design-specific persistent acceptance checks were explicitly requested by Maks; see [tests](tests/README.md). The pre-selection frame experiment is preserved at `/v2/previous/` rather than used in the current flow.
 
 Approved migration handoff (b73baf6 plan): [decisions, files and acceptance cases](migration-handoff.md). These later source changes are Git-only until a static-report release; published-version.json remains the deployed version's record.
+
+## Home surface correction - 2026-09-20
+
+The home logo context and mascot hero now share one solid `#fbf6ec` surface. The former blurred, pill-shaped home logo row was retired because it visually split the entry screen. This correction is scoped to home; result and utility-screen context bars remain as before. It is source-only until the next explicit static-report release.
