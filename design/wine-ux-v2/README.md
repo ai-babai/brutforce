@@ -17,3 +17,5 @@ Independent GPT-5.6 browser review identified sticky-navigation occlusion, undis
 The component section includes six source/adaptation comparisons with locally preserved source screenshots, explicit CSS-only provenance for the floating search, and links to actual screens. Product screens apply warm navigation capsules, milk search/status layers, opaque cream candidates/facts and bottle-first result hierarchy. Old reports are unchanged.
 
 Validation: Chrome at 320/390/1440, all 16 render states, 10 scenario outcomes, recovery and manual search; separate actual-click review by GPT-5.6. This remains a static prototype.
+
+Secondary 2D mascot integration: see [composition, prompts and verification](mascot-scenes.md). Static scenes on loading/waiting, missing result and empty manual search; selected home artwork unchanged.

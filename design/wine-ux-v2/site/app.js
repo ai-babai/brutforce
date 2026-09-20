@@ -305,7 +305,7 @@ function renderScenario(){
  document.querySelectorAll('[data-scenario]').forEach(b=>{let on=b.dataset.scenario===scenario.id;b.classList.toggle('active',on);b.setAttribute('aria-pressed',on)});
  $('#flow-explanation').innerHTML=`<p class="eyebrow">${esc(scenario.level)}</p><h3>${esc(scenario.title)}</h3><p>${esc(scenario.context)}</p><ol class="step-list">${scenario.steps.map(([id,t])=>`<li class="${screen===id?'current':''}">${esc(t)}</li>`).join('')}</ol><div class="criterion"><strong>Как проверим</strong>${esc(scenario.check)}</div><p class="evidence">${esc(scenario.ref)}</p>`;
 }
-function setScreen(next){clearTimeout(loadTimer);if(next==='preview')photoReturn=['result','catalog','candidates'].includes(screen)?screen:'cancelled';screen=next;renderPhone();renderScenario()}
+function setScreen(next){clearTimeout(loadTimer);if(next==='preview')photoReturn=['result','catalog','candidates','waiting','missing','loading'].includes(screen)?screen:'cancelled';screen=next;renderPhone();renderScenario()}
 function beginScan(retry=false){selectedYear='2023';detailTab='overview';setScreen('loading');loadTimer=setTimeout(()=>setScreen(retry?'result':scenario.id==='slow'?'waiting':scenario.id==='vintage'?'candidates':scenario.id==='missing'?'missing':scenario.id==='badphoto'?'badphoto':scenario.id==='network'?'offline':'result'),1200)}
 function renderPhone(){}
 scenarios.forEach((s,i)=>{const b=document.createElement('button');b.dataset.scenario=s.id;b.textContent=s.label;b.setAttribute('aria-pressed',i===0);b.onclick=()=>{scenario=s;selectedYear='2023';detailTab='overview';searched=false;setScreen(s.steps[0][0])};$('#scenario-picker').append(b)});
