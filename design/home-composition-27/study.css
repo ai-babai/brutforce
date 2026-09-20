@@ -8,3 +8,6 @@
 .v-f{background:radial-gradient(ellipse 160px 180px at 5% 43%,#d3d7b884,transparent 100%),radial-gradient(ellipse 210px 190px at 98% 52%,#dfbba472,transparent 100%),linear-gradient(160deg,#fbf6ec 28%,#f3ebd9 64%,#fbf6ec 83%)}.v-f .primary{box-shadow:0 8px 24px #6e303215}.v-f .alternatives{background:#fbf6ecb3;border-radius:16px}.v-f .hint{background:#fbf6ecb3}
 body.narrow .wide-title{font-size:30px!important}body.narrow .v-d .wide-title{font-size:32px!important}body.narrow .editorial-scene{height:302px}body.narrow .editorial-scene .side-copy{width:130px;font-size:14px;top:18px}body.narrow .editorial-scene .art{height:217px;left:-39px;width:106%}
 .editorial-scene{height:334px}body.narrow .editorial-scene{height:326px}.v-d .art{object-position:center bottom}
+
+/* Approved variant D: the hint follows the central axis. */
+.v-d .hint{text-align:center;text-wrap:balance}
