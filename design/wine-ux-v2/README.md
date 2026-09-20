@@ -19,3 +19,5 @@ The component section includes six source/adaptation comparisons with locally pr
 Validation: Chrome at 320/390/1440, all 16 render states, 10 scenario outcomes, recovery and manual search; separate actual-click review by GPT-5.6. This remains a static prototype.
 
 Secondary 2D mascot integration: see [composition, prompts and verification](mascot-scenes.md). Static scenes on loading/waiting, missing result and empty manual search; selected home artwork unchanged.
+
+Current selected edition: [scope, transition decisions and immutable archive](selected-edition.md). Design-specific persistent acceptance checks were explicitly requested by Maks; see [tests](tests/README.md). The pre-selection frame experiment is preserved at `/v2/previous/` rather than used in the current flow.

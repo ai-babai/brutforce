@@ -132,7 +132,7 @@ const scenarios=[
     "Получить карточку"
    ]
   ],
-  "check": "Отмена останавливает демопереход и сохраняет снимок. Повтор не требует съёмки.",
+  "check": "Отмена возвращает на главную с последним снимком. Продолжение не требует съёмки и не ведёт на отдельный экран отмены.",
   "level": "UX-рекомендация",
   "ref": "Q&A 26:41–29:55: точность важнее скорости. Конкретный UX ожидания — наше решение."
  },
@@ -155,7 +155,7 @@ const scenarios=[
     "Попробовать название"
    ]
   ],
-  "check": "Нет выдуманной карточки. Есть ручной поиск и новый снимок.",
+  "check": "Нет выдуманной карточки. Ручной запрос сохраняется после неудачного поиска; доступны исправление названия и новый снимок.",
   "level": "UX-рекомендация",
   "ref": "Q&A: в закрытом тесте все вина есть в каталоге. Этот сценарий нужен для реального использования."
  },
@@ -197,6 +197,10 @@ const scenarios=[
     "Выбрать альтернативу"
    ],
    [
+    "gallery",
+    "Выбрать фото в системной галерее"
+   ],
+   [
     "loading",
     "Отправить фото"
    ],
@@ -218,6 +222,10 @@ const scenarios=[
    [
     "camera",
     "Снять фото"
+   ],
+   [
+    "loading",
+    "Поиск по фото"
    ],
    [
     "offline",
@@ -281,6 +289,60 @@ const scenarios=[
   "check": "Возврат сохраняет выбранное вино. Фото не становится обязательным экраном до результата.",
   "level": "UX-рекомендация",
   "ref": "Наше решение: проверяемость ответа без лишнего шага в основном пути."
+ },
+ {
+  "id": "manual",
+  "label": "По названию",
+  "title": "Найти вино без фотографии",
+  "context": "Ручной ввод открывает ту же карточку. Назад возвращает к запросу и кандидатам.",
+  "steps": [
+   [
+    "start",
+    "Открыть главную"
+   ],
+   [
+    "search",
+    "Ввести название"
+   ],
+   [
+    "result",
+    "Открыть вино"
+   ]
+  ],
+  "check": "Демо-запрос показывает кандидат. Неизвестный запрос сохраняется для исправления. Фото не придумывается.",
+  "level": "UX-решение",
+  "ref": "Альтернативный вход из уже существующего макета; каталог демонстрационный."
+ },
+ {
+  "id": "stop",
+  "label": "Остановить и продолжить",
+  "title": "Сохранить снимок без лишнего экрана",
+  "context": "Отмена поиска возвращает на главную. Продолжить можно по тому же снимку.",
+  "steps": [
+   [
+    "camera",
+    "Снять фото"
+   ],
+   [
+    "loading",
+    "Начать поиск"
+   ],
+   [
+    "start",
+    "Остановить: на главную"
+   ],
+   [
+    "loading",
+    "Продолжить с тем же фото"
+   ],
+   [
+    "result",
+    "Открыть карточку"
+   ]
+  ],
+  "check": "Таймер остановлен; после отмены не происходит самопроизвольного перехода. Повтор не требует новой фотографии.",
+  "level": "UX-решение",
+  "ref": "Текущая сессия страницы. Хранение после закрытия не обещается."
  }
 ];
 let scenario=scenarios[0],screen='start',selectedYear='2023',loadTimer=null,photoReturn='result';
@@ -305,11 +367,12 @@ function renderScenario(){
  document.querySelectorAll('[data-scenario]').forEach(b=>{let on=b.dataset.scenario===scenario.id;b.classList.toggle('active',on);b.setAttribute('aria-pressed',on)});
  $('#flow-explanation').innerHTML=`<p class="eyebrow">${esc(scenario.level)}</p><h3>${esc(scenario.title)}</h3><p>${esc(scenario.context)}</p><ol class="step-list">${scenario.steps.map(([id,t])=>`<li class="${screen===id?'current':''}">${esc(t)}</li>`).join('')}</ol><div class="criterion"><strong>Как проверим</strong>${esc(scenario.check)}</div><p class="evidence">${esc(scenario.ref)}</p>`;
 }
-function setScreen(next){clearTimeout(loadTimer);if(next==='preview')photoReturn=['result','catalog','candidates','waiting','missing','loading'].includes(screen)?screen:'cancelled';screen=next;renderPhone();renderScenario()}
-function beginScan(retry=false){selectedYear='2023';detailTab='overview';setScreen('loading');loadTimer=setTimeout(()=>setScreen(retry?'result':scenario.id==='slow'?'waiting':scenario.id==='vintage'?'candidates':scenario.id==='missing'?'missing':scenario.id==='badphoto'?'badphoto':scenario.id==='network'?'offline':'result'),1200)}
+function setScreen(next){clearTimeout(loadTimer);if(next==='cancelled')next='start';if(next==='preview')photoReturn=['start','result','catalog','candidates','waiting','missing','loading','offline','badphoto'].includes(screen)?screen:'start';screen=next;renderPhone();renderScenario()}
+function resumeScan(){setScreen('loading');loadTimer=setTimeout(()=>{resultReturn='start';candidateReturn='start';missingOrigin='photo';setScreen(scanOutcome)},1200)}
+function beginScan(retry=false){hasPhoto=true;showResume=false;selectedYear='2023';detailTab='overview';scanOutcome=retry||retryAfterBadPhoto?'result':scenario.id==='slow'?'waiting':scenario.id==='vintage'?'candidates':scenario.id==='missing'?'missing':scenario.id==='badphoto'?'badphoto':scenario.id==='network'?'offline':'result';retryAfterBadPhoto=false;resumeScan()}
 function renderPhone(){}
 scenarios.forEach((s,i)=>{const b=document.createElement('button');b.dataset.scenario=s.id;b.textContent=s.label;b.setAttribute('aria-pressed',i===0);b.onclick=()=>{scenario=s;selectedYear='2023';detailTab='overview';searched=false;setScreen(s.steps[0][0])};$('#scenario-picker').append(b)});
-$('#restart').onclick=()=>{selectedYear='2023';detailTab='overview';searched=false;setScreen(scenario.steps[0][0])};
+$('#restart').onclick=()=>{resetDemoContext(scenario.steps[0][0]);selectedYear='2023';detailTab='overview';searched=false;setScreen(scenario.steps[0][0])};
 
 $('#decision-content').innerHTML=`<div class="map-grid"><article class="decision-block"><p class="eyebrow">Сначала</p><h3>Работающий сканер</h3><ol><li><strong>Фото → карточка каталога</strong><span>Q&A: уверенное совпадение сразу открывает карточку. Фото, название, винодельня.</span></li><li><strong>Неоднозначность и исправление</strong><span>Ближайшие кандидаты при неуверенности, исправление доступно из карточки.</span></li><li><strong>Исправление и ручной поиск</strong><span>Наша UX-рекомендация: не создавать тупик при ошибке модели.</span></li><li><strong>Факты и источник</strong><span>Описание из каталога; неизвестное остаётся неизвестным.</span></li><li><strong>Восстановление после сбоев</strong><span>Галерея, разрешения, повтор запроса с тем же снимком.</span></li></ol></article><article class="decision-block optional"><p class="eyebrow">После устойчивого ядра</p><h3>Причина вернуться</h3><ol><li><strong>История сканов</strong><span>Найти бутылку, которую видел вчера.</span></li><li><strong>«Хочу попробовать»</strong><span>Сохранить без обязательной оценки.</span></li><li><strong>Личная заметка</strong><span>Впечатление отдельно от фактов.</span></li><li><strong>Сравнение двух вин</strong><span>Только по доступным полям, с видимым годом.</span></li><li><strong>Экспорт личных данных</strong><span>Если начинаем хранить историю — не запирать её внутри продукта.</span></li></ol></article><article class="decision-block later"><p class="eyebrow">Отдельные гипотезы</p><h3>Пока не усложняем</h3><ol><li><strong>3D-погреб</strong><span>Сильный InVintory-сценарий, но другая задача.</span></li><li><strong>Социальная лента</strong><span>Не нужна, чтобы распознать этикетку.</span></li><li><strong>Корзина и покупка</strong><span>Q&A: платформа информационная, покупка происходит в магазине.</span></li><li><strong>AI-сомелье</strong><span>Не должен подменять данные каталога.</span></li><li><strong>Рейтинги и гастропары</strong><span>Уже есть на платформе. Не дублируем их как отдельную бонусную механику.</span></li></ol></article></div><div class="pattern-list"><h3>Пять полезных паттернов</h3>${[
  ['Vivino','Камера → быстрый результат','Поставить поиск по фотографии в центр первого экрана.','Перегруженный торговлей результат и уверенно неверные факты.'],
