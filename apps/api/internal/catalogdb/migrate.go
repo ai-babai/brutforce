@@ -18,7 +18,7 @@ func Open(url string) (*sql.DB, error) {
 	return stdlib.OpenDB(*config), nil
 }
 func Seed(ctx context.Context, db *sql.DB, dir string) error {
-	seed, err := os.ReadFile(filepath.Join(dir, "seed_demo_catalog.sql"))
+	seed, err := os.ReadFile(filepath.Join(dir, "seeds", "demo_catalog.sql"))
 	if err != nil {
 		return err
 	}
