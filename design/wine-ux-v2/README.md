@@ -29,3 +29,11 @@ Approved migration handoff (b73baf6 plan): [decisions, files and acceptance case
 The home logo context and mascot hero now share one solid `#fbf6ec` surface. The former blurred, pill-shaped home logo row was retired because it visually split the entry screen. This correction is scoped to home; result and utility-screen context bars remain as before. It is source-only until the next explicit static-report release.
 
 The logo row now contains only the logo; the disconnected `Поиск по этикетке` descriptor was removed. Bottom navigation names the start destination `Главная` with a house icon. It always returns to the start screen, while explicit capture and reshoot actions open the camera.
+
+## Canonical release 2026-09-21 — approved FE-027 Г
+
+Published source 854d88f at https://reps.maks.dzap.pw/v2/ . Canonical home, component specimens, explanation and tokens now use the approved centered composition and hint. This release also includes previously Git-only Home navigation and alpha asset corrections. Earlier source-only notes above describe history, not the current publication status.
+
+Release `/srv/lct/maks/wine-ux-v2/releases/v2-20260921-854d88f`; preceding release `v2-20260920-29874e7` retained. Immutable `/v2/previous/` still points to `v2-20260920-922709f`. Index checksums for that archive, /view and mascot glass study remained unchanged during release. Only the static report symlink changed; no service restart or application deployment.
+
+Local flows + migration checks passed. Visual home320×568/390×844 and desktop phone verified; short prototype scene140px accommodates the simulated status bar and keeps CTA above bottom navigation. Other scene sizes260/220px. Application reference uses160px at short height because it does not simulate OS chrome. The complete main content remains scrollable.
