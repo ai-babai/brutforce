@@ -632,6 +632,48 @@
       "title": "Demo upload allowlist remains unchanged after contest WebP support",
       "source": "apps/api/security_test.go",
       "spec": "contracts/eval-predict.md"
+    },
+    {
+      "id": "DB-001",
+      "area": "database",
+      "title": "Миграции создают схему и не теряют данные при повторном запуске",
+      "source": "apps/api/database_integration_test.go",
+      "spec": "contracts/database.md"
+    },
+    {
+      "id": "DB-002",
+      "area": "database",
+      "title": "Seed не создаёт дубли и не перезаписывает изменённые карточки",
+      "source": "apps/api/database_integration_test.go",
+      "spec": "contracts/database.md"
+    },
+    {
+      "id": "DB-003",
+      "area": "database",
+      "title": "Каталог и поиск читают PostgreSQL; SQL-подобный ввод остаётся данными",
+      "source": "apps/api/database_integration_test.go",
+      "spec": "contracts/database.md"
+    },
+    {
+      "id": "DB-004",
+      "area": "database",
+      "title": "Каталог сохраняется после переподключения",
+      "source": "apps/api/database_integration_test.go",
+      "spec": "contracts/database.md"
+    },
+    {
+      "id": "DB-005",
+      "area": "database",
+      "title": "Runtime читает каталог, но не меняет схему",
+      "source": "apps/api/database_integration_test.go",
+      "spec": "contracts/database.md"
+    },
+    {
+      "id": "DB-006",
+      "area": "database",
+      "title": "Отказ БД возвращает безопасный HTTP 503 без fallback",
+      "source": "apps/api/catalog_store_test.go",
+      "spec": "contracts/database.md"
     }
   ]
 }

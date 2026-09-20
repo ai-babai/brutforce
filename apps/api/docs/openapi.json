@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "BrutForce synthetic demo API",
-    "version": "1.1.0",
+    "version": "1.1.1",
     "description": "Versioned demo API plus the separately bounded contest prediction adapter. Synthetic demo routes do not perform recognition; the contest adapter reports recognition_unavailable until a real recognizer is wired."
   },
   "paths": {
@@ -19,10 +19,12 @@
     "/v1/catalog": {
       "get": {
         "operationId": "getCatalog",
-        "summary": "Read the embedded synthetic wine catalog",
+        "summary": "Read the synthetic wine catalog",
+        "description": "Reads PostgreSQL when configured. Database failure returns 503 catalog_unavailable; no silent fallback.",
         "responses": {
           "200": {"description": "Ordered synthetic candidates.", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/SearchResponse"}}}},
-          "405": {"$ref": "#/components/responses/APIError"}
+          "405": {"$ref": "#/components/responses/APIError"},
+          "503": {"$ref": "#/components/responses/APIError"}
         }
       }
     },

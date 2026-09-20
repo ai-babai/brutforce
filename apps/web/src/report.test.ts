@@ -44,7 +44,22 @@ describe('report dashboard regressions', () => {
     expect(document.querySelector('#head .scenario-column')?.textContent).toBe('Сценарий');
     expect(document.querySelector('#body .scenario-column:not(.section-column)')?.textContent).toContain('UI-001');
     const headings = [...document.querySelectorAll('#body .section-column')].map(heading => heading.textContent?.trim());
-    expect(headings).toEqual(['Поведение', 'Security', 'Конкурсный API — контрактРаспознаватель недоступен: проверки подтверждают адаптер API, а не качество модели.', 'Дизайн']);
+    expect(headings).toEqual(['Поведение', 'DatabaseDB-001…005 требуют отдельного реального PostgreSQL-свидетельства; их внешнее время не входит в «Весь запуск».', 'Security', 'Конкурсный API — контрактРаспознаватель недоступен: проверки подтверждают адаптер API, а не качество модели.', 'Дизайн']);
+  });
+
+  it('groups database scenarios under a sticky Database heading', async () => {
+    const cases = [
+      { id: 'DB-001', area: 'database', title: 'Миграции' },
+      { id: 'DB-006', area: 'database', title: 'Недоступная БД' },
+      { id: 'UI-001', area: 'web', title: 'Вход' },
+    ];
+    await render(cases, ['runs/one.json'], { 'runs/one.json': run('one', '2026-09-19T10:00:00Z', 'passed', cases) });
+    const heading = [...document.querySelectorAll('#body .section-column')].find(item => item.textContent?.startsWith('Database'));
+    expect(heading).toHaveClass('scenario-column');
+    expect(heading?.textContent).toContain('DB-001…005');
+    const databaseRows = [...document.querySelectorAll('#body tr')].filter(row => row.querySelector('strong')?.textContent?.startsWith('DB-00'));
+    expect(databaseRows).toHaveLength(2);
+    expect(databaseRows.every(row => row.querySelector('.scenario-column'))).toBe(true);
   });
 
   it('REPORT-002 orders an unordered index from newest run to the baseline', async () => {

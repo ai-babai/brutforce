@@ -14,7 +14,9 @@ with it.
   and the embedded synthetic catalog is readable, but recognition, OCR, real
   catalog lookup, authentication, and analytics remain deliberate stubs.
 - Keep dependencies in the Go standard library except the approved
-  `golang.org/x/image/webp` decoder used only by the contest adapter. It lets
+  `golang.org/x/image/webp` decoder used only by the contest adapter and the
+  authorized PostgreSQL catalog dependencies `github.com/jackc/pgx/v5` and
+  `github.com/pressly/goose/v3`. It lets
   `POST /v1/eval/predict` identify actual WebP bytes regardless of filename;
   the demo upload allowlist remains JPEG/PNG/GIF.
 - `go test -count=1 ./...` is the required fast verification command.

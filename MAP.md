@@ -14,7 +14,7 @@
 | Проверки и история | [cases](cases/cases.json), scripts/run-fast-checks.mjs, reports/ |
 | Совместная работа | [RULES](docs/agent-guide/RULES.md), [BOARD](docs/agent-guide/BOARD.md) |
 | Выпуск и откат | [deploy](deploy/README.md), deploy/releases/ |
-| БД и тестовые среды | [DATABASE](docs/agent-guide/DATABASE.md) — предложение |
+| БД и тестовые среды | [DATABASE](docs/agent-guide/DATABASE.md), [контракт каталога](contracts/database.md) |
 | Полномочия и ограничения | [AGENTS](AGENTS.md), [подробности](docs/agent-guide/OPERATING-RULES.md) |
 | Обновление структуры | [GUIDE-FORMAT](docs/agent-guide/GUIDE-FORMAT.md) |
 

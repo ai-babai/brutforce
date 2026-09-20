@@ -63,7 +63,7 @@ func TestAPI018OpenAPIMatchesImplementedDemoContract(t *testing.T) {
 	if err := json.Unmarshal(openAPISpec, &spec); err != nil {
 		t.Fatalf("decode OpenAPI: %v", err)
 	}
-	if spec.OpenAPI != "3.1.0" || spec.Info.Version != "1.1.0" {
+	if spec.OpenAPI != "3.1.0" || spec.Info.Version != "1.1.1" {
 		t.Fatalf("OpenAPI version=%q contract version=%q", spec.OpenAPI, spec.Info.Version)
 	}
 	wantMethods := map[string]string{

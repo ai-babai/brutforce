@@ -1,15 +1,16 @@
 # Demo search API
 
-Minimal, standard-library Go prototype for the Wine UX Atlas. It provides
+Minimal Go prototype for the Wine UX Atlas. It provides
 predictable synthetic outcomes for frontend integration; it does not recognize
 images or query a real wine catalog. It can retain a private uploaded image for
 the demo flow, but a stored receipt only gates the synthetic response.
 
-## Embedded synthetic catalog
+## Synthetic catalog: PostgreSQL and standalone mode
 
-[`catalog.json`](catalog.json) is the read-only, embedded demo catalog. It has
-eight synthetic red-dry wines with stable IDs; it is not a database, supplier
-feed, or claim about real wine records. `GET /v1/catalog` returns its complete
+[`catalog.json`](catalog.json) defines eight synthetic red-dry wines with stable IDs.
+With DATABASE_URL set, catalog and search read PostgreSQL; without it, the embedded
+fixture serves standalone tests. A configured database failure never falls back to
+embedded data. These records are not a supplier feed or a real wine catalog. `GET /v1/catalog` returns its complete
 ordered candidate list as `{ "demo": true, "candidates": [...] }`. The same
 catalog is used by search, so catalog and search candidate IDs always match.
 
@@ -176,3 +177,23 @@ Run: `go test -count=1 ./...`.
 
 ## Public input security
 See [Security Specs](../../docs/product/security-spec.md) for input, upload concurrency/rate, storage and service resource limits. Search POST requires application/json and at most256 query characters. Uploads are decoded after dimension checks; originals remain private and untrusted.
+
+## PostgreSQL operations (BE-031)
+
+Contract: [database.md](../../contracts/database.md). Schema/seed: `migrations/`.
+From `apps/api`, migrate explicitly with migration-role credentials already in
+`MIGRATION_DATABASE_URL`: `go run ./cmd/catalog-migrate`. In a packaged release,
+run `./catalog-migrate` with `migrations/` beside it and that directory as cwd.
+Goose applies schema once; explicit seed reruns preserve existing rows (`ON CONFLICT DO NOTHING`).
+Never run schema changes under the HTTP runtime role. Startup with DATABASE_URL
+requires a reachable DB; query errors return HTTP503 catalog_unavailable without secrets.
+The health route is process liveness, not a database readiness check.
+
+Fast suite: `go test -count=1 ./...` (no DB required). SQL integration is build-tagged:
+`lct-db-test maks bash -c 'cd /path/to/apps/api && go test -tags=integration -count=1 -run "^TestDB00[1-5]" .'`.
+The wrapper resets only the registered test schema and supplies both credentials.
+Missing credentials or an unexpected database fail the integration tests, not skip them.
+For measuring just DB work, precompile `GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go test -c -tags=integration -o db-tests .`,
+copy it and migrations/, then run with `go tool test2json -t -p brutforce-behavior-demo/apps/api ./db-tests
+-test.v=test2json -test.run '^TestDB00[1-5]' -test.count=1` inside the wrapper.
+No real images or competition data are needed for these tests.

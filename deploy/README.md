@@ -19,3 +19,23 @@
 восстановить резервную копию maks-reports.caddy, validate и reload Caddy.
 
 Файл demo.caddy устанавливается как /etc/caddy/sites-enabled/z-brutforce-demo.caddy: общий snippet загружается раньше из lct-previews.caddy.
+
+## Каталог PostgreSQL — BE-031
+
+Демо Макса использует только `lct_maks`. Перед выпуском выполнить миграцию отдельной
+ролью через `MIGRATION_DATABASE_URL`; точная команда в `apps/api/README.md`.
+Не выполнять down/reset постоянной базы при откате приложения.
+
+Runtime получает только `DATABASE_URL` из защищённого
+`/etc/lct-db/brutforce-demo.env` (root:lct, 0640). Это копия runtime-настройки зоны,
+не весь `/etc/lct-db/maks.env`: migration и тестовые полномочия приложению не нужны.
+Systemd drop-in `brutforce-demo.service.d/database.conf` подключает этот EnvironmentFile.
+Не хранить значения в Git. При смене runtime-credential обновить и эту служебную копию.
+
+Перед публикацией: обычный fast run плюс реальный PostgreSQL-набор через `lct-db-test maks`.
+Проверки не очищают постоянные базы. `/v1/catalog` и ручной поиск проверяются после перезапуска.
+Фото, отчёт и Caddy-маршруты не меняются из-за подключения БД.
+
+Откат первого подключения: вернуть предыдущий release и убрать только добавленный DB drop-in,
+затем restart `brutforce-demo`. Таблицы и данные сохранить. Предыдущий бинарник использует
+встроенный синтетический каталог; это осознанный откат релиза, не автоматический fallback.

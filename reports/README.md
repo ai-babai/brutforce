@@ -21,6 +21,49 @@
 (разрешение Go)`, а дробная длительность Vitest сохраняется без округления.
 История ранних запусков без снимков оставлена как ограниченное свидетельство; это видно в деталях.
 
+## Внешнее свидетельство Database
+
+Обычный fast run не подключается к PostgreSQL. Поэтому DB-001…005 получают
+`not_run`, если внешнее свидетельство не передано; это не успех. DB-006 — быстрый
+Go mock отказа БД и входит в обычный Go API output.
+
+На Sigma сначала соберите DB-набор и сохраните его JSONL вне репозитория. Текущий
+предпочтительный запуск использует уже скомпилированный тестовый бинарник, чтобы
+время DB-набора не включало компиляцию:
+
+```sh
+cd apps/api
+go test -c -tags=integration -o db-tests .
+go tool test2json -t -p brutforce-behavior-demo/apps/api ./db-tests -test.v -test.run '^TestDB00[1-5]' -test.count=1 > /absolute/path/db-test-results.jsonl
+```
+
+Рядом создайте `/absolute/path/db-test-metadata.json` с фактическими значениями:
+
+```json
+{
+  "revision": "полный_git_HEAD",
+  "wallMs": 1234,
+  "command": "go tool test2json -t -p brutforce-behavior-demo/apps/api ./db-tests -test.v -test.run '^TestDB00[1-5]' -test.count=1"
+}
+```
+
+Передайте оба абсолютных пути в fast runner и задайте точно ту же revision:
+
+```sh
+GIT_REVISION="полный_git_HEAD" \
+DB_TEST_RESULTS_FILE=/absolute/path/db-test-results.jsonl \
+DB_TEST_METADATA_FILE=/absolute/path/db-test-metadata.json \
+node scripts/run-fast-checks.mjs
+```
+
+`DB_TEST_WALL_MS` можно передать только как запасной источник длительности, если
+в metadata нет `wallMs`. Runner принимает свидетельство лишь при точном совпадении
+`metadata.revision` и `GIT_REVISION`, наличии команды, итоговом package `pass` и
+результатах всех DB-001…005. Плохой, устаревший или неполный явно переданный
+результат сохраняется в immutable report, помечает run ошибкой и возвращает
+ненулевой exit code. Время Database отображается отдельно и не входит в локальное
+`timing.wallMs` («Весь запуск»).
+
 ## Отдельная проверка конкурсного API
 
 Общий runner запускает тесты `TestEVAL` отдельным процессом Go и сохраняет
