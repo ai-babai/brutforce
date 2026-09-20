@@ -409,7 +409,7 @@ describe("mobile behavior demo", () => {
       (searchCalls[0][1] as RequestInit).body,
     );
   });
-  it("UI-006 SR-008 manual candidates keep full accessible names and no photo-result badge", async () => {
+  it("UI-006 SR-008 manual candidates keep full accessible names and receive the shared leader badge", async () => {
     mock(uncertain);
     render(<App initialScenario="uncertain" />);
     await submitManual("Мерло");
@@ -425,7 +425,7 @@ describe("mobile behavior demo", () => {
       screen.getByRole("img", { name: /Фото Мерло недоступно/i }),
     ).toBeVisible();
     expect(screen.getByRole("button", { name: "Мерло, 2022" })).toBeVisible();
-    expect(screen.queryByText("Наиболее похожее")).not.toBeInTheDocument();
+    expect(screen.getByText("Наиболее похожее")).toBeVisible();
     fireEvent.error(screen.getByRole("img", { name: "Фото вина: Каберне Совиньон" }));
     expect(
       screen.getByRole("img", { name: "Фото Каберне Совиньон недоступно" }),

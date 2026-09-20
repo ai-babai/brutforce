@@ -80,15 +80,15 @@ describe('selected Wine UX 2.0 design contract', () => {
   });
 
   it('DESIGN-009 keeps candidate rows as full actionable surfaces with readable metadata', () => {
-    expect(css).toContain('#UI-006 .candidate-list button{grid-template-columns:56px minmax(0,1fr)');
-    expect(css).toContain('#UI-006 .candidate-list b{overflow-wrap:anywhere;font-size:14px');
-    expect(css).toContain('#UI-006 .candidate-list small{overflow-wrap:anywhere;white-space:normal');
+    expect(css).toContain('.leader-list button{grid-template-columns:56px minmax(0,1fr)');
+    expect(css).toContain('.leader-list b{overflow-wrap:anywhere;font-size:14px');
+    expect(css).toContain('.leader-list small{overflow-wrap:anywhere;white-space:normal');
   });
 
   it('SR-009 constrains the leader badge and preserves full titles at enlarged text', () => {
-    expect(css).toContain('#UI-006 .candidate-list button.candidate-leader{grid-template-columns:76px minmax(0,1fr)');
-    expect(css).toContain('#UI-006 .candidate-list .candidate-leader img,#UI-006 .candidate-list .candidate-leader .missing-image{width:76px;height:132px');
-    expect(css).toContain('#UI-006 .candidate-list img,#UI-006 .candidate-list .missing-image{width:56px;height:98px');
+    expect(css).toContain('.leader-list button.candidate-leader{grid-template-columns:76px minmax(0,1fr)');
+    expect(css).toContain('.leader-list .candidate-leader img,.leader-list .candidate-leader .missing-image{width:76px;height:132px');
+    expect(css).toContain('.leader-list img,.leader-list .missing-image{width:56px;height:98px');
     expect(css).toContain('max-inline-size:100%');
     expect(css).toContain('overflow-wrap:anywhere');
   });

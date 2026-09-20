@@ -832,7 +832,7 @@
     {
       "id": "SR-008",
       "area": "ui",
-      "title": "Текстовый поиск без бейджа фото",
+      "title": "Лидер текстового поиска и похожих вин",
       "source": "apps/web/src/App.test.tsx",
       "spec": "docs/product/behavior-spec.md#фото-выделенный-лидер-и-вертикальный-список--fe-035"
     },

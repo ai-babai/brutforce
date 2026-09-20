@@ -833,7 +833,7 @@ export function App({
               <WineList
                 wines={candidates}
                 onChoose={choose}
-                leader={candidateOrigin === "scan" && candidateHasPhoto}
+                leader
               />
               <button className="secondary" onClick={openManualCorrection}>
                 Ни одно не подходит
@@ -1046,7 +1046,11 @@ export function App({
                 ) : catalog.length === 0 ? (
                   <p role="status">Загружаем каталог</p>
                 ) : filteredCatalog.length ? (
-                  <WineList wines={filteredCatalog} onChoose={chooseCatalog} />
+                  <WineList
+                    wines={filteredCatalog}
+                    onChoose={chooseCatalog}
+                    leader={Boolean(query.trim())}
+                  />
                 ) : (
                   <p className="empty-catalog">
                     По этому запросу ничего не найдено.
@@ -1328,13 +1332,15 @@ function WineList({
   wines,
   onChoose,
   leader = false,
+  className = "",
 }: {
   wines: Candidate[];
   onChoose: (wine: Candidate) => void;
   leader?: boolean;
+  className?: string;
 }) {
   return (
-    <div className="candidate-list">
+    <div className={`candidate-list${leader ? " leader-list" : ""}${className ? ` ${className}` : ""}`}>
       {wines.map((wine, index) => {
         const isLeader = leader && index === 0;
         const year = wine.year > 0 ? wine.year : "Год не указан";
@@ -1346,11 +1352,11 @@ function WineList({
           onClick={() => onChoose(wine)}
           aria-label={`${wine.name}${wine.line ? `, ${wine.line}` : ""}, ${year}`}
         >
-          <CandidateImage candidate={wine} />
-          <span>
+            <CandidateImage candidate={wine} />
+            <span>
             {isLeader && <em>Наиболее похожее</em>}
-            {wine.line && <small>{wine.line}</small>}
             <b>{wine.name}</b>
+            {wine.line && <small>{wine.line}</small>}
             {wine.winery && <small>{wine.winery}</small>}
             <small>{details ? `${year} · ${details}` : year}</small>
           </span>
@@ -1367,20 +1373,7 @@ function RecommendationList({
   wines: Candidate[];
   onChoose: (wine: Candidate) => void;
 }) {
-  return (
-    <div className="recommendation-list">
-      {wines.map((wine) => (
-        <button key={wine.id} onClick={() => onChoose(wine)}>
-          <CandidateImage candidate={wine} />
-          <span>
-            <small>{wine.winery}</small>
-            <b>{wine.name}</b>
-            <small>{wine.year}</small>
-          </span>
-        </button>
-      ))}
-    </div>
-  );
+  return <WineList wines={wines} onChoose={onChoose} leader className="recommendation-list" />;
 }
 function BottomNav({
   section,

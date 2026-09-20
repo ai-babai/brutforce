@@ -67,6 +67,9 @@ describe("catalog navigation and saved wines", () => {
       screen.queryByRole("button", { name: /Каберне Совиньон/i }),
     ).not.toBeInTheDocument();
     expect(screen.getByRole("button", { name: /Мерло/i })).toBeVisible();
+    expect(screen.getByText("Наиболее похожее")).toBeVisible();
+    await userEvent.clear(screen.getByLabelText(/Название вина/i));
+    expect(screen.queryByText("Наиболее похожее")).not.toBeInTheDocument();
     content.scrollTop = 480;
     await userEvent.click(screen.getByRole("button", { name: "Сохранённое" }));
     expect(content.scrollTop).toBe(0);

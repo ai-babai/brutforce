@@ -53,10 +53,14 @@ function mockApi(recommendationResponse: unknown) {
 
 describe("wine-card recommendations", () => {
   it("REC001 requests recommendations for the selected wine and labels them separately from search candidates", async () => {
-    const fetchMock = mockApi({ demo: true, candidates: [recommendation] });
+    const fetchMock = mockApi({
+      demo: true,
+      candidates: [recommendation, { ...recommendation, id: "pinot", name: "Пино Нуар" }],
+    });
     await openCard();
     expect(await screen.findByText("Вам также может подойти")).toBeVisible();
     expect(screen.getByText("Мерло")).toBeVisible();
+    expect(screen.getAllByText("Наиболее похожее")).toHaveLength(1);
     expect(fetchMock).toHaveBeenCalledWith(
       "/v1/recommendations",
       expect.objectContaining({
