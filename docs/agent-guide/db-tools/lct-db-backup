@@ -1,0 +1,14 @@
+#!/bin/sh
+set -eu
+umask 077
+dir=/srv/lct/data/backups/postgres
+stamp=$(date -u +%Y%m%dT%H%M%SZ)
+for db in lct_shared lct_maks lct_roman; do
+  file="$dir/$db-$stamp.dump.partial"
+  runuser -u postgres -- pg_dump --format=custom "$db" > "$file"
+  chown root:postgres "$file"
+  chmod 0640 "$file"
+  pg_restore --list "$file" >/dev/null
+  mv "$file" "${file%.partial}"
+done
+find "$dir" -maxdepth 1 -type f \( -name 'lct_shared-*.dump' -o -name 'lct_maks-*.dump' -o -name 'lct_roman-*.dump' \) -mtime +14 -delete

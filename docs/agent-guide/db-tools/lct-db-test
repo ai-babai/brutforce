@@ -1,0 +1,40 @@
+#!/bin/bash
+# Reset a registered disposable database, then hold the zone lock for the whole command.
+set -euo pipefail
+zone=${1:-}
+case "$zone" in shared|maks|roman) ;; *) echo 'Usage: lct-db-test shared|maks|roman COMMAND [ARGS...]' >&2; exit 2;; esac
+shift
+if [ "$#" -eq 0 ]; then echo 'A test command is required; no reset performed.' >&2; exit 2; fi
+source "/etc/lct-db/$zone.env"
+prefix="LCT_${zone^^}"
+migration_var="${prefix}_TEST_MIGRATION_DATABASE_URL"
+runtime_var="${prefix}_TEST_RUNTIME_DATABASE_URL"
+export MIGRATION_DATABASE_URL="${!migration_var}" DATABASE_URL="${!runtime_var}"
+set_pg_env() {
+  eval "$(DB_CONNECT_URL="$1" python3 - <<'PYENV'
+import os, shlex
+from urllib.parse import urlsplit, parse_qs, unquote
+u=urlsplit(os.environ['DB_CONNECT_URL']); q=parse_qs(u.query)
+fields={'PGDATABASE':unquote(u.path.lstrip('/')), 'PGUSER':unquote(u.username or ''),
+        'PGPASSWORD':unquote(u.password or ''), 'PGHOST':q.get('host',['/var/run/postgresql'])[0]}
+for k,v in fields.items(): print('export '+k+'='+shlex.quote(v))
+PYENV
+)"
+}
+set_pg_env "$MIGRATION_DATABASE_URL"
+exec 9>"/srv/lct/data/db-test-locks/$zone.lock"
+flock -n 9 || { echo "Test slot $zone is busy; retry after the current run." >&2; exit 75; }
+actual=$(psql -X -Atqc 'SELECT current_database()')
+[ "$actual" = "lct_test_$zone" ] || { echo 'Unexpected database; refusing reset.' >&2; exit 1; }
+psql -X -v ON_ERROR_STOP=1 >/dev/null <<SQL
+BEGIN;
+DROP SCHEMA public CASCADE;
+CREATE SCHEMA public;
+GRANT USAGE ON SCHEMA public TO lct_test_${zone}_runtime;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO lct_test_${zone}_runtime;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT USAGE, SELECT ON SEQUENCES TO lct_test_${zone}_runtime;
+COMMIT;
+SQL
+set_pg_env "$DATABASE_URL"
+# Commands get runtime credentials by default and explicit migration credentials separately.
+"$@"
