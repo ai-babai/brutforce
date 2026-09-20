@@ -28,4 +28,18 @@ The mock camera/gallery, two synthetic wines keyed by year, substring search and
 
 ## Acceptance checks
 
+### Issue #24: no-match screenshot follow-up
+
+Maks's red annotations were found by sigma-ops in Hermes Telegram context, linked to [issue #24](https://github.com/ai-babai/brutforce/issues/24), but were not copied into that issue originally. The old PR #25 concerns proposal inventory, not these UI changes. Current design owner: sigma - front; implementation handoff: sigma-ops-server-ops-bdd.
+
+- Candidate list is the uncertain recognition outcome when usable candidates exist. True no-match does not fabricate similar wines, ratings or probabilities. No new intermediate screen is introduced.
+- Photo no-match: primary `Найти по названию`, secondary `Переснять этикетку`. Both are full-width, centered, 56 px minimum, 16 px radius and 10 px gap. The first uses the existing wine fill, the second the existing outlined style.
+- Manual no-match: primary `Изменить запрос`, returns to the same editable query. Do not display an unrelated retained scan on this text-only failure.
+- Copy does not infer a missing catalog record or poor image quality from no-match alone.
+- New static 2D art `site/assets/v2/mascot-counter-thoughtful-2d.png`: neutral concerned mouth/eyebrows, same counter, pose, hat, scarf and magnifying glass. Previous art remains in Git. The mascot stays behind the action panel and never overlaps labels.
+- Built-in imagegen edit prompt: change only facial expression; remove smile, slightly concerned mouth corners/raised inner eyebrows; attentive, no tears or dramatic sadness; preserve 3:2 composition, muted watercolor style and light background. Original reference: `mascot-counter-2d.png`.
+- `tests/migration.cjs` UX-M10 covers aligned actions at 320/390, no fabricated candidates, manual miss -> editable retained query, no unrelated photo. Existing flows cover ambiguous -> candidates -> manual, preview and reshoot.
+
+This handoff updates mockups only. BDD session should adapt actual recognition candidates, file context and query state, then run its application checks. No report publication is included in this change.
+
 Run tests/flows.cjs and tests/migration.cjs with the documented Playwright runtime. UX-M01..08 verify cancel/delete/resume identity, success/error arriving behind preview, query/list/scroll return, original versus newly selected identity, distinct error states, reshoot, catalog/Saved save/delete, bottom navigation, camera and wide frame, exact heading. Existing flow checks remain and include the new report states. Parent and independent GPT-5.6 browser review cover visual geometry; tests do not claim physical-device or real camera/network validation.

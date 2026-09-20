@@ -10,6 +10,8 @@ body.mascot-preview .phone-status{flex:none}body.mascot-preview .product-nav{fle
 .saved-stack{display:grid;gap:16px}.saved-stack article{min-width:0}.saved-stack .product-text{display:block;margin-left:auto;font-size:12px}.preview-completed{padding:14px;margin-top:14px!important;border-radius:14px;background:#fdf9ed;color:#8f3d42!important}.file-recovery-note{padding:24px;border-radius:20px;background:#fdf9ed;font-size:14px;line-height:1.6;color:#746e68}.resume-photo .product-text{min-height:44px}
 @media(min-width:761px){body:not(.mascot-preview) .phone.is-camera{position:relative;inset:auto;height:740px;width:100%;border:6px solid #302d2b;border-radius:42px;overflow:hidden;z-index:auto}.phone.is-camera .camera-screen{border-radius:0}}
 /* Home is one warm canvas: the brand context introduces the scene, not a floating control. */
+.product-screen[data-state=missing] .missing-actions{display:grid;gap:10px;}
+.product-screen[data-state=missing] .missing-actions .product-button{display:flex;align-items:center;justify-content:center;width:100%;min-height:56px;margin:0;padding:14px 16px;text-align:center;border-radius:16px;}
 .start-screen,
 .start-screen .start-hero,
 .start-screen .v2-mascot-scene{
