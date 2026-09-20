@@ -9,7 +9,13 @@ import {
   X,
 } from "@phosphor-icons/react";
 import { IconBookmark, IconHome, IconSearch } from "@tabler/icons-react";
-import { getCatalog, InvalidPhotoError, searchWine, uploadPhoto } from "./api";
+import {
+  getCatalog,
+  getRecommendations,
+  InvalidPhotoError,
+  searchWine,
+  uploadPhoto,
+} from "./api";
 import type { Candidate, PhotoReceipt, Scenario } from "./types";
 import { AtlasScan } from "./AtlasIcons";
 import { InstallApp } from "./InstallApp";
@@ -33,6 +39,7 @@ type CandidateOrigin = "scan" | "manual" | "correction";
 type ResultOrigin = CandidateOrigin | "catalog" | "saved";
 type SearchOrigin = "normal" | "correction";
 type ErrorKind = "network" | "server";
+type RecommendationStatus = "idle" | "loading" | "ready" | "empty" | "error";
 const savedKey = "wine-demo-saved-v1";
 
 export function App({
@@ -68,8 +75,14 @@ export function App({
   const [resultFromCorrection, setResultFromCorrection] = useState(false);
   const [searchOrigin, setSearchOrigin] = useState<SearchOrigin>("normal");
   const [errorKind, setErrorKind] = useState<ErrorKind>("server");
+  const [recommendations, setRecommendations] = useState<{
+    status: RecommendationStatus;
+    candidates: Candidate[];
+  }>({ status: "idle", candidates: [] });
+  const [recommendationAttempt, setRecommendationAttempt] = useState(0);
   const abort = useRef<AbortController | undefined>(undefined);
   const catalogAbort = useRef<AbortController | undefined>(undefined);
+  const recommendationAbort = useRef<AbortController | undefined>(undefined);
   const waitTimer = useRef<ReturnType<typeof setTimeout> | undefined>(
     undefined,
   );
@@ -114,6 +127,7 @@ export function App({
     () => () => {
       abort.current?.abort();
       catalogAbort.current?.abort();
+      recommendationAbort.current?.abort();
       stopCamera();
       if (waitTimer.current) clearTimeout(waitTimer.current);
     },
@@ -137,7 +151,32 @@ export function App({
         previousScreen.current === "candidates" ? searchScroll.current : 0;
     else content.scrollTop = 0;
     previousScreen.current = screen;
-  }, [screen]);
+  }, [screen, selected?.id]);
+  useEffect(() => {
+    if (screen !== "result" || !selected) {
+      recommendationAbort.current?.abort();
+      setRecommendations({ status: "idle", candidates: [] });
+      return;
+    }
+    const controller = new AbortController();
+    recommendationAbort.current?.abort();
+    recommendationAbort.current = controller;
+    setRecommendations({ status: "loading", candidates: [] });
+    getRecommendations(selected.id, controller.signal)
+      .then((data) => {
+        if (controller.signal.aborted || recommendationAbort.current !== controller)
+          return;
+        setRecommendations({
+          status: data.candidates.length ? "ready" : "empty",
+          candidates: data.candidates,
+        });
+      })
+      .catch(() => {
+        if (!controller.signal.aborted && recommendationAbort.current === controller)
+          setRecommendations({ status: "error", candidates: [] });
+      });
+    return () => controller.abort();
+  }, [screen, selected?.id, recommendationAttempt]);
   useEffect(() => {
     if (screen !== "camera" || permissionDenied) return;
     let active = true;
@@ -411,6 +450,12 @@ export function App({
     setResultFromCorrection(false);
     setTab("overview");
     setScreen("result");
+  };
+  const chooseRecommendation = (c: Candidate) => {
+    setSelected(c);
+    setResultHasPhoto(false);
+    setResultFromCorrection(false);
+    setTab("overview");
   };
   const rememberCorrection = () => {
     if (selected)
@@ -871,6 +916,32 @@ export function App({
                       </a>
                     </div>
                   )}
+                  <section className="recommendations" aria-labelledby="recommendations-title">
+                    <h3 id="recommendations-title">Вам также может подойти</h3>
+                    {recommendations.status === "loading" && (
+                      <p role="status">Подбираем рекомендации</p>
+                    )}
+                    {recommendations.status === "ready" && (
+                      <RecommendationList
+                        wines={recommendations.candidates}
+                        onChoose={chooseRecommendation}
+                      />
+                    )}
+                    {recommendations.status === "empty" && (
+                      <p>Пока нет рекомендаций для этой карточки.</p>
+                    )}
+                    {recommendations.status === "error" && (
+                      <div className="recommendation-error" role="alert">
+                        <p>Не удалось загрузить рекомендации.</p>
+                        <button
+                          className="secondary"
+                          onClick={() => setRecommendationAttempt((attempt) => attempt + 1)}
+                        >
+                          Повторить рекомендации
+                        </button>
+                      </div>
+                    )}
+                  </section>
                   <div className="result-actions">
                     <button className="primary" onClick={newCapture}>
                       Сканировать ещё
@@ -1223,6 +1294,28 @@ function WineList({
 }) {
   return (
     <div className="candidate-list">
+      {wines.map((wine) => (
+        <button key={wine.id} onClick={() => onChoose(wine)}>
+          <CandidateImage candidate={wine} />
+          <span>
+            <small>{wine.winery}</small>
+            <b>{wine.name}</b>
+            <small>{wine.year}</small>
+          </span>
+        </button>
+      ))}
+    </div>
+  );
+}
+function RecommendationList({
+  wines,
+  onChoose,
+}: {
+  wines: Candidate[];
+  onChoose: (wine: Candidate) => void;
+}) {
+  return (
+    <div className="recommendation-list">
       {wines.map((wine) => (
         <button key={wine.id} onClick={() => onChoose(wine)}>
           <CandidateImage candidate={wine} />

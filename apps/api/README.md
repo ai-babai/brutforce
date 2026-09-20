@@ -197,3 +197,17 @@ For measuring just DB work, precompile `GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go
 copy it and migrations/, then run with `go tool test2json -t -p brutforce-behavior-demo/apps/api ./db-tests
 -test.v=test2json -test.run '^TestDB00[1-5]' -test.count=1` inside the wrapper.
 No real images or competition data are needed for these tests.
+
+## Сервис Романа: поиск и рекомендации (BE-032)
+
+Контракт, бюджеты и ошибки: [wine-services.md](../../contracts/wine-services.md).
+Машинная спецификация: [OpenAPI](../../contracts/wine-services.openapi.json).
+Запуск референса и передача Роману: [ROMAN-SERVICES.md](../../docs/agent-guide/ROMAN-SERVICES.md).
+
+`SEARCH_SERVICE_URL` и `RECOMMENDATION_SERVICE_URL` задаются отдельно; допустим один адрес.
+`CATALOG_VERSION=demo-v1` связывает ответ с текущим синтетическим каталогом.
+Настроенный сервис не заменяется симулятором при сбое. Без URL поиска сохраняется прежний
+синтетический режим; без URL рекомендаций новая ручка возвращает503.
+`POST /v1/recommendations` принимает `{"wineId":"demo-cabernet-sauvignon-2023","limit":3}`.
+Публичный API дополняет ID полями каталога, сохраняя порядок сервиса.
+Конкурсный endpoint отдельно; эталон не подключается к нему автоматически.

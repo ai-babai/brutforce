@@ -1,4 +1,4 @@
-import type { PhotoReceipt, Scenario, SearchResponse } from './types';
+import type { PhotoReceipt, RecommendationResponse, Scenario, SearchResponse } from './types';
 
 export class InvalidPhotoError extends Error {
   constructor() { super('Не удалось прочитать изображение. Выберите другое фото.'); this.name = 'InvalidPhotoError'; }
@@ -35,6 +35,19 @@ export async function getCatalog(signal?: AbortSignal):Promise<SearchResponse>{
   return data;
 }
 
+export async function getRecommendations(wineId: string, signal?: AbortSignal): Promise<RecommendationResponse> {
+  const response = await fetch('/v1/recommendations', {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({ wineId, limit: 3 }),
+    signal,
+  });
+  if (!response.ok) throw new Error('Рекомендации временно недоступны');
+  const data: unknown = await response.json();
+  if (!isRecommendationResponse(data)) throw new Error('Сервис вернул некорректные рекомендации');
+  return data;
+}
+
 function isPhotoReceipt(value:unknown):value is PhotoReceipt{
   if(!value||typeof value!=='object')return false; const v=value as Record<string,unknown>;
   return typeof v.id==='string'&&/^[a-f0-9]{32}$/.test(v.id)&&typeof v.createdAt==='string'&&typeof v.mime==='string'&&['bytes','width','height'].every(k=>typeof v[k]==='number'&&Number.isInteger(v[k])&&(v[k] as number)>0);
@@ -53,4 +66,22 @@ function isSearchResponse(value: unknown): value is SearchResponse {
   if (!validCandidates) return false;
   if (data.selectedId === undefined) return true;
   return typeof data.selectedId === 'string' && data.candidates.some(candidate => candidate.id === data.selectedId);
+}
+
+function isRecommendationResponse(value: unknown): value is RecommendationResponse {
+  if (!value || typeof value !== 'object') return false;
+  const data = value as Record<string, unknown>;
+  return typeof data.demo === 'boolean'
+    && Array.isArray(data.candidates)
+    && data.candidates.every(isCandidate)
+    && ['catalogVersion', 'modelVersion'].every(
+      key => data[key] === undefined || typeof data[key] === 'string',
+    );
+}
+
+function isCandidate(candidate: unknown): candidate is Record<string, unknown> {
+  if (!candidate || typeof candidate !== 'object') return false;
+  const item = candidate as Record<string, unknown>;
+  return ['id','name','winery','image','description'].every(key => typeof item[key] === 'string')
+    && typeof item.year === 'number' && Number.isInteger(item.year);
 }

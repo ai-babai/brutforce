@@ -674,6 +674,111 @@
       "title": "Отказ БД возвращает безопасный HTTP 503 без fallback",
       "source": "apps/api/catalog_store_test.go",
       "spec": "contracts/database.md"
+    },
+    {
+      "id": "REC-001",
+      "area": "services",
+      "title": "Карточка запрашивает альтернативы выбранному вину",
+      "source": "apps/web/src/recommendations.test.tsx",
+      "spec": "contracts/wine-services.md"
+    },
+    {
+      "id": "REC-002",
+      "area": "services",
+      "title": "Пустые рекомендации не скрывают карточку",
+      "source": "apps/web/src/recommendations.test.tsx",
+      "spec": "contracts/wine-services.md"
+    },
+    {
+      "id": "REC-003",
+      "area": "services",
+      "title": "Ошибка рекомендаций оставляет карточку и явный повтор",
+      "source": "apps/web/src/recommendations.test.tsx",
+      "spec": "contracts/wine-services.md"
+    },
+    {
+      "id": "REC-004",
+      "area": "services",
+      "title": "Поздний ответ после ухода не меняет экран",
+      "source": "apps/web/src/recommendations.test.tsx",
+      "spec": "contracts/wine-services.md"
+    },
+    {
+      "id": "REC-005",
+      "area": "services",
+      "title": "Нажатие на рекомендацию открывает новое вино без автоматического обхода",
+      "source": "apps/web/src/recommendations.test.tsx",
+      "spec": "contracts/wine-services.md"
+    },
+    {
+      "id": "SVC-001",
+      "area": "services",
+      "title": "Ranked search IDs become catalog cards",
+      "source": "apps/api/model_services_test.go",
+      "spec": "contracts/wine-services.md"
+    },
+    {
+      "id": "SVC-002",
+      "area": "services",
+      "title": "Invalid provider response is rejected",
+      "source": "apps/api/model_services_test.go",
+      "spec": "contracts/wine-services.md"
+    },
+    {
+      "id": "SVC-003",
+      "area": "services",
+      "title": "Recommendations use an independent service",
+      "source": "apps/api/model_services_test.go",
+      "spec": "contracts/wine-services.md"
+    },
+    {
+      "id": "SVC-004",
+      "area": "services",
+      "title": "Reference engine obeys HTTP contract",
+      "source": "apps/api/model_services_test.go",
+      "spec": "contracts/wine-services.md"
+    },
+    {
+      "id": "SVC-005",
+      "area": "services",
+      "title": "Photo search forwards private bytes",
+      "source": "apps/api/model_services_test.go",
+      "spec": "contracts/wine-services.md"
+    },
+    {
+      "id": "SVC-006",
+      "area": "services",
+      "title": "Invalid configuration fails closed",
+      "source": "apps/api/model_services_test.go",
+      "spec": "contracts/wine-services.md"
+    },
+    {
+      "id": "SVC-007",
+      "area": "services",
+      "title": "Redirect and unknown source are rejected",
+      "source": "apps/api/model_services_test.go",
+      "spec": "contracts/wine-services.md"
+    },
+    {
+      "id": "SVC-008",
+      "area": "services",
+      "title": "Mandatory wire fields and additive compatibility",
+      "source": "apps/api/internal/referenceengine/decode_test.go",
+      "spec": "contracts/wine-services.md"
+    },
+    {
+      "id": "SVC-009",
+      "area": "services",
+      "title": "Cancellation and deadlines reach provider",
+      "source": "apps/api/model_services_test.go",
+      "spec": "contracts/wine-services.md"
+    },
+    {
+      "id": "SVC-010",
+      "area": "services",
+      "title": "Conformance CLI checks two independent services",
+      "source": "apps/api/cmd/roman-conformance/main_test.go",
+      "spec": "contracts/wine-services.md"
     }
   ]
 }

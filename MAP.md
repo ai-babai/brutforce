@@ -10,6 +10,7 @@
 | Изменение UI | [apps/web](apps/web/AGENTS.md), [Design Specs](apps/web/design-specs.md) |
 | HTTP backend | [apps/api](apps/api/AGENTS.md), [API README](apps/api/README.md) |
 | Связь модулей, конкурсный API | [contracts](contracts/README.md), [eval](contracts/eval-predict.md) |
+| Поиск/рекомендации Романа | [Контракт](contracts/wine-services.md), [онбординг](docs/agent-guide/ROMAN-SERVICES.md) |
 | Дизайн и макеты | [Переход на v2](docs/product/design-v2-migration-plan.md), design/ |
 | Проверки и история | [cases](cases/cases.json), scripts/run-fast-checks.mjs, reports/ |
 | Совместная работа | [RULES](docs/agent-guide/RULES.md), [BOARD](docs/agent-guide/BOARD.md) |

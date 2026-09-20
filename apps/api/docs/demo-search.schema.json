@@ -2,21 +2,60 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Demo search success response — not the contest API",
   "type": "object",
-  "required": ["demo", "candidates"],
+  "required": [
+    "demo",
+    "candidates"
+  ],
   "properties": {
-    "demo": {"const": true},
-    "selectedId": {"type": "string"},
+    "demo": {
+      "const": true
+    },
+    "selectedId": {
+      "type": "string"
+    },
     "candidates": {
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["id", "name", "winery", "year", "image", "description"],
+        "required": [
+          "id",
+          "name",
+          "winery",
+          "year",
+          "image",
+          "description"
+        ],
         "properties": {
-          "id": {"type": "string"}, "name": {"type": "string"},
-          "winery": {"type": "string"}, "year": {"type": "integer"},
-          "image": {"type": "string"}, "description": {"type": "string"}
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "winery": {
+            "type": "string"
+          },
+          "year": {
+            "type": "integer"
+          },
+          "image": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          }
         }
       }
+    },
+    "catalogVersion": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "modelVersion": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
     }
   }
 }

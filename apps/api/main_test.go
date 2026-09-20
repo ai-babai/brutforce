@@ -19,7 +19,7 @@ func request(t *testing.T, handler http.Handler, method, target, body string) *h
 	t.Helper()
 	recorder := httptest.NewRecorder()
 	r := httptest.NewRequest(method, target, strings.NewReader(body))
-	if method == http.MethodPost && (target == "/api/search" || target == "/v1/search") {
+	if method == http.MethodPost && (target == "/api/search" || target == "/v1/search" || target == "/v1/recommendations") {
 		r.Header.Set("Content-Type", "application/json")
 	}
 	handler.ServeHTTP(recorder, r)

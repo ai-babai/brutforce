@@ -62,6 +62,17 @@ describe('report dashboard regressions', () => {
     expect(databaseRows.every(row => row.querySelector('.scenario-column'))).toBe(true);
   });
 
+
+  it('groups service and recommendation cases separately from model quality', async () => {
+    const cases = [{ id: 'SVC-001', area: 'services', title: 'Поиск' }, { id: 'REC-001', area: 'services', title: 'Рекомендации' }];
+    await render(cases, ['runs/one.json'], { 'runs/one.json': run('one', '2026-09-21T10:00:00Z', 'passed', cases) });
+    const heading = [...document.querySelectorAll('#body .section-column')].find(item => item.textContent?.startsWith('Поиск и рекомендации'));
+    expect(heading).toHaveClass('scenario-column');
+    expect(heading?.textContent).toContain('качество ML проверяется отдельно');
+    expect(heading?.parentElement?.nextElementSibling?.textContent).toContain('SVC-001');
+    expect(heading?.parentElement?.nextElementSibling?.nextElementSibling?.textContent).toContain('REC-001');
+  });
+
   it('REPORT-002 orders an unordered index from newest run to the baseline', async () => {
     const cases = [{ id: 'UI-001', area: 'ui', title: 'Вход в сканирование' }];
     await render(cases, ['runs/middle.json', 'runs/baseline.json', 'runs/new.json'], {

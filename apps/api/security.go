@@ -42,7 +42,7 @@ func protectRequests(next http.Handler, now func() time.Time) http.Handler {
 		w.Header().Set("X-Content-Type-Options", "nosniff")
 		w.Header().Set("Referrer-Policy", "same-origin")
 		w.Header().Set("X-Frame-Options", "DENY")
-		if r.Method == http.MethodPost && (r.URL.Path == "/v1/search" || r.URL.Path == "/v1/photos" || r.URL.Path == "/v1/eval/predict") {
+		if r.Method == http.MethodPost && (r.URL.Path == "/v1/search" || r.URL.Path == "/v1/photos" || r.URL.Path == "/v1/eval/predict" || r.URL.Path == "/v1/recommendations") {
 			w.Header().Set("Cache-Control", "no-store")
 			if enc := r.Header.Get("Content-Encoding"); enc != "" && enc != "identity" {
 				writeRequestError(w, r, 415, "unsupported_encoding", "compressed request bodies are not supported")
@@ -55,7 +55,7 @@ func protectRequests(next http.Handler, now func() time.Time) http.Handler {
 					return
 				}
 			}
-			if r.URL.Path == "/v1/search" {
+			if r.URL.Path == "/v1/search" || r.URL.Path == "/v1/recommendations" {
 				media, _, e := mime.ParseMediaType(r.Header.Get("Content-Type"))
 				if e != nil || media != "application/json" {
 					writeRequestError(w, r, 415, "unsupported_media_type", "use application/json")

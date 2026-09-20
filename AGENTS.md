@@ -20,9 +20,12 @@
 - BE-031: разрешён PostgreSQL-каталог демо в lct_maks и проверки в lct_test_maks; остальные зоны не меняй.
 - Точные разрешения и границы: раздел «Текущая граница» в docs/agent-guide/OPERATING-RULES.md.
 
+- BE-032: разрешены контракты сервисов Романа, референсная заглушка, адаптер приложения и быстрые спеки.
+
 ## Перед работой
 
 - Совместная работа и ветки: docs/agent-guide/RULES.md; доска: docs/agent-guide/BOARD.md.
+- Агенту Романа: ROMAN-START.md, затем docs/agent-guide/ROMAN-SERVICES.md для поиска/рекомендаций.
 - Модули и контракты: contracts/README.md и contracts/api-versioning.md.
 - Работа с данными: раздел «Данные и результаты» в docs/agent-guide/OPERATING-RULES.md.
 - Проверки и сдача: раздел «Проверки и поставка» в том же файле.

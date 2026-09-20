@@ -265,6 +265,34 @@ func (store *photoStore) exists(id string) bool {
 	return err == nil && info.Mode().IsRegular() && info.Size() == receipt.Bytes
 }
 
+// readOriginal returns bounded private bytes only after receipt verification.
+// The caller forwards bytes, never a store path or public URL.
+func (store *photoStore) readOriginal(id string) ([]byte, error) {
+	if store == nil || !validPhotoID(id) {
+		return nil, errors.New("invalid photo receipt")
+	}
+	store.mu.Lock()
+	defer store.mu.Unlock()
+	metadata, err := os.ReadFile(store.metadataPath(id))
+	if err != nil {
+		return nil, err
+	}
+	var receipt photoReceipt
+	if err := json.Unmarshal(metadata, &receipt); err != nil || receipt.ID != id || receipt.Bytes < 1 || receipt.Bytes > maxPhotoBytes {
+		return nil, errors.New("invalid photo receipt")
+	}
+	file, err := os.Open(store.originalPath(id))
+	if err != nil {
+		return nil, err
+	}
+	defer file.Close()
+	data, err := io.ReadAll(io.LimitReader(file, receipt.Bytes+1))
+	if err != nil || int64(len(data)) != receipt.Bytes {
+		return nil, errors.New("invalid photo original")
+	}
+	return data, nil
+}
+
 func (store *photoStore) originalPath(id string) string { return filepath.Join(store.dir, id+".bin") }
 func (store *photoStore) metadataPath(id string) string { return filepath.Join(store.dir, id+".json") }
 

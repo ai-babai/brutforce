@@ -40,10 +40,12 @@ type apiError struct {
 }
 
 type searchResponse struct {
-	Demo       bool      `json:"demo"`
-	Candidates []wine    `json:"candidates"`
-	SelectedID string    `json:"selectedId,omitempty"`
-	Error      *apiError `json:"error,omitempty"`
+	Demo           bool      `json:"demo"`
+	Candidates     []wine    `json:"candidates"`
+	SelectedID     string    `json:"selectedId,omitempty"`
+	CatalogVersion string    `json:"catalogVersion,omitempty"`
+	ModelVersion   string    `json:"modelVersion,omitempty"`
+	Error          *apiError `json:"error,omitempty"`
 }
 
 //go:embed catalog.json
@@ -76,7 +78,7 @@ func main() {
 	log.Printf("demo API listening on %s", address)
 	server := &http.Server{
 		Addr:              address,
-		Handler:           newHandlerWithCatalog(os.Getenv("WEB_ROOT"), nil, catalog),
+		Handler:           newHandlerWithCatalogAndServices(os.Getenv("WEB_ROOT"), nil, catalog, configuredModelServices()),
 		ReadHeaderTimeout: 5 * time.Second,
 		ReadTimeout:       10 * time.Second,
 		WriteTimeout:      10 * time.Second,
@@ -97,6 +99,10 @@ func newHandlerWithRecognizer(webRoot string, recognizer Recognizer) http.Handle
 }
 
 func newHandlerWithCatalog(webRoot string, recognizer Recognizer, catalog catalogReader) http.Handler {
+	return newHandlerWithCatalogAndServices(webRoot, recognizer, catalog, modelServices{})
+}
+
+func newHandlerWithCatalogAndServices(webRoot string, recognizer Recognizer, catalog catalogReader, services modelServices) http.Handler {
 	store := configuredPhotoStore()
 	mux := http.NewServeMux()
 	mux.HandleFunc("/api/docs", docsHandler)
@@ -106,7 +112,8 @@ func newHandlerWithCatalog(webRoot string, recognizer Recognizer, catalog catalo
 	mux.HandleFunc("/v1/health", healthHandler)
 	mux.HandleFunc("/v1/catalog", catalogHandler(catalog))
 	mux.HandleFunc("/v1/photos", uploadHandler(store))
-	mux.HandleFunc("/v1/search", searchHandler(store, catalog))
+	mux.HandleFunc("/v1/search", correlateServiceRequest(searchHandler(store, catalog, services)))
+	mux.HandleFunc("/v1/recommendations", correlateServiceRequest(recommendationsHandler(catalog, services)))
 	mux.HandleFunc("/v1/eval/predict", newEvalPredictHandler(recognizer, configuredEvalConcurrency()))
 	mux.HandleFunc("/v1/", apiNotFoundHandler)
 	mux.HandleFunc("/api/", apiNotFoundHandler)
@@ -147,7 +154,7 @@ func healthHandler(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, http.StatusOK, map[string]bool{"ok": true, "demo": true})
 }
 
-func searchHandler(store *photoStore, catalog catalogReader) http.HandlerFunc {
+func searchHandler(store *photoStore, catalog catalogReader, services modelServices) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodPost {
 			writeError(w, http.StatusMethodNotAllowed, "method_not_allowed", "use POST")
@@ -171,6 +178,19 @@ func searchHandler(store *photoStore, catalog catalogReader) http.HandlerFunc {
 				writeError(w, http.StatusNotFound, "photo_not_found", "photo receipt was not found")
 				return
 			}
+		}
+		if services.search != nil {
+			if request.Query == nil && request.PhotoID == nil {
+				writeError(w, http.StatusBadRequest, "invalid_request", "query or photoId is required when search service is configured")
+				return
+			}
+			response, status, code, message := configuredSearch(r, store, catalog, request, services.search)
+			if status != 0 {
+				writeError(w, status, code, message)
+				return
+			}
+			writeJSON(w, http.StatusOK, response)
+			return
 		}
 
 		scenario := request.Scenario
@@ -206,6 +226,51 @@ func searchHandler(store *photoStore, catalog catalogReader) http.HandlerFunc {
 		default:
 			writeError(w, http.StatusBadRequest, "invalid_scenario", "scenario must be exact, uncertain, none, or error")
 		}
+	}
+}
+
+type recommendationsRequest struct {
+	WineID string `json:"wineId"`
+	Limit  *int   `json:"limit,omitempty"`
+}
+
+func recommendationsHandler(catalog catalogReader, services modelServices) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodPost {
+			writeError(w, http.StatusMethodNotAllowed, "method_not_allowed", "use POST")
+			return
+		}
+		if services.recommendations == nil {
+			writeError(w, http.StatusServiceUnavailable, "recommendations_unavailable", "recommendation service is not configured")
+			return
+		}
+		var req recommendationsRequest
+		if err := decodeBoundedJSON(r, maxRequestBody, &req); err != nil || strings.TrimSpace(req.WineID) == "" || utf8.RuneCountInString(req.WineID) > 128 || !validLimit(req.Limit) {
+			writeError(w, http.StatusBadRequest, "invalid_request", "wineId and an optional limit from 1 to 10 are required")
+			return
+		}
+		known, err := catalog.List(r.Context())
+		if err != nil {
+			writeError(w, http.StatusServiceUnavailable, "catalog_unavailable", "catalog is temporarily unavailable")
+			return
+		}
+		found := false
+		for _, candidate := range known {
+			if candidate.ID == req.WineID {
+				found = true
+				break
+			}
+		}
+		if !found {
+			writeError(w, http.StatusNotFound, "wine_not_found", "wineId is not in the demo catalog")
+			return
+		}
+		response, status, code, message := configuredRecommendations(r, catalog, req, services.recommendations)
+		if status != 0 {
+			writeError(w, status, code, message)
+			return
+		}
+		writeJSON(w, http.StatusOK, response)
 	}
 }
 
