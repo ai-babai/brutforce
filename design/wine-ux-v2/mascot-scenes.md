@@ -25,3 +25,9 @@ Walk: use old cellar image only for walking action/composition; preserve the sel
 ## Verification
 
 Temporary browser QA: 16 states at 320/390, 10 scenario paths and recovery actions. Independent GPT-5.6 click/visual review of all four changed states at 320/390/1440: photo preview/back, cancellation/retry, manual search removing the scene when a candidate appears. No content/control overlaps or horizontal overflow. Parent inspected rendered mobile screens. Real recognition, camera and physical devices remain outside this static prototype.
+
+## Saved-photo frame - revision 2.3
+
+User approved trying one more scene within the existing cancelled state. Built-in image_gen produced site/assets/v2/mascot-frame-2d.png using the selected 2D dog as reference. Prompt: preserve flat gouache beagle detective identity, tan cap/coat and burgundy scarf; dog on right holds a front-facing upright wooden frame on left resting on tabletop; paws outside opening; blank ivory rectangular opening for HTML photo insertion, no perspective/rotation, no text, no bottle or baked photo, warm #FEFDFA background, calm expression. Generated 1536x1024 artwork has measured opening x224/y203, width535/height652. CSS anchors the existing capture panel there proportionally.
+
+The entire scene opens the retained photo, and back returns to cancelled. Retry uses existing action. No new screen or onboarding step. Temporary Chrome checks at 320/390 validate preview/back/retry; all 16 states and ten scenario paths checked. Scene visually inspected.
