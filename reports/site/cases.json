@@ -293,7 +293,7 @@
     {
       "id": "DESIGN-006",
       "area": "design",
-      "title": "Типографика v2 применена к ключевым состояниям",
+      "title": "Центрированный заголовок на всю ширину без жёсткого переноса",
       "source": "apps/web/src/design.test.tsx",
       "spec": "apps/web/design-specs.md"
     },
@@ -370,14 +370,14 @@
     {
       "id": "DESIGN-013",
       "area": "design",
-      "title": "Иконки scanner и target совпадают с SVG макета",
+      "title": "Утверждённая геометрия значка сканирования",
       "source": "Утверждённый Wine UX Atlas + скриншот Макса 19.09.2026",
       "spec": "apps/web/design-specs.md"
     },
     {
       "id": "DESIGN-014",
       "area": "design",
-      "title": "Нижняя подсказка соответствует композиции макета",
+      "title": "Центрированная подсказка: этикетка целиком, бутылка по центру",
       "source": "Утверждённый Wine UX Atlas + скриншот Макса 19.09.2026",
       "spec": "apps/web/design-specs.md"
     },

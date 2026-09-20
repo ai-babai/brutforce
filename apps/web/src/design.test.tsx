@@ -19,7 +19,7 @@ describe('selected Wine UX 2.0 design contract', () => {
     for (const asset of ['onest-0.woff2', 'onest-1.woff2', 'onest-2.woff2', 'onest-3.woff2']) expect(readFileSync(join(process.cwd(), 'public/assets', asset)).byteLength).toBeGreaterThan(1_000);
     expect(readFileSync(join(process.cwd(), 'public/assets/v2/PlayfairDisplay-VariableFont_wght.woff2')).byteLength).toBeGreaterThan(10_000);
     expect(css).toContain('font-family:"Playfair Display V2"');
-    expect(css).toContain('#UI-001 .hero h1{margin-bottom:16px;font-family:var(--serif)');
+    expect(css).toContain('#UI-001 .hero h1{width:100%;margin:0 0 14px;font-family:var(--serif)');
   });
 
   it('DESIGN-022 joins the welcome header and hero on one warm surface', () => {
@@ -32,9 +32,12 @@ describe('selected Wine UX 2.0 design contract', () => {
     expect(css).toContain('@media(min-width:1024px){#UI-001 .welcome-intro{margin-top:-24px;padding-top:24px}}');
   });
 
-  it('DESIGN-004 keeps 320px actions reachable with a reduced mascot panel', () => {
+  it('DESIGN-004 keeps 320px actions reachable with a reduced centered mascot panel', () => {
     expect(css).toContain('@media(max-width:360px)');
-    expect(css).toContain('#UI-001 .hero>.mascot-scene{width:100%;height:200px');
+    expect(css).toContain('#UI-001 .hero>.mascot-scene{height:160px}');
+    expect(css).toContain('.scan-button>span{display:grid;min-width:0;overflow-wrap:anywhere;gap:4px}');
+    expect(css).toContain('white-space:normal;overflow-wrap:anywhere;min-width:0');
+    expect(css).toContain('#UI-001 .hero>.mascot-scene{width:100%;height:220px');
     expect(css).toContain('.scan-button{grid-template-columns:36px minmax(0,1fr) 24px');
   });
 
@@ -54,11 +57,13 @@ describe('selected Wine UX 2.0 design contract', () => {
     expect(screen.queryByLabelText(/Управление демонстрацией/i)).not.toBeInTheDocument();
   });
 
-  it('DESIGN-006 applies the selected display hierarchy to welcome and state headings', () => {
-    expect(css).toContain('#UI-001 .hero h1{margin-bottom:16px;font-family:var(--serif);font-size:33px');
+  it('DESIGN-006 applies the selected centered display hierarchy to the welcome heading', () => {
+    expect(css).toContain('#UI-001 .hero h1{width:100%;margin:0 0 14px;font-family:var(--serif);font-size:36px;font-weight:650;line-height:1.08;letter-spacing:-1px;text-align:center;text-wrap:balance}');
     expect(css).toContain('.page h2{font-family:var(--serif);font-weight:650');
     render(<App />);
-    expect(screen.getByRole('heading', { name: /Какое вино/i })).toBeVisible();
+    const heading = screen.getByRole('heading', { name: /Какое вино/i });
+    expect(heading).toBeVisible();
+    expect(heading.querySelector('br')).toBeNull();
   });
 
   it('DESIGN-008 uses a dark real-video camera surface', () => {
@@ -108,11 +113,11 @@ describe('selected Wine UX 2.0 design contract', () => {
     } finally { Object.defineProperty(navigator, 'mediaDevices', { configurable: true, value: mediaDevices }); }
   });
 
-  it('DESIGN-013 preserves the approved Atlas scan and focus vectors', () => {
+  it('DESIGN-013 preserves the approved Atlas scan vector on the camera CTA', () => {
     const source = readFileSync(join(process.cwd(), '../../design/wine-ux-atlas/site/assets/icons.js'), 'utf8');
     const icons = JSON.parse(source.slice(source.indexOf('{')).trim().replace(/;$/, ''));
     render(<App />);
-    for (const name of ['scan', 'focus-2']) {
+    for (const name of ['scan']) {
       const svg = document.querySelector(`[data-atlas-icon="${name}"]`)!;
       const expected = new DOMParser().parseFromString(icons[name], 'image/svg+xml');
       expect(svg.getAttribute('viewBox')).toBe('0 0 24 24');
@@ -120,13 +125,13 @@ describe('selected Wine UX 2.0 design contract', () => {
     }
   });
 
-  it('DESIGN-014 renders the selected warm guidance card with its complete instructions', () => {
+  it('DESIGN-014 renders the accepted centered one-line guidance card', () => {
     render(<App />);
     const tip = document.querySelector('#UI-001 .tip')!;
-    expect(tip).toHaveTextContent('Нужная бутылка по центру');
-    expect(tip).toHaveTextContent('Поверните этикетку к камере.Соседние бутылки могут быть в кадре.');
-    expect(tip.querySelector('.tip-icon [data-atlas-icon="focus-2"]')).not.toBeNull();
-    expect(css).toContain('#UI-001 .tip{margin-top:18px;margin-bottom:15px;padding:10px 12px;border:1px solid #eadfd4');
+    expect(tip).toHaveClass('welcome-tip');
+    expect(tip).toHaveTextContent('Этикетка целиком, нужная бутылка по центру.');
+    expect(tip.querySelector('.tip-icon')).toBeNull();
+    expect(css).toContain('#UI-001 .welcome-tip{display:block;margin-top:14px;margin-bottom:15px;padding:12px 14px;border:1px solid #eadfd4;border-radius:14px;background:#fcf7ef;text-align:center;text-wrap:balance}');
   });
 
   it('DESIGN-015 and DESIGN-017 preserve the desktop frame and app navigation shell', () => {
@@ -200,8 +205,8 @@ describe('selected Wine UX 2.0 design contract', () => {
     for (const image of document.querySelectorAll('.mascot-scene img')) expect(image.getAttribute('src')).toMatch(/-alpha\.webp$/);
     expect(css).not.toMatch(/mix-blend-mode:\s*multiply/);
     expect(css).not.toMatch(/(?:-webkit-)?mask-image:/);
-    expect(css).toContain('#UI-001 .hero>.mascot-scene{position:relative;right:auto;bottom:auto;width:100%;height:220px');
-    expect(css).toContain('#UI-001 .tip{margin-top:18px;margin-bottom:15px;padding:10px 12px;border:1px solid #eadfd4');
+    expect(css).toContain('#UI-001 .hero{display:flex;flex-direction:column;align-items:center;min-height:0;margin:0;background:#fbf6ec;overflow:visible;text-align:center}');
+    expect(css).toContain('#UI-001 .hero>.mascot-scene{position:relative;right:auto;bottom:auto;width:100%;height:260px;margin:6px 0 0;background:transparent;mix-blend-mode:normal}');
     expect(css).not.toContain('concept-bottle.png');
   });
 

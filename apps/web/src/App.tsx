@@ -11,7 +11,7 @@ import {
 import { IconBookmark, IconHome, IconSearch } from "@tabler/icons-react";
 import { getCatalog, InvalidPhotoError, searchWine, uploadPhoto } from "./api";
 import type { Candidate, PhotoReceipt, Scenario } from "./types";
-import { AtlasScan, AtlasFocus } from "./AtlasIcons";
+import { AtlasScan } from "./AtlasIcons";
 import { InstallApp } from "./InstallApp";
 import { MascotScene, V2Logo } from "./V2Visual";
 
@@ -564,15 +564,9 @@ export function App({
                 <div className="hero">
                   <div>
                     <h1>
-                      Какое вино
-                      <br />
-                      перед вами?
+                      Какое вино перед вами?
                     </h1>
-                    <p>
-                      Сфотографируйте этикетку.
-                      <br />
-                      Откроем карточку вина.
-                    </p>
+                    <p>Сфотографируйте этикетку.<br />Откроем карточку вина.</p>
                   </div>
                   <MascotScene scene="home" />
                 </div>
@@ -1170,18 +1164,8 @@ function Top({
 }
 function Tip() {
   return (
-    <div className="tip">
-      <span className="tip-icon">
-        <AtlasFocus />
-      </span>
-      <div className="tip-copy">
-        <strong>Нужная бутылка по центру</strong>
-        <p>
-          Поверните этикетку к камере.
-          <br />
-          Соседние бутылки могут быть в кадре.
-        </p>
-      </div>
+    <div className="tip welcome-tip">
+      <strong>Этикетка целиком, нужная бутылка по центру.</strong>
     </div>
   );
 }

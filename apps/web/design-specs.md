@@ -51,17 +51,17 @@ The camera screen is bounded to `100dvh`. Its preview uses `minmax(0, 1fr)` and 
 ## camera-hint
 DESIGN-012. Дано открытая камера. Когда показана подсказка «Нужная бутылка по центру», она находится в собственной строке под изображением, вне рамки. Рамка не пересекает текст при коротком/высоком экране и повороте. Уменьшается превью, затвор остаётся видимым. Быстрая проверка фиксирует реальную DOM-структуру и grid-контракт; геометрия проверяется отдельно в браузере.
 
-## Welcome: точное соответствие двум элементам Atlas
-DESIGN-013: SVG scan (углы + средняя линия) и focus-2 из assets/icons.js, не похожие замены. В v2 trailing scan18px/stroke1.55, target19px/stroke1.65; исходная геометрия SVG сохранена.
-DESIGN-014: в выбранной v2 редакции подсказка — тёплая карточка: `margin` 18px сверху/15px снизу, `padding` 10×12px, граница `#eadfd4`, радиус 14px и фон `#fcf7ef`. Плашка target остаётся 34px/radius10; заголовок 11px/500, текст 10px/1.5 и оба предложения сохранены. Быстрая проверка фиксирует Atlas SVG, DOM текста и контракт карточки; визуальная компоновка проверяется отдельно в браузере.
+## Welcome: значок сканирования и подсказка
+DESIGN-013: SVG scan (углы + средняя линия) из assets/icons.js, не похожая замена. В v2 trailing scan18px/stroke1.55; исходная геометрия сохранена. В принятом FE-027 подсказка текстовая, без значка focus-2.
+DESIGN-014: в принятом FE-027 варианте Г подсказка — центрированная тёплая карточка с точным текстом «Этикетка целиком, нужная бутылка по центру.», `padding` 12×14px, границей `#eadfd4`, радиусом 14px и фоном `#fcf7ef`. Естественный перенос и геометрия проверяются отдельно в браузере.
 
 ## Welcome: selected mascot composition
 
-DESIGN-022: `UI-001` uses the selected Wine UX 2.0 logo, a continuous `#fbf6ec` field from page top through the header and hero, Playfair display headline, cream mascot panel, and bordered guidance card. The header has no rounded, translucent, or colored pill surface; its existing vertical dimensions remain unchanged. The home scene uses the selected 2D dog holding a bottle and keeps its descriptive alt text. The functional secondary scenes use the same selected edition: walk during photo search, thoughtful counter for no match, cellar for an empty manual search, and offline for a connection failure. These images are decorative and hidden from assistive technology. In `UI-009`, the counter scene is placed before the action panel in normal flow and does not overlap action labels.
+DESIGN-022 / FE-027: `UI-001` uses the selected Wine UX 2.0 logo and one continuous `#fbf6ec` field from page top through header, hero and centered alpha mascot. The full-width Playfair title «Какое вино перед вами?» has no forced break, uses balanced natural wrapping (36px at 390px, 32px at 320px), and the explanation is centered. The mascot is 260px in the standard mobile composition, `contain`/`center bottom`; short heights reduce the scene in normal scroll flow so CTA and navigation stay reachable. The header has no rounded, translucent, or colored pill surface. The home scene keeps its descriptive alt text. The functional secondary scenes use the same selected edition: walk during photo search, thoughtful counter for no match, cellar for an empty manual search, and offline for a connection failure. These images are decorative and hidden from assistive technology. In `UI-009`, the counter scene is placed before the action panel in normal flow and does not overlap action labels.
 
 The mascot is never rendered over the real camera, permission guidance, gallery/native file picker, expanded photograph, candidates, saved wines, or wine facts. The local app stores 90-quality WebP renditions of the 1536×1024 selected assets. Their original source SHA-256 values and conversion command are recorded in `assets-v2-provenance.md`; artwork source is selected design revision `29874e7`.
 
-At 390 px, the mascot panel is 210 px; at 360 px it is 200 px. Short-height overrides reduce it further; the viewport test must use the final cascade. It remains a panel in normal document flow so the primary action is reachable at 320 px. Fast tests verify assets, alt handling, typography and visual tokens. Browser review verifies crops and action visibility at 320×568, 390×844, 844×390 and desktop frame sizes.
+At 390 px, the mascot panel is 260 px; at 360 px it is 220 px. Short-height overrides reduce it further; the viewport test must use the final cascade. It remains in normal document flow so the primary action is reachable at 320 px. Fast tests verify assets, alt handling, typography and visual tokens. Browser review verifies crops and action visibility at 320×568, 390×844, 844×390 and desktop frame sizes.
 
 ## Рамка на широком экране
 DESIGN-015: Дано ширина от1024 CSS px. Когда открыто любое состояние приложения, оно находится по центру подложки в декоративной рамке телефона. При ширине до1023 включительно рамки и подложки нет; страница использует мобильный viewport. Определение по ширине, не user-agent; относится и к PWA.
@@ -92,3 +92,5 @@ DESIGN-020: Поле `UI-008` — единый контейнер с рамко�
 
 ### All mascot scenes: real transparency (design 4a3615f)
 Given home, manual search, waiting, no-match or offline, the selected mascot uses an alpha WebP. Transparent source background is preserved; opaque character and props remain visible. Normal composition, no multiply or CSS mask to simulate transparency. No behavioral changes.
+
+FE-027 responsive acceptance: 320×568 normal-text CTA must be fully above bottom navigation; short-height art is160px. At enlarged text sizes the content scrolls, action labels wrap inside their buttons, icons remain visible, no horizontal overflow. Fast checks cover wrapping rules; rendered geometry is verified separately.
