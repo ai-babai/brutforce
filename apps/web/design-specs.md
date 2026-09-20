@@ -57,7 +57,7 @@ DESIGN-014: в выбранной v2 редакции подсказка — т�
 
 ## Welcome: selected mascot composition
 
-DESIGN-022: `UI-001` uses the selected Wine UX 2.0 logo, warm translucent header band, Playfair display headline, cream mascot panel, and bordered guidance card. The home scene uses the selected 2D dog holding a bottle and keeps its descriptive alt text. The functional secondary scenes use the same selected edition: walk during photo search, counter for no match, cellar for an empty manual search, and offline for a connection failure. These images are decorative and hidden from assistive technology.
+DESIGN-022: `UI-001` uses the selected Wine UX 2.0 logo, a continuous `#fbf6ec` field from page top through the header and hero, Playfair display headline, cream mascot panel, and bordered guidance card. The header has no rounded, translucent, or colored pill surface; its existing vertical dimensions remain unchanged. The home scene uses the selected 2D dog holding a bottle and keeps its descriptive alt text. The functional secondary scenes use the same selected edition: walk during photo search, counter for no match, cellar for an empty manual search, and offline for a connection failure. These images are decorative and hidden from assistive technology.
 
 The mascot is never rendered over the real camera, permission guidance, gallery/native file picker, expanded photograph, candidates, saved wines, or wine facts. The local app stores 90-quality WebP renditions of the 1536×1024 selected assets. Their original source SHA-256 values and conversion command are recorded in `assets-v2-provenance.md`; artwork source is selected design revision `29874e7`.
 

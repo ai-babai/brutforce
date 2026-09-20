@@ -22,6 +22,16 @@ describe('selected Wine UX 2.0 design contract', () => {
     expect(css).toContain('#UI-001 .hero h1{margin-bottom:16px;font-family:var(--serif)');
   });
 
+  it('DESIGN-022 joins the welcome header and hero on one warm surface', () => {
+    render(<App />);
+    expect(document.querySelector('#UI-001 .brand.v2-brand')?.parentElement).toHaveClass('welcome-intro');
+    expect(css).toContain('#UI-001 .welcome-intro{margin:-18px -22px 0;padding:18px 22px 0;background:#fbf6ec}');
+    expect(css).toContain('.brand.v2-brand{min-height:56px;margin-top:12px;padding:10px 12px;border-radius:0;background:transparent;backdrop-filter:none;-webkit-backdrop-filter:none}');
+    expect(css).toContain('@media(max-width:390px){#UI-001 .welcome-intro{margin-right:-18px;margin-left:-18px;padding-right:18px;padding-left:18px}');
+    expect(css).toContain('@media(min-width:768px){#UI-001 .welcome-intro{margin-top:-28px;padding-top:28px}}');
+    expect(css).toContain('@media(min-width:1024px){#UI-001 .welcome-intro{margin-top:-24px;padding-top:24px}}');
+  });
+
   it('DESIGN-004 keeps 320px actions reachable with a reduced mascot panel', () => {
     expect(css).toContain('@media(max-width:360px)');
     expect(css).toContain('#UI-001 .hero>.mascot-scene{width:100%;height:200px');

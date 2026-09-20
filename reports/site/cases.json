@@ -538,7 +538,7 @@
     {
       "id": "DESIGN-022",
       "area": "design",
-      "title": "Выбранные маскоты размещены только в согласованных состояниях",
+      "title": "Цельный фон шапки и согласованное оформление с маскотами",
       "source": "apps/web/src/design.test.tsx",
       "spec": "apps/web/design-specs.md"
     },

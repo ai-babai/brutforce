@@ -551,24 +551,26 @@ export function App({
         <div className="app-content" ref={contentRef}>
           {screen === "welcome" && (
             <Page id="UI-001">
-              <header className="brand v2-brand">
-                <V2Logo />
-                <span className="quiet-badge">Поиск по этикетке</span>
-              </header>
-              <div className="hero">
-                <div>
-                  <h1>
-                    Какое вино
-                    <br />
-                    перед вами?
-                  </h1>
-                  <p>
-                    Сфотографируйте этикетку.
-                    <br />
-                    Откроем карточку вина.
-                  </p>
+              <div className="welcome-intro">
+                <header className="brand v2-brand">
+                  <V2Logo />
+                  <span className="quiet-badge">Поиск по этикетке</span>
+                </header>
+                <div className="hero">
+                  <div>
+                    <h1>
+                      Какое вино
+                      <br />
+                      перед вами?
+                    </h1>
+                    <p>
+                      Сфотографируйте этикетку.
+                      <br />
+                      Откроем карточку вина.
+                    </p>
+                  </div>
+                  <MascotScene scene="home" />
                 </div>
-                <MascotScene scene="home" />
               </div>
               {(photo || lastRequest.current.query) && (
                 <div className="retained-photo">
