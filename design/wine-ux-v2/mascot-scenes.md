@@ -31,3 +31,9 @@ Temporary browser QA: 16 states at 320/390, 10 scenario paths and recovery actio
 User approved trying one more scene within the existing cancelled state. Built-in image_gen produced site/assets/v2/mascot-frame-2d.png using the selected 2D dog as reference. Prompt: preserve flat gouache beagle detective identity, tan cap/coat and burgundy scarf; dog on right holds a front-facing upright wooden frame on left resting on tabletop; paws outside opening; blank ivory rectangular opening for HTML photo insertion, no perspective/rotation, no text, no bottle or baked photo, warm #FEFDFA background, calm expression. Generated 1536x1024 artwork has measured opening x224/y203, width535/height652. CSS anchors the existing capture panel there proportionally.
 
 The entire scene opens the retained photo, and back returns to cancelled. Retry uses existing action. No new screen or onboarding step. Temporary Chrome checks at 320/390 validate preview/back/retry; all 16 states and ten scenario paths checked. Scene visually inspected.
+
+## Home cutout — 2026-09-20
+
+Maks approved removing the baked rectangular background from the bottle-in-paws scene. New asset: `site/assets/v2/mascot-hold-2d-alpha.png` (1536×1024 RGBA). Original `mascot-hold-2d.png` is preserved. Built-in imagegen edit used the original as reference, requesting only background removal, unchanged pose/bottle/blank label/white fur/soft 2D style, true alpha, no glow or decorative backdrop. The final illustration sits directly on the existing `#fbf6ec` home surface; no additional UI backdrop is needed.
+
+Browser canvas inspection confirmed 875,609 fully transparent pixels; reviewed compositing against the actual cream surface. Alpha should be preserved during delivery/conversion; do not export as JPEG, flatten onto a paper-colored rectangle, or use blend modes to simulate transparency.

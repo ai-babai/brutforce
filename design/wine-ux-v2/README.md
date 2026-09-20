@@ -27,3 +27,5 @@ Approved migration handoff (b73baf6 plan): [decisions, files and acceptance case
 ## Home surface correction - 2026-09-20
 
 The home logo context and mascot hero now share one solid `#fbf6ec` surface. The former blurred, pill-shaped home logo row was retired because it visually split the entry screen. This correction is scoped to home; result and utility-screen context bars remain as before. It is source-only until the next explicit static-report release.
+
+The logo row now contains only the logo; the disconnected `Поиск по этикетке` descriptor was removed. Bottom navigation names the start destination `Главная` with a house icon. It always returns to the start screen, while explicit capture and reshoot actions open the camera.
