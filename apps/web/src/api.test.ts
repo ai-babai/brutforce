@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { getCatalog, searchWine, uploadPhoto } from './api';
+import { getCatalog, searchWine, uploadPhoto, InvalidPhotoError } from './api';
 
 const candidate = { id: 'cabernet', name: 'Каберне Совиньон', winery: 'Долина', year: 2023, image: '/assets/concept-bottle.png', description: 'Красное вино.' };
 const catalog = { demo: true, candidates: [candidate] };
@@ -35,4 +35,12 @@ describe('UI-025 versioned API client', () => {
       signal: undefined,
     });
   });
+});
+
+it('UI-011 distinguishes rejected image content from temporary upload failures',async()=>{
+ const file=new File(['not a jpeg'],'label.jpg',{type:'image/jpeg'});
+ vi.stubGlobal('fetch',vi.fn().mockResolvedValue({ok:false,status:400,json:async()=>({error:{code:'invalid_photo',message:'internal detail'}})}));
+ await expect(uploadPhoto(file)).rejects.toBeInstanceOf(InvalidPhotoError);
+ vi.stubGlobal('fetch',vi.fn().mockResolvedValue({ok:false,status:503,json:async()=>({error:{code:'storage_unavailable'}})}));
+ await expect(uploadPhoto(file)).rejects.not.toBeInstanceOf(InvalidPhotoError);
 });

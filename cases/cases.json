@@ -139,7 +139,7 @@
     {
       "id": "UI-002",
       "area": "web",
-      "title": "Scan entry opens simulated camera guidance",
+      "title": "Scan entry opens the live camera flow and gallery fallback",
       "source": "apps/web/README.md; Wine UX Atlas",
       "spec": "docs/product/behavior-spec.md#demo-001"
     },
@@ -153,14 +153,14 @@
     {
       "id": "UI-004",
       "area": "web",
-      "title": "Searching state is cancellable",
+      "title": "Cancelling photo search returns home with explicit retained-photo actions",
       "source": "apps/web/README.md; Wine UX Atlas",
       "spec": "docs/product/behavior-spec.md#demo-005"
     },
     {
       "id": "UI-005",
       "area": "web",
-      "title": "Cancelled search stays retryable",
+      "title": "Late cancelled response is ignored until explicit resume",
       "source": "apps/web/README.md; Wine UX Atlas",
       "spec": "docs/product/behavior-spec.md#demo-005"
     },
@@ -258,42 +258,42 @@
     {
       "id": "DESIGN-001",
       "area": "design",
-      "title": "Винный токен Atlas и основное действие 82px",
+      "title": "Винные и тёплые цветовые токены выбранного дизайна v2",
       "source": "apps/web/src/design.test.tsx",
       "spec": "apps/web/design-specs.md"
     },
     {
       "id": "DESIGN-002",
       "area": "design",
-      "title": "Иконки камеры 24px и сканера 28px",
+      "title": "Иконки камеры и сканера соответствуют размерам v2",
       "source": "apps/web/src/design.test.tsx",
       "spec": "apps/web/design-specs.md"
     },
     {
       "id": "DESIGN-003",
       "area": "design",
-      "title": "Подключены реальные файлы Onest и заявленные веса",
+      "title": "Локальные шрифты Onest и Playfair для выбранного дизайна",
       "source": "apps/web/src/design.test.tsx",
       "spec": "apps/web/design-specs.md"
     },
     {
       "id": "DESIGN-004",
       "area": "design",
-      "title": "Объявлены правила responsive 390, 768 и 1280",
+      "title": "Адаптивность 320/390 и широкого экрана без потери действий",
       "source": "apps/web/src/design.test.tsx",
       "spec": "apps/web/design-specs.md"
     },
     {
       "id": "DESIGN-005",
       "area": "design",
-      "title": "Production root без demo controls и device chrome",
+      "title": "В приложении нет отладочных панелей и фиктивных системных индикаторов",
       "source": "apps/web/src/design.test.tsx",
       "spec": "apps/web/design-specs.md"
     },
     {
       "id": "DESIGN-006",
       "area": "design",
-      "title": "Типографика Atlas применена к ключевым состояниям",
+      "title": "Типографика v2 применена к ключевым состояниям",
       "source": "apps/web/src/design.test.tsx",
       "spec": "apps/web/design-specs.md"
     },
@@ -314,7 +314,7 @@
     {
       "id": "DESIGN-009",
       "area": "design",
-      "title": "Строки кандидатов целиком активны и содержат metadata type",
+      "title": "Кандидаты целиком нажимаются и сохраняют идентичность вина",
       "source": "apps/web/src/design.test.tsx",
       "spec": "apps/web/design-specs.md"
     },
@@ -405,7 +405,7 @@
     {
       "id": "DESIGN-018",
       "area": "design",
-      "title": "Текущий раздел и footer оформлены по Atlas",
+      "title": "Активный раздел и футер соответствуют v2",
       "source": "apps/web/src/design.test.tsx",
       "spec": "apps/web/design-specs.md"
     },
@@ -501,13 +501,6 @@
       "spec": "apps/web/design-specs.md"
     },
     {
-      "id": "DESIGN-021",
-      "area": "design",
-      "title": "Бутылка welcome обрезана hero и находится под текстом по Atlas",
-      "source": "apps/web/src/design.test.tsx",
-      "spec": "apps/web/design-specs.md"
-    },
-    {
       "id": "API-019",
       "area": "api",
       "title": "V1 routes work; retired API paths return JSON 404",
@@ -520,6 +513,34 @@
       "title": "Application uses v1 catalog, upload and search contracts",
       "source": "apps/web/src/api.test.ts",
       "spec": "contracts/api-versioning.md"
+    },
+    {
+      "id": "UI-026",
+      "area": "web",
+      "title": "Preview returns to the settled async origin",
+      "source": "apps/web/src/App.test.tsx",
+      "spec": "docs/product/behavior-spec.md#утверждённые-переходы-v2--20092026"
+    },
+    {
+      "id": "UI-027",
+      "area": "web",
+      "title": "Manual query, candidates and correction preserve return context",
+      "source": "apps/web/src/App.test.tsx",
+      "spec": "docs/product/behavior-spec.md#утверждённые-переходы-v2--20092026"
+    },
+    {
+      "id": "UI-028",
+      "area": "web",
+      "title": "Network and server failures remain distinct and retry a retained receipt",
+      "source": "apps/web/src/App.test.tsx",
+      "spec": "docs/product/behavior-spec.md#утверждённые-переходы-v2--20092026"
+    },
+    {
+      "id": "DESIGN-022",
+      "area": "design",
+      "title": "Выбранные маскоты размещены только в согласованных состояниях",
+      "source": "apps/web/src/design.test.tsx",
+      "spec": "apps/web/design-specs.md"
     },
     {
       "id": "EVAL-001",

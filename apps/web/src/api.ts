@@ -1,5 +1,9 @@
 import type { PhotoReceipt, Scenario, SearchResponse } from './types';
 
+export class InvalidPhotoError extends Error {
+  constructor() { super('Не удалось прочитать изображение. Выберите другое фото.'); this.name = 'InvalidPhotoError'; }
+}
+
 export async function searchWine(scenario: Scenario, query?: string, signal?: AbortSignal, photoId?: string): Promise<SearchResponse> {
   const response = await fetch('/v1/search', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ scenario, ...(query ? { query } : {}), ...(photoId ? { photoId } : {}) }), signal });
   if (!response.ok) throw new Error('Поиск временно недоступен');
@@ -11,7 +15,13 @@ export async function searchWine(scenario: Scenario, query?: string, signal?: Ab
 export async function uploadPhoto(file: File, signal?: AbortSignal): Promise<PhotoReceipt> {
   const form = new FormData(); form.append('photo',file);
   const response=await fetch('/v1/photos',{method:'POST',body:form,signal});
-  if(!response.ok)throw new Error('Не удалось загрузить фотографию');
+  if(!response.ok){
+    if([400,413,415].includes(response.status)){
+      const problem=await response.json().catch(()=>null);
+      if(response.status===413||response.status===415||['invalid_photo','invalid_upload'].includes(problem?.error?.code))throw new InvalidPhotoError();
+    }
+    throw new Error('Не удалось загрузить фотографию');
+  }
   const value:unknown=await response.json();
   if(!isPhotoReceipt(value))throw new Error('Сервис вернул некорректную квитанцию');
   return value;

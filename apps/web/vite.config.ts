@@ -6,7 +6,8 @@ export default defineConfig({
   server: {
     port: 5190,
     proxy: {
-      '/v1': 'http://localhost:8097',
+      // Preserve the browser Host so the API's same-origin write check remains valid.
+      '/v1': { target: 'http://localhost:8097', changeOrigin: false },
       '/api/docs': 'http://localhost:8097',
       '/api/openapi.json': 'http://localhost:8097',
       '/api/schema': 'http://localhost:8097',

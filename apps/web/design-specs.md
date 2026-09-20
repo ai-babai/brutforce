@@ -1,22 +1,22 @@
 # Web scanner design specification
 
-This app adapts the product screens in `design/wine-ux-atlas/site/design.css`. The atlas remains the visual source. These values make the implemented subset reviewable.
+The selected Wine UX v2 assets come from design revision `29874e7`; approved navigation refinements come from `a70eacf` in `codex/camera-viewport`. Runtime styles are `src/v2.css`. Historical Atlas values below are replaced where noted; previous report snapshots remain unchanged.
 
 ## Tokens
 
-- Font: locally hosted Onest, weights 400, 500, 600, 700, 800, `font-display: swap`.
-- Wine action color: `#742c46`; dark pressed state: `#572037`; paper: `#fffafd`.
-- Primary scan action: minimum height 82 px, radius 18 px, three columns `42px minmax(0,1fr) 28px`.
-- Primary camera glyph: 24 px. Trailing scan glyph: 28 px. Touch actions: at least 48 px where the atlas calls for comfortable controls.
+- Font: locally hosted Onest, weights 400, 500, 600, 700, and Playfair Display for headings, `font-display: swap`.
+- Wine action color: `#8f3d42`; dark pressed state: `#723135`; paper: `#fefdfa`, cream: `#fdf9ed`.
+- Primary scan action: minimum height 78 px, radius 18 px, three columns `39px minmax(0,1fr) 24px`.
+- Primary camera glyph: 20 px inside a padded tile. Trailing scan glyph: 18 px. Navigation targets are at least 48 px; primary buttons at least 50 px and shutter 66 px. Compact secondary controls remain distinct from glyph dimensions.
 - Cards and photo surfaces use the app's soft 14-20 px radius family.
 
 ## Responsive checkpoints
 
 - 320 px: single column is the base layout. Controls remain within the viewport.
 - 390 px: page side padding becomes 18 px.
-- 360 px: the primary action uses `36px minmax(0,1fr) 28px`, 9 px gap, and 15 px by 12 px padding.
+- 360 px: the primary action uses `36px minmax(0,1fr) 24px`, 9 px gap, and 15 px by 12 px padding.
 - 768 px: content remains one focused app column with 28 px vertical padding.
-- 1280 px: the content column grows to at most 520 px. The interface is still the app, not a device mockup.
+- 1024 px and wider: centered 410 px decorative phone shell; viewport below 1024 px has no phone border. Short-height rules shrink illustration/spacing, preserving the primary action.
 
 ## Screens
 
@@ -25,13 +25,13 @@ This app adapts the product screens in `design/wine-ux-atlas/site/design.css`. T
 - `UI-003`: permission or unsupported-camera recovery.
 - `UI-003A`: browser permission instructions with camera and gallery return paths.
 - `UI-004`: local original photo, upload/search progress, long-wait copy, cancellation.
-- `UI-005`: cancelled request, saved local photo, receipt-aware retry.
+- `UI-005` is a behavior case, not a separate screen: cancel returns to UI-001 with retained-photo actions and no automatic retry.
 - `UI-006`: original-photo comparison and ranked candidates.
 - `UI-007`: wine identity, correction, overview, description, and source.
 - `UI-008`: manual search.
 - `UI-009`: no catalog result and recovery.
 - `UI-010`: upload/search/contract error and retry.
-- `UI-011`: rejected local file type or size.
+- `UI-011`: rejected local file type/size or a server-rejected unreadable image. No unsupported diagnosis of blur/glare.
 - `UI-016`: three-section navigation and initial catalog browse/filter.
 - `UI-017`: save a validated wine snapshot and restore it after reload.
 - `UI-018`: remove a saved wine and return to the saved-list empty state.
@@ -52,12 +52,16 @@ The camera screen is bounded to `100dvh`. Its preview uses `minmax(0, 1fr)` and 
 DESIGN-012. Дано открытая камера. Когда показана подсказка «Нужная бутылка по центру», она находится в собственной строке под изображением, вне рамки. Рамка не пересекает текст при коротком/высоком экране и повороте. Уменьшается превью, затвор остаётся видимым. Быстрая проверка фиксирует реальную DOM-структуру и grid-контракт; геометрия проверяется отдельно в браузере.
 
 ## Welcome: точное соответствие двум элементам Atlas
-DESIGN-013: SVG scan (углы + средняя линия) и focus-2 из assets/icons.js, не похожие замены. Scan28px/stroke1.55, target19px/stroke1.65.
-DESIGN-014: подсказка без общего фона и padding, отступ сверху27px/снизу21px, gap12px. Плашка target34px/radius10; заголовок11px/500, текст10px/1.5 и оба предложения из макета. Проверки геометрии SVG и DOM текста быстрые; визуальная компоновка проверяется отдельно. Макет не меняется.
+DESIGN-013: SVG scan (углы + средняя линия) и focus-2 из assets/icons.js, не похожие замены. В v2 trailing scan18px/stroke1.55, target19px/stroke1.65; исходная геометрия SVG сохранена.
+DESIGN-014: в выбранной v2 редакции подсказка — тёплая карточка: `margin` 18px сверху/15px снизу, `padding` 10×12px, граница `#eadfd4`, радиус 14px и фон `#fcf7ef`. Плашка target остаётся 34px/radius10; заголовок 11px/500, текст 10px/1.5 и оба предложения сохранены. Быстрая проверка фиксирует Atlas SVG, DOM текста и контракт карточки; визуальная компоновка проверяется отдельно в браузере.
 
-## Welcome: бутылка в фоне hero
+## Welcome: selected mascot composition
 
-DESIGN-021: В `UI-001` используется тот же `concept-bottle.png`, что в Wine UX Atlas (SHA-256 файлов совпадает). Hero — относительный контейнер высотой 285 px с `overflow:hidden`; текстовый слой имеет `z-index:2`, ширину 220 px, верхний отступ 45 px, а описание — ширину до 205 px. Бутылка абсолютна на фоновом слое `z-index:1`: 160×240 px, `right:-26px` (до 390 px включительно — `right:-28px`), `bottom:-45px`, `object-fit:contain`, `rotate(9deg)`. Смещение на 16 px ниже исходной координаты Atlas — запрошенная пользователем оптическая адаптация для равновесия композиции, а не утверждение о точной исходной координате Atlas. Нижняя часть бутылки скрыта за границей hero перед началом кнопок. Самый правый видимый край силуэта выровнен с правым краем кнопки «Сканировать вино» с оптической погрешностью до 1 px: учитываются прозрачные поля PNG и поворот, а не граница img. Горизонтальное смещение на 7 px влево на узких экранах и 9 px на остальных одобрено визуальным ревью Astra при ширинах 320, 390 и 1280 px; высота, вертикальное положение и наклон сохранены. Быстрая проверка фиксирует asset, слой, crop, геометрию и интервалы текста; визуальная сверка выполняется в браузере.
+DESIGN-022: `UI-001` uses the selected Wine UX 2.0 logo, warm translucent header band, Playfair display headline, cream mascot panel, and bordered guidance card. The home scene uses the selected 2D dog holding a bottle and keeps its descriptive alt text. The functional secondary scenes use the same selected edition: walk during photo search, counter for no match, cellar for an empty manual search, and offline for a connection failure. These images are decorative and hidden from assistive technology.
+
+The mascot is never rendered over the real camera, permission guidance, gallery/native file picker, expanded photograph, candidates, saved wines, or wine facts. The local app stores 90-quality WebP renditions of the 1536×1024 selected assets. Their original source SHA-256 values and conversion command are recorded in `assets-v2-provenance.md`; artwork source is selected design revision `29874e7`.
+
+At 390 px, the mascot panel is 210 px; at 360 px it is 200 px. Short-height overrides reduce it further; the viewport test must use the final cascade. It remains a panel in normal document flow so the primary action is reachable at 320 px. Fast tests verify assets, alt handling, typography and visual tokens. Browser review verifies crops and action visibility at 320×568, 390×844, 844×390 and desktop frame sizes.
 
 ## Рамка на широком экране
 DESIGN-015: Дано ширина от1024 CSS px. Когда открыто любое состояние приложения, оно находится по центру подложки в декоративной рамке телефона. При ширине до1023 включительно рамки и подложки нет; страница использует мобильный viewport. Определение по ширине, не user-agent; относится и к PWA.

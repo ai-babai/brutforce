@@ -28,6 +28,11 @@ npm run dev
 
 ## Путь от идеи к проверке
 
+Текущий переход на выбранный дизайн 2.0 и согласованные изменения поведения:
+[план миграции](docs/product/design-v2-migration-plan.md). Макеты развиваются отдельно
+в `codex/camera-viewport`, приложение — в `codex/behavior-demo`. Симуляции макета
+не заменяют настоящую камеру, загрузку снимков и API приложения.
+
 - `docs/product/idea-inbox.md` — исходные мысли человеческим языком.
 - `docs/product/behavior-spec.md` — конкретные Given / When / Then и границы.
 - `cases/cases.json` — стабильные ID и связи с проверками.
