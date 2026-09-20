@@ -1,0 +1,54 @@
+{"Time":"2026-09-20T23:50:32.563013997Z","Action":"start","Package":"brutforce-behavior-demo/apps/api"}
+{"Time":"2026-09-20T23:50:32.569090468Z","Action":"run","Package":"brutforce-behavior-demo/apps/api","Test":"TestDB001FreshMigrationsAndReapply"}
+{"Time":"2026-09-20T23:50:32.569185161Z","Action":"output","Package":"brutforce-behavior-demo/apps/api","Test":"TestDB001FreshMigrationsAndReapply","Output":"=== RUN   TestDB001FreshMigrationsAndReapply\n"}
+{"Time":"2026-09-20T23:50:32.590825836Z","Action":"output","Package":"brutforce-behavior-demo/apps/api","Test":"TestDB001FreshMigrationsAndReapply","Output":"2026/09/20 23:50:32 OK   00001_demo_catalog.sql (2.72ms)\n"}
+{"Time":"2026-09-20T23:50:32.590873137Z","Action":"output","Package":"brutforce-behavior-demo/apps/api","Test":"TestDB001FreshMigrationsAndReapply","Output":"2026/09/20 23:50:32 goose: successfully migrated database to version: 1\n"}
+{"Time":"2026-09-20T23:50:32.598182013Z","Action":"output","Package":"brutforce-behavior-demo/apps/api","Test":"TestDB001FreshMigrationsAndReapply","Output":"2026/09/20 23:50:32 goose: no migrations to run. current version: 1\n"}
+{"Time":"2026-09-20T23:50:32.605290947Z","Action":"output","Package":"brutforce-behavior-demo/apps/api","Test":"TestDB001FreshMigrationsAndReapply","Output":"--- PASS: TestDB001FreshMigrationsAndReapply (0.04s)\n"}
+{"Time":"2026-09-20T23:50:32.605332981Z","Action":"pass","Package":"brutforce-behavior-demo/apps/api","Test":"TestDB001FreshMigrationsAndReapply","Elapsed":0.04}
+{"Time":"2026-09-20T23:50:32.605363526Z","Action":"run","Package":"brutforce-behavior-demo/apps/api","Test":"TestDB002SeedPreservesEditsAndDoesNotDuplicate"}
+{"Time":"2026-09-20T23:50:32.605367973Z","Action":"output","Package":"brutforce-behavior-demo/apps/api","Test":"TestDB002SeedPreservesEditsAndDoesNotDuplicate","Output":"=== RUN   TestDB002SeedPreservesEditsAndDoesNotDuplicate\n"}
+{"Time":"2026-09-20T23:50:32.614815968Z","Action":"output","Package":"brutforce-behavior-demo/apps/api","Test":"TestDB002SeedPreservesEditsAndDoesNotDuplicate","Output":"--- PASS: TestDB002SeedPreservesEditsAndDoesNotDuplicate (0.01s)\n"}
+{"Time":"2026-09-20T23:50:32.61485028Z","Action":"pass","Package":"brutforce-behavior-demo/apps/api","Test":"TestDB002SeedPreservesEditsAndDoesNotDuplicate","Elapsed":0.01}
+{"Time":"2026-09-20T23:50:32.61485651Z","Action":"run","Package":"brutforce-behavior-demo/apps/api","Test":"TestDB003ActualHTTPQueriesUsePostgresLiterally"}
+{"Time":"2026-09-20T23:50:32.614859554Z","Action":"output","Package":"brutforce-behavior-demo/apps/api","Test":"TestDB003ActualHTTPQueriesUsePostgresLiterally","Output":"=== RUN   TestDB003ActualHTTPQueriesUsePostgresLiterally\n"}
+{"Time":"2026-09-20T23:50:32.6222349Z","Action":"run","Package":"brutforce-behavior-demo/apps/api","Test":"TestDB003ActualHTTPQueriesUsePostgresLiterally/КАбЕрНе"}
+{"Time":"2026-09-20T23:50:32.622278817Z","Action":"output","Package":"brutforce-behavior-demo/apps/api","Test":"TestDB003ActualHTTPQueriesUsePostgresLiterally/КАбЕрНе","Output":"=== RUN   TestDB003ActualHTTPQueriesUsePostgresLiterally/КАбЕрНе\n"}
+{"Time":"2026-09-20T23:50:32.62327781Z","Action":"output","Package":"brutforce-behavior-demo/apps/api","Test":"TestDB003ActualHTTPQueriesUsePostgresLiterally/КАбЕрНе","Output":"--- PASS: TestDB003ActualHTTPQueriesUsePostgresLiterally/КАбЕрНе (0.00s)\n"}
+{"Time":"2026-09-20T23:50:32.623292552Z","Action":"pass","Package":"brutforce-behavior-demo/apps/api","Test":"TestDB003ActualHTTPQueriesUsePostgresLiterally/КАбЕрНе","Elapsed":0}
+{"Time":"2026-09-20T23:50:32.623313764Z","Action":"run","Package":"brutforce-behavior-demo/apps/api","Test":"TestDB003ActualHTTPQueriesUsePostgresLiterally/Демо"}
+{"Time":"2026-09-20T23:50:32.62331779Z","Action":"output","Package":"brutforce-behavior-demo/apps/api","Test":"TestDB003ActualHTTPQueriesUsePostgresLiterally/Демо","Output":"=== RUN   TestDB003ActualHTTPQueriesUsePostgresLiterally/Демо\n"}
+{"Time":"2026-09-20T23:50:32.623963388Z","Action":"output","Package":"brutforce-behavior-demo/apps/api","Test":"TestDB003ActualHTTPQueriesUsePostgresLiterally/Демо","Output":"--- PASS: TestDB003ActualHTTPQueriesUsePostgresLiterally/Демо (0.00s)\n"}
+{"Time":"2026-09-20T23:50:32.624027465Z","Action":"pass","Package":"brutforce-behavior-demo/apps/api","Test":"TestDB003ActualHTTPQueriesUsePostgresLiterally/Демо","Elapsed":0}
+{"Time":"2026-09-20T23:50:32.624033244Z","Action":"run","Package":"brutforce-behavior-demo/apps/api","Test":"TestDB003ActualHTTPQueriesUsePostgresLiterally/2022"}
+{"Time":"2026-09-20T23:50:32.624036529Z","Action":"output","Package":"brutforce-behavior-demo/apps/api","Test":"TestDB003ActualHTTPQueriesUsePostgresLiterally/2022","Output":"=== RUN   TestDB003ActualHTTPQueriesUsePostgresLiterally/2022\n"}
+{"Time":"2026-09-20T23:50:32.62453271Z","Action":"output","Package":"brutforce-behavior-demo/apps/api","Test":"TestDB003ActualHTTPQueriesUsePostgresLiterally/2022","Output":"--- PASS: TestDB003ActualHTTPQueriesUsePostgresLiterally/2022 (0.00s)\n"}
+{"Time":"2026-09-20T23:50:32.624538258Z","Action":"pass","Package":"brutforce-behavior-demo/apps/api","Test":"TestDB003ActualHTTPQueriesUsePostgresLiterally/2022","Elapsed":0}
+{"Time":"2026-09-20T23:50:32.624541643Z","Action":"run","Package":"brutforce-behavior-demo/apps/api","Test":"TestDB003ActualHTTPQueriesUsePostgresLiterally/%"}
+{"Time":"2026-09-20T23:50:32.624544578Z","Action":"output","Package":"brutforce-behavior-demo/apps/api","Test":"TestDB003ActualHTTPQueriesUsePostgresLiterally/%","Output":"=== RUN   TestDB003ActualHTTPQueriesUsePostgresLiterally/%\n"}
+{"Time":"2026-09-20T23:50:32.624809569Z","Action":"output","Package":"brutforce-behavior-demo/apps/api","Test":"TestDB003ActualHTTPQueriesUsePostgresLiterally/%","Output":"--- PASS: TestDB003ActualHTTPQueriesUsePostgresLiterally/% (0.00s)\n"}
+{"Time":"2026-09-20T23:50:32.62481668Z","Action":"pass","Package":"brutforce-behavior-demo/apps/api","Test":"TestDB003ActualHTTPQueriesUsePostgresLiterally/%","Elapsed":0}
+{"Time":"2026-09-20T23:50:32.624819374Z","Action":"run","Package":"brutforce-behavior-demo/apps/api","Test":"TestDB003ActualHTTPQueriesUsePostgresLiterally/_"}
+{"Time":"2026-09-20T23:50:32.624821868Z","Action":"output","Package":"brutforce-behavior-demo/apps/api","Test":"TestDB003ActualHTTPQueriesUsePostgresLiterally/_","Output":"=== RUN   TestDB003ActualHTTPQueriesUsePostgresLiterally/_\n"}
+{"Time":"2026-09-20T23:50:32.625039677Z","Action":"output","Package":"brutforce-behavior-demo/apps/api","Test":"TestDB003ActualHTTPQueriesUsePostgresLiterally/_","Output":"--- PASS: TestDB003ActualHTTPQueriesUsePostgresLiterally/_ (0.00s)\n"}
+{"Time":"2026-09-20T23:50:32.625042832Z","Action":"pass","Package":"brutforce-behavior-demo/apps/api","Test":"TestDB003ActualHTTPQueriesUsePostgresLiterally/_","Elapsed":0}
+{"Time":"2026-09-20T23:50:32.625046488Z","Action":"run","Package":"brutforce-behavior-demo/apps/api","Test":"TestDB003ActualHTTPQueriesUsePostgresLiterally/'_OR_1=1_--"}
+{"Time":"2026-09-20T23:50:32.625048891Z","Action":"output","Package":"brutforce-behavior-demo/apps/api","Test":"TestDB003ActualHTTPQueriesUsePostgresLiterally/'_OR_1=1_--","Output":"=== RUN   TestDB003ActualHTTPQueriesUsePostgresLiterally/'_OR_1=1_--\n"}
+{"Time":"2026-09-20T23:50:32.625329316Z","Action":"output","Package":"brutforce-behavior-demo/apps/api","Test":"TestDB003ActualHTTPQueriesUsePostgresLiterally/'_OR_1=1_--","Output":"--- PASS: TestDB003ActualHTTPQueriesUsePostgresLiterally/'_OR_1=1_-- (0.00s)\n"}
+{"Time":"2026-09-20T23:50:32.62533248Z","Action":"pass","Package":"brutforce-behavior-demo/apps/api","Test":"TestDB003ActualHTTPQueriesUsePostgresLiterally/'_OR_1=1_--","Elapsed":0}
+{"Time":"2026-09-20T23:50:32.625356176Z","Action":"run","Package":"brutforce-behavior-demo/apps/api","Test":"TestDB003ActualHTTPQueriesUsePostgresLiterally/not-a-wine"}
+{"Time":"2026-09-20T23:50:32.62535871Z","Action":"output","Package":"brutforce-behavior-demo/apps/api","Test":"TestDB003ActualHTTPQueriesUsePostgresLiterally/not-a-wine","Output":"=== RUN   TestDB003ActualHTTPQueriesUsePostgresLiterally/not-a-wine\n"}
+{"Time":"2026-09-20T23:50:32.62564262Z","Action":"output","Package":"brutforce-behavior-demo/apps/api","Test":"TestDB003ActualHTTPQueriesUsePostgresLiterally/not-a-wine","Output":"--- PASS: TestDB003ActualHTTPQueriesUsePostgresLiterally/not-a-wine (0.00s)\n"}
+{"Time":"2026-09-20T23:50:32.625702821Z","Action":"pass","Package":"brutforce-behavior-demo/apps/api","Test":"TestDB003ActualHTTPQueriesUsePostgresLiterally/not-a-wine","Elapsed":0}
+{"Time":"2026-09-20T23:50:32.625712455Z","Action":"output","Package":"brutforce-behavior-demo/apps/api","Test":"TestDB003ActualHTTPQueriesUsePostgresLiterally","Output":"--- PASS: TestDB003ActualHTTPQueriesUsePostgresLiterally (0.01s)\n"}
+{"Time":"2026-09-20T23:50:32.625717082Z","Action":"pass","Package":"brutforce-behavior-demo/apps/api","Test":"TestDB003ActualHTTPQueriesUsePostgresLiterally","Elapsed":0.01}
+{"Time":"2026-09-20T23:50:32.625796764Z","Action":"run","Package":"brutforce-behavior-demo/apps/api","Test":"TestDB004DataSurvivesRuntimeReconnect"}
+{"Time":"2026-09-20T23:50:32.625815081Z","Action":"output","Package":"brutforce-behavior-demo/apps/api","Test":"TestDB004DataSurvivesRuntimeReconnect","Output":"=== RUN   TestDB004DataSurvivesRuntimeReconnect\n"}
+{"Time":"2026-09-20T23:50:32.645295415Z","Action":"output","Package":"brutforce-behavior-demo/apps/api","Test":"TestDB004DataSurvivesRuntimeReconnect","Output":"--- PASS: TestDB004DataSurvivesRuntimeReconnect (0.02s)\n"}
+{"Time":"2026-09-20T23:50:32.645350589Z","Action":"pass","Package":"brutforce-behavior-demo/apps/api","Test":"TestDB004DataSurvivesRuntimeReconnect","Elapsed":0.02}
+{"Time":"2026-09-20T23:50:32.645358311Z","Action":"run","Package":"brutforce-behavior-demo/apps/api","Test":"TestDB005RuntimeCannotChangeSchema"}
+{"Time":"2026-09-20T23:50:32.645362267Z","Action":"output","Package":"brutforce-behavior-demo/apps/api","Test":"TestDB005RuntimeCannotChangeSchema","Output":"=== RUN   TestDB005RuntimeCannotChangeSchema\n"}
+{"Time":"2026-09-20T23:50:32.651266326Z","Action":"output","Package":"brutforce-behavior-demo/apps/api","Test":"TestDB005RuntimeCannotChangeSchema","Output":"--- PASS: TestDB005RuntimeCannotChangeSchema (0.01s)\n"}
+{"Time":"2026-09-20T23:50:32.65129617Z","Action":"pass","Package":"brutforce-behavior-demo/apps/api","Test":"TestDB005RuntimeCannotChangeSchema","Elapsed":0.01}
+{"Time":"2026-09-20T23:50:32.651316822Z","Action":"output","Package":"brutforce-behavior-demo/apps/api","Output":"PASS\n"}
+{"Time":"2026-09-20T23:50:32.655206671Z","Action":"pass","Package":"brutforce-behavior-demo/apps/api","Elapsed":0.092}
