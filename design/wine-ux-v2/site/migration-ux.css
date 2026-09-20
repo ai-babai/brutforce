@@ -36,3 +36,14 @@ body.mascot-preview .phone-status{flex:none}body.mascot-preview .product-nav{fle
 @media(prefers-reduced-transparency:reduce){
   .start-screen .brand-row{background:transparent;}
 }
+
+/* FE-027: approved full-width centered home (variant d / Г). */
+.start-screen .start-heading{width:100%;max-width:none;text-align:center;padding:28px 22px 10px}
+.start-screen .start-heading h3{width:100%;max-width:none;font-size:36px;font-weight:650;line-height:1.08;letter-spacing:-1px;text-align:center;text-wrap:balance;margin:0 0 14px}
+.start-screen .start-heading p{max-width:none;text-align:center;font-size:14px;line-height:1.5}
+.start-screen .v2-mascot-scene{height:260px;margin-top:6px}
+.start-screen .v2-mascot-scene img{object-position:center bottom}
+.start-screen .start-tip{display:block;text-align:center;text-wrap:balance;padding:12px 14px;font-size:12px;line-height:1.5;color:#746e68}
+.v2-type-spec{text-align:center;text-wrap:balance}
+@media(max-width:360px){.start-screen .start-heading h3{font-size:32px}.start-screen .v2-mascot-scene{height:220px}}
+@media(max-height:600px){.start-screen .start-heading{padding-top:20px;padding-bottom:8px}.start-screen .v2-mascot-scene{height:140px}.start-screen .start-tip{margin-top:10px;margin-bottom:8px}}

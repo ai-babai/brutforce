@@ -48,3 +48,6 @@ Run tests/flows.cjs and tests/migration.cjs with the documented Playwright runti
 ## Follow-up: alpha across every selected mascot scene
 
 Maks approved the same treatment for all illustrations. Use `-2d-alpha.png` variants for hold (home), walk (loading/waiting), cellar (empty manual search), counter-thoughtful (no match), offline (network unavailable). Keep scene objects and opaque whites; remove the baked rectangular paper backdrop. Preserve alpha in app WebP exports. See tokens.json and mascot-scenes.md. This is an asset correction, not a new user step or state.
+
+## Canonical FE-027 sync
+2026-09-21: accepted Г/d from6910b88 now lives in canonical v2, components and tokens. Centered full-width natural heading, centered two-sentence description and hint, opaque cream background, alpha scene260/220/140 (short prototype includes a simulated status bar). Matches the implemented application composition; existing prototype controller unchanged.
