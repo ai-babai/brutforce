@@ -1,8 +1,8 @@
 {
   "version": "2.0",
   "url": "https://reps.maks.dzap.pw/v2/#flows",
-  "source_commit": "cd5b49a",
-  "release": "/srv/lct/maks/wine-ux-v2/releases/v2-20260920-cd5b49a",
+  "source_commit": "922709f",
+  "release": "/srv/lct/maks/wine-ux-v2/releases/v2-20260920-922709f",
   "current": "/srv/lct/maks/wine-ux-v2/current",
   "date": "2026-09-20",
   "validation": {
@@ -10,7 +10,8 @@
     "responsive": "Camera shutter visible at 320x568 and 844x390. Report sections checked at 1440,390,320 with no horizontal page overflow. Screenshots visually inspected for typography, hierarchy, full mascot bottle and action visibility.",
     "deployment": "Atomic swap of isolated /v2/ release. No service configuration changes. SHA256 of /view, /mascots/journeys.html and /mascots/glass.html unchanged.",
     "not_tested": "Real camera, real recognition, physical Android/iOS devices and production data are outside this static mockup.",
-    "mascot": "Independent GPT-5.6 visual/click review at 320/390/1440: loading, waiting, missing, manual search; photo preview/back; cancel/retry; scene disappears on candidate. Three generated 2D assets, static scenes. Home preserved."
+    "mascot": "Independent GPT-5.6 visual/click review at 320/390/1440: loading, waiting, missing, manual search; photo preview/back; cancel/retry; scene disappears on candidate. Three generated 2D assets, static scenes. Home preserved.",
+    "savedPhoto": "Cancelled scene: genuine HTML photo within generated mascot frame; 320/390 visual QA, preview/back/retry checked locally and publicly. No new flow step."
   },
   "unchanged_sha256": {
     "/view": "970cdfbcd6ef800efe09ce12361837202ecd7ff2a37696fc5e4414a5b53f0d33",
@@ -18,5 +19,5 @@
     "/mascots/glass.html": "51e99137b99a3a83b65caa46594e67e79671c0c45582d2b74832f7ddc8f31daa"
   },
   "issue": "https://github.com/ai-babai/brutforce/issues/23",
-  "revision": "secondary-2d-mascot-scenes"
+  "revision": "saved-photo-frame"
 }
