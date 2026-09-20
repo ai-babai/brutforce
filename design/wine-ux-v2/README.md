@@ -21,3 +21,5 @@ Validation: Chrome at 320/390/1440, all 16 render states, 10 scenario outcomes, 
 Secondary 2D mascot integration: see [composition, prompts and verification](mascot-scenes.md). Static scenes on loading/waiting, missing result and empty manual search; selected home artwork unchanged.
 
 Current selected edition: [scope, transition decisions and immutable archive](selected-edition.md). Design-specific persistent acceptance checks were explicitly requested by Maks; see [tests](tests/README.md). The pre-selection frame experiment is preserved at `/v2/previous/` rather than used in the current flow.
+
+Approved migration handoff (b73baf6 plan): [decisions, files and acceptance cases](migration-handoff.md). These later source changes are Git-only until a static-report release; published-version.json remains the deployed version's record.

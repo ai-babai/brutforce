@@ -161,9 +161,9 @@ const scenarios=[
  },
  {
   "id": "badphoto",
-  "label": "Блик / плохое фото",
+  "label": "Подтверждённо плохой кадр",
   "title": "Помочь переснять этикетку",
-  "context": "Название закрыто бликом. Показываем конкретную подсказку, что изменить.",
+  "context": "Получен достоверный сигнал, что этикетка не читается. Не выводим эту причину из сетевого сбоя или отсутствия совпадения.",
   "steps": [
    [
     "camera",
@@ -178,7 +178,7 @@ const scenarios=[
     "Переснять"
    ]
   ],
-  "check": "Пользователь понимает, как изменить свет или ракурс. Детектор качества не заявлен готовым.",
+  "check": "После нового кадра можно выйти из ошибки. Диагностика качества — отдельный входной сигнал, не MIME или отсутствие вина в каталоге.",
   "level": "UX-рекомендация",
   "ref": "Реальные условия съёмки из Q&A. Автоматическое выявление блика — гипотеза реализации."
  },
@@ -286,7 +286,7 @@ const scenarios=[
     "Вернуться к карточке"
    ]
   ],
-  "check": "Возврат сохраняет выбранное вино. Фото не становится обязательным экраном до результата.",
+  "check": "Возврат сохраняет место входа и вино. Если поиск завершился за просмотром, возврат открывает свежий ответ без нового запроса.",
   "level": "UX-рекомендация",
   "ref": "Наше решение: проверяемость ответа без лишнего шага в основном пути."
  },
@@ -309,7 +309,7 @@ const scenarios=[
     "Открыть вино"
    ]
   ],
-  "check": "Демо-запрос показывает кандидат. Неизвестный запрос сохраняется для исправления. Фото не придумывается.",
+  "check": "Запрос, список и позиция сохраняются при возврате из карточки. Есть вход в каталог. Фото не выдумывается.",
   "level": "UX-решение",
   "ref": "Альтернативный вход из уже существующего макета; каталог демонстрационный."
  },
@@ -340,9 +340,94 @@ const scenarios=[
     "Открыть карточку"
    ]
   ],
-  "check": "Таймер остановлен; после отмены не происходит самопроизвольного перехода. Повтор не требует новой фотографии.",
+  "check": "Отмена останавливает переход. На главной есть продолжение по тому же снимку и удаление фото; автоматического продолжения нет.",
   "level": "UX-решение",
   "ref": "Текущая сессия страницы. Хранение после закрытия не обещается."
+ },
+ {
+  "id": "server",
+  "label": "Сбой сервера",
+  "title": "Отличить сервер от сети",
+  "context": "Связь установлена, но сервис не ответил корректно. Это не отсутствие совпадения.",
+  "steps": [
+   [
+    "camera",
+    "Снять фото"
+   ],
+   [
+    "loading",
+    "Поиск"
+   ],
+   [
+    "servererror",
+    "Увидеть сбой сервера"
+   ],
+   [
+    "loading",
+    "Повторить с прежним фото"
+   ],
+   [
+    "result",
+    "Получить ответ"
+   ]
+  ],
+  "check": "Тот же снимок доступен для повтора; текст не утверждает, что вина нет.",
+  "level": "Согласованный UX",
+  "ref": "План миграции дизайна 2.0, 20.09.2026."
+ },
+ {
+  "id": "unreadable",
+  "label": "Нечитаемый файл",
+  "title": "Файл не открылся",
+  "context": "Файл изображения не читается. Не показываем выдуманную диагностику блика или неизвестного вина.",
+  "steps": [
+   [
+    "gallery",
+    "Выбрать файл"
+   ],
+   [
+    "unreadable",
+    "Увидеть ошибку файла"
+   ],
+   [
+    "gallery",
+    "Выбрать другое фото"
+   ],
+   [
+    "loading",
+    "Отправить валидное фото"
+   ],
+   [
+    "result",
+    "Открыть карточку"
+   ]
+  ],
+  "check": "Нет выдуманного снимка; другое изображение позволяет продолжить.",
+  "level": "Согласованный UX",
+  "ref": "План миграции дизайна 2.0, 20.09.2026."
+ },
+ {
+  "id": "saved",
+  "label": "Сохранённое",
+  "title": "Вернуться к выбранному вину",
+  "context": "Сохранение доступно в карточке; список доступен из нижней панели.",
+  "steps": [
+   [
+    "result",
+    "Сохранить вино"
+   ],
+   [
+    "saved",
+    "Открыть сохранённое"
+   ],
+   [
+    "result",
+    "Вернуться к вину"
+   ]
+  ],
+  "check": "Удаление записи меняет список и кнопку в карточке. Вино и год не подменяются.",
+  "level": "Согласованный UX",
+  "ref": "Сохраняем существующую возможность приложения."
  }
 ];
 let scenario=scenarios[0],screen='start',selectedYear='2023',loadTimer=null,photoReturn='result';
@@ -363,13 +448,14 @@ const notes={
  offline:['Сохраняем труд пользователя',['Снимок остаётся на экране и в текущем сценарии.','Повтор запроса — одно действие.','Межсессионное или фоновое хранение не обещаем: это отдельное решение о данных.']],
  search:['Ручной вход на равных',['Название и производитель помогают уточнить объект.','Результаты ведут к тем же карточкам, что и поиск по фото.','В макете поиск демонстрационный: произвольный каталог не подключён.']],
  settings:['Понятная следующая попытка',['Настройки зависят от iOS, Android или браузера.','После разрешения пользователь возвращается в тот же сценарий.','Демо-кнопка ниже только меняет экран макета.']]};
+notes.servererror=['Сервис не ответил',['Сбой сервера отделён от отсутствия сети и отсутствия совпадения.','Повтор использует прежний снимок.']];
+notes.unreadable=['Файл не читается',['Ошибка чтения файла не доказывает плохую этикетку.','Можно выбрать другое фото или снять новое.']];
+notes.saved=['Сохранённые карточки',['Список и удаление доступны из нижней панели.','Это симуляция в памяти макета; существующее хранилище приложения при миграции сохраняется.']];
 function renderScenario(){
  document.querySelectorAll('[data-scenario]').forEach(b=>{let on=b.dataset.scenario===scenario.id;b.classList.toggle('active',on);b.setAttribute('aria-pressed',on)});
  $('#flow-explanation').innerHTML=`<p class="eyebrow">${esc(scenario.level)}</p><h3>${esc(scenario.title)}</h3><p>${esc(scenario.context)}</p><ol class="step-list">${scenario.steps.map(([id,t])=>`<li class="${screen===id?'current':''}">${esc(t)}</li>`).join('')}</ol><div class="criterion"><strong>Как проверим</strong>${esc(scenario.check)}</div><p class="evidence">${esc(scenario.ref)}</p>`;
 }
-function setScreen(next){clearTimeout(loadTimer);if(next==='cancelled')next='start';if(next==='preview')photoReturn=['start','result','catalog','candidates','waiting','missing','loading','offline','badphoto'].includes(screen)?screen:'start';screen=next;renderPhone();renderScenario()}
-function resumeScan(){setScreen('loading');loadTimer=setTimeout(()=>{resultReturn='start';candidateReturn='start';missingOrigin='photo';setScreen(scanOutcome)},1200)}
-function beginScan(retry=false){hasPhoto=true;showResume=false;selectedYear='2023';detailTab='overview';scanOutcome=retry||retryAfterBadPhoto?'result':scenario.id==='slow'?'waiting':scenario.id==='vintage'?'candidates':scenario.id==='missing'?'missing':scenario.id==='badphoto'?'badphoto':scenario.id==='network'?'offline':'result';retryAfterBadPhoto=false;resumeScan()}
+// Product transitions and request simulation live in flow-state.js.
 function renderPhone(){}
 scenarios.forEach((s,i)=>{const b=document.createElement('button');b.dataset.scenario=s.id;b.textContent=s.label;b.setAttribute('aria-pressed',i===0);b.onclick=()=>{scenario=s;selectedYear='2023';detailTab='overview';searched=false;setScreen(s.steps[0][0])};$('#scenario-picker').append(b)});
 $('#restart').onclick=()=>{resetDemoContext(scenario.steps[0][0]);selectedYear='2023';detailTab='overview';searched=false;setScreen(scenario.steps[0][0])};

@@ -11,3 +11,4 @@ Standalone static design system and clickable report. Start with README.md.
 - Prefer GPT-5.6 for bounded implementation work. Parent visually verifies all screens before delivery.
 - Selected mascot edition: follow selected-edition.md. No separate cancelled screen; cancel returns home with retained-photo actions. Preserve /v2/previous/ as immutable release 922709f on every deployment.
 - User explicitly authorized design-specific persistent tests under tests/. They do not cover real recognition/camera.
+- Approved migration handoff: migration-handoff.md. Preserve Scanner/Search/Saved, exact home heading, request completion behind preview, correction identity and manual search position. Canonical prototype transitions: site/flow-state.js.

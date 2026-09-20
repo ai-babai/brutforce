@@ -1,0 +1,34 @@
+// Approved design-only migration cases from docs/product/design-v2-migration-plan.md.
+const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
+const assert=require('node:assert/strict');
+const base=process.env.DESIGN_URL||'http://localhost:8768/';
+(async()=>{const browser=await chromium.launch({channel:'chrome',headless:true});try{
+ const page=await browser.newPage({viewport:{width:390,height:844}});let run=0;const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ const open=async(scene,extra='')=>{await page.goto(`${base}?mascotPreview=1&scene=${scene}&qa=${++run}${extra}#flows`);await page.locator('#phone-content img').evaluateAll(xs=>Promise.all(xs.map(i=>i.decode())));};
+ const go=async(id)=>page.locator(`#phone-content [data-go="${id}"]`).first().click();
+ const state=()=>page.locator('#phone-content .product-screen').getAttribute('data-state');
+ const check=async(id)=>assert.equal(await state(),id);
+ const section=async(id)=>page.locator(`[data-section="${id}"]`).click();
+ // UX-M01: cancel/delete stops pending work, and resume uses the retained snapshot.
+ await open('offline');const photo=await page.evaluate(()=>lastPhotoId);await go('retry');assert.equal(await page.evaluate(()=>lastPhotoId),photo);await go('cancel');await check('start');await go('delete-photo');await page.waitForTimeout(1400);await check('start');assert.equal(await page.locator('.resume-photo').count(),0);assert.equal(await page.evaluate(()=>hasPhoto),false);
+ // UX-M02: success arrives behind preview; dismissing it shows fresh result immediately, no second search.
+ await open('offline');await go('retry');await go('preview');await page.waitForTimeout(1400);await check('preview');assert(await page.locator('.preview-completed').isVisible());await go('photo-back');await check('result');
+ // UX-M03: error may also arrive behind preview; old loading state must not be restored.
+ await open('offline');await go('camera');await page.locator('.shutter').click();await go('preview');await page.waitForTimeout(1400);await check('preview');await go('photo-back');await check('offline');
+ // UX-M04: query, candidate list and inner scroll are restored after visiting a card.
+ await page.setViewportSize({width:320,height:568});await open('search');await page.locator('#wine-query').fill('Демо регион');await page.locator('#wine-query').press('Enter');await page.locator('[data-year="2022"]').scrollIntoViewIfNeeded();const y=await page.locator('#phone-content').evaluate(e=>e.scrollTop);assert(y>0);await page.locator('[data-year="2022"]').click();assert.equal(await page.locator('[data-section=search]').getAttribute('aria-current'),'page');await go('search');await page.waitForTimeout(100);assert.equal(await page.locator('#wine-query').inputValue(),'Демо регион');assert.equal(await page.locator('[data-year]').count(),2);assert(Math.abs(await page.locator('#phone-content').evaluate(e=>e.scrollTop)-y)<2);
+ // UX-M05: correction chain preserves original identity/year and the newly selected identity separately.
+ await page.setViewportSize({width:390,height:844});await open('candidates');await page.locator('[data-year="2022"]').click();await go('correct-wine');await go('search');await page.locator('#wine-query').fill('Демо');await page.locator('#product-search button').click();await page.locator('[data-year="2023"]').click();assert.match(await page.locator('.result-identity').innerText(),/Каберне[\s\S]*2023/);await go('search');await go('correction-back');assert.match(await page.locator('.result-identity').innerText(),/Мерло[\s\S]*2022/);
+ // Saved and catalog correction must never reuse unrelated photo candidates.
+ await open('result');await page.locator('[data-save-wine]').click();await section('saved');await page.locator('[data-year="2023"]').click();await go('correct-wine');await check('search');assert.equal(await page.locator('.preserved-photo').count(),0);await go('correction-back');await check('result');await go('saved');await section('search');await go('browse-catalog');await page.locator('[data-year="2022"]').click();await go('correct-wine');await check('search');await go('correction-back');assert.match(await page.locator('.result-identity').innerText(),/Мерло[\s\S]*2022/);
+ // UX-M06: distinct error semantics, repeated server request preserves photograph.
+ await open('servererror');assert.match(await page.locator('.screen-heading').innerText(),/сервера/);const serverPhoto=await page.evaluate(()=>lastPhotoId);await go('retry');await page.waitForTimeout(1400);await check('result');assert.equal(await page.evaluate(()=>lastPhotoId),serverPhoto);
+ await open('unreadable');assert.match(await page.locator('.screen-heading').innerText(),/ошибка чтения файла/);assert.equal(await page.locator('.capture-panel,.preserved-photo').count(),0);await go('gallery');await go('galleryscan');await page.waitForTimeout(1400);await check('result');
+ await open('badphoto');assert.match(await page.locator('.screen-heading').innerText(),/Этикетка на снимке не читается/);await open('missing');assert.doesNotMatch(await page.locator('.screen-heading').innerText(),/блик|размыт|ошибка чтения/);
+ // UX-M07: all three sections and save/delete survive redesign; camera hides them.
+ await open('result');await page.locator('[data-save-wine]').click();await section('saved');assert(await page.locator('[data-year="2023"]').isVisible());await page.locator('[data-year="2023"]').click();await check('result');await go('saved');await page.locator('[data-remove-saved="2023"]').click();assert.equal(await page.locator('[data-year]').count(),0);await section('search');await go('browse-catalog');assert.equal(await page.locator('[data-year]').count(),2);await section('start');assert.equal((await page.locator('.start-heading h3').innerText()).replace(/\s+/g,' '),'Какое вино перед вами?');await go('camera');assert.equal(await page.locator('.product-nav').count(),0);
+ for(const size of [{width:320,height:568},{width:844,height:390}]){await page.setViewportSize(size);const box=await page.locator('.shutter').boundingBox();assert(box.y>=0&&box.y+box.height<=size.height);}
+ // UX-M08: wide report keeps the camera inside the agreed phone frame.
+ await page.setViewportSize({width:1440,height:1000});await page.goto(base+'?screen=camera&scenario=shelf#flows');const phone=await page.locator('.phone').boundingBox();assert(phone.width<500&&phone.width>280);assert.notEqual(await page.locator('.phone').evaluate(e=>getComputedStyle(e).position),'fixed');assert(parseFloat(await page.locator('.phone').evaluate(e=>getComputedStyle(e).borderRadius))>=30);
+ assert.deepEqual(errors,[]);console.log('PASS UX-M01..08: context, late response, search scroll, correction identity, error taxonomy, saved/nav, phone frame and title');
+ }finally{await browser.close()}})().catch(e=>{console.error(e);process.exitCode=1});
