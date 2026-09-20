@@ -5,13 +5,13 @@ This directory is the standalone demo HTTP server. Its contract is defined in
 with it.
 
 - Use only synthetic `DEMO` wine data. Private uploads are allowed only through
-  the documented `UPLOAD_DIR` store. The embedded read-only catalog and its
+  the documented `UPLOAD_DIR` store. The synthetic PostgreSQL catalog (embedded only when DATABASE_URL is unset) and its
   `GET /v1/catalog` route follow
   [`contracts/demo-catalog.md`](../../contracts/demo-catalog.md); do not add
   real catalog exports, upload GET/list routes, secrets, or request-body
   logging.
 - The server is a prototype boundary only. Upload receipt persistence exists,
-  and the embedded synthetic catalog is readable, but recognition, OCR, real
+  and the synthetic catalog is readable, but recognition, OCR, real
   catalog lookup, authentication, and analytics remain deliberate stubs.
 - Keep dependencies in the Go standard library except the approved
   `golang.org/x/image/webp` decoder used only by the contest adapter and the
