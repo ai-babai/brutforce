@@ -779,6 +779,69 @@
       "title": "Conformance CLI checks two independent services",
       "source": "apps/api/cmd/roman-conformance/main_test.go",
       "spec": "contracts/wine-services.md"
+    },
+    {
+      "id": "SR-001",
+      "area": "ui",
+      "title": "Фото: лидер без автоматического выбора",
+      "source": "apps/web/src/App.test.tsx",
+      "spec": "docs/product/behavior-spec.md#фото-выделенный-лидер-и-вертикальный-список--fe-035"
+    },
+    {
+      "id": "SR-002",
+      "area": "ui",
+      "title": "Выбранный кандидат открывает правильный ID и год",
+      "source": "apps/web/src/App.test.tsx",
+      "spec": "docs/product/behavior-spec.md#фото-выделенный-лидер-и-вертикальный-список--fe-035"
+    },
+    {
+      "id": "SR-003",
+      "area": "ui",
+      "title": "Экранный возврат сохраняет список и прокрутку без поиска",
+      "source": "apps/web/src/App.test.tsx",
+      "spec": "docs/product/behavior-spec.md#фото-выделенный-лидер-и-вертикальный-список--fe-035"
+    },
+    {
+      "id": "SR-004",
+      "area": "ui",
+      "title": "Системный Back возвращает исходную выдачу",
+      "source": "apps/web/src/App.test.tsx",
+      "spec": "docs/product/behavior-spec.md#фото-выделенный-лидер-и-вертикальный-список--fe-035"
+    },
+    {
+      "id": "SR-005",
+      "area": "ui",
+      "title": "Ноль и один кандидат без фиктивных альтернатив",
+      "source": "apps/web/src/App.test.tsx",
+      "spec": "docs/product/behavior-spec.md#фото-выделенный-лидер-и-вертикальный-список--fe-035"
+    },
+    {
+      "id": "SR-006",
+      "area": "ui",
+      "title": "Отказ от кандидатов сохраняет пути восстановления",
+      "source": "apps/web/src/App.test.tsx",
+      "spec": "docs/product/behavior-spec.md#фото-выделенный-лидер-и-вертикальный-список--fe-035"
+    },
+    {
+      "id": "SR-007",
+      "area": "ui",
+      "title": "Полные названия и честные неизвестные поля/фото",
+      "source": "apps/web/src/App.test.tsx",
+      "spec": "docs/product/behavior-spec.md#фото-выделенный-лидер-и-вертикальный-список--fe-035"
+    },
+    {
+      "id": "SR-008",
+      "area": "ui",
+      "title": "Текстовый поиск без бейджа фото",
+      "source": "apps/web/src/App.test.tsx",
+      "spec": "docs/product/behavior-spec.md#фото-выделенный-лидер-и-вертикальный-список--fe-035"
+    },
+    {
+      "id": "SR-009",
+      "area": "design",
+      "title": "Доступная компактная выдача на узком экране",
+      "source": "apps/web/src/design.test.tsx",
+      "spec": "docs/product/behavior-spec.md#фото-выделенный-лидер-и-вертикальный-список--fe-035"
     }
   ]
 }

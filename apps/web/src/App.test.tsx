@@ -183,7 +183,20 @@ describe("mobile behavior demo", () => {
     ).toBeVisible();
     expect(screen.getByRole("button", { name: /Выбрать фото/i })).toBeVisible();
   });
-  it("upload preview sends multipart receipt into search and reaches UI-007", async () => {
+  it("SR-005 one unselected photo candidate uses a singular heading and one actionable row", async () => {
+    vi.stubGlobal("URL", {...URL, createObjectURL: vi.fn(() => "blob:single"), revokeObjectURL: vi.fn()});
+    vi.stubGlobal("fetch", vi.fn((url) => Promise.resolve(response(
+      url === "/v1/photos" ? receipt : {demo: true, candidates: [candidate]},
+    ))));
+    render(<App />);
+    await userEvent.upload(screen.getByLabelText(/Загрузить фотографию/i), new File(["photo"], "one.jpg", {type:"image/jpeg"}));
+    expect(await screen.findByRole("heading", {name:"Проверьте найденное вино"})).toBeVisible();
+    expect(document.querySelectorAll(".candidate-list button")).toHaveLength(1);
+    expect(screen.queryByText(/несколько похожих/i)).not.toBeInTheDocument();
+    await userEvent.click(screen.getByRole("button", {name:"Каберне Совиньон, 2023"}));
+    expect(screen.getByRole("heading", {name:candidate.name})).toBeVisible();
+  });
+  it("SR-005 one photo candidate sends its receipt into search and reaches UI-007", async () => {
     vi.stubGlobal(
       "fetch",
       vi
@@ -396,7 +409,7 @@ describe("mobile behavior demo", () => {
       (searchCalls[0][1] as RequestInit).body,
     );
   });
-  it("UI-006 manual candidates do not invent an original photo", async () => {
+  it("SR-008 manual candidates keep full accessible names and no photo-result badge", async () => {
     mock(uncertain);
     render(<App initialScenario="uncertain" />);
     await submitManual("Мерло");
@@ -409,10 +422,107 @@ describe("mobile behavior demo", () => {
       screen.queryByRole("button", { name: /Открыть исходную фотографию/i }),
     ).not.toBeInTheDocument();
     expect(
-      screen.getByRole("img", { name: /Фото Мерло отсутствует/i }),
+      screen.getByRole("img", { name: /Фото Мерло недоступно/i }),
+    ).toBeVisible();
+    expect(screen.getByRole("button", { name: "Мерло, 2022" })).toBeVisible();
+    expect(screen.queryByText("Наиболее похожее")).not.toBeInTheDocument();
+    fireEvent.error(screen.getByRole("img", { name: "Фото вина: Каберне Совиньон" }));
+    expect(
+      screen.getByRole("img", { name: "Фото Каберне Совиньон недоступно" }),
     ).toBeVisible();
     await userEvent.click(screen.getByRole("button", { name: /Мерло/i }));
     expect(screen.getByRole("heading", { name: "Мерло" })).toBeVisible();
+  });
+  it("SR-007 renders unknown fields and a broken catalog image without inventing metadata", async () => {
+    const unknown = {
+      ...candidate,
+      id: "unknown",
+      name: "Очень длинное название Резерв без сокращения",
+      winery: "",
+      year: 0,
+      image: "/broken-catalog-image.jpg",
+      line: "",
+      color: "",
+      sugar: "",
+    };
+    mock({ demo: true, candidates: [unknown] });
+    render(<App />);
+    await submitManual("Резерв");
+    await screen.findByRole("heading", { name: /несколько похожих/i });
+    expect(screen.getByRole("button", { name: `${unknown.name}, Год не указан` })).toBeVisible();
+    expect(screen.getByText("Год не указан")).toBeVisible();
+    fireEvent.error(screen.getByRole("img", { name: `Фото вина: ${unknown.name}` }));
+    expect(screen.getByRole("img", { name: `Фото ${unknown.name} недоступно` })).toBeVisible();
+    expect(screen.queryByText(" · ")).not.toBeInTheDocument();
+  });
+  it("SR-001 SR-002 SR-003 SR-004 keeps multi-photo candidates ordered until a user chooses one, then restores the list", async () => {
+    const second = {
+      ...candidate,
+      id: "second",
+      name: "Резерв с очень длинным названием виноградника",
+      year: 2021,
+      line: "Коллекция Резерв",
+      color: "красное",
+      sugar: "сухое",
+    };
+    vi.stubGlobal("URL", {
+      ...URL,
+      createObjectURL: vi.fn(() => "blob:multi-photo"),
+      revokeObjectURL: vi.fn(),
+    });
+    vi.stubGlobal(
+      "fetch",
+      vi.fn((url) => Promise.resolve(response(url === "/v1/photos" ? receipt : {
+        demo: true, candidates: [candidate, second], selectedId: candidate.id,
+      }))),
+    );
+    render(<App />);
+    await userEvent.upload(
+      screen.getByLabelText(/Загрузить фотографию/i),
+      new File(["photo"], "wine.jpg", { type: "image/jpeg" }),
+    );
+    await screen.findByRole("heading", { name: /несколько похожих/i });
+    expect(screen.getByText("Наиболее похожее")).toBeVisible();
+    expect(screen.getAllByRole("button", { name: /Каберне Совиньон|Резерв с очень/i }).map((button) => button.getAttribute("aria-label")))
+      .toEqual(["Каберне Совиньон, 2023", `${second.name}, ${second.line}, 2021`]);
+    expect(screen.queryByRole("heading", { name: "Каберне Совиньон" })).not.toBeInTheDocument();
+    const content = screen.getByTestId("app").querySelector(".app-content") as HTMLDivElement;
+    Object.defineProperty(content, "scrollTop", { configurable: true, value: 83, writable: true });
+    await userEvent.click(screen.getByRole("button", { name: /Резерв с очень длинным/i }));
+    expect(screen.getByRole("heading", { name: second.name })).toBeVisible();
+    expect(screen.getAllByText("2021").length).toBeGreaterThan(1);
+    await userEvent.click(screen.getByRole("button", { name: "Назад" }));
+    await screen.findByRole("heading", { name: /несколько похожих/i });
+    expect(content.scrollTop).toBe(83);
+    expect(vi.mocked(fetch).mock.calls.filter(([url]) => url === "/v1/search")).toHaveLength(1);
+    expect(vi.mocked(fetch).mock.calls.filter(([url]) => url === "/v1/photos")).toHaveLength(1);
+    expect(vi.mocked(fetch).mock.calls.find(([url]) => url === "/v1/search")![1]).toEqual(
+      expect.objectContaining({ body: JSON.stringify({ scenario: "exact", photoId: receipt.id }) }),
+    );
+  });
+  it("SR-004 handles the system Back event from a chosen photo candidate without another search", async () => {
+    const second = { ...candidate, id: "second", name: "Второе вино", year: 2020 };
+    vi.stubGlobal("URL", {
+      ...URL,
+      createObjectURL: vi.fn(() => "blob:system-back"),
+      revokeObjectURL: vi.fn(),
+    });
+    vi.stubGlobal(
+      "fetch",
+      vi.fn((url) => Promise.resolve(response(url === "/v1/photos" ? receipt : {
+        demo: true, candidates: [candidate, second], selectedId: candidate.id,
+      }))),
+    );
+    render(<App />);
+    await userEvent.upload(
+      screen.getByLabelText(/Загрузить фотографию/i),
+      new File(["photo"], "wine.jpg", { type: "image/jpeg" }),
+    );
+    await screen.findByRole("heading", { name: /несколько похожих/i });
+    await userEvent.click(screen.getByRole("button", { name: /Второе вино/i }));
+    fireEvent.popState(window);
+    await screen.findByRole("heading", { name: /несколько похожих/i });
+    expect(vi.mocked(fetch).mock.calls.filter(([url]) => url === "/v1/search")).toHaveLength(1);
   });
   it("UI-007 exposes the simulated source description after manual candidate choice", async () => {
     mock(exact);
@@ -444,7 +554,7 @@ describe("mobile behavior demo", () => {
       screen.getByRole("button", { name: /Сканировать этикетку/i }),
     ).toBeVisible();
   });
-  it("UI-009 photo no-match offers manual search and reshoot without candidates", async () => {
+  it("SR-005 zero photo candidates offer the existing manual-search and reshoot fallback", async () => {
     vi.spyOn(HTMLMediaElement.prototype, "play").mockResolvedValue();
     vi.stubGlobal("URL", {
       ...URL,
@@ -474,7 +584,7 @@ describe("mobile behavior demo", () => {
     await userEvent.click(reshoot);
     expect(await screen.findByLabelText(/Изображение с камеры/i)).toBeVisible();
   });
-  it("UI-009 manual no-match after a scan keeps the editable query without its photo", async () => {
+  it("SR-006 declining candidates keeps the editable correction context without its photo", async () => {
     vi.stubGlobal("URL", {
       ...URL,
       createObjectURL: vi.fn(() => "blob:prior-scan"),

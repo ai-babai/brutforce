@@ -40,6 +40,10 @@ The selected Wine UX v2 assets come from design revision `29874e7`; approved nav
 - `UI-021`: storage failure leaves the wine unsaved and reports the failure.
 - `UI-023`: result-header save action toggles its label, pressed state, and bookmark fill without moving its target.
 
+### Photo candidates · SR-001
+
+`UI-006` preserves photo-search order from the backend. With several candidates it never opens `selectedId` automatically: the first row is the cream, burgundy-accented leader with the neutral label «Наиболее похожее», a 76×132 px contain photo and 18 px title. Other rows use 56×98 px contain photos and 14 px titles. The label applies only to a photo search, never manual name search. Each entire row is one accessible link target whose name includes the full wine name and year; title text wraps without ellipsis. Show catalog fields in order: name and line, winery, then year plus `color · sugar`; omit empty fields and show year `0` as «Год не указан». A missing or broken image has an accessible unavailable-photo placeholder. At 320/390/430 px and 200% text, rows and the label wrap inside the viewport.
+
 The client makes no quality or probability claims. The source tab identifies the current catalog content as prototype data.
 
 Completed upload receipts are reused for retry. If cancellation races with an upload before its receipt reaches the browser, a retry can upload the file again because the API currently has no idempotency key.
@@ -94,3 +98,15 @@ DESIGN-020: Поле `UI-008` — единый контейнер с рамко�
 Given home, manual search, waiting, no-match or offline, the selected mascot uses an alpha WebP. Transparent source background is preserved; opaque character and props remain visible. Normal composition, no multiply or CSS mask to simulate transparency. No behavioral changes.
 
 FE-027 responsive acceptance: 320×568 normal-text CTA must be fully above bottom navigation; short-height art is160px. At enlarged text sizes the content scrolls, action labels wrap inside their buttons, icons remain visible, no horizontal overflow. Fast checks cover wrapping rules; rendered geometry is verified separately.
+
+
+## FE-035 · Выдача фото, вариант В
+
+SR-001…009: первый результат выделен кремовой поверхностью и винным контуром;
+бейдж «Наиболее похожее» без процента уверенности. Остальные строки компактны.
+Фото лидера 76×132, остальных 56×98 CSS px, contain; заголовки 18/14 px.
+Имя/линейка → производитель → год → известные цвет/сахар. Полные названия,
+неизвестный год «Год не указан», сломанное фото заменяется нейтральной заглушкой.
+Вся строка — кнопка; focus visible; бейдж ограничен шириной и переносится при
+увеличении текста. Для одного фото-кандидата — единственное число в заголовке.
+Быстрые CSS проверки не измеряют геометрию: [браузерное ревью](../../docs/product/reviews/fe-035/README.md).

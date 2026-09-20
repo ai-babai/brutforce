@@ -100,6 +100,7 @@ export function App({
   const previousScreen = useRef<Screen>("welcome");
   const searchScroll = useRef(0);
   const listScroll = useRef(0);
+  const candidateResultHistory = useRef(false);
   const [catalogOpen, setCatalogOpen] = useState(false);
   const correctionResult = useRef<
     {
@@ -114,6 +115,11 @@ export function App({
   const stopCamera = () => {
     streamRef.current?.getTracks().forEach((track) => track.stop());
     streamRef.current = undefined;
+  };
+  const discardCandidateResultHistory = () => {
+    if (!candidateResultHistory.current) return;
+    candidateResultHistory.current = false;
+    window.history.back();
   };
   const clearWaitTimer = (controller?: AbortController) => {
     if (!controller || abort.current === controller) {
@@ -145,6 +151,8 @@ export function App({
     if (screen === "search" && previousScreen.current === "result")
       content.scrollTop = listScroll.current;
     else if (screen === "saved" && previousScreen.current === "result")
+      content.scrollTop = listScroll.current;
+    else if (screen === "candidates" && previousScreen.current === "result")
       content.scrollTop = listScroll.current;
     else if (screen === "search")
       content.scrollTop =
@@ -290,7 +298,7 @@ export function App({
         setScreen("missing");
         return;
       }
-      if (q || next === "uncertain" || !data.selectedId) {
+      if (q || next === "uncertain" || !data.selectedId || list.length > 1) {
         setCandidateOrigin(
           q
             ? searchOrigin === "correction"
@@ -346,6 +354,7 @@ export function App({
   const openCamera = () =>
     permissionDenied ? setScreen("permission") : setScreen("camera");
   const leaveWork = () => {
+    discardCandidateResultHistory();
     abort.current?.abort();
     catalogAbort.current?.abort();
     if (waitTimer.current) clearTimeout(waitTimer.current);
@@ -424,6 +433,9 @@ export function App({
     lastRequest.current = { scenario, hasPhoto: false };
   };
   const choose = (c: Candidate) => {
+    listScroll.current = contentRef.current?.scrollTop ?? 0;
+    window.history.pushState({ ...window.history.state, brutforceCandidateResult: true }, "");
+    candidateResultHistory.current = true;
     setSelected(c);
     if (candidateOrigin !== "correction") setResultOrigin(candidateOrigin);
     setResultFromCorrection(candidateOrigin === "correction");
@@ -501,6 +513,10 @@ export function App({
     back();
   };
   const backFromResult = () => {
+    if (candidateResultHistory.current) {
+      window.history.back();
+      return;
+    }
     if (resultFromCorrection) {
       setCandidateOrigin("correction");
       setScreen("candidates");
@@ -524,6 +540,16 @@ export function App({
     }
     back();
   };
+  useEffect(() => {
+    const onPopState = () => {
+      if (screen !== "result" || !candidateResultHistory.current) return;
+      candidateResultHistory.current = false;
+      setCandidateHasPhoto(resultHasPhoto);
+      setScreen("candidates");
+    };
+    window.addEventListener("popstate", onPopState);
+    return () => window.removeEventListener("popstate", onPopState);
+  }, [candidateOrigin, resultHasPhoto, screen]);
   const backFromSearch = () => {
     if (searchOrigin === "correction" && restoreCorrection()) return;
     back();
@@ -789,7 +815,9 @@ export function App({
           {screen === "candidates" && (
             <Page id="UI-006">
               <Top title="Похожие вина" onBack={backFromCandidates} />
-              <h2>Есть несколько похожих этикеток</h2>
+              <h2>{candidateHasPhoto && candidates.length === 1
+                ? "Проверьте найденное вино"
+                : "Есть несколько похожих этикеток"}</h2>
               <p>
                 {candidateHasPhoto
                   ? "Сравните название и винодельню со своим снимком."
@@ -802,7 +830,11 @@ export function App({
                   onExpand={() => setExpandedPhoto(true)}
                 />
               )}
-              <WineList wines={candidates} onChoose={choose} />
+              <WineList
+                wines={candidates}
+                onChoose={choose}
+                leader={candidateOrigin === "scan" && candidateHasPhoto}
+              />
               <button className="secondary" onClick={openManualCorrection}>
                 Ни одно не подходит
               </button>
@@ -860,10 +892,14 @@ export function App({
                         resultOrigin !== "catalog" &&
                         resultOrigin !== "saved"
                       ) {
+                        discardCandidateResultHistory();
                         setCandidateOrigin("correction");
                         setCandidateHasPhoto(resultHasPhoto);
                         setScreen("candidates");
-                      } else openManualCorrection();
+                      } else {
+                        discardCandidateResultHistory();
+                        openManualCorrection();
+                      }
                     }}
                   >
                     Не это вино? Исправить
@@ -1265,20 +1301,23 @@ function Photo({
   );
 }
 function CandidateImage({ candidate }: { candidate: Candidate }) {
-  return candidate.image ? (
+  const [broken, setBroken] = useState(false);
+  useEffect(() => setBroken(false), [candidate.image]);
+  return candidate.image && !broken ? (
     <img
       src={candidate.image}
-      alt={`Демонстрационное изображение: ${candidate.name}`}
+      alt={`Фото вина: ${candidate.name}`}
+      onError={() => setBroken(true)}
     />
   ) : (
     <div
       className="missing-image"
       role="img"
-      aria-label={`Фото ${candidate.name} отсутствует`}
+      aria-label={`Фото ${candidate.name} недоступно`}
     >
       <ImageSquare />
       <span>
-        Демо-фото
+        Фото
         <br />
         отсутствует
       </span>
@@ -1288,22 +1327,36 @@ function CandidateImage({ candidate }: { candidate: Candidate }) {
 function WineList({
   wines,
   onChoose,
+  leader = false,
 }: {
   wines: Candidate[];
   onChoose: (wine: Candidate) => void;
+  leader?: boolean;
 }) {
   return (
     <div className="candidate-list">
-      {wines.map((wine) => (
-        <button key={wine.id} onClick={() => onChoose(wine)}>
+      {wines.map((wine, index) => {
+        const isLeader = leader && index === 0;
+        const year = wine.year > 0 ? wine.year : "Год не указан";
+        const details = [wine.color, wine.sugar].filter(Boolean).join(" · ");
+        return (
+        <button
+          key={wine.id}
+          className={isLeader ? "candidate-leader" : undefined}
+          onClick={() => onChoose(wine)}
+          aria-label={`${wine.name}${wine.line ? `, ${wine.line}` : ""}, ${year}`}
+        >
           <CandidateImage candidate={wine} />
           <span>
-            <small>{wine.winery}</small>
+            {isLeader && <em>Наиболее похожее</em>}
+            {wine.line && <small>{wine.line}</small>}
             <b>{wine.name}</b>
-            <small>{wine.year}</small>
+            {wine.winery && <small>{wine.winery}</small>}
+            <small>{details ? `${year} · ${details}` : year}</small>
           </span>
         </button>
-      ))}
+        );
+      })}
     </div>
   );
 }

@@ -61,6 +61,9 @@ function isSearchResponse(value: unknown): value is SearchResponse {
     if (!candidate || typeof candidate !== 'object') return false;
     const item = candidate as Record<string, unknown>;
     return ['id','name','winery','image','description'].every(key => typeof item[key] === 'string')
+      && ['line', 'color', 'sugar'].every(
+        key => item[key] === undefined || typeof item[key] === 'string',
+      )
       && typeof item.year === 'number' && Number.isInteger(item.year);
   });
   if (!validCandidates) return false;
@@ -83,5 +86,8 @@ function isCandidate(candidate: unknown): candidate is Record<string, unknown> {
   if (!candidate || typeof candidate !== 'object') return false;
   const item = candidate as Record<string, unknown>;
   return ['id','name','winery','image','description'].every(key => typeof item[key] === 'string')
+    && ['line', 'color', 'sugar'].every(
+      key => item[key] === undefined || typeof item[key] === 'string',
+    )
     && typeof item.year === 'number' && Number.isInteger(item.year);
 }
