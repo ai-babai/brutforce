@@ -1,5 +1,8 @@
 # Демонстрационный релиз
 
+Общий TEST/PROD и команды Sigma: [PIPELINE.md](PIPELINE.md).
+Ниже — действующий личный preview Макса; это отдельная среда.
+
 Демо: https://demo.maks.dzap.pw
 Отчёт: https://reps.maks.dzap.pw/behavior/
 Существующий UX Atlas остаётся https://reps.maks.dzap.pw/view.

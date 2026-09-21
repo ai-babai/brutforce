@@ -790,4 +790,12 @@ describe("mobile behavior demo", () => {
       expect(screen.getByText(/Сервис временно недоступен/i)).toBeVisible(),
     );
   });
+  it("UI-029 discloses that a demo search does not recognise a photo", async () => {
+    mock(exact);
+    render(<App />);
+    await submitManual();
+    await waitFor(() => expect(screen.getByText("Демо-режим")).toBeVisible());
+    expect(screen.getByText(/Фото не распознаётся/i)).toBeVisible();
+    expect(screen.getByText(/Карточки и похожие варианты синтетические/i)).toBeVisible();
+  });
 });

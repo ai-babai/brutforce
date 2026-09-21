@@ -80,6 +80,7 @@ export function App({
     candidates: Candidate[];
   }>({ status: "idle", candidates: [] });
   const [recommendationAttempt, setRecommendationAttempt] = useState(0);
+  const [demoMode, setDemoMode] = useState(false);
   const abort = useRef<AbortController | undefined>(undefined);
   const catalogAbort = useRef<AbortController | undefined>(undefined);
   const recommendationAbort = useRef<AbortController | undefined>(undefined);
@@ -292,6 +293,7 @@ export function App({
       );
       if (controller.signal.aborted || abort.current !== controller) return;
       clearWaitTimer(controller);
+      setDemoMode(data.demo);
       const list = data.candidates;
       setCandidates(list);
       if (!list.length) {
@@ -576,6 +578,8 @@ export function App({
     getCatalog(controller.signal)
       .then((data) => {
         if (!controller.signal.aborted && catalogAbort.current === controller)
+          setDemoMode(data.demo);
+        if (!controller.signal.aborted && catalogAbort.current === controller)
           setCatalog(data.candidates);
       })
       .catch((error) => {
@@ -637,7 +641,7 @@ export function App({
                     <h1>
                       Какое вино перед вами?
                     </h1>
-                    <p>Сфотографируйте этикетку.<br />Откроем карточку вина.</p>
+                    <p>Сфотографируйте этикетку.<br />Покажем карточки из демо-каталога.</p>
                   </div>
                   <MascotScene scene="home" />
                 </div>
@@ -792,12 +796,12 @@ export function App({
               <h2>
                 {screen === "waiting"
                   ? "Нужно чуть больше времени"
-                  : "Узнаём ваше вино"}
+                  : "Готовим варианты из демо-каталога"}
               </h2>
               <p>
                 {screen === "waiting"
                   ? "Поиск продолжается. Запрос можно отменить."
-                  : "Ищем вино по этикетке."}
+                  : "Демо не распознаёт изображение: показываем заданные варианты."}
               </p>
               {photo && lastRequest.current.hasPhoto && (
                 <Photo photo={photo} onExpand={() => setExpandedPhoto(true)} />
@@ -820,9 +824,10 @@ export function App({
                 : "Есть несколько похожих этикеток"}</h2>
               <p>
                 {candidateHasPhoto
-                  ? "Сравните название и винодельню со своим снимком."
+                  ? "Сверьте название и винодельню со своим снимком."
                   : "Сравните название, винодельню и год."}
               </p>
+              {demoMode && <DemoDisclosure />}
               {photo && candidateHasPhoto && (
                 <Photo
                   photo={photo}
@@ -871,7 +876,7 @@ export function App({
                     <div>
                       <span className="demo-label">
                         <Check />
-                        Карточка вина
+                        Демо-карточка
                       </span>
                       <small>{shown.winery}</small>
                       <h2>{shown.name}</h2>
@@ -883,6 +888,7 @@ export function App({
                       {storageNotice}
                     </p>
                   )}
+                  {demoMode && <DemoDisclosure />}
                   <button
                     className="correction"
                     onClick={() => {
@@ -1278,6 +1284,14 @@ function Tip() {
     <div className="tip welcome-tip">
       <strong>Этикетка целиком, нужная бутылка по центру.</strong>
     </div>
+  );
+}
+function DemoDisclosure() {
+  return (
+    <aside className="demo-disclosure" role="note" aria-label="Режим демо">
+      <strong>Демо-режим</strong>
+      <span>Карточки и похожие варианты синтетические. Фото не распознаётся.</span>
+    </aside>
   );
 }
 function StateIcon({ children }: { children: React.ReactNode }) {

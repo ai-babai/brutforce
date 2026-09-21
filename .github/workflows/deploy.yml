@@ -1,0 +1,107 @@
+name: Deploy
+on:
+  workflow_dispatch:
+    inputs:
+      ci_run:
+        description: Successful main CI run ID (identifies immutable release)
+        required: true
+      target:
+        type: choice
+        options: [test, prod]
+        default: test
+        description: PROD requires separate recorded human approval on Sigma
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: brutforce-deployment
+  cancel-in-progress: false
+jobs:
+  deploy:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      GH_TOKEN: ${{ github.token }}
+      REPO: ${{ github.repository }}
+      CI_RUN: ${{ inputs.ci_run }}
+      TARGET: ${{ inputs.target }}
+    steps:
+      - name: Resolve successful main release
+        id: resolve
+        run: |
+          [[ "$CI_RUN" =~ ^[0-9]+$ ]]
+          gh api "repos/$REPO/actions/runs/$CI_RUN" > "$RUNNER_TEMP/run.json"
+          jq -e '.conclusion == "success" and .head_branch == "main" and .event == "push" and .path == ".github/workflows/ci.yml"' "$RUNNER_TEMP/run.json"
+          sha=$(jq -r .head_sha "$RUNNER_TEMP/run.json")
+          [[ "$sha" =~ ^[a-f0-9]{40}$ ]]
+          echo "RELEASE_SHA=$sha" >> "$GITHUB_ENV"
+          echo "sha=$sha" >> "$GITHUB_OUTPUT"
+          gh run download "$CI_RUN" --repo "$REPO" --name "release-$sha" --dir "$RUNNER_TEMP/package"
+          cd "$RUNNER_TEMP/package"
+          sha256sum -c "release-$sha.tar.gz.sha256"
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.resolve.outputs.sha }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Configure constrained SSH identity
+        env:
+          SSH_KEY: ${{ secrets.SIGMA_RELEASE_SSH_KEY }}
+          KNOWN_HOSTS: ${{ secrets.SIGMA_KNOWN_HOSTS }}
+        run: |
+          umask 077
+          mkdir -p ~/.ssh
+          printf '%s\n' "$SSH_KEY" > ~/.ssh/id_ed25519
+          printf '%s\n' "$KNOWN_HOSTS" > ~/.ssh/known_hosts
+      - name: Install and deploy TEST, or promote approved PROD
+        run: |
+          if [ "$TARGET" = test ]; then
+            checksum=$(cut -d ' ' -f1 "$RUNNER_TEMP/package/release-$RELEASE_SHA.tar.gz.sha256")
+            # An immutable package may already exist after a failed smoke/retry.
+            ssh -o BatchMode=yes lct-release@217.26.30.220 status > "$RUNNER_TEMP/status.json"
+            if ! jq -e --arg sha "$RELEASE_SHA" '.releases[] | select(.revision == $sha)' "$RUNNER_TEMP/status.json" >/dev/null; then
+              ssh -o BatchMode=yes lct-release@217.26.30.220 "install $RELEASE_SHA $checksum $CI_RUN" < "$RUNNER_TEMP/package/release-$RELEASE_SHA.tar.gz"
+            fi
+            ssh -o BatchMode=yes lct-release@217.26.30.220 "deploy-test $RELEASE_SHA"
+          elif [ "$TARGET" = prod ]; then
+            ssh -o BatchMode=yes lct-release@217.26.30.220 "promote $RELEASE_SHA"
+          else
+            exit 2
+          fi
+      - name: Browser verification on TEST
+        if: inputs.target == 'test'
+        env:
+          BASE_URL: https://test.ops.dzap.pw
+          TEST_HTTP_USER: ${{ secrets.TEST_HTTP_USER }}
+          TEST_HTTP_PASSWORD: ${{ secrets.TEST_HTTP_PASSWORD }}
+          EXPECTED_REVISION: ${{ env.RELEASE_SHA }}
+          SMOKE_OUTPUT_DIR: ${{ runner.temp }}/browser
+        run: |
+          npm --prefix apps/web ci
+          cd apps/web
+          npx playwright install --with-deps chromium
+          cd ../..
+          node deploy/browser-smoke.mjs
+      - name: Record browser evidence, including failure
+        if: always() && inputs.target == 'test'
+        run: |
+          if [ -f "$RUNNER_TEMP/browser/result.json" ]; then
+            ssh -o BatchMode=yes lct-release@217.26.30.220 "browser-result $RELEASE_SHA" < "$RUNNER_TEMP/browser/result.json"
+          fi
+      - name: Keep browser evidence
+        if: always() && inputs.target == 'test'
+        uses: actions/upload-artifact@v4
+        with:
+          name: browser-${{ env.RELEASE_SHA }}
+          path: ${{ runner.temp }}/browser
+          retention-days: 14
+      - name: Verify public PROD endpoint
+        if: inputs.target == 'prod'
+        run: |
+          curl --fail --silent --show-error https://app.dzap.pw/v1/health | jq -e '.ok == true'
+          curl --fail --silent --show-error https://app.dzap.pw/release.json | jq -e --arg sha "$RELEASE_SHA" '.revision == $sha'
+      - name: Summary
+        if: always()
+        run: |
+          printf '## Release %s\n\nEnvironment: %s\n\n[Ops releases](https://ops.dzap.pw/releases/)\n\nMode: synthetic reference; ML quality is not measured.\n' "$RELEASE_SHA" "$TARGET" >> "$GITHUB_STEP_SUMMARY"
