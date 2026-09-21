@@ -120,13 +120,19 @@ def switch(envname, sha, action='deploy'):
         result=smoke(cfg,sha)
         if envname=='prod': command('sudo','-n','/usr/local/sbin/lct-release-service','publish-prod')
     except Exception:
-        if previous:
-            temp.symlink_to(previous); temp.replace(current)
-            command('sudo','-n','/usr/local/sbin/lct-release-service','restart-'+envname)
-        else:
-            current.unlink(missing_ok=True)
-            command('sudo','-n','/usr/local/sbin/lct-release-service','stop-'+envname)
-        r['gates'][envname]={'status':'failed','at':stamp(),'summary':'Проверка после выкатки не прошла; прежняя версия возвращена, если была.'}
+        summary='Проверка после выкатки не прошла.'
+        try:
+            if previous:
+                temp.symlink_to(previous); temp.replace(current)
+                command('sudo','-n','/usr/local/sbin/lct-release-service','restart-'+envname)
+                summary+=' Прежний current возвращён; проверьте доступность.'
+            else:
+                current.unlink(missing_ok=True)
+                command('sudo','-n','/usr/local/sbin/lct-release-service','stop-'+envname)
+                summary+=' Первый неудачный выпуск остановлен.'
+        except Exception:
+            summary+=' Автоматический возврат тоже не завершился; требуется оператор.'
+        r['gates'][envname]={'status':'failed','at':stamp(),'summary':summary}
         save(sha,r); raise
     r['gates'][envname]=result
     if envname=='test':

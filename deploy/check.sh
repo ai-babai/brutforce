@@ -54,7 +54,7 @@ trap - EXIT
 
 db_started=$(node -e 'process.stdout.write(String(Date.now()))')
 set +e
-(cd apps/api && go test -tags=integration -count=1 -json -run '^TestDB00[1-5]$' .) >"$db_results" 2>&1
+(cd apps/api && go test -tags=integration -count=1 -json -run '^TestDB00[1-5]' .) >"$db_results" 2>&1
 db_exit=$?
 set -e
 db_finished=$(node -e 'process.stdout.write(String(Date.now()))')
@@ -69,21 +69,25 @@ const [out,revision,wall]=process.argv.slice(1);
 fs.writeFileSync(out, JSON.stringify({
   schemaVersion: 1,
   revision,
-  command: "go test -tags=integration -count=1 -json -run ^TestDB00[1-5]$ .",
+  command: "go test -tags=integration -count=1 -json -run ^TestDB00[1-5] .",
   wallMs: Number(wall),
   environment: "PostgreSQL integration; synthetic demo catalog only"
 }, null, 2)+"\n");
 ' "$db_metadata" "$revision" "$((db_finished - db_started))"
 
 fast_stdout="$evidence_dir/fast-check.stdout.json"
+set +e
 DB_TEST_RESULTS_FILE="$db_results" \
 DB_TEST_METADATA_FILE="$db_metadata" \
 GIT_REVISION="$revision" \
 node scripts/run-fast-checks.mjs | tee "$fast_stdout"
+fast_exit=${PIPESTATUS[0]}
+set -e
 report_path=$(node -e 'const fs=require("fs"); const o=JSON.parse(fs.readFileSync(process.argv[1],"utf8")); if (!o.report) process.exit(1); process.stdout.write(o.report)' "$fast_stdout")
 report_file="$root/$report_path"
 [ -f "$report_file" ] || { echo "fast report was not created: $report_path" >&2; exit 1; }
 cp "$report_file" "$evidence_dir/fast-report.json"
+[ "$fast_exit" -eq 0 ] || { echo "Fast checks failed; see retained fast-report.json" >&2; exit "$fast_exit"; }
 
 node -e '
 const fs=require("fs");
@@ -105,7 +109,7 @@ fs.writeFileSync(out, JSON.stringify({
   catalogVersion: "demo-v1",
   modelVersion: "reference-demo-v1",
   synthetic: true,
-  commands: ["python3 -m unittest discover -s deploy -p test_release.py", "npm --prefix apps/web ci", "go build ./cmd/reference-engine + roman-conformance against localhost", "go test -tags=integration -count=1 -json -run ^TestDB00[1-5]$ .", "node scripts/run-fast-checks.mjs"],
+  commands: ["python3 -m unittest discover -s deploy -p test_release.py", "npm --prefix apps/web ci", "go build ./cmd/reference-engine + roman-conformance against localhost", "go test -tags=integration -count=1 -json -run ^TestDB00[1-5] .", "node scripts/run-fast-checks.mjs"],
   versions: {go: goVersion, node: nodeVersion},
   databaseEvidence: run.databaseEvidence,
   fastReport: "fast-report.json"

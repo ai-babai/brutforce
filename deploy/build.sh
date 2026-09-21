@@ -10,6 +10,7 @@ fi
 root=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 output=$1
 revision=$(git -C "$root" rev-parse HEAD)
+[ -z "$(git -C "$root" status --porcelain)" ] || { echo "Build requires a clean checkout" >&2; exit 1; }
 case "$output" in
   /*) ;;
   *) output="$PWD/$output" ;;
