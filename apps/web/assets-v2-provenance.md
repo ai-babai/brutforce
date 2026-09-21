@@ -38,3 +38,16 @@ Approved source: `7a4c9e3:design/app-icon-study/assets/icon-24.png`, SHA-256
 and favicon PNGs are dimension-only renditions. Maskable renditions center a
 56% copy of the source on a burgundy background, leaving the art inside the
 conservative 40%-radius safe circle; no artwork was redrawn or cropped.
+
+## App icon 24 maskable v2
+
+`public/assets/icon-24-maskable-v2-192.png` and
+`public/assets/icon-24-maskable-v2-512.png` are reproducible derivatives of
+the same 1254×1254 approved source. `scripts/generate-app-icons.py` reads the
+shared semantic geometry from `public/assets/icon24-meta/geometry.json`: 83%
+Pillow LANCZOS scaling, then 1.8% left and 3.1% down. It applies an edge-only
+feather over the outer 3% of the source square onto RGB burgundy
+`(124, 28, 52)`. The illustration inside the source is preserved; no creative
+redraw occurred. The generator requires Pillow; run
+`python3 scripts/generate-app-icons.py --check` to verify committed byte
+output.

@@ -111,13 +111,13 @@ it("ICON-001 lists versioned selected-icon PNGs in manifest, favicon, and Apple 
         purpose: "any",
       },
       {
-        src: "/assets/icon-24-maskable-v1-192.png",
+        src: "/assets/icon-24-maskable-v2-192.png",
         sizes: "192x192",
         type: "image/png",
         purpose: "maskable",
       },
       {
-        src: "/assets/icon-24-maskable-v1-512.png",
+        src: "/assets/icon-24-maskable-v2-512.png",
         sizes: "512x512",
         type: "image/png",
         purpose: "maskable",
@@ -224,42 +224,44 @@ function rgbPixels(file: string) {
   }
   return { width, height, output };
 }
-function maskBounds(size: number) {
-  const image = rgbPixels(`public/assets/icon-24-maskable-v1-${size}.png`),
-    background = Array.from(image.output.subarray(0, 3));
-  let minX = size,
-    minY = size,
-    maxX = -1,
-    maxY = -1;
-  for (let y = 0; y < size; y++)
-    for (let x = 0; x < size; x++) {
-      const offset = (y * size + x) * 3;
-      if (background.some((value, i) => image.output[offset + i] !== value)) {
-        minX = Math.min(minX, x);
-        minY = Math.min(minY, y);
-        maxX = Math.max(maxX, x);
-        maxY = Math.max(maxY, y);
-      }
+// Selected artwork has a cream circle and warm light foreground on a dark burgundy
+// background. Measure those pixels, not the square burgundy gradient surrounding them.
+function iconGeometry(file: string) {
+  const { width: size, height, output } = rgbPixels(file);
+  expect(height).toBe(size);
+  let creamMinX = size, creamMaxX = -1, foregroundRadius = 0;
+  for (let y = 0; y < size; y++) for (let x = 0; x < size; x++) {
+    const offset = (y * size + x) * 3;
+    const [r, g, b] = output.subarray(offset, offset + 3);
+    if (r > 220 && g > 210 && b > 170) {
+      creamMinX = Math.min(creamMinX, x);
+      creamMaxX = Math.max(creamMaxX, x);
     }
-  return { minX, minY, maxX, maxY };
+    if (r > 140 && g > 80) {
+      foregroundRadius = Math.max(foregroundRadius, Math.hypot(x - (size - 1)/2, y - (size - 1)/2));
+    }
+  }
+  expect(creamMaxX).toBeGreaterThan(creamMinX);
+  return { diameter: (creamMaxX - creamMinX + 1)/size, foregroundRadius: foregroundRadius/size };
 }
-it("ICON-002 keeps substantial maskable art inside the conservative 40% safe-circle radius", () => {
+it("ICON-002 keeps the cream circle prominent without clipping foreground in the safe mask", () => {
   for (const size of [192, 512]) {
-    const { minX, minY, maxX, maxY } = maskBounds(size);
-    expect(maxX).toBeGreaterThanOrEqual(minX);
-    expect(maxY).toBeGreaterThanOrEqual(minY);
-    expect(maxX - minX + 1).toBeGreaterThan(size * 0.5);
-    const furthest = Math.hypot(
-      Math.max(
-        Math.abs(minX - (size - 1) / 2),
-        Math.abs(maxX - (size - 1) / 2),
-      ),
-      Math.max(
-        Math.abs(minY - (size - 1) / 2),
-        Math.abs(maxY - (size - 1) / 2),
-      ),
-    );
-    expect(furthest).toBeLessThanOrEqual(size * 0.4);
+    const geometry = iconGeometry(`public/assets/icon-24-maskable-v2-${size}.png`);
+    expect(geometry.diameter).toBeGreaterThanOrEqual(.70);
+    expect(geometry.diameter).toBeLessThanOrEqual(.78);
+    // Approved hull excludes the decorative disc. A circle is convex, so checking
+    // every polygon vertex also contains each straight edge.
+    const placement = JSON.parse(readFileSync("public/assets/icon24-meta/geometry.json", "utf8"));
+    const artSize = Math.round(size * placement.scale);
+    const left = Math.floor((size - artSize)/2) + Math.round(size * placement.offsetX);
+    const top = Math.floor((size - artSize)/2) + Math.round(size * placement.offsetY);
+    for (const [x, y] of placement.semanticHull) {
+      const radius = Math.hypot(left + x / placement.sourceSize * artSize - size/2,
+        top + y / placement.sourceSize * artSize - size/2);
+      expect(radius).toBeLessThanOrEqual(size*.40);
+    }
+    // Regression witness: the previous export was too small, despite passing its old test.
+    expect(iconGeometry(`public/assets/icon-24-maskable-v1-${size}.png`).diameter).toBeLessThan(.70);
   }
 });
 

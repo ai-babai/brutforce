@@ -15,8 +15,9 @@ The selected Wine UX v2 assets come from design revision `29874e7`; approved nav
 The approved icon is candidate 24. `icon-24.png` stays the unmodified source;
 versioned PNG derivatives supply 32/48 px favicons, 180 px Apple touch icon,
 and 192/512 px manifest `any` icons. Separate 192/512 px `maskable` files
-center a 56% source rendition so the bottle, dog, and magnifier remain inside
-the conservative safe circle. Manifest identity (`id`, `start_url`, `scope`),
+center an 83% source rendition. The cream circle must span 70–78% of the canvas;
+important foreground stays inside the 40%-radius safe circle. Measure artwork,
+not the square burgundy background. Ordinary/Apple/favicon exports have no added padding. Manifest identity (`id`, `start_url`, `scope`),
 storage keys, and service-worker policy are unchanged. Existing installed
 instances can retain their previously cached icon until the platform refreshes
 metadata; this is not a verified phone-install result.
@@ -121,3 +122,6 @@ SR-001…009: первый результат выделен кремовой п
 Вся строка — кнопка; focus visible; бейдж ограничен шириной и переносится при
 увеличении текста. Для одного фото-кандидата — единственное число в заголовке.
 Быстрые CSS проверки не измеряют геометрию: [браузерное ревью](../../docs/product/reviews/fe-035/README.md).
+
+Maskable v2: оптический сдвиг −1,8% по X, +3,1% по Y; semantic hull согласован с sigma-front.
+Декоративный кремовый круг может выходить за safe-circle; бутылка, пёс и лупа — нет.
