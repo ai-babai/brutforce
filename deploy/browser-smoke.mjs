@@ -44,11 +44,22 @@ try {
   });
   const capture = async (page, name) => {
     const path = resolve(outputDir, `${name}.png`);
-    await page.screenshot({ path, fullPage: true });
+    await page.waitForFunction(() => [...document.images].every(image => image.complete), null, {timeout: 10_000});
+    const broken = await page.locator('img').evaluateAll(images => images.filter(image => !image.naturalWidth).map(image => image.getAttribute('src')));
+    if (broken.length) throw new Error('Images failed to load: '+broken.join(', '));
+    await page.screenshot({ path, fullPage: true, animations: 'disabled' });
     evidence.push(path);
   };
   const visible = (locator, description) => locator.waitFor({ state: 'visible', timeout: 10_000 })
     .catch(() => { throw new Error(`${description} is not visible`); });
+  const recommendationsReady = async (page) => {
+    const list = page.locator('.recommendation-list');
+    await visible(list.getByRole('button').first(), 'loaded recommendation cards');
+    if (await list.getByRole('button', {name: /Каберне Совиньон/i}).count())
+      throw new Error('Recommendation repeats the source wine');
+    if (await page.getByText('Подбираем рекомендации', {exact:true}).isVisible())
+      throw new Error('Recommendations still loading');
+  };
   const textFlow = async (viewport, prefix) => {
     const context = await browser.newContext({ viewport, ...contextOptions });
     const page = await context.newPage();
@@ -62,6 +73,7 @@ try {
     await page.getByRole('button', { name: /Каберне Совиньон/i }).first().click();
     await visible(page.getByRole('heading', { name: 'Каберне Совиньон' }), `${prefix} text card`);
     await visible(page.getByRole('heading', { name: /Вам также может подойти/i }), `${prefix} recommendations`);
+    await recommendationsReady(page);
     await capture(page, `${prefix}-text-card-recommendations`);
     return { context, page };
   };
@@ -79,6 +91,7 @@ try {
     await page.getByRole('button', { name: /Каберне Совиньон/i }).first().click();
     await visible(page.getByRole('heading', { name: 'Каберне Совиньон' }), 'mobile photo card');
     await visible(page.getByRole('heading', { name: /Вам также может подойти/i }), 'mobile photo recommendations');
+    await recommendationsReady(page);
     await capture(page, 'mobile-photo-card-recommendations');
     await context.close();
   });
