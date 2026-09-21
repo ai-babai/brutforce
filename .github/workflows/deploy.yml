@@ -62,6 +62,8 @@ jobs:
             ssh -o BatchMode=yes lct-release@217.26.30.220 status > "$RUNNER_TEMP/status.json"
             if ! jq -e --arg sha "$RELEASE_SHA" '.releases[] | select(.revision == $sha)' "$RUNNER_TEMP/status.json" >/dev/null; then
               ssh -o BatchMode=yes lct-release@217.26.30.220 "install $RELEASE_SHA $checksum $CI_RUN" < "$RUNNER_TEMP/package/release-$RELEASE_SHA.tar.gz"
+            else
+              jq -e --arg sha "$RELEASE_SHA" --arg checksum "$checksum" '.releases[] | select(.revision == $sha) | .archiveSHA256 == $checksum' "$RUNNER_TEMP/status.json"
             fi
             ssh -o BatchMode=yes lct-release@217.26.30.220 "deploy-test $RELEASE_SHA"
           elif [ "$TARGET" = prod ]; then
