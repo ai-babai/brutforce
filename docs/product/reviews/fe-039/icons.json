@@ -1,0 +1,90 @@
+{
+  "manifest": {
+    "id": "/",
+    "name": "Своё вино",
+    "short_name": "Своё вино",
+    "lang": "ru",
+    "start_url": "/",
+    "scope": "/",
+    "display": "standalone",
+    "background_color": "#fefdfa",
+    "theme_color": "#8f3d42",
+    "icons": [
+      {
+        "src": "/assets/icon-24-any-v1-192.png",
+        "sizes": "192x192",
+        "type": "image/png",
+        "purpose": "any"
+      },
+      {
+        "src": "/assets/icon-24-any-v1-512.png",
+        "sizes": "512x512",
+        "type": "image/png",
+        "purpose": "any"
+      },
+      {
+        "src": "/assets/icon-24-maskable-v1-192.png",
+        "sizes": "192x192",
+        "type": "image/png",
+        "purpose": "maskable"
+      },
+      {
+        "src": "/assets/icon-24-maskable-v1-512.png",
+        "sizes": "512x512",
+        "type": "image/png",
+        "purpose": "maskable"
+      }
+    ]
+  },
+  "assets": [
+    {
+      "url": "http://127.0.0.1:5190/assets/icon-24-favicon-v1-32.png",
+      "status": 200,
+      "type": "image/png",
+      "width": 32,
+      "height": 32
+    },
+    {
+      "url": "http://127.0.0.1:5190/assets/icon-24-favicon-v1-48.png",
+      "status": 200,
+      "type": "image/png",
+      "width": 48,
+      "height": 48
+    },
+    {
+      "url": "http://127.0.0.1:5190/assets/icon-24-apple-v1-180.png",
+      "status": 200,
+      "type": "image/png",
+      "width": 180,
+      "height": 180
+    },
+    {
+      "url": "http://127.0.0.1:5190/assets/icon-24-any-v1-192.png",
+      "status": 200,
+      "type": "image/png",
+      "width": 192,
+      "height": 192
+    },
+    {
+      "url": "http://127.0.0.1:5190/assets/icon-24-any-v1-512.png",
+      "status": 200,
+      "type": "image/png",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "url": "http://127.0.0.1:5190/assets/icon-24-maskable-v1-192.png",
+      "status": 200,
+      "type": "image/png",
+      "width": 192,
+      "height": 192
+    },
+    {
+      "url": "http://127.0.0.1:5190/assets/icon-24-maskable-v1-512.png",
+      "status": 200,
+      "type": "image/png",
+      "width": 512,
+      "height": 512
+    }
+  ]
+}

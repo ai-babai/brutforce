@@ -10,16 +10,28 @@
   "theme_color": "#8f3d42",
   "icons": [
     {
-      "src": "/assets/app-192.png",
+      "src": "/assets/icon-24-any-v1-192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     },
     {
-      "src": "/assets/app-512.png",
+      "src": "/assets/icon-24-any-v1-512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "/assets/icon-24-maskable-v1-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/assets/icon-24-maskable-v1-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ]
 }

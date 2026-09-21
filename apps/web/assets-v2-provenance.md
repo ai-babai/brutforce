@@ -29,3 +29,12 @@ Source design `4c0c601`, `mascot-hold-2d-alpha.png`, SHA256 `f0ea361d856964e5eef
 ## Transparent secondary art — issue #24
 
 Source design `4a3615f`. The walk, thoughtful-counter, cellar and offline runtime assets listed above were encoded with `cwebp -q 90 -alpha_q 100`; `webpmux` confirms transparency at 1536×1024 for each. No creative edits during conversion. The prior opaque WebP assets remain in Git.
+
+## App icon 24
+
+Approved source: `7a4c9e3:design/app-icon-study/assets/icon-24.png`, SHA-256
+`cb8fb933f6842f7c17133159acc89894e41ed3681ab4c30331fa7614933b33a6`.
+`public/assets/icon-24.png` is an unchanged copy. The versioned `any`, Apple,
+and favicon PNGs are dimension-only renditions. Maskable renditions center a
+56% copy of the source on a burgundy background, leaving the art inside the
+conservative 40%-radius safe circle; no artwork was redrawn or cropped.

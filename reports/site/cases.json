@@ -842,6 +842,27 @@
       "title": "Доступная компактная выдача на узком экране",
       "source": "apps/web/src/design.test.tsx",
       "spec": "docs/product/behavior-spec.md#фото-выделенный-лидер-и-вертикальный-список--fe-035"
+    },
+    {
+      "id": "ICON-001",
+      "area": "design",
+      "title": "Выбранная иконка24: ресурсы и метаданные",
+      "source": "apps/web/src/pwa.test.tsx",
+      "spec": "docs/product/behavior-spec.md#fe-039--выбранная-иконка-приложения-24"
+    },
+    {
+      "id": "ICON-002",
+      "area": "design",
+      "title": "Maskable сохраняет рисунок в безопасной зоне",
+      "source": "apps/web/src/pwa.test.tsx",
+      "spec": "docs/product/behavior-spec.md#fe-039--выбранная-иконка-приложения-24"
+    },
+    {
+      "id": "ICON-003",
+      "area": "design",
+      "title": "Обновление иконки сохраняет идентичность и данные приложения",
+      "source": "apps/web/src/pwa.test.tsx",
+      "spec": "docs/product/behavior-spec.md#fe-039--выбранная-иконка-приложения-24"
     }
   ]
 }

@@ -10,6 +10,17 @@ The selected Wine UX v2 assets come from design revision `29874e7`; approved nav
 - Primary camera glyph: 20 px inside a padded tile. Trailing scan glyph: 18 px. Navigation targets are at least 48 px; primary buttons at least 50 px and shutter 66 px. Compact secondary controls remain distinct from glyph dimensions.
 - Cards and photo surfaces use the app's soft 14-20 px radius family.
 
+## App icon · ICON-001
+
+The approved icon is candidate 24. `icon-24.png` stays the unmodified source;
+versioned PNG derivatives supply 32/48 px favicons, 180 px Apple touch icon,
+and 192/512 px manifest `any` icons. Separate 192/512 px `maskable` files
+center a 56% source rendition so the bottle, dog, and magnifier remain inside
+the conservative safe circle. Manifest identity (`id`, `start_url`, `scope`),
+storage keys, and service-worker policy are unchanged. Existing installed
+instances can retain their previously cached icon until the platform refreshes
+metadata; this is not a verified phone-install result.
+
 ## Responsive checkpoints
 
 - 320 px: single column is the base layout. Controls remain within the viewport.
