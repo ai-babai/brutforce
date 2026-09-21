@@ -1,0 +1,2383 @@
+{
+  "schemaVersion": 2,
+  "id": "20260919T140607Z-fast-444ae400",
+  "label": "v5.5 Lower welcome bottle",
+  "createdAt": "2026-09-19T14:06:07.935Z",
+  "revision": "working-tree",
+  "status": "passed",
+  "timing": {
+    "wallMs": 3443,
+    "suites": [
+      {
+        "id": "api",
+        "label": "Go API suite",
+        "processWallMs": 694,
+        "reportedMs": 443,
+        "testMeasuredSumMs": 70
+      },
+      {
+        "id": "ui",
+        "label": "Vitest UI suite",
+        "processWallMs": 2742,
+        "reportedMs": null,
+        "testMeasuredSumMs": 2357.0578740000005
+      }
+    ]
+  },
+  "tests": [
+    {
+      "name": "TestAPI001ExactSelectsCabernet",
+      "status": "passed",
+      "durationMs": 0,
+      "durationText": "<1 мс (разрешение Go)",
+      "suite": "api"
+    },
+    {
+      "name": "TestAPI002UncertainReturnsCandidatesWithoutSelection",
+      "status": "passed",
+      "durationMs": 0,
+      "durationText": "<1 мс (разрешение Go)",
+      "suite": "api"
+    },
+    {
+      "name": "TestAPI003NoneReturnsEmptyCandidates",
+      "status": "passed",
+      "durationMs": 0,
+      "durationText": "<1 мс (разрешение Go)",
+      "suite": "api"
+    },
+    {
+      "name": "TestAPI004ErrorIsStructured503",
+      "status": "passed",
+      "durationMs": 0,
+      "durationText": "<1 мс (разрешение Go)",
+      "suite": "api"
+    },
+    {
+      "name": "TestAPI005ManualQueryFiltersCaseInsensitively",
+      "status": "passed",
+      "durationMs": 0,
+      "durationText": "<1 мс (разрешение Go)",
+      "suite": "api"
+    },
+    {
+      "name": "TestAPI006InvalidInputIs400",
+      "status": "passed",
+      "durationMs": 0,
+      "durationText": "<1 мс (разрешение Go)",
+      "suite": "api"
+    },
+    {
+      "name": "TestAPI007MethodAndUnknownAPIRouteReturnJSON4xx",
+      "status": "passed",
+      "durationMs": 0,
+      "durationText": "<1 мс (разрешение Go)",
+      "suite": "api"
+    },
+    {
+      "name": "TestAPI008Health",
+      "status": "passed",
+      "durationMs": 0,
+      "durationText": "<1 мс (разрешение Go)",
+      "suite": "api"
+    },
+    {
+      "name": "TestAPI015EmbeddedCatalogIsConsistent",
+      "status": "passed",
+      "durationMs": 0,
+      "durationText": "<1 мс (разрешение Go)",
+      "suite": "api"
+    },
+    {
+      "name": "TestAPI016SearchFiltersCatalogFields",
+      "status": "passed",
+      "durationMs": 0,
+      "durationText": "<1 мс (разрешение Go)",
+      "suite": "api"
+    },
+    {
+      "name": "TestSearchBodyLimit",
+      "status": "passed",
+      "durationMs": 0,
+      "durationText": "<1 мс (разрешение Go)",
+      "suite": "api"
+    },
+    {
+      "name": "TestSPAHandlerServesFilesAndFallsBackToIndex",
+      "status": "passed",
+      "durationMs": 0,
+      "durationText": "<1 мс (разрешение Go)",
+      "suite": "api"
+    },
+    {
+      "name": "TestAPI010StoresPhotoAndSearchAcceptsReceipt",
+      "status": "passed",
+      "durationMs": 10,
+      "durationText": "10 мс",
+      "suite": "api"
+    },
+    {
+      "name": "TestAPI011RejectsInvalidAndOversizePhotos",
+      "status": "passed",
+      "durationMs": 10,
+      "durationText": "10 мс",
+      "suite": "api"
+    },
+    {
+      "name": "TestAPI012UploadUnavailableWithoutConfiguredStorage",
+      "status": "passed",
+      "durationMs": 0,
+      "durationText": "<1 мс (разрешение Go)",
+      "suite": "api"
+    },
+    {
+      "name": "TestAPI013UnknownPhotoIDIsNotFound",
+      "status": "passed",
+      "durationMs": 0,
+      "durationText": "<1 мс (разрешение Go)",
+      "suite": "api"
+    },
+    {
+      "name": "TestAPI014StorageLimitRejectsUpload",
+      "status": "passed",
+      "durationMs": 0,
+      "durationText": "<1 мс (разрешение Go)",
+      "suite": "api"
+    },
+    {
+      "name": "TestSEC006SearchInputBounds",
+      "status": "passed",
+      "durationMs": 0,
+      "durationText": "<1 мс (разрешение Go)",
+      "suite": "api"
+    },
+    {
+      "name": "TestSEC007RequestBudgetsAndWriteBoundary",
+      "status": "passed",
+      "durationMs": 0,
+      "durationText": "<1 мс (разрешение Go)",
+      "suite": "api"
+    },
+    {
+      "name": "TestSEC008PrivateUploadsAndHeaders",
+      "status": "passed",
+      "durationMs": 0,
+      "durationText": "<1 мс (разрешение Go)",
+      "suite": "api"
+    },
+    {
+      "name": "TestSEC001RejectsDisguisedNonImages/zip_named_png",
+      "status": "passed",
+      "durationMs": 0,
+      "durationText": "<1 мс (разрешение Go)",
+      "suite": "api"
+    },
+    {
+      "name": "TestSEC001RejectsDisguisedNonImages/svg_named_jpg",
+      "status": "passed",
+      "durationMs": 0,
+      "durationText": "<1 мс (разрешение Go)",
+      "suite": "api"
+    },
+    {
+      "name": "TestSEC001RejectsDisguisedNonImages/zip_with_spoofed_image_MIME",
+      "status": "passed",
+      "durationMs": 0,
+      "durationText": "<1 мс (разрешение Go)",
+      "suite": "api"
+    },
+    {
+      "name": "TestSEC001RejectsDisguisedNonImages",
+      "status": "passed",
+      "durationMs": 0,
+      "durationText": "<1 мс (разрешение Go)",
+      "suite": "api"
+    },
+    {
+      "name": "TestSEC002RejectsTruncatedImageAfterDecodeConfig/accepts_valid_jpeg",
+      "status": "passed",
+      "durationMs": 10,
+      "durationText": "10 мс",
+      "suite": "api"
+    },
+    {
+      "name": "TestSEC002RejectsTruncatedImageAfterDecodeConfig/accepts_valid_gif_first_frame",
+      "status": "passed",
+      "durationMs": 10,
+      "durationText": "10 мс",
+      "suite": "api"
+    },
+    {
+      "name": "TestSEC002RejectsTruncatedImageAfterDecodeConfig",
+      "status": "passed",
+      "durationMs": 20,
+      "durationText": "20 мс",
+      "suite": "api"
+    },
+    {
+      "name": "TestSEC003RejectsTinyOversizedImageConfig/pixel_limit",
+      "status": "passed",
+      "durationMs": 0,
+      "durationText": "<1 мс (разрешение Go)",
+      "suite": "api"
+    },
+    {
+      "name": "TestSEC003RejectsTinyOversizedImageConfig/single_dimension_limit",
+      "status": "passed",
+      "durationMs": 0,
+      "durationText": "<1 мс (разрешение Go)",
+      "suite": "api"
+    },
+    {
+      "name": "TestSEC003RejectsTinyOversizedImageConfig",
+      "status": "passed",
+      "durationMs": 0,
+      "durationText": "<1 мс (разрешение Go)",
+      "suite": "api"
+    },
+    {
+      "name": "TestSEC004RejectsInvalidMultipartAndOversizeFile/additional_field",
+      "status": "passed",
+      "durationMs": 0,
+      "durationText": "<1 мс (разрешение Go)",
+      "suite": "api"
+    },
+    {
+      "name": "TestSEC004RejectsInvalidMultipartAndOversizeFile/two_photo_files",
+      "status": "passed",
+      "durationMs": 0,
+      "durationText": "<1 мс (разрешение Go)",
+      "suite": "api"
+    },
+    {
+      "name": "TestSEC004RejectsInvalidMultipartAndOversizeFile/photo_without_filename",
+      "status": "passed",
+      "durationMs": 0,
+      "durationText": "<1 мс (разрешение Go)",
+      "suite": "api"
+    },
+    {
+      "name": "TestSEC004RejectsInvalidMultipartAndOversizeFile/file_exceeds_byte_cap",
+      "status": "passed",
+      "durationMs": 10,
+      "durationText": "10 мс",
+      "suite": "api"
+    },
+    {
+      "name": "TestSEC004RejectsInvalidMultipartAndOversizeFile",
+      "status": "passed",
+      "durationMs": 10,
+      "durationText": "10 мс",
+      "suite": "api"
+    },
+    {
+      "name": "TestSEC005LimitsConcurrentUploads",
+      "status": "passed",
+      "durationMs": 20,
+      "durationText": "20 мс",
+      "suite": "api"
+    },
+    {
+      "name": "mobile behavior demo UI-001 to UI-002 starts live camera and separates camera from gallery",
+      "status": "passed",
+      "durationMs": 109.61574999999993,
+      "durationText": "109.62 мс",
+      "suite": "ui"
+    },
+    {
+      "name": "mobile behavior demo stops a camera stream that resolves after leaving UI-002",
+      "status": "passed",
+      "durationMs": 101.63545900000008,
+      "durationText": "101.64 мс",
+      "suite": "ui"
+    },
+    {
+      "name": "mobile behavior demo UI-002 shutter captures a JPEG frame, uploads it, and stops the stream",
+      "status": "passed",
+      "durationMs": 48.821874999999864,
+      "durationText": "48.82 мс",
+      "suite": "ui"
+    },
+    {
+      "name": "mobile behavior demo UI-003 offers fallbacks after permission denial",
+      "status": "passed",
+      "durationMs": 41.97304099999997,
+      "durationText": "41.97 мс",
+      "suite": "ui"
+    },
+    {
+      "name": "mobile behavior demo UI-003A explains permission recovery and retains gallery fallback",
+      "status": "passed",
+      "durationMs": 55.73912500000006,
+      "durationText": "55.74 мс",
+      "suite": "ui"
+    },
+    {
+      "name": "mobile behavior demo upload preview sends multipart receipt into search and reaches UI-007",
+      "status": "passed",
+      "durationMs": 19.764417000000094,
+      "durationText": "19.76 мс",
+      "suite": "ui"
+    },
+    {
+      "name": "mobile behavior demo UI-011 rejects a non-image before API use",
+      "status": "passed",
+      "durationMs": 15.103374999999915,
+      "durationText": "15.10 мс",
+      "suite": "ui"
+    },
+    {
+      "name": "mobile behavior demo UI-004 shows deterministic long wait and allows cancel",
+      "status": "passed",
+      "durationMs": 43.109666999999945,
+      "durationText": "43.11 мс",
+      "suite": "ui"
+    },
+    {
+      "name": "mobile behavior demo cancelled stale response cannot leave UI-005",
+      "status": "passed",
+      "durationMs": 86.53999999999996,
+      "durationText": "86.54 мс",
+      "suite": "ui"
+    },
+    {
+      "name": "mobile behavior demo UI-005 retry preserves scenario and query",
+      "status": "passed",
+      "durationMs": 98.77095800000006,
+      "durationText": "98.77 мс",
+      "suite": "ui"
+    },
+    {
+      "name": "mobile behavior demo UI-005 retry reuses a completed upload receipt",
+      "status": "passed",
+      "durationMs": 45.775125000000116,
+      "durationText": "45.78 мс",
+      "suite": "ui"
+    },
+    {
+      "name": "mobile behavior demo UI-006 manual candidates do not invent an original photo",
+      "status": "passed",
+      "durationMs": 99.46170800000004,
+      "durationText": "99.46 мс",
+      "suite": "ui"
+    },
+    {
+      "name": "mobile behavior demo UI-007 exposes the simulated source description after manual candidate choice",
+      "status": "passed",
+      "durationMs": 105.46020799999997,
+      "durationText": "105.46 мс",
+      "suite": "ui"
+    },
+    {
+      "name": "mobile behavior demo UI-008 does not send an empty manual query and keeps camera entry available",
+      "status": "passed",
+      "durationMs": 44.67837499999996,
+      "durationText": "44.68 мс",
+      "suite": "ui"
+    },
+    {
+      "name": "mobile behavior demo UI-008 sends none and UI-009 offers recovery",
+      "status": "passed",
+      "durationMs": 88.96733399999994,
+      "durationText": "88.97 мс",
+      "suite": "ui"
+    },
+    {
+      "name": "mobile behavior demo UI-010 rejects selectedId absent from candidates",
+      "status": "passed",
+      "durationMs": 68.42091699999992,
+      "durationText": "68.42 мс",
+      "suite": "ui"
+    },
+    {
+      "name": "atlas design contract DESIGN-001 uses the atlas wine token and 82px primary action",
+      "status": "passed",
+      "durationMs": 0.6201249999999163,
+      "durationText": "0.62 мс",
+      "suite": "ui"
+    },
+    {
+      "name": "atlas design contract DESIGN-002 renders 24px camera and 28px scan glyph rules",
+      "status": "passed",
+      "durationMs": 91.39887500000009,
+      "durationText": "91.40 мс",
+      "suite": "ui"
+    },
+    {
+      "name": "atlas design contract DESIGN-003 declares the actual TrueType Onest files and every specified weight",
+      "status": "passed",
+      "durationMs": 0.7875409999999192,
+      "durationText": "0.79 мс",
+      "suite": "ui"
+    },
+    {
+      "name": "atlas design contract DESIGN-004 separates the 390px page padding from the 360px button geometry",
+      "status": "passed",
+      "durationMs": 0.13758400000006077,
+      "durationText": "0.14 мс",
+      "suite": "ui"
+    },
+    {
+      "name": "atlas design contract DESIGN-005 keeps the application free of demo controls",
+      "status": "passed",
+      "durationMs": 7.728832999999895,
+      "durationText": "7.73 мс",
+      "suite": "ui"
+    },
+    {
+      "name": "atlas design contract DESIGN-006 applies atlas typography to welcome candidates result and errors",
+      "status": "passed",
+      "durationMs": 0.10866699999996854,
+      "durationText": "0.11 мс",
+      "suite": "ui"
+    },
+    {
+      "name": "atlas design contract DESIGN-007 preserves 48px actions and exact camera shutter geometry",
+      "status": "passed",
+      "durationMs": 0.049709000000120795,
+      "durationText": "0.05 мс",
+      "suite": "ui"
+    },
+    {
+      "name": "atlas design contract DESIGN-008 renders the camera surface as a dark live-video container",
+      "status": "passed",
+      "durationMs": 0.03520800000001145,
+      "durationText": "0.04 мс",
+      "suite": "ui"
+    },
+    {
+      "name": "atlas design contract DESIGN-009 keeps candidate rows fully actionable with explicit metadata type",
+      "status": "passed",
+      "durationMs": 0.04520800000000236,
+      "durationText": "0.05 мс",
+      "suite": "ui"
+    },
+    {
+      "name": "atlas design contract DESIGN-010 bounds camera to the dynamic viewport with a shrinkable preview",
+      "status": "passed",
+      "durationMs": 0.06175000000007458,
+      "durationText": "0.06 мс",
+      "suite": "ui"
+    },
+    {
+      "name": "atlas design contract DESIGN-011 keeps camera actions in flow with safe-area and short-landscape rules",
+      "status": "passed",
+      "durationMs": 0.04758300000003146,
+      "durationText": "0.05 мс",
+      "suite": "ui"
+    },
+    {
+      "name": "DESIGN-012 keeps the hint outside the framed camera image",
+      "status": "passed",
+      "durationMs": 23.92120799999998,
+      "durationText": "23.92 мс",
+      "suite": "ui"
+    },
+    {
+      "name": "DESIGN-013 matches the approved Atlas scanner and target vector geometry",
+      "status": "passed",
+      "durationMs": 6.298667000000023,
+      "durationText": "6.30 мс",
+      "suite": "ui"
+    },
+    {
+      "name": "DESIGN-014 restores the complete airy welcome guidance from Atlas",
+      "status": "passed",
+      "durationMs": 3.973750000000109,
+      "durationText": "3.97 мс",
+      "suite": "ui"
+    },
+    {
+      "name": "DESIGN-015 limits the decorative phone frame to wide screens",
+      "status": "passed",
+      "durationMs": 24.004290999999967,
+      "durationText": "24.00 мс",
+      "suite": "ui"
+    },
+    {
+      "name": "DESIGN-016 camera uses the available desktop phone height, not the outer viewport",
+      "status": "passed",
+      "durationMs": 0.11366599999996652,
+      "durationText": "0.11 мс",
+      "suite": "ui"
+    },
+    {
+      "name": "DESIGN-017 keeps the three equal Tabler navigation actions outside the scroll region",
+      "status": "passed",
+      "durationMs": 6.088040999999976,
+      "durationText": "6.09 мс",
+      "suite": "ui"
+    },
+    {
+      "name": "DESIGN-018 marks only the current product section and uses the Atlas footer treatment",
+      "status": "passed",
+      "durationMs": 18.121875000000045,
+      "durationText": "18.12 мс",
+      "suite": "ui"
+    },
+    {
+      "name": "DESIGN-019 keeps result save in a compact, stable header target",
+      "status": "passed",
+      "durationMs": 2.805665999999974,
+      "durationText": "2.81 мс",
+      "suite": "ui"
+    },
+    {
+      "name": "DESIGN-020 groups search input and submit into one focused control",
+      "status": "passed",
+      "durationMs": 34.976249999999936,
+      "durationText": "34.98 мс",
+      "suite": "ui"
+    },
+    {
+      "name": "DESIGN-021 crops the approved bottle behind the welcome interface with the requested optical offset",
+      "status": "passed",
+      "durationMs": 4.561916999999994,
+      "durationText": "4.56 мс",
+      "suite": "ui"
+    },
+    {
+      "name": "catalog navigation and saved wines UI-016 bottom navigation opens the catalog, filters it, and resets section scroll",
+      "status": "passed",
+      "durationMs": 202.31241599999998,
+      "durationText": "202.31 мс",
+      "suite": "ui"
+    },
+    {
+      "name": "catalog navigation and saved wines UI-022 bottom Scanner starts a fresh camera capture and falls back after a denial",
+      "status": "passed",
+      "durationMs": 117.19966700000009,
+      "durationText": "117.20 мс",
+      "suite": "ui"
+    },
+    {
+      "name": "catalog navigation and saved wines UI-017 saves one validated catalog snapshot and restores it after reload",
+      "status": "passed",
+      "durationMs": 115.16041600000017,
+      "durationText": "115.16 мс",
+      "suite": "ui"
+    },
+    {
+      "name": "catalog navigation and saved wines UI-018 removes a saved wine and returns to the useful empty state",
+      "status": "passed",
+      "durationMs": 75.72720800000002,
+      "durationText": "75.73 мс",
+      "suite": "ui"
+    },
+    {
+      "name": "catalog navigation and saved wines UI-019 clears corrupt or duplicate saved snapshots without crashing",
+      "status": "passed",
+      "durationMs": 25.89316699999995,
+      "durationText": "25.89 мс",
+      "suite": "ui"
+    },
+    {
+      "name": "catalog navigation and saved wines UI-020 leaving catalog aborts the request and a late response cannot change section",
+      "status": "passed",
+      "durationMs": 52.86541699999998,
+      "durationText": "52.87 мс",
+      "suite": "ui"
+    },
+    {
+      "name": "catalog navigation and saved wines UI-021 reports storage failure and does not claim the wine was saved",
+      "status": "passed",
+      "durationMs": 71.85816699999987,
+      "durationText": "71.86 мс",
+      "suite": "ui"
+    },
+    {
+      "name": "catalog navigation and saved wines UI-023 toggles the stable compact header save action",
+      "status": "passed",
+      "durationMs": 89.95783299999994,
+      "durationText": "89.96 мс",
+      "suite": "ui"
+    },
+    {
+      "name": "catalog navigation and saved wines UI-024 submits the compact search field with its button and Enter",
+      "status": "passed",
+      "durationMs": 123.90708400000017,
+      "durationText": "123.91 мс",
+      "suite": "ui"
+    },
+    {
+      "name": "UI-012 ordinary browser remains usable without installation support",
+      "status": "passed",
+      "durationMs": 109.85325000000012,
+      "durationText": "109.85 мс",
+      "suite": "ui"
+    },
+    {
+      "name": "UI-013 installation only opens on click; dismissal preserves the web journey",
+      "status": "passed",
+      "durationMs": 42.32316700000001,
+      "durationText": "42.32 мс",
+      "suite": "ui"
+    },
+    {
+      "name": "UI-013 refused browser install prompt does not break the page",
+      "status": "passed",
+      "durationMs": 2.473167000000103,
+      "durationText": "2.47 мс",
+      "suite": "ui"
+    },
+    {
+      "name": "UI-014 standalone exposes the same application without an install offer",
+      "status": "passed",
+      "durationMs": 25.94337500000006,
+      "durationText": "25.94 мс",
+      "suite": "ui"
+    },
+    {
+      "name": "UI-014 successful installation removes the offer",
+      "status": "passed",
+      "durationMs": 0.987041999999974,
+      "durationText": "0.99 мс",
+      "suite": "ui"
+    },
+    {
+      "name": "UI-015 install manifest launches the same root with real PNG icons",
+      "status": "passed",
+      "durationMs": 0.8727499999999964,
+      "durationText": "0.87 мс",
+      "suite": "ui"
+    }
+  ],
+  "command": "go test -count=1 -json ./...; npm --prefix apps/web test -- --reporter=json",
+  "caveat": "Синтетический контракт demo и проверки состояний UI. Это не benchmark OCR, визуального поиска или конкурсного качества.",
+  "cases": [
+    {
+      "id": "API-001",
+      "area": "api",
+      "title": "Exact response orders candidates and selects Cabernet",
+      "source": "apps/api/README.md",
+      "spec": "docs/product/behavior-spec.md#demo-003",
+      "given": "сценарий exact",
+      "when": "POST /api/search",
+      "then": "выбран первый synthetic candidate",
+      "status": "passed",
+      "durationMs": 0,
+      "durationText": "<1 мс (разрешение Go)",
+      "reason": "Go-проверка TestAPI001ExactSelectsCabernet: пройдена",
+      "tests": [
+        {
+          "name": "TestAPI001ExactSelectsCabernet",
+          "status": "passed",
+          "durationMs": 0,
+          "durationText": "<1 мс (разрешение Go)"
+        }
+      ]
+    },
+    {
+      "id": "API-002",
+      "area": "api",
+      "title": "Uncertain response has candidates and no selection",
+      "source": "apps/api/README.md",
+      "spec": "docs/product/behavior-spec.md#demo-004",
+      "given": "сценарий uncertain",
+      "when": "POST /api/search",
+      "then": "есть кандидаты, selectedId отсутствует",
+      "status": "passed",
+      "durationMs": 0,
+      "durationText": "<1 мс (разрешение Go)",
+      "reason": "Go-проверка TestAPI002UncertainReturnsCandidatesWithoutSelection: пройдена",
+      "tests": [
+        {
+          "name": "TestAPI002UncertainReturnsCandidatesWithoutSelection",
+          "status": "passed",
+          "durationMs": 0,
+          "durationText": "<1 мс (разрешение Go)"
+        }
+      ]
+    },
+    {
+      "id": "API-003",
+      "area": "api",
+      "title": "No match returns an explicit empty candidates array",
+      "source": "apps/api/README.md",
+      "spec": "docs/product/behavior-spec.md#demo-006",
+      "given": "сценарий none",
+      "when": "POST /api/search",
+      "then": "candidates равен []",
+      "status": "passed",
+      "durationMs": 0,
+      "durationText": "<1 мс (разрешение Go)",
+      "reason": "Go-проверка TestAPI003NoneReturnsEmptyCandidates: пройдена",
+      "tests": [
+        {
+          "name": "TestAPI003NoneReturnsEmptyCandidates",
+          "status": "passed",
+          "durationMs": 0,
+          "durationText": "<1 мс (разрешение Go)"
+        }
+      ]
+    },
+    {
+      "id": "API-004",
+      "area": "api",
+      "title": "Synthetic backend failure is structured HTTP 503",
+      "source": "apps/api/README.md",
+      "spec": "docs/product/behavior-spec.md#demo-009",
+      "given": "сценарий error",
+      "when": "POST /api/search",
+      "then": "HTTP 503 содержит structured error",
+      "status": "passed",
+      "durationMs": 0,
+      "durationText": "<1 мс (разрешение Go)",
+      "reason": "Go-проверка TestAPI004ErrorIsStructured503: пройдена",
+      "tests": [
+        {
+          "name": "TestAPI004ErrorIsStructured503",
+          "status": "passed",
+          "durationMs": 0,
+          "durationText": "<1 мс (разрешение Go)"
+        }
+      ]
+    },
+    {
+      "id": "API-005",
+      "area": "api",
+      "title": "Manual name or winery query filters case-insensitively",
+      "source": "apps/api/README.md",
+      "spec": "docs/product/behavior-spec.md#demo-010",
+      "given": "текст названия или винодельни",
+      "when": "POST /api/search",
+      "then": "поиск без учёта регистра",
+      "status": "passed",
+      "durationMs": 0,
+      "durationText": "<1 мс (разрешение Go)",
+      "reason": "Go-проверка TestAPI005ManualQueryFiltersCaseInsensitively: пройдена",
+      "tests": [
+        {
+          "name": "TestAPI005ManualQueryFiltersCaseInsensitively",
+          "status": "passed",
+          "durationMs": 0,
+          "durationText": "<1 мс (разрешение Go)"
+        }
+      ]
+    },
+    {
+      "id": "API-006",
+      "area": "api",
+      "title": "Invalid input is a structured HTTP 400",
+      "source": "apps/api/README.md",
+      "spec": "docs/product/behavior-spec.md",
+      "given": "некорректный JSON или scenario",
+      "when": "POST /api/search",
+      "then": "HTTP 400 JSON error",
+      "status": "passed",
+      "durationMs": 0,
+      "durationText": "<1 мс (разрешение Go)",
+      "reason": "Go-проверка TestAPI006InvalidInputIs400: пройдена",
+      "tests": [
+        {
+          "name": "TestAPI006InvalidInputIs400",
+          "status": "passed",
+          "durationMs": 0,
+          "durationText": "<1 мс (разрешение Go)"
+        }
+      ]
+    },
+    {
+      "id": "API-007",
+      "area": "api",
+      "title": "Method and unknown API route are JSON 4xx",
+      "source": "apps/api/README.md",
+      "spec": "docs/product/behavior-spec.md",
+      "given": "неверный method или API path",
+      "when": "запрос к API",
+      "then": "JSON HTTP 405 либо 404",
+      "status": "passed",
+      "durationMs": 0,
+      "durationText": "<1 мс (разрешение Go)",
+      "reason": "Go-проверка TestAPI007MethodAndUnknownAPIRouteReturnJSON4xx: пройдена",
+      "tests": [
+        {
+          "name": "TestAPI007MethodAndUnknownAPIRouteReturnJSON4xx",
+          "status": "passed",
+          "durationMs": 0,
+          "durationText": "<1 мс (разрешение Go)"
+        }
+      ]
+    },
+    {
+      "id": "API-008",
+      "area": "api",
+      "title": "Health endpoint marks synthetic demo state",
+      "source": "apps/api/README.md",
+      "spec": "docs/product/behavior-spec.md",
+      "given": "сервер доступен",
+      "when": "GET /api/health",
+      "then": "ok и demo равны true",
+      "status": "passed",
+      "durationMs": 0,
+      "durationText": "<1 мс (разрешение Go)",
+      "reason": "Go-проверка TestAPI008Health: пройдена",
+      "tests": [
+        {
+          "name": "TestAPI008Health",
+          "status": "passed",
+          "durationMs": 0,
+          "durationText": "<1 мс (разрешение Go)"
+        }
+      ]
+    },
+    {
+      "id": "API-009",
+      "area": "api",
+      "title": "WEB_ROOT serves static files and SPA fallback",
+      "source": "apps/api/README.md",
+      "spec": "reports/site/index.html",
+      "given": "задан WEB_ROOT",
+      "when": "GET file или client route",
+      "then": "файл либо index.html отданы",
+      "status": "passed",
+      "durationMs": 0,
+      "durationText": "<1 мс (разрешение Go)",
+      "reason": "Go-проверка TestSPAHandlerServesFilesAndFallsBackToIndex: пройдена",
+      "tests": [
+        {
+          "name": "TestSPAHandlerServesFilesAndFallsBackToIndex",
+          "status": "passed",
+          "durationMs": 0,
+          "durationText": "<1 мс (разрешение Go)"
+        }
+      ]
+    },
+    {
+      "id": "API-010",
+      "area": "api",
+      "title": "Загрузка сохраняет байты фото и выдаёт receipt для поиска",
+      "source": "apps/api/main_test.go",
+      "spec": "docs/product/behavior-spec.md#demo-002",
+      "given": "валидный PNG upload",
+      "when": "POST upload, затем search по receipt",
+      "then": "байты и metadata сохранены, receipt принимается",
+      "status": "passed",
+      "durationMs": 10,
+      "durationText": "10 мс",
+      "reason": "Go-проверка TestAPI010StoresPhotoAndSearchAcceptsReceipt: пройдена",
+      "tests": [
+        {
+          "name": "TestAPI010StoresPhotoAndSearchAcceptsReceipt",
+          "status": "passed",
+          "durationMs": 10,
+          "durationText": "10 мс"
+        }
+      ]
+    },
+    {
+      "id": "API-011",
+      "area": "api",
+      "title": "Некорректное и слишком большое фото отклоняются",
+      "source": "apps/api/main_test.go",
+      "spec": "docs/product/behavior-spec.md#demo-007",
+      "given": "некорректное либо >10 MiB фото",
+      "when": "POST upload",
+      "then": "400 без записи",
+      "status": "passed",
+      "durationMs": 10,
+      "durationText": "10 мс",
+      "reason": "Go-проверка TestAPI011RejectsInvalidAndOversizePhotos: пройдена",
+      "tests": [
+        {
+          "name": "TestAPI011RejectsInvalidAndOversizePhotos",
+          "status": "passed",
+          "durationMs": 10,
+          "durationText": "10 мс"
+        }
+      ]
+    },
+    {
+      "id": "API-012",
+      "area": "api",
+      "title": "Без настроенного хранилища upload возвращает storage_unavailable",
+      "source": "apps/api/main_test.go",
+      "spec": "docs/product/behavior-spec.md",
+      "given": "UPLOAD_DIR не задан",
+      "when": "POST upload",
+      "then": "503 storage_unavailable",
+      "status": "passed",
+      "durationMs": 0,
+      "durationText": "<1 мс (разрешение Go)",
+      "reason": "Go-проверка TestAPI012UploadUnavailableWithoutConfiguredStorage: пройдена",
+      "tests": [
+        {
+          "name": "TestAPI012UploadUnavailableWithoutConfiguredStorage",
+          "status": "passed",
+          "durationMs": 0,
+          "durationText": "<1 мс (разрешение Go)"
+        }
+      ]
+    },
+    {
+      "id": "API-013",
+      "area": "api",
+      "title": "Неизвестный photoId возвращает photo_not_found",
+      "source": "apps/api/main_test.go",
+      "spec": "docs/product/behavior-spec.md",
+      "given": "неизвестный photoId",
+      "when": "POST search",
+      "then": "404 photo_not_found",
+      "status": "passed",
+      "durationMs": 0,
+      "durationText": "<1 мс (разрешение Go)",
+      "reason": "Go-проверка TestAPI013UnknownPhotoIDIsNotFound: пройдена",
+      "tests": [
+        {
+          "name": "TestAPI013UnknownPhotoIDIsNotFound",
+          "status": "passed",
+          "durationMs": 0,
+          "durationText": "<1 мс (разрешение Go)"
+        }
+      ]
+    },
+    {
+      "id": "API-014",
+      "area": "api",
+      "title": "Лимит хранилища отклоняет upload",
+      "source": "apps/api/main_test.go",
+      "spec": "docs/product/behavior-spec.md",
+      "given": "хранилище заполнено",
+      "when": "POST upload",
+      "then": "503 storage_full",
+      "status": "passed",
+      "durationMs": 0,
+      "durationText": "<1 мс (разрешение Go)",
+      "reason": "Go-проверка TestAPI014StorageLimitRejectsUpload: пройдена",
+      "tests": [
+        {
+          "name": "TestAPI014StorageLimitRejectsUpload",
+          "status": "passed",
+          "durationMs": 0,
+          "durationText": "<1 мс (разрешение Go)"
+        }
+      ]
+    },
+    {
+      "id": "API-015",
+      "area": "api",
+      "title": "Встроенный каталог содержит восемь synthetic записей",
+      "source": "apps/api/main_test.go",
+      "spec": "contracts/demo-catalog.md",
+      "given": "embedded catalog",
+      "when": "GET /api/catalog",
+      "then": "ровно восемь уникальных synthetic записей",
+      "status": "passed",
+      "durationMs": 0,
+      "durationText": "<1 мс (разрешение Go)",
+      "reason": "Go-проверка TestAPI015EmbeddedCatalogIsConsistent: пройдена",
+      "tests": [
+        {
+          "name": "TestAPI015EmbeddedCatalogIsConsistent",
+          "status": "passed",
+          "durationMs": 0,
+          "durationText": "<1 мс (разрешение Go)"
+        }
+      ]
+    },
+    {
+      "id": "API-016",
+      "area": "api",
+      "title": "Поиск фильтрует каталог по названию, винодельне и году",
+      "source": "apps/api/main_test.go",
+      "spec": "contracts/demo-catalog.md",
+      "given": "название, винодельня или год",
+      "when": "POST search",
+      "then": "фильтрация по тому же embedded catalog",
+      "status": "passed",
+      "durationMs": 0,
+      "durationText": "<1 мс (разрешение Go)",
+      "reason": "Go-проверка TestAPI016SearchFiltersCatalogFields: пройдена",
+      "tests": [
+        {
+          "name": "TestAPI016SearchFiltersCatalogFields",
+          "status": "passed",
+          "durationMs": 0,
+          "durationText": "<1 мс (разрешение Go)"
+        }
+      ]
+    },
+    {
+      "id": "UI-001",
+      "area": "web",
+      "title": "Welcome shows the scan entry",
+      "source": "apps/web/README.md; Wine UX Atlas",
+      "spec": "docs/product/behavior-spec.md#demo-001",
+      "given": "стартовый экран",
+      "when": "пользователь начинает путь",
+      "then": "есть вход в сканирование",
+      "status": "passed",
+      "durationMs": 109.61574999999993,
+      "durationText": "109.62 мс",
+      "reason": "Vitest-проверка: пройдена (mobile behavior demo UI-001 to UI-002 starts live camera and separates camera from gallery)",
+      "output": "",
+      "tests": [
+        {
+          "name": "mobile behavior demo UI-001 to UI-002 starts live camera and separates camera from gallery",
+          "status": "passed",
+          "durationMs": 109.61574999999993,
+          "durationText": "109.62 мс",
+          "output": ""
+        }
+      ]
+    },
+    {
+      "id": "UI-002",
+      "area": "web",
+      "title": "Scan entry opens simulated camera guidance",
+      "source": "apps/web/README.md; Wine UX Atlas",
+      "spec": "docs/product/behavior-spec.md#demo-001",
+      "given": "пользователь выбрал сканирование",
+      "when": "переход UI",
+      "then": "есть камера/выбор файла",
+      "status": "passed",
+      "durationText": "несколько проверок — см. детали",
+      "reason": "Vitest-проверка: пройдена (mobile behavior demo UI-002 shutter captures a JPEG frame, uploads it, and stops the stream)",
+      "output": "",
+      "tests": [
+        {
+          "name": "mobile behavior demo UI-001 to UI-002 starts live camera and separates camera from gallery",
+          "status": "passed",
+          "durationMs": 109.61574999999993,
+          "durationText": "109.62 мс",
+          "output": ""
+        },
+        {
+          "name": "mobile behavior demo stops a camera stream that resolves after leaving UI-002",
+          "status": "passed",
+          "durationMs": 101.63545900000008,
+          "durationText": "101.64 мс",
+          "output": ""
+        },
+        {
+          "name": "mobile behavior demo UI-002 shutter captures a JPEG frame, uploads it, and stops the stream",
+          "status": "passed",
+          "durationMs": 48.821874999999864,
+          "durationText": "48.82 мс",
+          "output": ""
+        }
+      ]
+    },
+    {
+      "id": "UI-003",
+      "area": "web",
+      "title": "Camera permission denial exposes gallery fallback",
+      "source": "apps/web/README.md; Wine UX Atlas",
+      "spec": "docs/product/behavior-spec.md#demo-008",
+      "given": "камера запрещена",
+      "when": "пользователь начинает путь",
+      "then": "доступны fallback действия",
+      "status": "passed",
+      "durationMs": 41.97304099999997,
+      "durationText": "41.97 мс",
+      "reason": "Vitest-проверка: пройдена (mobile behavior demo UI-003 offers fallbacks after permission denial)",
+      "output": "",
+      "tests": [
+        {
+          "name": "mobile behavior demo UI-003 offers fallbacks after permission denial",
+          "status": "passed",
+          "durationMs": 41.97304099999997,
+          "durationText": "41.97 мс",
+          "output": ""
+        }
+      ]
+    },
+    {
+      "id": "UI-004",
+      "area": "web",
+      "title": "Searching state is cancellable",
+      "source": "apps/web/README.md; Wine UX Atlas",
+      "spec": "docs/product/behavior-spec.md#demo-005",
+      "given": "поиск не завершился",
+      "when": "пользователь отменяет",
+      "then": "видно отменённое состояние",
+      "status": "passed",
+      "durationMs": 43.109666999999945,
+      "durationText": "43.11 мс",
+      "reason": "Vitest-проверка: пройдена (mobile behavior demo UI-004 shows deterministic long wait and allows cancel)",
+      "output": "",
+      "tests": [
+        {
+          "name": "mobile behavior demo UI-004 shows deterministic long wait and allows cancel",
+          "status": "passed",
+          "durationMs": 43.109666999999945,
+          "durationText": "43.11 мс",
+          "output": ""
+        }
+      ]
+    },
+    {
+      "id": "UI-005",
+      "area": "web",
+      "title": "Cancelled search stays retryable",
+      "source": "apps/web/README.md; Wine UX Atlas",
+      "spec": "docs/product/behavior-spec.md#demo-005",
+      "given": "поиск отменён",
+      "when": "пользователь повторяет",
+      "then": "сценарий и query сохранены",
+      "status": "passed",
+      "durationText": "несколько проверок — см. детали",
+      "reason": "Vitest-проверка: пройдена (mobile behavior demo UI-005 retry reuses a completed upload receipt)",
+      "output": "",
+      "tests": [
+        {
+          "name": "mobile behavior demo cancelled stale response cannot leave UI-005",
+          "status": "passed",
+          "durationMs": 86.53999999999996,
+          "durationText": "86.54 мс",
+          "output": ""
+        },
+        {
+          "name": "mobile behavior demo UI-005 retry preserves scenario and query",
+          "status": "passed",
+          "durationMs": 98.77095800000006,
+          "durationText": "98.77 мс",
+          "output": ""
+        },
+        {
+          "name": "mobile behavior demo UI-005 retry reuses a completed upload receipt",
+          "status": "passed",
+          "durationMs": 45.775125000000116,
+          "durationText": "45.78 мс",
+          "output": ""
+        }
+      ]
+    },
+    {
+      "id": "UI-016",
+      "area": "web",
+      "title": "Нижняя навигация открывает каталог, фильтрует его и сбрасывает прокрутку раздела",
+      "source": "apps/web/src/navigation.test.tsx",
+      "spec": "apps/web/design-specs.md",
+      "given": "навигация приложения",
+      "when": "открыт поиск и введён query",
+      "then": "каталог фильтруется, активный раздел выделен",
+      "status": "passed",
+      "durationMs": 202.31241599999998,
+      "durationText": "202.31 мс",
+      "reason": "Vitest-проверка: пройдена (catalog navigation and saved wines UI-016 bottom navigation opens the catalog, filters it, and resets section scroll)",
+      "output": "",
+      "tests": [
+        {
+          "name": "catalog navigation and saved wines UI-016 bottom navigation opens the catalog, filters it, and resets section scroll",
+          "status": "passed",
+          "durationMs": 202.31241599999998,
+          "durationText": "202.31 мс",
+          "output": ""
+        }
+      ]
+    },
+    {
+      "id": "UI-017",
+      "area": "web",
+      "title": "Сохранённая карточка восстанавливается после reload",
+      "source": "apps/web/src/navigation.test.tsx",
+      "spec": "apps/web/design-specs.md",
+      "given": "каталожная карточка",
+      "when": "сохранить и перезагрузить",
+      "then": "один local snapshot восстановлен",
+      "status": "passed",
+      "durationMs": 115.16041600000017,
+      "durationText": "115.16 мс",
+      "reason": "Vitest-проверка: пройдена (catalog navigation and saved wines UI-017 saves one validated catalog snapshot and restores it after reload)",
+      "output": "",
+      "tests": [
+        {
+          "name": "catalog navigation and saved wines UI-017 saves one validated catalog snapshot and restores it after reload",
+          "status": "passed",
+          "durationMs": 115.16041600000017,
+          "durationText": "115.16 мс",
+          "output": ""
+        }
+      ]
+    },
+    {
+      "id": "UI-018",
+      "area": "web",
+      "title": "Удаление сохранённого вина возвращает полезное пустое состояние",
+      "source": "apps/web/src/navigation.test.tsx",
+      "spec": "apps/web/design-specs.md",
+      "given": "сохранённое вино",
+      "when": "удалить последнюю запись",
+      "then": "показано полезное пустое состояние",
+      "status": "passed",
+      "durationMs": 75.72720800000002,
+      "durationText": "75.73 мс",
+      "reason": "Vitest-проверка: пройдена (catalog navigation and saved wines UI-018 removes a saved wine and returns to the useful empty state)",
+      "output": "",
+      "tests": [
+        {
+          "name": "catalog navigation and saved wines UI-018 removes a saved wine and returns to the useful empty state",
+          "status": "passed",
+          "durationMs": 75.72720800000002,
+          "durationText": "75.73 мс",
+          "output": ""
+        }
+      ]
+    },
+    {
+      "id": "UI-019",
+      "area": "web",
+      "title": "Повреждённые или дублирующиеся сохранения не ломают запуск",
+      "source": "apps/web/src/navigation.test.tsx",
+      "spec": "apps/web/design-specs.md",
+      "given": "повреждённый либо duplicate storage",
+      "when": "открыть приложение",
+      "then": "запуск не падает, записи очищены",
+      "status": "passed",
+      "durationMs": 25.89316699999995,
+      "durationText": "25.89 мс",
+      "reason": "Vitest-проверка: пройдена (catalog navigation and saved wines UI-019 clears corrupt or duplicate saved snapshots without crashing)",
+      "output": "",
+      "tests": [
+        {
+          "name": "catalog navigation and saved wines UI-019 clears corrupt or duplicate saved snapshots without crashing",
+          "status": "passed",
+          "durationMs": 25.89316699999995,
+          "durationText": "25.89 мс",
+          "output": ""
+        }
+      ]
+    },
+    {
+      "id": "UI-020",
+      "area": "web",
+      "title": "Уход из каталога отменяет запрос и late response не меняет раздел",
+      "source": "apps/web/src/navigation.test.tsx",
+      "spec": "apps/web/design-specs.md",
+      "given": "поиск каталога в ожидании",
+      "when": "уйти в другой раздел",
+      "then": "запрос отменён, поздний ответ игнорирован",
+      "status": "passed",
+      "durationMs": 52.86541699999998,
+      "durationText": "52.87 мс",
+      "reason": "Vitest-проверка: пройдена (catalog navigation and saved wines UI-020 leaving catalog aborts the request and a late response cannot change section)",
+      "output": "",
+      "tests": [
+        {
+          "name": "catalog navigation and saved wines UI-020 leaving catalog aborts the request and a late response cannot change section",
+          "status": "passed",
+          "durationMs": 52.86541699999998,
+          "durationText": "52.87 мс",
+          "output": ""
+        }
+      ]
+    },
+    {
+      "id": "UI-021",
+      "area": "web",
+      "title": "Ошибка browser storage не выдаётся за сохранение",
+      "source": "apps/web/src/navigation.test.tsx",
+      "spec": "apps/web/design-specs.md",
+      "given": "browser storage бросает ошибку",
+      "when": "сохранить карточку",
+      "then": "ошибка видна, успех не заявлен",
+      "status": "passed",
+      "durationMs": 71.85816699999987,
+      "durationText": "71.86 мс",
+      "reason": "Vitest-проверка: пройдена (catalog navigation and saved wines UI-021 reports storage failure and does not claim the wine was saved)",
+      "output": "",
+      "tests": [
+        {
+          "name": "catalog navigation and saved wines UI-021 reports storage failure and does not claim the wine was saved",
+          "status": "passed",
+          "durationMs": 71.85816699999987,
+          "durationText": "71.86 мс",
+          "output": ""
+        }
+      ]
+    },
+    {
+      "id": "UI-006",
+      "area": "web",
+      "title": "Uncertain result exposes correction candidates",
+      "source": "apps/web/README.md; Wine UX Atlas",
+      "spec": "docs/product/behavior-spec.md#demo-004",
+      "given": "API вернул кандидатов",
+      "when": "пользователь исправляет ответ",
+      "then": "можно выбрать другой результат",
+      "status": "passed",
+      "durationMs": 99.46170800000004,
+      "durationText": "99.46 мс",
+      "reason": "Vitest-проверка: пройдена (mobile behavior demo UI-006 manual candidates do not invent an original photo)",
+      "output": "",
+      "tests": [
+        {
+          "name": "mobile behavior demo UI-006 manual candidates do not invent an original photo",
+          "status": "passed",
+          "durationMs": 99.46170800000004,
+          "durationText": "99.46 мс",
+          "output": ""
+        }
+      ]
+    },
+    {
+      "id": "UI-007",
+      "area": "web",
+      "title": "Exact result opens synthetic wine details",
+      "source": "apps/web/README.md; Wine UX Atlas",
+      "spec": "docs/product/behavior-spec.md#demo-003",
+      "given": "mocked API вернул exact shape",
+      "when": "React применяет ответ",
+      "then": "видны synthetic details",
+      "status": "passed",
+      "durationText": "несколько проверок — см. детали",
+      "reason": "Vitest-проверка: пройдена (mobile behavior demo UI-007 exposes the simulated source description after manual candidate choice)",
+      "output": "",
+      "tests": [
+        {
+          "name": "mobile behavior demo upload preview sends multipart receipt into search and reaches UI-007",
+          "status": "passed",
+          "durationMs": 19.764417000000094,
+          "durationText": "19.76 мс",
+          "output": ""
+        },
+        {
+          "name": "mobile behavior demo UI-007 exposes the simulated source description after manual candidate choice",
+          "status": "passed",
+          "durationMs": 105.46020799999997,
+          "durationText": "105.46 мс",
+          "output": ""
+        }
+      ]
+    },
+    {
+      "id": "UI-008",
+      "area": "web",
+      "title": "Manual search route is available",
+      "source": "apps/web/README.md; Wine UX Atlas",
+      "spec": "docs/product/behavior-spec.md#demo-010",
+      "given": "пользователь ищет вручную",
+      "when": "отправлен scenario none",
+      "then": "доступен экран no-match",
+      "status": "passed",
+      "durationText": "несколько проверок — см. детали",
+      "reason": "Vitest-проверка: пройдена (mobile behavior demo UI-008 sends none and UI-009 offers recovery)",
+      "output": "",
+      "tests": [
+        {
+          "name": "mobile behavior demo UI-008 does not send an empty manual query and keeps camera entry available",
+          "status": "passed",
+          "durationMs": 44.67837499999996,
+          "durationText": "44.68 мс",
+          "output": ""
+        },
+        {
+          "name": "mobile behavior demo UI-008 sends none and UI-009 offers recovery",
+          "status": "passed",
+          "durationMs": 88.96733399999994,
+          "durationText": "88.97 мс",
+          "output": ""
+        }
+      ]
+    },
+    {
+      "id": "UI-009",
+      "area": "web",
+      "title": "Empty API result remains recoverable",
+      "source": "apps/web/README.md; Wine UX Atlas",
+      "spec": "docs/product/behavior-spec.md#demo-006",
+      "given": "API вернул пустых кандидатов",
+      "when": "React применяет ответ",
+      "then": "доступно восстановление",
+      "status": "passed",
+      "durationMs": 88.96733399999994,
+      "durationText": "88.97 мс",
+      "reason": "Vitest-проверка: пройдена (mobile behavior demo UI-008 sends none and UI-009 offers recovery)",
+      "output": "",
+      "tests": [
+        {
+          "name": "mobile behavior demo UI-008 sends none and UI-009 offers recovery",
+          "status": "passed",
+          "durationMs": 88.96733399999994,
+          "durationText": "88.97 мс",
+          "output": ""
+        }
+      ]
+    },
+    {
+      "id": "UI-010",
+      "area": "web",
+      "title": "Service error remains recoverable",
+      "source": "apps/web/README.md; Wine UX Atlas",
+      "spec": "docs/product/behavior-spec.md#demo-009",
+      "given": "selectedId отсутствует в candidates",
+      "when": "React валидирует ответ",
+      "then": "видна recoverable error",
+      "status": "passed",
+      "durationMs": 68.42091699999992,
+      "durationText": "68.42 мс",
+      "reason": "Vitest-проверка: пройдена (mobile behavior demo UI-010 rejects selectedId absent from candidates)",
+      "output": "",
+      "tests": [
+        {
+          "name": "mobile behavior demo UI-010 rejects selectedId absent from candidates",
+          "status": "passed",
+          "durationMs": 68.42091699999992,
+          "durationText": "68.42 мс",
+          "output": ""
+        }
+      ]
+    },
+    {
+      "id": "UI-011",
+      "area": "web",
+      "title": "Non-image file is rejected before preview",
+      "source": "apps/web/src/App.test.tsx",
+      "spec": "docs/product/behavior-spec.md#demo-007",
+      "status": "passed",
+      "durationMs": 15.103374999999915,
+      "durationText": "15.10 мс",
+      "reason": "Vitest-проверка: пройдена (mobile behavior demo UI-011 rejects a non-image before API use)",
+      "output": "",
+      "tests": [
+        {
+          "name": "mobile behavior demo UI-011 rejects a non-image before API use",
+          "status": "passed",
+          "durationMs": 15.103374999999915,
+          "durationText": "15.10 мс",
+          "output": ""
+        }
+      ]
+    },
+    {
+      "id": "UI-003A",
+      "area": "web",
+      "title": "Инструкция восстановления доступа к камере сохраняет fallback",
+      "source": "apps/web/src/App.test.tsx",
+      "spec": "docs/product/behavior-spec.md#demo-008",
+      "status": "passed",
+      "durationMs": 55.73912500000006,
+      "durationText": "55.74 мс",
+      "reason": "Vitest-проверка: пройдена (mobile behavior demo UI-003A explains permission recovery and retains gallery fallback)",
+      "output": "",
+      "tests": [
+        {
+          "name": "mobile behavior demo UI-003A explains permission recovery and retains gallery fallback",
+          "status": "passed",
+          "durationMs": 55.73912500000006,
+          "durationText": "55.74 мс",
+          "output": ""
+        }
+      ]
+    },
+    {
+      "id": "DESIGN-001",
+      "area": "design",
+      "title": "Винный токен Atlas и основное действие 82px",
+      "source": "apps/web/src/design.test.tsx",
+      "spec": "apps/web/design-specs.md",
+      "status": "passed",
+      "durationMs": 0.6201249999999163,
+      "durationText": "0.62 мс",
+      "reason": "Vitest-проверка: пройдена (atlas design contract DESIGN-001 uses the atlas wine token and 82px primary action)",
+      "output": "",
+      "tests": [
+        {
+          "name": "atlas design contract DESIGN-001 uses the atlas wine token and 82px primary action",
+          "status": "passed",
+          "durationMs": 0.6201249999999163,
+          "durationText": "0.62 мс",
+          "output": ""
+        }
+      ]
+    },
+    {
+      "id": "DESIGN-002",
+      "area": "design",
+      "title": "Иконки камеры 24px и сканера 28px",
+      "source": "apps/web/src/design.test.tsx",
+      "spec": "apps/web/design-specs.md",
+      "status": "passed",
+      "durationMs": 91.39887500000009,
+      "durationText": "91.40 мс",
+      "reason": "Vitest-проверка: пройдена (atlas design contract DESIGN-002 renders 24px camera and 28px scan glyph rules)",
+      "output": "",
+      "tests": [
+        {
+          "name": "atlas design contract DESIGN-002 renders 24px camera and 28px scan glyph rules",
+          "status": "passed",
+          "durationMs": 91.39887500000009,
+          "durationText": "91.40 мс",
+          "output": ""
+        }
+      ]
+    },
+    {
+      "id": "DESIGN-003",
+      "area": "design",
+      "title": "Подключены реальные файлы Onest и заявленные веса",
+      "source": "apps/web/src/design.test.tsx",
+      "spec": "apps/web/design-specs.md",
+      "status": "passed",
+      "durationMs": 0.7875409999999192,
+      "durationText": "0.79 мс",
+      "reason": "Vitest-проверка: пройдена (atlas design contract DESIGN-003 declares the actual TrueType Onest files and every specified weight)",
+      "output": "",
+      "tests": [
+        {
+          "name": "atlas design contract DESIGN-003 declares the actual TrueType Onest files and every specified weight",
+          "status": "passed",
+          "durationMs": 0.7875409999999192,
+          "durationText": "0.79 мс",
+          "output": ""
+        }
+      ]
+    },
+    {
+      "id": "DESIGN-004",
+      "area": "design",
+      "title": "Объявлены правила responsive 390, 768 и 1280",
+      "source": "apps/web/src/design.test.tsx",
+      "spec": "apps/web/design-specs.md",
+      "status": "passed",
+      "durationMs": 0.13758400000006077,
+      "durationText": "0.14 мс",
+      "reason": "Vitest-проверка: пройдена (atlas design contract DESIGN-004 separates the 390px page padding from the 360px button geometry)",
+      "output": "",
+      "tests": [
+        {
+          "name": "atlas design contract DESIGN-004 separates the 390px page padding from the 360px button geometry",
+          "status": "passed",
+          "durationMs": 0.13758400000006077,
+          "durationText": "0.14 мс",
+          "output": ""
+        }
+      ]
+    },
+    {
+      "id": "DESIGN-005",
+      "area": "design",
+      "title": "Production root без demo controls и device chrome",
+      "source": "apps/web/src/design.test.tsx",
+      "spec": "apps/web/design-specs.md",
+      "status": "passed",
+      "durationMs": 7.728832999999895,
+      "durationText": "7.73 мс",
+      "reason": "Vitest-проверка: пройдена (atlas design contract DESIGN-005 keeps the application free of demo controls)",
+      "output": "",
+      "tests": [
+        {
+          "name": "atlas design contract DESIGN-005 keeps the application free of demo controls",
+          "status": "passed",
+          "durationMs": 7.728832999999895,
+          "durationText": "7.73 мс",
+          "output": ""
+        }
+      ]
+    },
+    {
+      "id": "DESIGN-006",
+      "area": "design",
+      "title": "Типографика Atlas применена к ключевым состояниям",
+      "source": "apps/web/src/design.test.tsx",
+      "spec": "apps/web/design-specs.md",
+      "status": "passed",
+      "durationMs": 0.10866699999996854,
+      "durationText": "0.11 мс",
+      "reason": "Vitest-проверка: пройдена (atlas design contract DESIGN-006 applies atlas typography to welcome candidates result and errors)",
+      "output": "",
+      "tests": [
+        {
+          "name": "atlas design contract DESIGN-006 applies atlas typography to welcome candidates result and errors",
+          "status": "passed",
+          "durationMs": 0.10866699999996854,
+          "durationText": "0.11 мс",
+          "output": ""
+        }
+      ]
+    },
+    {
+      "id": "DESIGN-007",
+      "area": "design",
+      "title": "Действия 48px и точная геометрия camera shutter",
+      "source": "apps/web/src/design.test.tsx",
+      "spec": "apps/web/design-specs.md",
+      "status": "passed",
+      "durationMs": 0.049709000000120795,
+      "durationText": "0.05 мс",
+      "reason": "Vitest-проверка: пройдена (atlas design contract DESIGN-007 preserves 48px actions and exact camera shutter geometry)",
+      "output": "",
+      "tests": [
+        {
+          "name": "atlas design contract DESIGN-007 preserves 48px actions and exact camera shutter geometry",
+          "status": "passed",
+          "durationMs": 0.049709000000120795,
+          "durationText": "0.05 мс",
+          "output": ""
+        }
+      ]
+    },
+    {
+      "id": "DESIGN-008",
+      "area": "design",
+      "title": "Камера оформлена как тёмная поверхность live video",
+      "source": "apps/web/src/design.test.tsx",
+      "spec": "apps/web/design-specs.md",
+      "status": "passed",
+      "durationMs": 0.03520800000001145,
+      "durationText": "0.04 мс",
+      "reason": "Vitest-проверка: пройдена (atlas design contract DESIGN-008 renders the camera surface as a dark live-video container)",
+      "output": "",
+      "tests": [
+        {
+          "name": "atlas design contract DESIGN-008 renders the camera surface as a dark live-video container",
+          "status": "passed",
+          "durationMs": 0.03520800000001145,
+          "durationText": "0.04 мс",
+          "output": ""
+        }
+      ]
+    },
+    {
+      "id": "DESIGN-009",
+      "area": "design",
+      "title": "Строки кандидатов целиком активны и содержат metadata type",
+      "source": "apps/web/src/design.test.tsx",
+      "spec": "apps/web/design-specs.md",
+      "status": "passed",
+      "durationMs": 0.04520800000000236,
+      "durationText": "0.05 мс",
+      "reason": "Vitest-проверка: пройдена (atlas design contract DESIGN-009 keeps candidate rows fully actionable with explicit metadata type)",
+      "output": "",
+      "tests": [
+        {
+          "name": "atlas design contract DESIGN-009 keeps candidate rows fully actionable with explicit metadata type",
+          "status": "passed",
+          "durationMs": 0.04520800000000236,
+          "durationText": "0.05 мс",
+          "output": ""
+        }
+      ]
+    },
+    {
+      "id": "UI-012",
+      "area": "web",
+      "title": "Обычная вкладка работает без установки",
+      "source": "Скриншоты Макса: Android Яндекс Браузер, 19.09.2026",
+      "spec": "docs/product/behavior-spec.md",
+      "given": "обычная вкладка",
+      "when": "открыть приложение без установки",
+      "then": "основные действия доступны",
+      "status": "passed",
+      "durationMs": 109.85325000000012,
+      "durationText": "109.85 мс",
+      "reason": "Vitest-проверка: пройдена (UI-012 ordinary browser remains usable without installation support)",
+      "output": "",
+      "tests": [
+        {
+          "name": "UI-012 ordinary browser remains usable without installation support",
+          "status": "passed",
+          "durationMs": 109.85325000000012,
+          "durationText": "109.85 мс",
+          "output": ""
+        }
+      ]
+    },
+    {
+      "id": "UI-013",
+      "area": "web",
+      "title": "Установка по запросу; отмена не мешает работе",
+      "source": "Скриншоты Макса: Android Яндекс Браузер, 19.09.2026",
+      "spec": "docs/product/behavior-spec.md",
+      "given": "браузер предлагает установку",
+      "when": "нажать и отменить либо получить отказ",
+      "then": "обычный путь остаётся доступен",
+      "status": "passed",
+      "durationText": "несколько проверок — см. детали",
+      "reason": "Vitest-проверка: пройдена (UI-013 refused browser install prompt does not break the page)",
+      "output": "",
+      "tests": [
+        {
+          "name": "UI-013 installation only opens on click; dismissal preserves the web journey",
+          "status": "passed",
+          "durationMs": 42.32316700000001,
+          "durationText": "42.32 мс",
+          "output": ""
+        },
+        {
+          "name": "UI-013 refused browser install prompt does not break the page",
+          "status": "passed",
+          "durationMs": 2.473167000000103,
+          "durationText": "2.47 мс",
+          "output": ""
+        }
+      ]
+    },
+    {
+      "id": "UI-014",
+      "area": "web",
+      "title": "Standalone сохраняет пользовательские пути",
+      "source": "Скриншоты Макса: Android Яндекс Браузер, 19.09.2026",
+      "spec": "docs/product/behavior-spec.md",
+      "given": "standalone",
+      "when": "открыть приложение",
+      "then": "тот же путь без предложения установки",
+      "status": "passed",
+      "durationText": "несколько проверок — см. детали",
+      "reason": "Vitest-проверка: пройдена (UI-014 successful installation removes the offer)",
+      "output": "",
+      "tests": [
+        {
+          "name": "UI-014 standalone exposes the same application without an install offer",
+          "status": "passed",
+          "durationMs": 25.94337500000006,
+          "durationText": "25.94 мс",
+          "output": ""
+        },
+        {
+          "name": "UI-014 successful installation removes the offer",
+          "status": "passed",
+          "durationMs": 0.987041999999974,
+          "durationText": "0.99 мс",
+          "output": ""
+        }
+      ]
+    },
+    {
+      "id": "UI-015",
+      "area": "web",
+      "title": "Manifest запускает приложение с корректными иконками",
+      "source": "Скриншоты Макса: Android Яндекс Браузер, 19.09.2026",
+      "spec": "docs/product/behavior-spec.md",
+      "given": "manifest",
+      "when": "проверить маршрут и файлы",
+      "then": "standalone / и PNG192/512",
+      "status": "passed",
+      "durationMs": 0.8727499999999964,
+      "durationText": "0.87 мс",
+      "reason": "Vitest-проверка: пройдена (UI-015 install manifest launches the same root with real PNG icons)",
+      "output": "",
+      "tests": [
+        {
+          "name": "UI-015 install manifest launches the same root with real PNG icons",
+          "status": "passed",
+          "durationMs": 0.8727499999999964,
+          "durationText": "0.87 мс",
+          "output": ""
+        }
+      ]
+    },
+    {
+      "id": "DESIGN-010",
+      "area": "design",
+      "title": "Камера вписывается в доступную высоту",
+      "source": "Скриншоты Макса: Android Яндекс Браузер, 19.09.2026",
+      "spec": "docs/product/behavior-spec.md",
+      "given": "низкий viewport",
+      "when": "открыть камеру",
+      "then": "превью сжимается, действия внутри экрана",
+      "status": "passed",
+      "durationMs": 0.06175000000007458,
+      "durationText": "0.06 мс",
+      "reason": "Vitest-проверка: пройдена (atlas design contract DESIGN-010 bounds camera to the dynamic viewport with a shrinkable preview)",
+      "output": "",
+      "tests": [
+        {
+          "name": "atlas design contract DESIGN-010 bounds camera to the dynamic viewport with a shrinkable preview",
+          "status": "passed",
+          "durationMs": 0.06175000000007458,
+          "durationText": "0.06 мс",
+          "output": ""
+        }
+      ]
+    },
+    {
+      "id": "DESIGN-011",
+      "area": "design",
+      "title": "Затвор и подсказки доступны на коротком экране",
+      "source": "Скриншоты Макса: Android Яндекс Браузер, 19.09.2026",
+      "spec": "docs/product/behavior-spec.md",
+      "given": "короткий экран",
+      "when": "повернуть устройство",
+      "then": "подсказки и затвор не обрезаются",
+      "status": "passed",
+      "durationMs": 0.04758300000003146,
+      "durationText": "0.05 мс",
+      "reason": "Vitest-проверка: пройдена (atlas design contract DESIGN-011 keeps camera actions in flow with safe-area and short-landscape rules)",
+      "output": "",
+      "tests": [
+        {
+          "name": "atlas design contract DESIGN-011 keeps camera actions in flow with safe-area and short-landscape rules",
+          "status": "passed",
+          "durationMs": 0.04758300000003146,
+          "durationText": "0.05 мс",
+          "output": ""
+        }
+      ]
+    },
+    {
+      "id": "DESIGN-012",
+      "area": "design",
+      "title": "Рамка камеры не пересекает подсказку",
+      "source": "Скриншот Макса 19.09.2026: рамка проходит через текст",
+      "spec": "docs/product/behavior-spec.md#camera-hint",
+      "given": "открыта камера",
+      "when": "показаны рамка и подсказка",
+      "then": "текст в отдельной строке, без пересечения рамки",
+      "status": "passed",
+      "durationMs": 23.92120799999998,
+      "durationText": "23.92 мс",
+      "reason": "Vitest-проверка: пройдена (DESIGN-012 keeps the hint outside the framed camera image)",
+      "output": "",
+      "tests": [
+        {
+          "name": "DESIGN-012 keeps the hint outside the framed camera image",
+          "status": "passed",
+          "durationMs": 23.92120799999998,
+          "durationText": "23.92 мс",
+          "output": ""
+        }
+      ]
+    },
+    {
+      "id": "DESIGN-013",
+      "area": "design",
+      "title": "Иконки scanner и target совпадают с SVG макета",
+      "source": "Утверждённый Wine UX Atlas + скриншот Макса 19.09.2026",
+      "spec": "apps/web/design-specs.md",
+      "given": "утверждённые SVG макета",
+      "when": "рендер welcome",
+      "then": "геометрия scanner и focus-2 совпадает",
+      "status": "passed",
+      "durationMs": 6.298667000000023,
+      "durationText": "6.30 мс",
+      "reason": "Vitest-проверка: пройдена (DESIGN-013 matches the approved Atlas scanner and target vector geometry)",
+      "output": "",
+      "tests": [
+        {
+          "name": "DESIGN-013 matches the approved Atlas scanner and target vector geometry",
+          "status": "passed",
+          "durationMs": 6.298667000000023,
+          "durationText": "6.30 мс",
+          "output": ""
+        }
+      ]
+    },
+    {
+      "id": "DESIGN-014",
+      "area": "design",
+      "title": "Нижняя подсказка соответствует композиции макета",
+      "source": "Утверждённый Wine UX Atlas + скриншот Макса 19.09.2026",
+      "spec": "apps/web/design-specs.md",
+      "given": "welcome",
+      "when": "показана подсказка",
+      "then": "полный текст, отдельная плашка target, без общего фона",
+      "status": "passed",
+      "durationMs": 3.973750000000109,
+      "durationText": "3.97 мс",
+      "reason": "Vitest-проверка: пройдена (DESIGN-014 restores the complete airy welcome guidance from Atlas)",
+      "output": "",
+      "tests": [
+        {
+          "name": "DESIGN-014 restores the complete airy welcome guidance from Atlas",
+          "status": "passed",
+          "durationMs": 3.973750000000109,
+          "durationText": "3.97 мс",
+          "output": ""
+        }
+      ]
+    },
+    {
+      "id": "DESIGN-015",
+      "area": "design",
+      "title": "Рамка телефона только на экране от 1024px",
+      "source": "Запрос Макса: рамка только на широком экране, 19.09.2026",
+      "spec": "apps/web/design-specs.md",
+      "given": "широкий или узкий экран",
+      "when": "открыть приложение",
+      "then": "рамка только от1024px",
+      "status": "passed",
+      "durationMs": 24.004290999999967,
+      "durationText": "24.00 мс",
+      "reason": "Vitest-проверка: пройдена (DESIGN-015 limits the decorative phone frame to wide screens)",
+      "output": "",
+      "tests": [
+        {
+          "name": "DESIGN-015 limits the decorative phone frame to wide screens",
+          "status": "passed",
+          "durationMs": 24.004290999999967,
+          "durationText": "24.00 мс",
+          "output": ""
+        }
+      ]
+    },
+    {
+      "id": "DESIGN-016",
+      "area": "design",
+      "title": "Камера и затвор помещаются внутри настольной рамки",
+      "source": "Запрос Макса: рамка только на широком экране, 19.09.2026",
+      "spec": "apps/web/design-specs.md",
+      "given": "десктопная рамка",
+      "when": "открыть камеру",
+      "then": "высота ограничена внутренним экраном, затвор доступен",
+      "status": "passed",
+      "durationMs": 0.11366599999996652,
+      "durationText": "0.11 мс",
+      "reason": "Vitest-проверка: пройдена (DESIGN-016 camera uses the available desktop phone height, not the outer viewport)",
+      "output": "",
+      "tests": [
+        {
+          "name": "DESIGN-016 camera uses the available desktop phone height, not the outer viewport",
+          "status": "passed",
+          "durationMs": 0.11366599999996652,
+          "durationText": "0.11 мс",
+          "output": ""
+        }
+      ]
+    },
+    {
+      "id": "DESIGN-017",
+      "area": "design",
+      "title": "Нижняя навигация вне прокручиваемой области",
+      "source": "apps/web/src/design.test.tsx",
+      "spec": "apps/web/design-specs.md",
+      "status": "passed",
+      "durationMs": 6.088040999999976,
+      "durationText": "6.09 мс",
+      "reason": "Vitest-проверка: пройдена (DESIGN-017 keeps the three equal Tabler navigation actions outside the scroll region)",
+      "output": "",
+      "tests": [
+        {
+          "name": "DESIGN-017 keeps the three equal Tabler navigation actions outside the scroll region",
+          "status": "passed",
+          "durationMs": 6.088040999999976,
+          "durationText": "6.09 мс",
+          "output": ""
+        }
+      ]
+    },
+    {
+      "id": "DESIGN-018",
+      "area": "design",
+      "title": "Текущий раздел и footer оформлены по Atlas",
+      "source": "apps/web/src/design.test.tsx",
+      "spec": "apps/web/design-specs.md",
+      "status": "passed",
+      "durationMs": 18.121875000000045,
+      "durationText": "18.12 мс",
+      "reason": "Vitest-проверка: пройдена (DESIGN-018 marks only the current product section and uses the Atlas footer treatment)",
+      "output": "",
+      "tests": [
+        {
+          "name": "DESIGN-018 marks only the current product section and uses the Atlas footer treatment",
+          "status": "passed",
+          "durationMs": 18.121875000000045,
+          "durationText": "18.12 мс",
+          "output": ""
+        }
+      ]
+    },
+    {
+      "id": "SEC-001",
+      "area": "security",
+      "title": "Файл с подменённым типом не принимается как изображение",
+      "source": "apps/api/security_test.go",
+      "spec": "docs/product/security-spec.md",
+      "given": "ZIP или SVG-байты под видом изображения",
+      "when": "POST multipart photo",
+      "then": "HTTP 400 invalid_photo, приватные файлы не создаются",
+      "status": "passed",
+      "durationText": "несколько проверок — см. детали",
+      "reason": "Go-проверка TestSEC001RejectsDisguisedNonImages: пройдена",
+      "tests": [
+        {
+          "name": "TestSEC001RejectsDisguisedNonImages/zip_named_png",
+          "status": "passed",
+          "durationMs": 0,
+          "durationText": "<1 мс (разрешение Go)"
+        },
+        {
+          "name": "TestSEC001RejectsDisguisedNonImages/svg_named_jpg",
+          "status": "passed",
+          "durationMs": 0,
+          "durationText": "<1 мс (разрешение Go)"
+        },
+        {
+          "name": "TestSEC001RejectsDisguisedNonImages/zip_with_spoofed_image_MIME",
+          "status": "passed",
+          "durationMs": 0,
+          "durationText": "<1 мс (разрешение Go)"
+        },
+        {
+          "name": "TestSEC001RejectsDisguisedNonImages",
+          "status": "passed",
+          "durationMs": 0,
+          "durationText": "<1 мс (разрешение Go)"
+        }
+      ]
+    },
+    {
+      "id": "SEC-002",
+      "area": "security",
+      "title": "Обрезанное изображение отклоняется после полной декодировки",
+      "source": "apps/api/security_test.go",
+      "spec": "docs/product/security-spec.md",
+      "given": "обрезанный PNG с корректным IHDR/DecodeConfig; валидные JPEG, GIF и PNG",
+      "when": "POST multipart photo",
+      "then": "обрезанное изображение получает HTTP 400 invalid_photo после полной декодировки, валидные форматы принимаются",
+      "status": "passed",
+      "durationText": "несколько проверок — см. детали",
+      "reason": "Go-проверка TestSEC002RejectsTruncatedImageAfterDecodeConfig: пройдена",
+      "tests": [
+        {
+          "name": "TestSEC002RejectsTruncatedImageAfterDecodeConfig/accepts_valid_jpeg",
+          "status": "passed",
+          "durationMs": 10,
+          "durationText": "10 мс"
+        },
+        {
+          "name": "TestSEC002RejectsTruncatedImageAfterDecodeConfig/accepts_valid_gif_first_frame",
+          "status": "passed",
+          "durationMs": 10,
+          "durationText": "10 мс"
+        },
+        {
+          "name": "TestSEC002RejectsTruncatedImageAfterDecodeConfig",
+          "status": "passed",
+          "durationMs": 20,
+          "durationText": "20 мс"
+        }
+      ]
+    },
+    {
+      "id": "SEC-003",
+      "area": "security",
+      "title": "Изображение с чрезмерными размерами отклоняется до сохранения",
+      "source": "apps/api/security_test.go",
+      "spec": "docs/product/security-spec.md",
+      "given": "PNG IHDR 5001×5001 (>25 млн пикселей) либо 12001×1 (выше лимита стороны)",
+      "when": "POST multipart photo",
+      "then": "HTTP 400 invalid_photo, файлы не создаются",
+      "status": "passed",
+      "durationText": "несколько проверок — см. детали",
+      "reason": "Go-проверка TestSEC003RejectsTinyOversizedImageConfig: пройдена",
+      "tests": [
+        {
+          "name": "TestSEC003RejectsTinyOversizedImageConfig/pixel_limit",
+          "status": "passed",
+          "durationMs": 0,
+          "durationText": "<1 мс (разрешение Go)"
+        },
+        {
+          "name": "TestSEC003RejectsTinyOversizedImageConfig/single_dimension_limit",
+          "status": "passed",
+          "durationMs": 0,
+          "durationText": "<1 мс (разрешение Go)"
+        },
+        {
+          "name": "TestSEC003RejectsTinyOversizedImageConfig",
+          "status": "passed",
+          "durationMs": 0,
+          "durationText": "<1 мс (разрешение Go)"
+        }
+      ]
+    },
+    {
+      "id": "SEC-004",
+      "area": "security",
+      "title": "Неверный multipart и слишком большой файл отклоняются",
+      "source": "apps/api/security_test.go",
+      "spec": "docs/product/security-spec.md",
+      "given": "лишняя часть, два photo, photo без файла или файл 10 MiB+1",
+      "when": "POST multipart photo",
+      "then": "HTTP 400, файлы не создаются",
+      "status": "passed",
+      "durationText": "несколько проверок — см. детали",
+      "reason": "Go-проверка TestSEC004RejectsInvalidMultipartAndOversizeFile: пройдена",
+      "tests": [
+        {
+          "name": "TestSEC004RejectsInvalidMultipartAndOversizeFile/additional_field",
+          "status": "passed",
+          "durationMs": 0,
+          "durationText": "<1 мс (разрешение Go)"
+        },
+        {
+          "name": "TestSEC004RejectsInvalidMultipartAndOversizeFile/two_photo_files",
+          "status": "passed",
+          "durationMs": 0,
+          "durationText": "<1 мс (разрешение Go)"
+        },
+        {
+          "name": "TestSEC004RejectsInvalidMultipartAndOversizeFile/photo_without_filename",
+          "status": "passed",
+          "durationMs": 0,
+          "durationText": "<1 мс (разрешение Go)"
+        },
+        {
+          "name": "TestSEC004RejectsInvalidMultipartAndOversizeFile/file_exceeds_byte_cap",
+          "status": "passed",
+          "durationMs": 10,
+          "durationText": "10 мс"
+        },
+        {
+          "name": "TestSEC004RejectsInvalidMultipartAndOversizeFile",
+          "status": "passed",
+          "durationMs": 10,
+          "durationText": "10 мс"
+        }
+      ]
+    },
+    {
+      "id": "SEC-005",
+      "area": "security",
+      "title": "Одновременные upload ограничены с Retry-After",
+      "source": "apps/api/security_test.go",
+      "spec": "docs/product/security-spec.md",
+      "given": "два валидных upload удерживают слоты обработчика",
+      "when": "начать третий multipart upload",
+      "then": "HTTP 429 upload_busy, Retry-After: 1 и body не читается; после освобождения первые два получают 201",
+      "status": "passed",
+      "durationMs": 20,
+      "durationText": "20 мс",
+      "reason": "Go-проверка TestSEC005LimitsConcurrentUploads: пройдена",
+      "tests": [
+        {
+          "name": "TestSEC005LimitsConcurrentUploads",
+          "status": "passed",
+          "durationMs": 20,
+          "durationText": "20 мс"
+        }
+      ]
+    },
+    {
+      "id": "SEC-006",
+      "area": "security",
+      "title": "Поисковый запрос ограничен, валиден в UTF-8 и не отражается",
+      "source": "apps/api/request_security_test.go",
+      "spec": "docs/product/security-spec.md",
+      "given": "query длиннее 256 Unicode-символов, control-символ, неверный UTF-8, лишние поля или слишком большое тело",
+      "when": "POST /api/search",
+      "then": "HTTP 400; ограниченный текст остаётся данными и не отражается в ответе",
+      "status": "passed",
+      "durationMs": 0,
+      "durationText": "<1 мс (разрешение Go)",
+      "reason": "Go-проверка TestSEC006SearchInputBounds: пройдена",
+      "tests": [
+        {
+          "name": "TestSEC006SearchInputBounds",
+          "status": "passed",
+          "durationMs": 0,
+          "durationText": "<1 мс (разрешение Go)"
+        }
+      ]
+    },
+    {
+      "id": "SEC-007",
+      "area": "security",
+      "title": "Записи API имеют границы типа, origin и частоты запросов",
+      "source": "apps/api/request_security_test.go",
+      "spec": "docs/product/security-spec.md",
+      "given": "POST API с неверным Content-Type, сжатым телом или чужим Origin; затем допустимые записи",
+      "when": "выполнить запросы в одно окно бюджета",
+      "then": "ранние запросы отклоняются 415/403 до handler; search: burst 10, refill 1/с (60/мин); upload: burst 4, refill 1/5 с (12/мин); 429 содержит Retry-After",
+      "status": "passed",
+      "durationMs": 0,
+      "durationText": "<1 мс (разрешение Go)",
+      "reason": "Go-проверка TestSEC007RequestBudgetsAndWriteBoundary: пройдена",
+      "tests": [
+        {
+          "name": "TestSEC007RequestBudgetsAndWriteBoundary",
+          "status": "passed",
+          "durationMs": 0,
+          "durationText": "<1 мс (разрешение Go)"
+        }
+      ]
+    },
+    {
+      "id": "SEC-008",
+      "area": "security",
+      "title": "Приватные upload недоступны, ответы имеют защитные заголовки",
+      "source": "apps/api/request_security_test.go",
+      "spec": "docs/product/security-spec.md",
+      "given": "WEB_ROOT и приватный файл upload",
+      "when": "запросить API/файловые пути и передать traversal photoId",
+      "then": "приватные байты не выдаются, traversal отклоняется 400, ответы имеют nosniff и DENY",
+      "status": "passed",
+      "durationMs": 0,
+      "durationText": "<1 мс (разрешение Go)",
+      "reason": "Go-проверка TestSEC008PrivateUploadsAndHeaders: пройдена",
+      "tests": [
+        {
+          "name": "TestSEC008PrivateUploadsAndHeaders",
+          "status": "passed",
+          "durationMs": 0,
+          "durationText": "<1 мс (разрешение Go)"
+        }
+      ]
+    },
+    {
+      "id": "UI-022",
+      "area": "ui",
+      "title": "Нижняя кнопка Сканер открывает камеру или запасной путь",
+      "source": "apps/web/src/navigation.test.tsx",
+      "spec": "docs/product/behavior-spec.md",
+      "given": "главный экран, поиск или сохранённое",
+      "when": "нажать нижнюю кнопку Сканер",
+      "then": "открывается камера; при запрете доступны галерея и ручной поиск",
+      "status": "passed",
+      "durationMs": 117.19966700000009,
+      "durationText": "117.20 мс",
+      "reason": "Vitest-проверка: пройдена (catalog navigation and saved wines UI-022 bottom Scanner starts a fresh camera capture and falls back after a denial)",
+      "output": "",
+      "tests": [
+        {
+          "name": "catalog navigation and saved wines UI-022 bottom Scanner starts a fresh camera capture and falls back after a denial",
+          "status": "passed",
+          "durationMs": 117.19966700000009,
+          "durationText": "117.20 мс",
+          "output": ""
+        }
+      ]
+    },
+    {
+      "id": "UI-023",
+      "area": "ui",
+      "title": "Закладка в шапке карточки сохраняет и удаляет вино",
+      "source": "apps/web/src/navigation.test.tsx",
+      "spec": "docs/product/behavior-spec.md",
+      "given": "карточка вина",
+      "when": "нажать закладку, затем повторно",
+      "then": "состояние и сохранённый список переключаются согласованно",
+      "status": "passed",
+      "durationMs": 89.95783299999994,
+      "durationText": "89.96 мс",
+      "reason": "Vitest-проверка: пройдена (catalog navigation and saved wines UI-023 toggles the stable compact header save action)",
+      "output": "",
+      "tests": [
+        {
+          "name": "catalog navigation and saved wines UI-023 toggles the stable compact header save action",
+          "status": "passed",
+          "durationMs": 89.95783299999994,
+          "durationText": "89.96 мс",
+          "output": ""
+        }
+      ]
+    },
+    {
+      "id": "DESIGN-019",
+      "area": "design",
+      "title": "Компактная закладка в шапке без широкой рамки",
+      "source": "apps/web/src/design.test.tsx",
+      "spec": "apps/web/design-specs.md",
+      "given": "узкая карточка",
+      "when": "показать действие сохранения",
+      "then": "кнопка в шапке, без широкой рамки, доступная область нажатия",
+      "status": "passed",
+      "durationMs": 2.805665999999974,
+      "durationText": "2.81 мс",
+      "reason": "Vitest-проверка: пройдена (DESIGN-019 keeps result save in a compact, stable header target)",
+      "output": "",
+      "tests": [
+        {
+          "name": "DESIGN-019 keeps result save in a compact, stable header target",
+          "status": "passed",
+          "durationMs": 2.805665999999974,
+          "durationText": "2.81 мс",
+          "output": ""
+        }
+      ]
+    },
+    {
+      "id": "UI-024",
+      "area": "ui",
+      "title": "Поиск запускается кнопкой и клавишей Enter",
+      "source": "apps/web/src/navigation.test.tsx",
+      "spec": "docs/product/behavior-spec.md",
+      "given": "непустой поисковый запрос",
+      "when": "нажать лупу либо Enter",
+      "then": "запускается поиск того же запроса",
+      "status": "passed",
+      "durationMs": 123.90708400000017,
+      "durationText": "123.91 мс",
+      "reason": "Vitest-проверка: пройдена (catalog navigation and saved wines UI-024 submits the compact search field with its button and Enter)",
+      "output": "",
+      "tests": [
+        {
+          "name": "catalog navigation and saved wines UI-024 submits the compact search field with its button and Enter",
+          "status": "passed",
+          "durationMs": 123.90708400000017,
+          "durationText": "123.91 мс",
+          "output": ""
+        }
+      ]
+    },
+    {
+      "id": "DESIGN-020",
+      "area": "design",
+      "title": "Поле поиска имеет цельную рамку и отступ до результатов",
+      "source": "apps/web/src/design.test.tsx",
+      "spec": "apps/web/design-specs.md",
+      "given": "экран поиска",
+      "when": "ввести текст или перейти к кнопке клавиатурой",
+      "then": "цельная округлая рамка и видимый фокус, список отделён от формы",
+      "status": "passed",
+      "durationMs": 34.976249999999936,
+      "durationText": "34.98 мс",
+      "reason": "Vitest-проверка: пройдена (DESIGN-020 groups search input and submit into one focused control)",
+      "output": "",
+      "tests": [
+        {
+          "name": "DESIGN-020 groups search input and submit into one focused control",
+          "status": "passed",
+          "durationMs": 34.976249999999936,
+          "durationText": "34.98 мс",
+          "output": ""
+        }
+      ]
+    },
+    {
+      "id": "DESIGN-021",
+      "area": "design",
+      "title": "Бутылка welcome обрезана hero и находится под текстом по Atlas",
+      "source": "apps/web/src/design.test.tsx",
+      "spec": "apps/web/design-specs.md",
+      "status": "passed",
+      "durationMs": 4.561916999999994,
+      "durationText": "4.56 мс",
+      "reason": "Vitest-проверка: пройдена (DESIGN-021 crops the approved bottle behind the welcome interface with the requested optical offset)",
+      "output": "",
+      "tests": [
+        {
+          "name": "DESIGN-021 crops the approved bottle behind the welcome interface with the requested optical offset",
+          "status": "passed",
+          "durationMs": 4.561916999999994,
+          "durationText": "4.56 мс",
+          "output": ""
+        }
+      ]
+    }
+  ],
+  "artifacts": [
+    "data/runs/20260919T140607Z-fast-444ae400.api-go.jsonl",
+    "data/runs/20260919T140607Z-fast-444ae400.web-vitest.json"
+  ],
+  "sources": [
+    "data/runs/20260919T140607Z-fast-444ae400.sources/cases.json",
+    "data/runs/20260919T140607Z-fast-444ae400.sources/behavior-spec.md",
+    "data/runs/20260919T140607Z-fast-444ae400.sources/security-spec.md",
+    "data/runs/20260919T140607Z-fast-444ae400.sources/demo-catalog.md",
+    "data/runs/20260919T140607Z-fast-444ae400.sources/main.go",
+    "data/runs/20260919T140607Z-fast-444ae400.sources/security.go",
+    "data/runs/20260919T140607Z-fast-444ae400.sources/uploads.go",
+    "data/runs/20260919T140607Z-fast-444ae400.sources/catalog.json",
+    "data/runs/20260919T140607Z-fast-444ae400.sources/main_test.go",
+    "data/runs/20260919T140607Z-fast-444ae400.sources/security_test.go",
+    "data/runs/20260919T140607Z-fast-444ae400.sources/request_security_test.go",
+    "data/runs/20260919T140607Z-fast-444ae400.sources/brutforce-demo.service",
+    "data/runs/20260919T140607Z-fast-444ae400.sources/App.tsx",
+    "data/runs/20260919T140607Z-fast-444ae400.sources/api.ts",
+    "data/runs/20260919T140607Z-fast-444ae400.sources/types.ts",
+    "data/runs/20260919T140607Z-fast-444ae400.sources/styles.css",
+    "data/runs/20260919T140607Z-fast-444ae400.sources/overrides.css",
+    "data/runs/20260919T140607Z-fast-444ae400.sources/App.test.tsx",
+    "data/runs/20260919T140607Z-fast-444ae400.sources/design.test.tsx",
+    "data/runs/20260919T140607Z-fast-444ae400.sources/navigation.test.tsx",
+    "data/runs/20260919T140607Z-fast-444ae400.sources/design-specs.md",
+    "data/runs/20260919T140607Z-fast-444ae400.sources/AtlasIcons.tsx",
+    "data/runs/20260919T140607Z-fast-444ae400.sources/InstallApp.tsx",
+    "data/runs/20260919T140607Z-fast-444ae400.sources/pwa.test.tsx",
+    "data/runs/20260919T140607Z-fast-444ae400.sources/manifest.webmanifest",
+    "data/runs/20260919T140607Z-fast-444ae400.sources/index.html"
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "revision": "282224518a6031b1df05619114e8f87067381408",
+  "wallMs": 316,
+  "command": "lct-db-test maks; go tool test2json -t -p brutforce-behavior-demo/apps/api ./db-tests -test.v=test2json -test.run ^TestDB00[1-5] -test.count=1",
+  "exitCode": 0,
+  "scope": "Registered test-schema reset and integration tests; compilation and SSH transfer excluded"
+}

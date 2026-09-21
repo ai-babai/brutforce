@@ -1,0 +1,78 @@
+name: CI
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  release-check:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    services:
+      postgres:
+        image: postgres:18
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 12
+    env:
+      DATABASE_URL: postgresql://lct_test_maks_runtime:ci-runtime@localhost:5432/lct_test_maks?sslmode=disable
+      MIGRATION_DATABASE_URL: postgresql://lct_test_maks_migration:ci-migration@localhost:5432/lct_test_maks?sslmode=disable
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.23.x"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22.x"
+          cache: npm
+          cache-dependency-path: apps/web/package-lock.json
+      - name: Provision isolated PostgreSQL integration database
+        env:
+          PGPASSWORD: postgres
+        run: |
+          psql -h localhost -U postgres -d postgres -v ON_ERROR_STOP=1 <<'SQL'
+          CREATE ROLE lct_test_maks_migration LOGIN PASSWORD 'ci-migration';
+          CREATE ROLE lct_test_maks_runtime LOGIN PASSWORD 'ci-runtime';
+          CREATE DATABASE lct_test_maks OWNER lct_test_maks_migration;
+          \connect lct_test_maks
+          REVOKE CREATE ON SCHEMA public FROM PUBLIC;
+          GRANT USAGE ON SCHEMA public TO lct_test_maks_runtime;
+          ALTER DEFAULT PRIVILEGES FOR ROLE lct_test_maks_migration IN SCHEMA public GRANT SELECT ON TABLES TO lct_test_maks_runtime;
+          SQL
+      - name: Build strict release artifact
+        run: RELEASE_EVIDENCE_DIR="$RUNNER_TEMP/release-evidence" deploy/build.sh "$RUNNER_TEMP/release"
+      - name: Upload release archive
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-${{ github.sha }}
+          path: |
+            ${{ runner.temp }}/release/release-${{ github.sha }}.tar.gz
+            ${{ runner.temp }}/release/release-${{ github.sha }}.tar.gz.sha256
+          if-no-files-found: error
+          retention-days: 14
+      - name: Upload release evidence on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-evidence-${{ github.sha }}
+          path: ${{ runner.temp }}/release-evidence
+          if-no-files-found: warn
+          retention-days: 14

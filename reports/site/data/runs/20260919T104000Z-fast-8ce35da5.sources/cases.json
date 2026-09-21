@@ -1,0 +1,329 @@
+{
+  "schemaVersion": 1,
+  "title": "BrutForce runnable demo — behavior cases",
+  "caveat": "Synthetic demo checks API and UI state handling only; it is not a recognition benchmark.",
+  "cases": [
+    {
+      "id": "API-001",
+      "area": "api",
+      "title": "Exact response orders candidates and selects Cabernet",
+      "source": "apps/api/README.md",
+      "spec": "docs/product/behavior-spec.md#demo-003"
+    },
+    {
+      "id": "API-002",
+      "area": "api",
+      "title": "Uncertain response has candidates and no selection",
+      "source": "apps/api/README.md",
+      "spec": "docs/product/behavior-spec.md#demo-004"
+    },
+    {
+      "id": "API-003",
+      "area": "api",
+      "title": "No match returns an explicit empty candidates array",
+      "source": "apps/api/README.md",
+      "spec": "docs/product/behavior-spec.md#demo-006"
+    },
+    {
+      "id": "API-004",
+      "area": "api",
+      "title": "Synthetic backend failure is structured HTTP 503",
+      "source": "apps/api/README.md",
+      "spec": "docs/product/behavior-spec.md#demo-009"
+    },
+    {
+      "id": "API-005",
+      "area": "api",
+      "title": "Manual name or winery query filters case-insensitively",
+      "source": "apps/api/README.md",
+      "spec": "docs/product/behavior-spec.md#demo-010"
+    },
+    {
+      "id": "API-006",
+      "area": "api",
+      "title": "Invalid input is a structured HTTP 400",
+      "source": "apps/api/README.md",
+      "spec": "docs/product/behavior-spec.md"
+    },
+    {
+      "id": "API-007",
+      "area": "api",
+      "title": "Method and unknown API route are JSON 4xx",
+      "source": "apps/api/README.md",
+      "spec": "docs/product/behavior-spec.md"
+    },
+    {
+      "id": "API-008",
+      "area": "api",
+      "title": "Health endpoint marks synthetic demo state",
+      "source": "apps/api/README.md",
+      "spec": "docs/product/behavior-spec.md"
+    },
+    {
+      "id": "API-009",
+      "area": "api",
+      "title": "WEB_ROOT serves static files and SPA fallback",
+      "source": "apps/api/README.md",
+      "spec": "reports/site/index.html"
+    },
+    {
+      "id": "API-010",
+      "area": "api",
+      "title": "Загрузка сохраняет байты фото и выдаёт receipt для поиска",
+      "source": "apps/api/main_test.go",
+      "spec": "docs/product/behavior-spec.md#demo-002"
+    },
+    {
+      "id": "API-011",
+      "area": "api",
+      "title": "Некорректное и слишком большое фото отклоняются",
+      "source": "apps/api/main_test.go",
+      "spec": "docs/product/behavior-spec.md#demo-007"
+    },
+    {
+      "id": "API-012",
+      "area": "api",
+      "title": "Без настроенного хранилища upload возвращает storage_unavailable",
+      "source": "apps/api/main_test.go",
+      "spec": "docs/product/behavior-spec.md"
+    },
+    {
+      "id": "API-013",
+      "area": "api",
+      "title": "Неизвестный photoId возвращает photo_not_found",
+      "source": "apps/api/main_test.go",
+      "spec": "docs/product/behavior-spec.md"
+    },
+    {
+      "id": "API-014",
+      "area": "api",
+      "title": "Лимит хранилища отклоняет upload",
+      "source": "apps/api/main_test.go",
+      "spec": "docs/product/behavior-spec.md"
+    },
+    {
+      "id": "UI-001",
+      "area": "web",
+      "title": "Welcome shows the scan entry",
+      "source": "apps/web/README.md; Wine UX Atlas",
+      "spec": "docs/product/behavior-spec.md#demo-001"
+    },
+    {
+      "id": "UI-002",
+      "area": "web",
+      "title": "Scan entry opens simulated camera guidance",
+      "source": "apps/web/README.md; Wine UX Atlas",
+      "spec": "docs/product/behavior-spec.md#demo-001"
+    },
+    {
+      "id": "UI-003",
+      "area": "web",
+      "title": "Camera permission denial exposes gallery fallback",
+      "source": "apps/web/README.md; Wine UX Atlas",
+      "spec": "docs/product/behavior-spec.md#demo-008"
+    },
+    {
+      "id": "UI-004",
+      "area": "web",
+      "title": "Searching state is cancellable",
+      "source": "apps/web/README.md; Wine UX Atlas",
+      "spec": "docs/product/behavior-spec.md#demo-005"
+    },
+    {
+      "id": "UI-005",
+      "area": "web",
+      "title": "Cancelled search stays retryable",
+      "source": "apps/web/README.md; Wine UX Atlas",
+      "spec": "docs/product/behavior-spec.md#demo-005"
+    },
+    {
+      "id": "UI-006",
+      "area": "web",
+      "title": "Uncertain result exposes correction candidates",
+      "source": "apps/web/README.md; Wine UX Atlas",
+      "spec": "docs/product/behavior-spec.md#demo-004"
+    },
+    {
+      "id": "UI-007",
+      "area": "web",
+      "title": "Exact result opens synthetic wine details",
+      "source": "apps/web/README.md; Wine UX Atlas",
+      "spec": "docs/product/behavior-spec.md#demo-003"
+    },
+    {
+      "id": "UI-008",
+      "area": "web",
+      "title": "Manual search route is available",
+      "source": "apps/web/README.md; Wine UX Atlas",
+      "spec": "docs/product/behavior-spec.md#demo-010"
+    },
+    {
+      "id": "UI-009",
+      "area": "web",
+      "title": "Empty API result remains recoverable",
+      "source": "apps/web/README.md; Wine UX Atlas",
+      "spec": "docs/product/behavior-spec.md#demo-006"
+    },
+    {
+      "id": "UI-010",
+      "area": "web",
+      "title": "Service error remains recoverable",
+      "source": "apps/web/README.md; Wine UX Atlas",
+      "spec": "docs/product/behavior-spec.md#demo-009"
+    },
+    {
+      "id": "UI-011",
+      "area": "web",
+      "title": "Non-image file is rejected before preview",
+      "source": "apps/web/src/App.test.tsx",
+      "spec": "docs/product/behavior-spec.md#demo-007"
+    },
+    {
+      "id": "UI-003A",
+      "area": "web",
+      "title": "Инструкция восстановления доступа к камере сохраняет fallback",
+      "source": "apps/web/src/App.test.tsx",
+      "spec": "docs/product/behavior-spec.md#demo-008"
+    },
+    {
+      "id": "DESIGN-001",
+      "area": "design",
+      "title": "Винный токен Atlas и основное действие 82px",
+      "source": "apps/web/src/design.test.tsx",
+      "spec": "apps/web/design-specs.md"
+    },
+    {
+      "id": "DESIGN-002",
+      "area": "design",
+      "title": "Иконки камеры 24px и сканера 28px",
+      "source": "apps/web/src/design.test.tsx",
+      "spec": "apps/web/design-specs.md"
+    },
+    {
+      "id": "DESIGN-003",
+      "area": "design",
+      "title": "Подключены реальные файлы Onest и заявленные веса",
+      "source": "apps/web/src/design.test.tsx",
+      "spec": "apps/web/design-specs.md"
+    },
+    {
+      "id": "DESIGN-004",
+      "area": "design",
+      "title": "Объявлены правила responsive 390, 768 и 1280",
+      "source": "apps/web/src/design.test.tsx",
+      "spec": "apps/web/design-specs.md"
+    },
+    {
+      "id": "DESIGN-005",
+      "area": "design",
+      "title": "Production root без demo controls и device chrome",
+      "source": "apps/web/src/design.test.tsx",
+      "spec": "apps/web/design-specs.md"
+    },
+    {
+      "id": "DESIGN-006",
+      "area": "design",
+      "title": "Типографика Atlas применена к ключевым состояниям",
+      "source": "apps/web/src/design.test.tsx",
+      "spec": "apps/web/design-specs.md"
+    },
+    {
+      "id": "DESIGN-007",
+      "area": "design",
+      "title": "Действия 48px и точная геометрия camera shutter",
+      "source": "apps/web/src/design.test.tsx",
+      "spec": "apps/web/design-specs.md"
+    },
+    {
+      "id": "DESIGN-008",
+      "area": "design",
+      "title": "Камера оформлена как тёмная поверхность live video",
+      "source": "apps/web/src/design.test.tsx",
+      "spec": "apps/web/design-specs.md"
+    },
+    {
+      "id": "DESIGN-009",
+      "area": "design",
+      "title": "Строки кандидатов целиком активны и содержат metadata type",
+      "source": "apps/web/src/design.test.tsx",
+      "spec": "apps/web/design-specs.md"
+    },
+    {
+      "id": "UI-012",
+      "area": "web",
+      "title": "Обычная вкладка работает без установки",
+      "source": "Скриншоты Макса: Android Яндекс Браузер, 19.09.2026",
+      "spec": "docs/product/behavior-spec.md"
+    },
+    {
+      "id": "UI-013",
+      "area": "web",
+      "title": "Установка по запросу; отмена не мешает работе",
+      "source": "Скриншоты Макса: Android Яндекс Браузер, 19.09.2026",
+      "spec": "docs/product/behavior-spec.md"
+    },
+    {
+      "id": "UI-014",
+      "area": "web",
+      "title": "Standalone сохраняет пользовательские пути",
+      "source": "Скриншоты Макса: Android Яндекс Браузер, 19.09.2026",
+      "spec": "docs/product/behavior-spec.md"
+    },
+    {
+      "id": "UI-015",
+      "area": "web",
+      "title": "Manifest запускает приложение с корректными иконками",
+      "source": "Скриншоты Макса: Android Яндекс Браузер, 19.09.2026",
+      "spec": "docs/product/behavior-spec.md"
+    },
+    {
+      "id": "DESIGN-010",
+      "area": "design",
+      "title": "Камера вписывается в доступную высоту",
+      "source": "Скриншоты Макса: Android Яндекс Браузер, 19.09.2026",
+      "spec": "docs/product/behavior-spec.md"
+    },
+    {
+      "id": "DESIGN-011",
+      "area": "design",
+      "title": "Затвор и подсказки доступны на коротком экране",
+      "source": "Скриншоты Макса: Android Яндекс Браузер, 19.09.2026",
+      "spec": "docs/product/behavior-spec.md"
+    },
+    {
+      "id": "DESIGN-012",
+      "area": "design",
+      "title": "Рамка камеры не пересекает подсказку",
+      "source": "Скриншот Макса 19.09.2026: рамка проходит через текст",
+      "spec": "docs/product/behavior-spec.md#camera-hint"
+    },
+    {
+      "id": "DESIGN-013",
+      "area": "design",
+      "title": "Иконки scanner и target совпадают с SVG макета",
+      "source": "Утверждённый Wine UX Atlas + скриншот Макса 19.09.2026",
+      "spec": "apps/web/design-specs.md"
+    },
+    {
+      "id": "DESIGN-014",
+      "area": "design",
+      "title": "Нижняя подсказка соответствует композиции макета",
+      "source": "Утверждённый Wine UX Atlas + скриншот Макса 19.09.2026",
+      "spec": "apps/web/design-specs.md"
+    },
+    {
+      "id": "DESIGN-015",
+      "area": "design",
+      "title": "Рамка телефона только на экране от 1024px",
+      "source": "Запрос Макса: рамка только на широком экране, 19.09.2026",
+      "spec": "apps/web/design-specs.md"
+    },
+    {
+      "id": "DESIGN-016",
+      "area": "design",
+      "title": "Камера и затвор помещаются внутри настольной рамки",
+      "source": "Запрос Макса: рамка только на широком экране, 19.09.2026",
+      "spec": "apps/web/design-specs.md"
+    }
+  ]
+}

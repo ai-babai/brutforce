@@ -1,0 +1,9 @@
+test.ops.dzap.pw {
+    import lct_preview_headers
+    route {
+        forward_auth 127.0.0.1:4096 {
+            uri /global/health
+        }
+        reverse_proxy 127.0.0.1:8103
+    }
+}

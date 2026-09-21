@@ -1,0 +1,235 @@
+{
+  "schemaVersion": 1,
+  "runId": "20260920T192237Z-fast-59707347",
+  "recordedAt": "2026-09-20T19:22:42.459Z",
+  "files": [
+    {
+      "path": "data/runs/20260920T192237Z-fast-59707347.json",
+      "sha256": "e042337168a00ef5a713c4fa70c06bf4bafcb6d92858c43925dc62bac24780b7"
+    },
+    {
+      "path": "data/runs/20260920T192237Z-fast-59707347.api-go.jsonl",
+      "sha256": "809a446179438def03237f87de2ae201ecc37e743763a1f490a1a77bf35e5404"
+    },
+    {
+      "path": "data/runs/20260920T192237Z-fast-59707347.eval-go.jsonl",
+      "sha256": "1cfea49079af92e7f99b9376e4adba1777123a278021fd5e9714e5307eab5e31"
+    },
+    {
+      "path": "data/runs/20260920T192237Z-fast-59707347.web-vitest.json",
+      "sha256": "ba9bebbc4bfc036cd10a767d094d1d83a5a2b006d346426c56de204246983918"
+    },
+    {
+      "path": "data/runs/20260920T192237Z-fast-59707347.sources/vite.config.ts",
+      "sha256": "70ebb60bb166767c58a4e48f55f449db5291d675149b55540d25d6474b8cfbab"
+    },
+    {
+      "path": "data/runs/20260920T192237Z-fast-59707347.sources/proxy.test.ts",
+      "sha256": "72965d00f2ca8f468ec766f9e6b927fc9b9e99342c268edd234609db679dcef0"
+    },
+    {
+      "path": "data/runs/20260920T192237Z-fast-59707347.sources/assets-v2-provenance.md",
+      "sha256": "092e4308c7214b4002025894cfc64767ac72a4ab1997df80cf47ae6cd8b74cbc"
+    },
+    {
+      "path": "data/runs/20260920T192237Z-fast-59707347.sources/PlayfairDisplay-VariableFont_wght.woff2",
+      "sha256": "f944fb36ede0ae3c2345a1a2f859537ae7a751bbbffecd38e43e9714aa18008d"
+    },
+    {
+      "path": "data/runs/20260920T192237Z-fast-59707347.sources/go.mod",
+      "sha256": "fdbb39923d8439f2cca609b02c4db9594ebab4e8814508a11b3197799cf21df5"
+    },
+    {
+      "path": "data/runs/20260920T192237Z-fast-59707347.sources/go.sum",
+      "sha256": "9660f68eb9368bcddf674978ccf43894d06f84f7d86940bc411843ed06433a14"
+    },
+    {
+      "path": "data/runs/20260920T192237Z-fast-59707347.sources/run-fast-checks.mjs",
+      "sha256": "af8acf49ab110eaadafe758f440b5ac662f5476c414f1e8a62dd3e67c7fb3b3d"
+    },
+    {
+      "path": "data/runs/20260920T192237Z-fast-59707347.sources/README.md",
+      "sha256": "150868684f981f75aa2ebfcc5652213fc4a2753aba06f0b470737789234a86c5"
+    },
+    {
+      "path": "data/runs/20260920T192237Z-fast-59707347.sources/report-index.html",
+      "sha256": "74b2ad79bf884c41372531619b72d1f1639b0f33cb02b7256e0608277879f98a"
+    },
+    {
+      "path": "data/runs/20260920T192237Z-fast-59707347.sources/report.test.ts",
+      "sha256": "2257b9dd7dc5128437c651f333ad7799788436eeb304bb6ffb96d8575fdbc8e6"
+    },
+    {
+      "path": "data/runs/20260920T192237Z-fast-59707347.sources/eval-predict.md",
+      "sha256": "372d7c63e8d7eccd5705a9dfb22158a8ff676da5578a1db792130f222451162c"
+    },
+    {
+      "path": "data/runs/20260920T192237Z-fast-59707347.sources/eval_predict.go",
+      "sha256": "8b5cae3174f9785c91d29924678d4483e2fcf1de65f85733baeeff89579d8dac"
+    },
+    {
+      "path": "data/runs/20260920T192237Z-fast-59707347.sources/eval_predict_test.go",
+      "sha256": "993dc926a61828dc90125c8a266a657448c2206f7c77e013a4b4420b759a3f60"
+    },
+    {
+      "path": "data/runs/20260920T192237Z-fast-59707347.sources/cases.json",
+      "sha256": "a5fc9a636e2e71dd264ad2916e5b6568525dd48dd765fc28684a83dfe55e8739"
+    },
+    {
+      "path": "data/runs/20260920T192237Z-fast-59707347.sources/behavior-spec.md",
+      "sha256": "83b9f1b4ce4fb82de3b519af65024ade467c63dc52890bd68e76f942ed7ed038"
+    },
+    {
+      "path": "data/runs/20260920T192237Z-fast-59707347.sources/security-spec.md",
+      "sha256": "35ce001d128b396f8994c76ac67ddb152bfe71236198001e132e3c12a1e0826e"
+    },
+    {
+      "path": "data/runs/20260920T192237Z-fast-59707347.sources/demo-catalog.md",
+      "sha256": "1637c8610dcbe7a2d5cd0d921a5653b88be644f2743efd7f39e238c12a9d6dd6"
+    },
+    {
+      "path": "data/runs/20260920T192237Z-fast-59707347.sources/demo-search.schema.json",
+      "sha256": "7534a29ff7e70370d9689368fbaf4f67a7d82f9434e7808129d78820b9b1782f"
+    },
+    {
+      "path": "data/runs/20260920T192237Z-fast-59707347.sources/api-versioning.md",
+      "sha256": "3147d484d53436e9b43b5a4717f70eb8a0a34eb172f3d6e430f3dc66b3fbf258"
+    },
+    {
+      "path": "data/runs/20260920T192237Z-fast-59707347.sources/main.go",
+      "sha256": "0beababa4006b3fcfc3aca1402fc045c09190ce6877444e1ccd22f40f5c5c5bc"
+    },
+    {
+      "path": "data/runs/20260920T192237Z-fast-59707347.sources/docs.go",
+      "sha256": "dd203f9280ab829a187e763263a9178b878d052cf871ccf87d83ba89ebc0b443"
+    },
+    {
+      "path": "data/runs/20260920T192237Z-fast-59707347.sources/security.go",
+      "sha256": "983c00358fa1da8511a2cb50c1bb97fdf632f56b34478c6847404d42b4f309bc"
+    },
+    {
+      "path": "data/runs/20260920T192237Z-fast-59707347.sources/uploads.go",
+      "sha256": "ed33f266be64f9239006fcdd807e25bd2fe51f09fae1a6f01ae0a8a9da8c8413"
+    },
+    {
+      "path": "data/runs/20260920T192237Z-fast-59707347.sources/catalog.json",
+      "sha256": "042944ad783a095d8726708b7bb25eb784e1ab008cf354f23c5f6ded05b008f9"
+    },
+    {
+      "path": "data/runs/20260920T192237Z-fast-59707347.sources/openapi.json",
+      "sha256": "2d404b594016a35bd2a11e8bc640ae21f30215a7edd61b3a03d556bf71def5ef"
+    },
+    {
+      "path": "data/runs/20260920T192237Z-fast-59707347.sources/main_test.go",
+      "sha256": "ad016f28d090fc3d096d4924a3125d007904cd7b0374e586d906d8bdc040aace"
+    },
+    {
+      "path": "data/runs/20260920T192237Z-fast-59707347.sources/docs_test.go",
+      "sha256": "54bc625ce3632df4596b58c5dfaaa44076c351cee5ea59ccb6bf749767e29a53"
+    },
+    {
+      "path": "data/runs/20260920T192237Z-fast-59707347.sources/security_test.go",
+      "sha256": "7b25b66418c0fd19ed4ce4e17f510ae163e00a8d838a845b999985862b75e16a"
+    },
+    {
+      "path": "data/runs/20260920T192237Z-fast-59707347.sources/request_security_test.go",
+      "sha256": "89f9d5901dece5b4b9dc27ac1db8ac864f0b84dae67b567c7ac23d19e007f798"
+    },
+    {
+      "path": "data/runs/20260920T192237Z-fast-59707347.sources/brutforce-demo.service",
+      "sha256": "d1044a834278569b1e988c76741b4f0191efabb405d5dc4b060a61609c68660e"
+    },
+    {
+      "path": "data/runs/20260920T192237Z-fast-59707347.sources/App.tsx",
+      "sha256": "d0de4cb1be3deacc63242024f0f351600b97ef5bab0312a5605a596f8a86c7a9"
+    },
+    {
+      "path": "data/runs/20260920T192237Z-fast-59707347.sources/api.ts",
+      "sha256": "d5f52be8ef767f4534cd4a6e102f284f7efda10764e7778901c45733c34b0752"
+    },
+    {
+      "path": "data/runs/20260920T192237Z-fast-59707347.sources/api.test.ts",
+      "sha256": "8e1f15a60dd85ebf33772febc532b5c40a9525e7ec068b6c040da0a5fc4f3efa"
+    },
+    {
+      "path": "data/runs/20260920T192237Z-fast-59707347.sources/types.ts",
+      "sha256": "067160f2002f9fc436c0ce88cd10542dadbd2f52edfeb6aa9d1403c59ec24b2d"
+    },
+    {
+      "path": "data/runs/20260920T192237Z-fast-59707347.sources/styles.css",
+      "sha256": "14096a1ba8e05c0e60ad650a17bc605511b4ff19c9a46db81d2fd6a21e39d145"
+    },
+    {
+      "path": "data/runs/20260920T192237Z-fast-59707347.sources/overrides.css",
+      "sha256": "cb3ad47b103af766da36c9c2cf6a615769b86a1fe4c1115e547cb4be45e5953b"
+    },
+    {
+      "path": "data/runs/20260920T192237Z-fast-59707347.sources/v2.css",
+      "sha256": "33083fc683d78ef033528c3bfa8681e69682072e9717df42d6d7b0f5c62fed46"
+    },
+    {
+      "path": "data/runs/20260920T192237Z-fast-59707347.sources/V2Visual.tsx",
+      "sha256": "d659a6ba0529949f1b7ef95ba6eb8cc76a13d5987b214add11a76b1d6d18532c"
+    },
+    {
+      "path": "data/runs/20260920T192237Z-fast-59707347.sources/App.test.tsx",
+      "sha256": "d7d66af4efa9fc910520996ad9778398e8f4600e5a816a75a04c30e5099d87ac"
+    },
+    {
+      "path": "data/runs/20260920T192237Z-fast-59707347.sources/design.test.tsx",
+      "sha256": "10cc815c5b3c6ef98e5b7cf6c0c433a3813e1650f7bf72087a73237245164bd8"
+    },
+    {
+      "path": "data/runs/20260920T192237Z-fast-59707347.sources/navigation.test.tsx",
+      "sha256": "25c357619520473f08eea7c082dcd59c7ff858c9315e661637c3f808d5466cf0"
+    },
+    {
+      "path": "data/runs/20260920T192237Z-fast-59707347.sources/design-specs.md",
+      "sha256": "f9bf6b16b5c237c61f13ea81172d6eec9d465565d0742beab1b2c5deab017807"
+    },
+    {
+      "path": "data/runs/20260920T192237Z-fast-59707347.sources/AtlasIcons.tsx",
+      "sha256": "6436b3c6da996624282d499fa8eee99a6115316c335aaf1027654b48e069e750"
+    },
+    {
+      "path": "data/runs/20260920T192237Z-fast-59707347.sources/InstallApp.tsx",
+      "sha256": "d9cd75e5c45c68ff61fa04c4367ba8d1dde7e1c8a3e3e4984e3c01b94e8aa0f4"
+    },
+    {
+      "path": "data/runs/20260920T192237Z-fast-59707347.sources/pwa.test.tsx",
+      "sha256": "bc5e7a0c0df5dc513074ed0192ca8e497ddc58c21d0606652297b3d298ccf3ef"
+    },
+    {
+      "path": "data/runs/20260920T192237Z-fast-59707347.sources/manifest.webmanifest",
+      "sha256": "10e4224f5bbb64ec749afdcc15446efd2321a1db346b6e49ae923af3a6c835ae"
+    },
+    {
+      "path": "data/runs/20260920T192237Z-fast-59707347.sources/mascot-hold-2d-alpha.webp",
+      "sha256": "26405f0ecbbf17f999f4cbdb222100fe104473e0dd5ebc4caaf8df371dc6c211"
+    },
+    {
+      "path": "data/runs/20260920T192237Z-fast-59707347.sources/mascot-walk-2d-alpha.webp",
+      "sha256": "446d4f99acf7974dd4dda8d34ed7f83f0f37abf45915629810ff2838c71e4615"
+    },
+    {
+      "path": "data/runs/20260920T192237Z-fast-59707347.sources/mascot-counter-thoughtful-2d-alpha.webp",
+      "sha256": "8f4966098416448e213eef07fa44c4d250285435be1ab85d59f96d62e77a8e5d"
+    },
+    {
+      "path": "data/runs/20260920T192237Z-fast-59707347.sources/mascot-cellar-2d-alpha.webp",
+      "sha256": "05cb2a89dc4b8bbc1bc43fa23546d0584a776d52677e32a3134b2fcf93e56758"
+    },
+    {
+      "path": "data/runs/20260920T192237Z-fast-59707347.sources/mascot-offline-2d-alpha.webp",
+      "sha256": "966bf6a2fdd5842a465e226c1df341926e6efba8e7400176edf7ba27cece0ee2"
+    },
+    {
+      "path": "data/runs/20260920T192237Z-fast-59707347.sources/svoe-vino-logo.svg",
+      "sha256": "9c472778d4c12a6f191265f09b3898d1167385a4309732b5dd9a4227888ed77f"
+    },
+    {
+      "path": "data/runs/20260920T192237Z-fast-59707347.sources/index.html",
+      "sha256": "a43f1a8d7e326d705b1a3553f962cd519c03418db98c5f698ff2961deedb9990"
+    }
+  ]
+}

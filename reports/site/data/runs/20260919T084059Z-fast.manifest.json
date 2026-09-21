@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "runId": "20260919T084059Z-fast",
+  "recordedAt": "2026-09-19T08:41:03.659Z",
+  "files": [
+    {
+      "path": "data/runs/20260919T084059Z-fast.json",
+      "sha256": "9f966a932cab4be1b4fbb7d3cc4d3e4abd29a30b3ee6293b50987366ce464ca3"
+    },
+    {
+      "path": "data/runs/20260919T084059Z-fast.api-go.jsonl",
+      "sha256": "015d714813ee47a47ddab8c1b6e1226e599561fa4b722409693e97efbc9e3672"
+    },
+    {
+      "path": "data/runs/20260919T084059Z-fast.web-vitest.json",
+      "sha256": "b2c18944539e348d28c8bdac87fcfbd1085567223d10187669f9fdad539ca7a7"
+    }
+  ]
+}

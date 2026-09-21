@@ -1,0 +1,66 @@
+[
+  {
+    "id": "demo-cabernet-sauvignon-2023",
+    "name": "Каберне Совиньон",
+    "winery": "Демо-винодельня",
+    "year": 2023,
+    "image": "/assets/concept-bottle.png",
+    "description": "Синтетическая карточка DEMO: красное сухое вино для интерфейсного прототипа."
+  },
+  {
+    "id": "demo-merlot-2022",
+    "name": "Мерло",
+    "winery": "Демо-винодельня",
+    "year": 2022,
+    "image": "",
+    "description": "Синтетическая карточка DEMO: красное сухое вино без фотографии для интерфейсного прототипа."
+  },
+  {
+    "id": "demo-saperavi-2021",
+    "name": "Саперави",
+    "winery": "Северная долина DEMO",
+    "year": 2021,
+    "image": "/assets/catalog/demo-saperavi-2021.svg",
+    "description": "Синтетическая карточка DEMO: красное сухое вино для проверки списка кандидатов."
+  },
+  {
+    "id": "demo-pinot-noir-2020",
+    "name": "Пино Нуар",
+    "winery": "Линия холмов DEMO",
+    "year": 2020,
+    "image": "/assets/catalog/demo-pinot-noir-2020.svg",
+    "description": "Синтетическая карточка DEMO: красное сухое вино для проверки поиска по названию."
+  },
+  {
+    "id": "demo-krasnostop-2022",
+    "name": "Красностоп",
+    "winery": "Донские террасы DEMO",
+    "year": 2022,
+    "image": "/assets/catalog/demo-krasnostop-2022.svg",
+    "description": "Синтетическая карточка DEMO: красное сухое вино для проверки поиска по винодельне."
+  },
+  {
+    "id": "demo-shiraz-2021",
+    "name": "Шираз",
+    "winery": "Степной берег DEMO",
+    "year": 2021,
+    "image": "/assets/catalog/demo-shiraz-2021.svg",
+    "description": "Синтетическая карточка DEMO: красное сухое вино для проверки карточки результата."
+  },
+  {
+    "id": "demo-cabernet-franc-2019",
+    "name": "Каберне Фран",
+    "winery": "Каменный сад DEMO",
+    "year": 2019,
+    "image": "/assets/catalog/demo-cabernet-franc-2019.svg",
+    "description": "Синтетическая карточка DEMO: красное сухое вино для проверки неоднозначного поиска."
+  },
+  {
+    "id": "demo-tsimlyansky-black-2023",
+    "name": "Цимлянский чёрный",
+    "winery": "Речная долина DEMO",
+    "year": 2023,
+    "image": "/assets/catalog/demo-tsimlyansky-black-2023.svg",
+    "description": "Синтетическая карточка DEMO: красное сухое вино для проверки поиска по году."
+  }
+]

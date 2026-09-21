@@ -1,0 +1,7 @@
+node_modules/
+dist/
+*.tsbuildinfo
+
+# TypeScript emits the Vite config during tsc -b
+vite.config.js
+vite.config.d.ts

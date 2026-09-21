@@ -1,0 +1,44 @@
+{"Time":"2026-09-19T11:47:19.449246+03:00","Action":"start","Package":"brutforce-behavior-demo/apps/api"}
+{"Time":"2026-09-19T11:47:19.741573+03:00","Action":"run","Package":"brutforce-behavior-demo/apps/api","Test":"TestAPI001ExactSelectsCabernet"}
+{"Time":"2026-09-19T11:47:19.741662+03:00","Action":"output","Package":"brutforce-behavior-demo/apps/api","Test":"TestAPI001ExactSelectsCabernet","Output":"=== RUN   TestAPI001ExactSelectsCabernet\n","OutputType":"frame"}
+{"Time":"2026-09-19T11:47:19.742101+03:00","Action":"output","Package":"brutforce-behavior-demo/apps/api","Test":"TestAPI001ExactSelectsCabernet","Output":"--- PASS: TestAPI001ExactSelectsCabernet (0.00s)\n","OutputType":"frame"}
+{"Time":"2026-09-19T11:47:19.742115+03:00","Action":"pass","Package":"brutforce-behavior-demo/apps/api","Test":"TestAPI001ExactSelectsCabernet","Elapsed":0}
+{"Time":"2026-09-19T11:47:19.742125+03:00","Action":"run","Package":"brutforce-behavior-demo/apps/api","Test":"TestAPI002UncertainReturnsCandidatesWithoutSelection"}
+{"Time":"2026-09-19T11:47:19.742131+03:00","Action":"output","Package":"brutforce-behavior-demo/apps/api","Test":"TestAPI002UncertainReturnsCandidatesWithoutSelection","Output":"=== RUN   TestAPI002UncertainReturnsCandidatesWithoutSelection\n","OutputType":"frame"}
+{"Time":"2026-09-19T11:47:19.742143+03:00","Action":"output","Package":"brutforce-behavior-demo/apps/api","Test":"TestAPI002UncertainReturnsCandidatesWithoutSelection","Output":"--- PASS: TestAPI002UncertainReturnsCandidatesWithoutSelection (0.00s)\n","OutputType":"frame"}
+{"Time":"2026-09-19T11:47:19.742145+03:00","Action":"pass","Package":"brutforce-behavior-demo/apps/api","Test":"TestAPI002UncertainReturnsCandidatesWithoutSelection","Elapsed":0}
+{"Time":"2026-09-19T11:47:19.742151+03:00","Action":"run","Package":"brutforce-behavior-demo/apps/api","Test":"TestAPI003NoneReturnsEmptyCandidates"}
+{"Time":"2026-09-19T11:47:19.742152+03:00","Action":"output","Package":"brutforce-behavior-demo/apps/api","Test":"TestAPI003NoneReturnsEmptyCandidates","Output":"=== RUN   TestAPI003NoneReturnsEmptyCandidates\n","OutputType":"frame"}
+{"Time":"2026-09-19T11:47:19.742155+03:00","Action":"output","Package":"brutforce-behavior-demo/apps/api","Test":"TestAPI003NoneReturnsEmptyCandidates","Output":"--- PASS: TestAPI003NoneReturnsEmptyCandidates (0.00s)\n","OutputType":"frame"}
+{"Time":"2026-09-19T11:47:19.742157+03:00","Action":"pass","Package":"brutforce-behavior-demo/apps/api","Test":"TestAPI003NoneReturnsEmptyCandidates","Elapsed":0}
+{"Time":"2026-09-19T11:47:19.742158+03:00","Action":"run","Package":"brutforce-behavior-demo/apps/api","Test":"TestAPI004ErrorIsStructured503"}
+{"Time":"2026-09-19T11:47:19.742159+03:00","Action":"output","Package":"brutforce-behavior-demo/apps/api","Test":"TestAPI004ErrorIsStructured503","Output":"=== RUN   TestAPI004ErrorIsStructured503\n","OutputType":"frame"}
+{"Time":"2026-09-19T11:47:19.742224+03:00","Action":"output","Package":"brutforce-behavior-demo/apps/api","Test":"TestAPI004ErrorIsStructured503","Output":"--- PASS: TestAPI004ErrorIsStructured503 (0.00s)\n","OutputType":"frame"}
+{"Time":"2026-09-19T11:47:19.742248+03:00","Action":"pass","Package":"brutforce-behavior-demo/apps/api","Test":"TestAPI004ErrorIsStructured503","Elapsed":0}
+{"Time":"2026-09-19T11:47:19.742254+03:00","Action":"run","Package":"brutforce-behavior-demo/apps/api","Test":"TestAPI005ManualQueryFiltersCaseInsensitively"}
+{"Time":"2026-09-19T11:47:19.742258+03:00","Action":"output","Package":"brutforce-behavior-demo/apps/api","Test":"TestAPI005ManualQueryFiltersCaseInsensitively","Output":"=== RUN   TestAPI005ManualQueryFiltersCaseInsensitively\n","OutputType":"frame"}
+{"Time":"2026-09-19T11:47:19.742265+03:00","Action":"output","Package":"brutforce-behavior-demo/apps/api","Test":"TestAPI005ManualQueryFiltersCaseInsensitively","Output":"--- PASS: TestAPI005ManualQueryFiltersCaseInsensitively (0.00s)\n","OutputType":"frame"}
+{"Time":"2026-09-19T11:47:19.742287+03:00","Action":"pass","Package":"brutforce-behavior-demo/apps/api","Test":"TestAPI005ManualQueryFiltersCaseInsensitively","Elapsed":0}
+{"Time":"2026-09-19T11:47:19.742291+03:00","Action":"run","Package":"brutforce-behavior-demo/apps/api","Test":"TestAPI006InvalidInputIs400"}
+{"Time":"2026-09-19T11:47:19.742294+03:00","Action":"output","Package":"brutforce-behavior-demo/apps/api","Test":"TestAPI006InvalidInputIs400","Output":"=== RUN   TestAPI006InvalidInputIs400\n","OutputType":"frame"}
+{"Time":"2026-09-19T11:47:19.7423+03:00","Action":"output","Package":"brutforce-behavior-demo/apps/api","Test":"TestAPI006InvalidInputIs400","Output":"--- PASS: TestAPI006InvalidInputIs400 (0.00s)\n","OutputType":"frame"}
+{"Time":"2026-09-19T11:47:19.742307+03:00","Action":"pass","Package":"brutforce-behavior-demo/apps/api","Test":"TestAPI006InvalidInputIs400","Elapsed":0}
+{"Time":"2026-09-19T11:47:19.742311+03:00","Action":"run","Package":"brutforce-behavior-demo/apps/api","Test":"TestAPI007MethodAndUnknownAPIRouteReturnJSON4xx"}
+{"Time":"2026-09-19T11:47:19.742319+03:00","Action":"output","Package":"brutforce-behavior-demo/apps/api","Test":"TestAPI007MethodAndUnknownAPIRouteReturnJSON4xx","Output":"=== RUN   TestAPI007MethodAndUnknownAPIRouteReturnJSON4xx\n","OutputType":"frame"}
+{"Time":"2026-09-19T11:47:19.742324+03:00","Action":"output","Package":"brutforce-behavior-demo/apps/api","Test":"TestAPI007MethodAndUnknownAPIRouteReturnJSON4xx","Output":"--- PASS: TestAPI007MethodAndUnknownAPIRouteReturnJSON4xx (0.00s)\n","OutputType":"frame"}
+{"Time":"2026-09-19T11:47:19.742325+03:00","Action":"pass","Package":"brutforce-behavior-demo/apps/api","Test":"TestAPI007MethodAndUnknownAPIRouteReturnJSON4xx","Elapsed":0}
+{"Time":"2026-09-19T11:47:19.74233+03:00","Action":"run","Package":"brutforce-behavior-demo/apps/api","Test":"TestAPI008Health"}
+{"Time":"2026-09-19T11:47:19.742332+03:00","Action":"output","Package":"brutforce-behavior-demo/apps/api","Test":"TestAPI008Health","Output":"=== RUN   TestAPI008Health\n","OutputType":"frame"}
+{"Time":"2026-09-19T11:47:19.742353+03:00","Action":"output","Package":"brutforce-behavior-demo/apps/api","Test":"TestAPI008Health","Output":"--- PASS: TestAPI008Health (0.00s)\n","OutputType":"frame"}
+{"Time":"2026-09-19T11:47:19.742356+03:00","Action":"pass","Package":"brutforce-behavior-demo/apps/api","Test":"TestAPI008Health","Elapsed":0}
+{"Time":"2026-09-19T11:47:19.742358+03:00","Action":"run","Package":"brutforce-behavior-demo/apps/api","Test":"TestSearchBodyLimit"}
+{"Time":"2026-09-19T11:47:19.74236+03:00","Action":"output","Package":"brutforce-behavior-demo/apps/api","Test":"TestSearchBodyLimit","Output":"=== RUN   TestSearchBodyLimit\n","OutputType":"frame"}
+{"Time":"2026-09-19T11:47:19.742402+03:00","Action":"output","Package":"brutforce-behavior-demo/apps/api","Test":"TestSearchBodyLimit","Output":"--- PASS: TestSearchBodyLimit (0.00s)\n","OutputType":"frame"}
+{"Time":"2026-09-19T11:47:19.742405+03:00","Action":"pass","Package":"brutforce-behavior-demo/apps/api","Test":"TestSearchBodyLimit","Elapsed":0}
+{"Time":"2026-09-19T11:47:19.742407+03:00","Action":"run","Package":"brutforce-behavior-demo/apps/api","Test":"TestSPAHandlerServesFilesAndFallsBackToIndex"}
+{"Time":"2026-09-19T11:47:19.742409+03:00","Action":"output","Package":"brutforce-behavior-demo/apps/api","Test":"TestSPAHandlerServesFilesAndFallsBackToIndex","Output":"=== RUN   TestSPAHandlerServesFilesAndFallsBackToIndex\n","OutputType":"frame"}
+{"Time":"2026-09-19T11:47:19.743892+03:00","Action":"output","Package":"brutforce-behavior-demo/apps/api","Test":"TestSPAHandlerServesFilesAndFallsBackToIndex","Output":"--- PASS: TestSPAHandlerServesFilesAndFallsBackToIndex (0.00s)\n","OutputType":"frame"}
+{"Time":"2026-09-19T11:47:19.743896+03:00","Action":"pass","Package":"brutforce-behavior-demo/apps/api","Test":"TestSPAHandlerServesFilesAndFallsBackToIndex","Elapsed":0}
+{"Time":"2026-09-19T11:47:19.743897+03:00","Action":"output","Package":"brutforce-behavior-demo/apps/api","Output":"PASS\n","OutputType":"frame"}
+{"Time":"2026-09-19T11:47:19.744462+03:00","Action":"output","Package":"brutforce-behavior-demo/apps/api","Output":"ok  \tbrutforce-behavior-demo/apps/api\t0.295s\n"}
+{"Time":"2026-09-19T11:47:19.74448+03:00","Action":"pass","Package":"brutforce-behavior-demo/apps/api","Elapsed":0.295}

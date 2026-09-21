@@ -1,0 +1,28 @@
+{"Time":"2026-09-20T21:53:33.308024852Z","Action":"start","Package":"brutforce-behavior-demo/apps/api"}
+{"Time":"2026-09-20T21:53:33.31295057Z","Action":"run","Package":"brutforce-behavior-demo/apps/api","Test":"TestDB001FreshMigrationsAndReapply"}
+{"Time":"2026-09-20T21:53:33.313041678Z","Action":"output","Package":"brutforce-behavior-demo/apps/api","Test":"TestDB001FreshMigrationsAndReapply","Output":"=== RUN   TestDB001FreshMigrationsAndReapply\n"}
+{"Time":"2026-09-20T21:53:33.322236509Z","Action":"output","Package":"brutforce-behavior-demo/apps/api","Test":"TestDB001FreshMigrationsAndReapply","Output":"\u000f    database_integration_test.go:80: test database preparation failed (credential details suppressed)\u000e\n"}
+{"Time":"2026-09-20T21:53:33.322311513Z","Action":"output","Package":"brutforce-behavior-demo/apps/api","Test":"TestDB001FreshMigrationsAndReapply","Output":"--- FAIL: TestDB001FreshMigrationsAndReapply (0.01s)\n"}
+{"Time":"2026-09-20T21:53:33.322323832Z","Action":"fail","Package":"brutforce-behavior-demo/apps/api","Test":"TestDB001FreshMigrationsAndReapply","Elapsed":0.01}
+{"Time":"2026-09-20T21:53:33.32234258Z","Action":"run","Package":"brutforce-behavior-demo/apps/api","Test":"TestDB002SeedPreservesEditsAndDoesNotDuplicate"}
+{"Time":"2026-09-20T21:53:33.322362911Z","Action":"output","Package":"brutforce-behavior-demo/apps/api","Test":"TestDB002SeedPreservesEditsAndDoesNotDuplicate","Output":"=== RUN   TestDB002SeedPreservesEditsAndDoesNotDuplicate\n"}
+{"Time":"2026-09-20T21:53:33.322373316Z","Action":"output","Package":"brutforce-behavior-demo/apps/api","Test":"TestDB002SeedPreservesEditsAndDoesNotDuplicate","Output":"\u000f    database_integration_test.go:96: test database preparation failed (credential details suppressed)\u000e\n"}
+{"Time":"2026-09-20T21:53:33.322378895Z","Action":"output","Package":"brutforce-behavior-demo/apps/api","Test":"TestDB002SeedPreservesEditsAndDoesNotDuplicate","Output":"--- FAIL: TestDB002SeedPreservesEditsAndDoesNotDuplicate (0.00s)\n"}
+{"Time":"2026-09-20T21:53:33.322382871Z","Action":"fail","Package":"brutforce-behavior-demo/apps/api","Test":"TestDB002SeedPreservesEditsAndDoesNotDuplicate","Elapsed":0}
+{"Time":"2026-09-20T21:53:33.322386646Z","Action":"run","Package":"brutforce-behavior-demo/apps/api","Test":"TestDB003ActualHTTPQueriesUsePostgresLiterally"}
+{"Time":"2026-09-20T21:53:33.322390213Z","Action":"output","Package":"brutforce-behavior-demo/apps/api","Test":"TestDB003ActualHTTPQueriesUsePostgresLiterally","Output":"=== RUN   TestDB003ActualHTTPQueriesUsePostgresLiterally\n"}
+{"Time":"2026-09-20T21:53:33.322394339Z","Action":"output","Package":"brutforce-behavior-demo/apps/api","Test":"TestDB003ActualHTTPQueriesUsePostgresLiterally","Output":"\u000f    database_integration_test.go:123: test database preparation failed (credential details suppressed)\u000e\n"}
+{"Time":"2026-09-20T21:53:33.322403663Z","Action":"output","Package":"brutforce-behavior-demo/apps/api","Test":"TestDB003ActualHTTPQueriesUsePostgresLiterally","Output":"--- FAIL: TestDB003ActualHTTPQueriesUsePostgresLiterally (0.00s)\n"}
+{"Time":"2026-09-20T21:53:33.322407779Z","Action":"fail","Package":"brutforce-behavior-demo/apps/api","Test":"TestDB003ActualHTTPQueriesUsePostgresLiterally","Elapsed":0}
+{"Time":"2026-09-20T21:53:33.322411535Z","Action":"run","Package":"brutforce-behavior-demo/apps/api","Test":"TestDB004DataSurvivesRuntimeReconnect"}
+{"Time":"2026-09-20T21:53:33.32241491Z","Action":"output","Package":"brutforce-behavior-demo/apps/api","Test":"TestDB004DataSurvivesRuntimeReconnect","Output":"=== RUN   TestDB004DataSurvivesRuntimeReconnect\n"}
+{"Time":"2026-09-20T21:53:33.322418796Z","Action":"output","Package":"brutforce-behavior-demo/apps/api","Test":"TestDB004DataSurvivesRuntimeReconnect","Output":"\u000f    database_integration_test.go:147: test database preparation failed (credential details suppressed)\u000e\n"}
+{"Time":"2026-09-20T21:53:33.322423212Z","Action":"output","Package":"brutforce-behavior-demo/apps/api","Test":"TestDB004DataSurvivesRuntimeReconnect","Output":"--- FAIL: TestDB004DataSurvivesRuntimeReconnect (0.00s)\n"}
+{"Time":"2026-09-20T21:53:33.322439286Z","Action":"fail","Package":"brutforce-behavior-demo/apps/api","Test":"TestDB004DataSurvivesRuntimeReconnect","Elapsed":0}
+{"Time":"2026-09-20T21:53:33.322442832Z","Action":"run","Package":"brutforce-behavior-demo/apps/api","Test":"TestDB005RuntimeCannotChangeSchema"}
+{"Time":"2026-09-20T21:53:33.322445996Z","Action":"output","Package":"brutforce-behavior-demo/apps/api","Test":"TestDB005RuntimeCannotChangeSchema","Output":"=== RUN   TestDB005RuntimeCannotChangeSchema\n"}
+{"Time":"2026-09-20T21:53:33.322449842Z","Action":"output","Package":"brutforce-behavior-demo/apps/api","Test":"TestDB005RuntimeCannotChangeSchema","Output":"\u000f    database_integration_test.go:169: test database preparation failed (credential details suppressed)\u000e\n"}
+{"Time":"2026-09-20T21:53:33.322454259Z","Action":"output","Package":"brutforce-behavior-demo/apps/api","Test":"TestDB005RuntimeCannotChangeSchema","Output":"--- FAIL: TestDB005RuntimeCannotChangeSchema (0.00s)\n"}
+{"Time":"2026-09-20T21:53:33.322457714Z","Action":"fail","Package":"brutforce-behavior-demo/apps/api","Test":"TestDB005RuntimeCannotChangeSchema","Elapsed":0}
+{"Time":"2026-09-20T21:53:33.322461971Z","Action":"output","Package":"brutforce-behavior-demo/apps/api","Output":"FAIL\n"}
+{"Time":"2026-09-20T21:53:33.323826697Z","Action":"fail","Package":"brutforce-behavior-demo/apps/api","Elapsed":0.016}

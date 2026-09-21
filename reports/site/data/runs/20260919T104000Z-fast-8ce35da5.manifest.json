@@ -1,0 +1,91 @@
+{
+  "schemaVersion": 1,
+  "runId": "20260919T104000Z-fast-8ce35da5",
+  "recordedAt": "2026-09-19T10:40:03.630Z",
+  "files": [
+    {
+      "path": "data/runs/20260919T104000Z-fast-8ce35da5.json",
+      "sha256": "88835ee2726427a03186ae8a1b04426a9040bce3220d4df14c9cad697b90bbad"
+    },
+    {
+      "path": "data/runs/20260919T104000Z-fast-8ce35da5.api-go.jsonl",
+      "sha256": "c26e417e7c33d72e548f15337763c78b007e495c5296992783c717b5b57a4c93"
+    },
+    {
+      "path": "data/runs/20260919T104000Z-fast-8ce35da5.web-vitest.json",
+      "sha256": "6bbf82f1e7aba2aef8222bccec42ac264dd835fce7aba7965f043b0e2fce3638"
+    },
+    {
+      "path": "data/runs/20260919T104000Z-fast-8ce35da5.sources/cases.json",
+      "sha256": "9b47b538c55adc099019039972a01c689d1a91aeef0e8a2d5f6a99d68ff7ccb8"
+    },
+    {
+      "path": "data/runs/20260919T104000Z-fast-8ce35da5.sources/behavior-spec.md",
+      "sha256": "11eece2e57b75cdd874a1992ab5f4b02734f9267e5abbecb81ee35e0394b8400"
+    },
+    {
+      "path": "data/runs/20260919T104000Z-fast-8ce35da5.sources/main.go",
+      "sha256": "4c79facb3d33f98e029b469851725d0da443f66cac7ff267e46723311862622a"
+    },
+    {
+      "path": "data/runs/20260919T104000Z-fast-8ce35da5.sources/uploads.go",
+      "sha256": "c530eb8d0e4d8a055ae9e6abf2f7205fbe663fee345f6beb2c49570c90a848ba"
+    },
+    {
+      "path": "data/runs/20260919T104000Z-fast-8ce35da5.sources/main_test.go",
+      "sha256": "e2e0a4cd039af367740a1cae631328760b10ff853d8ee4787e96c99c30f2662d"
+    },
+    {
+      "path": "data/runs/20260919T104000Z-fast-8ce35da5.sources/App.tsx",
+      "sha256": "06e4d6f70d20d1795f8d6f2d65a483f159e4acfdfe7e315bb0f240c7c51fe8b7"
+    },
+    {
+      "path": "data/runs/20260919T104000Z-fast-8ce35da5.sources/api.ts",
+      "sha256": "7fb4e22672a33a79b77eb3d8c12e1987026ed5fec6b4719529886f3b280654cf"
+    },
+    {
+      "path": "data/runs/20260919T104000Z-fast-8ce35da5.sources/types.ts",
+      "sha256": "067160f2002f9fc436c0ce88cd10542dadbd2f52edfeb6aa9d1403c59ec24b2d"
+    },
+    {
+      "path": "data/runs/20260919T104000Z-fast-8ce35da5.sources/styles.css",
+      "sha256": "14096a1ba8e05c0e60ad650a17bc605511b4ff19c9a46db81d2fd6a21e39d145"
+    },
+    {
+      "path": "data/runs/20260919T104000Z-fast-8ce35da5.sources/overrides.css",
+      "sha256": "ec14e852af5c143e7f8bacdb05de3896d0d981e0885fa703fabaa0153d0327e7"
+    },
+    {
+      "path": "data/runs/20260919T104000Z-fast-8ce35da5.sources/App.test.tsx",
+      "sha256": "51498aa0f82a511c0208434e34fbe9705dc046f86ce51559f38284bda3782563"
+    },
+    {
+      "path": "data/runs/20260919T104000Z-fast-8ce35da5.sources/design.test.tsx",
+      "sha256": "86040f4f8ba3820672077adb59fe2be72fccf175117784aae4a7a7a5b05a5fa4"
+    },
+    {
+      "path": "data/runs/20260919T104000Z-fast-8ce35da5.sources/design-specs.md",
+      "sha256": "5f885f9a5817226cdabd52c1a16b2d8f15a6024a00d671a90b91cb0d8f727cb4"
+    },
+    {
+      "path": "data/runs/20260919T104000Z-fast-8ce35da5.sources/AtlasIcons.tsx",
+      "sha256": "6436b3c6da996624282d499fa8eee99a6115316c335aaf1027654b48e069e750"
+    },
+    {
+      "path": "data/runs/20260919T104000Z-fast-8ce35da5.sources/InstallApp.tsx",
+      "sha256": "d9cd75e5c45c68ff61fa04c4367ba8d1dde7e1c8a3e3e4984e3c01b94e8aa0f4"
+    },
+    {
+      "path": "data/runs/20260919T104000Z-fast-8ce35da5.sources/pwa.test.tsx",
+      "sha256": "ad911dfe86510fb66c19715bfc5d46bc9d418a1a593ae2f05ab5b3696545c9b3"
+    },
+    {
+      "path": "data/runs/20260919T104000Z-fast-8ce35da5.sources/manifest.webmanifest",
+      "sha256": "b81001b08550e936b3c6d741c4721c54bdb38ca85fc8d05c4eae664cd85062fa"
+    },
+    {
+      "path": "data/runs/20260919T104000Z-fast-8ce35da5.sources/index.html",
+      "sha256": "ad2e3c87de1c42aeaebd96290745fe54f1476192b910ce1f263724a29838c6e4"
+    }
+  ]
+}

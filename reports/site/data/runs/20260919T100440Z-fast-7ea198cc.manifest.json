@@ -1,0 +1,87 @@
+{
+  "schemaVersion": 1,
+  "runId": "20260919T100440Z-fast-7ea198cc",
+  "recordedAt": "2026-09-19T10:04:43.444Z",
+  "files": [
+    {
+      "path": "data/runs/20260919T100440Z-fast-7ea198cc.json",
+      "sha256": "67ec23261f47f00b52da2a3f155bbf8a13667113a769a3fc7210c032d8de675c"
+    },
+    {
+      "path": "data/runs/20260919T100440Z-fast-7ea198cc.api-go.jsonl",
+      "sha256": "e094ff590e89d56a7c5093ddbe398799cefd52cae2e41b8e2614c1727cb97f67"
+    },
+    {
+      "path": "data/runs/20260919T100440Z-fast-7ea198cc.web-vitest.json",
+      "sha256": "470468d3b136f3f58c965a2b860b94f0c122802bef3fee7e488cbf810bb4610a"
+    },
+    {
+      "path": "data/runs/20260919T100440Z-fast-7ea198cc.sources/cases.json",
+      "sha256": "758eaa17cd65cfa173fb7f3fdcd051cf5411d0a7f3cb4d0b4e7423461bf5d6f1"
+    },
+    {
+      "path": "data/runs/20260919T100440Z-fast-7ea198cc.sources/behavior-spec.md",
+      "sha256": "68daadba64bb3e417433fffacbb7b1842965319f2a90c49d4427136a3d519c86"
+    },
+    {
+      "path": "data/runs/20260919T100440Z-fast-7ea198cc.sources/main.go",
+      "sha256": "f405bf6001d1c3424ad116e36818089db33c6d335cb5e4710012532d157bd748"
+    },
+    {
+      "path": "data/runs/20260919T100440Z-fast-7ea198cc.sources/uploads.go",
+      "sha256": "c530eb8d0e4d8a055ae9e6abf2f7205fbe663fee345f6beb2c49570c90a848ba"
+    },
+    {
+      "path": "data/runs/20260919T100440Z-fast-7ea198cc.sources/main_test.go",
+      "sha256": "e2e0a4cd039af367740a1cae631328760b10ff853d8ee4787e96c99c30f2662d"
+    },
+    {
+      "path": "data/runs/20260919T100440Z-fast-7ea198cc.sources/App.tsx",
+      "sha256": "a23da9a5f38c2eb1f5e5351526cec4405116a19a7a9523e5e249cd7b06587f83"
+    },
+    {
+      "path": "data/runs/20260919T100440Z-fast-7ea198cc.sources/api.ts",
+      "sha256": "7fb4e22672a33a79b77eb3d8c12e1987026ed5fec6b4719529886f3b280654cf"
+    },
+    {
+      "path": "data/runs/20260919T100440Z-fast-7ea198cc.sources/types.ts",
+      "sha256": "067160f2002f9fc436c0ce88cd10542dadbd2f52edfeb6aa9d1403c59ec24b2d"
+    },
+    {
+      "path": "data/runs/20260919T100440Z-fast-7ea198cc.sources/styles.css",
+      "sha256": "14096a1ba8e05c0e60ad650a17bc605511b4ff19c9a46db81d2fd6a21e39d145"
+    },
+    {
+      "path": "data/runs/20260919T100440Z-fast-7ea198cc.sources/overrides.css",
+      "sha256": "bf6f517a4446dbcdcdcba0b056daa22629da0e8099dab86f2d02a734a218ab99"
+    },
+    {
+      "path": "data/runs/20260919T100440Z-fast-7ea198cc.sources/App.test.tsx",
+      "sha256": "51498aa0f82a511c0208434e34fbe9705dc046f86ce51559f38284bda3782563"
+    },
+    {
+      "path": "data/runs/20260919T100440Z-fast-7ea198cc.sources/design.test.tsx",
+      "sha256": "3149640db090c51ede2e6a63e4758fdad0cf1c8a435ebc3a8a970c0b77ea07d9"
+    },
+    {
+      "path": "data/runs/20260919T100440Z-fast-7ea198cc.sources/design-specs.md",
+      "sha256": "0f821fb94ac69e7d551c953ff7a683001fe8b24d9e3bdb5d9ea0afc98a902339"
+    },
+    {
+      "path": "data/runs/20260919T100440Z-fast-7ea198cc.sources/InstallApp.tsx",
+      "sha256": "d9cd75e5c45c68ff61fa04c4367ba8d1dde7e1c8a3e3e4984e3c01b94e8aa0f4"
+    },
+    {
+      "path": "data/runs/20260919T100440Z-fast-7ea198cc.sources/pwa.test.tsx",
+      "sha256": "ad911dfe86510fb66c19715bfc5d46bc9d418a1a593ae2f05ab5b3696545c9b3"
+    },
+    {
+      "path": "data/runs/20260919T100440Z-fast-7ea198cc.sources/manifest.webmanifest",
+      "sha256": "b81001b08550e936b3c6d741c4721c54bdb38ca85fc8d05c4eae664cd85062fa"
+    },
+    {
+      "path": "data/runs/20260919T100440Z-fast-7ea198cc.sources/index.html",
+      "sha256": "ad2e3c87de1c42aeaebd96290745fe54f1476192b910ce1f263724a29838c6e4"
+    }
+  ]
+}

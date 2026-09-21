@@ -1,0 +1,163 @@
+{
+  "schemaVersion": 1,
+  "id": "20260919T084411Z-fast-502d2b3a",
+  "label": "После исправления фото и отмены",
+  "createdAt": "2026-09-19T08:44:11.105Z",
+  "revision": "working-tree",
+  "status": "failed",
+  "command": "/opt/homebrew/opt/go/bin/go test -count=1 -json ./...; npm --prefix apps/web test -- --reporter=json",
+  "caveat": "Синтетический контракт demo и проверки состояний UI. Это не benchmark OCR, визуального поиска или конкурсного качества.",
+  "cases": [
+    {
+      "id": "API-001",
+      "title": "Exact response orders candidates and selects Cabernet",
+      "status": "passed",
+      "durationMs": 0,
+      "reason": "Go-проверка TestAPI001ExactSelectsCabernet: пройдена"
+    },
+    {
+      "id": "API-002",
+      "title": "Uncertain response has candidates and no selection",
+      "status": "passed",
+      "durationMs": 0,
+      "reason": "Go-проверка TestAPI002UncertainReturnsCandidatesWithoutSelection: пройдена"
+    },
+    {
+      "id": "API-003",
+      "title": "No match returns an explicit empty candidates array",
+      "status": "passed",
+      "durationMs": 0,
+      "reason": "Go-проверка TestAPI003NoneReturnsEmptyCandidates: пройдена"
+    },
+    {
+      "id": "API-004",
+      "title": "Synthetic backend failure is structured HTTP 503",
+      "status": "passed",
+      "durationMs": 0,
+      "reason": "Go-проверка TestAPI004ErrorIsStructured503: пройдена"
+    },
+    {
+      "id": "API-005",
+      "title": "Manual name query filters case-insensitively",
+      "status": "passed",
+      "durationMs": 0,
+      "reason": "Go-проверка TestAPI005ManualQueryFiltersCaseInsensitively: пройдена"
+    },
+    {
+      "id": "API-006",
+      "title": "Invalid input is a structured HTTP 400",
+      "status": "passed",
+      "durationMs": 0,
+      "reason": "Go-проверка TestAPI006InvalidInputIs400: пройдена"
+    },
+    {
+      "id": "API-007",
+      "title": "Method and unknown API route are JSON 4xx",
+      "status": "passed",
+      "durationMs": 0,
+      "reason": "Go-проверка TestAPI007MethodAndUnknownAPIRouteReturnJSON4xx: пройдена"
+    },
+    {
+      "id": "API-008",
+      "title": "Health endpoint marks synthetic demo state",
+      "status": "passed",
+      "durationMs": 0,
+      "reason": "Go-проверка TestAPI008Health: пройдена"
+    },
+    {
+      "id": "API-009",
+      "title": "WEB_ROOT serves static files and SPA fallback",
+      "status": "passed",
+      "durationMs": 0,
+      "reason": "Go-проверка TestSPAHandlerServesFilesAndFallsBackToIndex: пройдена"
+    },
+    {
+      "id": "UI-001",
+      "title": "Welcome shows the scan entry",
+      "status": "error",
+      "reason": "Vitest suite ended with code 1; this case has no individual result."
+    },
+    {
+      "id": "UI-002",
+      "title": "Scan entry opens simulated camera guidance",
+      "status": "passed",
+      "durationMs": 98,
+      "reason": "Vitest-проверка: пройдена (mobile behavior demo UI-001 to UI-002 explains camera capture device behavior)",
+      "output": ""
+    },
+    {
+      "id": "UI-003",
+      "title": "Camera permission denial exposes gallery fallback",
+      "status": "passed",
+      "durationMs": 35,
+      "reason": "Vitest-проверка: пройдена (mobile behavior demo UI-003 offers fallbacks after permission denial)",
+      "output": ""
+    },
+    {
+      "id": "UI-004",
+      "title": "Searching state is cancellable",
+      "status": "failed",
+      "durationMs": 55,
+      "reason": "Vitest-проверка: не пройдена (mobile behavior demo UI-004 shows deterministic long wait and allows cancel)",
+      "output": "TestingLibraryElementError: Unable to find an accessible element with the role \"heading\" and name \"Нужно чуть больше времени\"\n\nHere are the accessible roles:\n\n  main:\n\n  Name \"\":\n  \u001b[36m<main\u001b[39m\n    \u001b[33mclass\u001b[39m=\u001b[32m\"demo-shell\"\u001b[39m\n  \u001b[36m/>\u001b[39m\n\n  --------------------------------------------------\n  complementary:\n\n  Name \"Управление демонстрацией\":\n  \u001b[36m<aside\u001b[39m\n    \u001b[33maria-label\u001b[39m=\u001b[32m\"Управление демонстрацией\"\u001b[39m\n    \u001b[33mclass\u001b[39m=\u001b[32m\"demo-controls\"\u001b[39m\n  \u001b[36m/>\u001b[39m\n\n  --------------------------------------------------\n  strong:\n\n  Name \"\":\n  \u001b[36m<strong />\u001b[39m\n\n  --------------------------------------------------\n  combobox:\n\n  Name \"Сценарий ответа\":\n  \u001b[36m<select\u001b[39m\n    \u001b[33maria-label\u001b[39m=\u001b[32m\"Сценарий ответа\"\u001b[39m\n  \u001b[36m/>\u001b[39m\n\n  --------------------------------------------------\n  option:\n\n  Name \"Точное совпадение\":\n  \u001b[36m<option\u001b[39m\n    \u001b[33mvalue\u001b[39m=\u001b[32m\"exact\"\u001b[39m\n  \u001b[36m/>\u001b[39m\n\n  Name \"Несколько кандидатов\":\n  \u001b[36m<option\u001b[39m\n    \u001b[33mvalue\u001b[39m=\u001b[32m\"uncertain\"\u001b[39m\n  \u001b[36m/>\u001b[39m\n\n  Name \"Нет результата\":\n  \u001b[36m<option\u001b[39m\n    \u001b[33mvalue\u001b[39m=\u001b[32m\"none\"\u001b[39m\n  \u001b[36m/>\u001b[39m\n\n  Name \"Ошибка сервиса\":\n  \u001b[36m<option\u001b[39m\n    \u001b[33mvalue\u001b[39m=\u001b[32m\"error\"\u001b[39m\n  \u001b[36m/>\u001b[39m\n\n  --------------------------------------------------\n  checkbox:\n\n  Name \"Симулировать отказ камеры\":\n  \u001b[36m<input\u001b[39m\n    \u001b[33mtype\u001b[39m=\u001b[32m\"checkbox\"\u001b[39m\n  \u001b[36m/>\u001b[39m\n\n  --------------------------------------------------\n  banner:\n\n  Name \"\":\n  \u001b[36m<header\u001b[39m\n    \u001b[33mclass\u001b[39m=\u001b[32m\"top\"\u001b[39m\n  \u001b[36m/>\u001b[39m\n\n  --------------------------------------------------\n  button:\n\n  Name \"Назад\":\n  \u001b[36m<button\u001b[39m\n    \u001b[33maria-label\u001b[39m=\u001b[32m\"Назад\"\u001b[39m\n  \u001b[36m/>\u001b[39m\n\n  Name \"Открыть исходную фотографию\":\n  \u001b[36m<button\u001b[39m\n    \u001b[33maria-label\u001b[39m=\u001b[32m\"Открыть исходную фотографию\"\u001b[39m\n    \u001b[33mclass\u001b[39m=\u001b[32m\"photo \"\u001b[39m\n    \u001b[33mtype\u001b[39m=\u001b[32m\"button\"\u001b[39m\n  \u001b[36m/>\u001b[39m\n\n  Name \"Отменить поиск\":\n  \u001b[36m<button\u001b[39m\n    \u001b[33mclass\u001b[39m=\u001b[32m\"text-button bottom\"\u001b[39m\n  \u001b[36m/>\u001b[39m\n\n  --------------------------------------------------\n  heading:\n\n  Name \"Узнаём ваше вино\":\n  \u001b[36m<h2 />\u001b[39m\n\n  --------------------------------------------------\n  paragraph:\n\n  Name \"\":\n  \u001b[36m<p />\u001b[39m\n\n  --------------------------------------------------\n  img:\n\n  Name \"Демонстрационное фото бутылки\":\n  \u001b[36m<img\u001b[39m\n    \u001b[33malt\u001b[39m=\u001b[32m\"Демонстрационное фото бутылки\"\u001b[39m\n    \u001b[33msrc\u001b[39m=\u001b[32m\"/assets/concept-bottle.png\"\u001b[39m\n  \u001b[36m/>\u001b[39m\n\n  --------------------------------------------------\n  status:\n\n  Name \"\":\n  \u001b[36m<p\u001b[39m\n    \u001b[33mclass\u001b[39m=\u001b[32m\"status\"\u001b[39m\n    \u001b[33mrole\u001b[39m=\u001b[32m\"status\"\u001b[39m\n  \u001b[36m/>\u001b[39m\n\n  --------------------------------------------------\n\nIgnored nodes: comments, script, style\n\u001b[36m<body>\u001b[39m\n  \u001b[36m<div>\u001b[39m\n    \u001b[36m<main\u001b[39m\n      \u001b[33mclass\u001b[39m=\u001b[32m\"demo-shell\"\u001b[39m\n    \u001b[36m>\u001b[39m\n      \u001b[36m<aside\u001b[39m\n        \u001b[33maria-label\u001b[39m=\u001b[32m\"Управление демонстрацией\"\u001b[39m\n        \u001b[33mclass\u001b[39m=\u001b[32m\"demo-controls\"\u001b[39m\n      \u001b[36m>\u001b[39m\n        \u001b[36m<div>\u001b[39m\n          \u001b[36m<strong>\u001b[39m\n            \u001b[0mДемо-сценарий\u001b[0m\n          \u001b[36m</strong>\u001b[39m\n          \u001b[36m<span>\u001b[39m\n            \u001b[0mРаспознавание полностью симулировано\u001b[0m\n          \u001b[36m</span>\u001b[39m\n        \u001b[36m</div>\u001b[39m\n        \u001b[36m<select\u001b[39m\n          \u001b[33maria-label\u001b[39m=\u001b[32m\"Сценарий ответа\"\u001b[39m\n        \u001b[36m>\u001b[39m\n          \u001b[36m<option\u001b[39m\n            \u001b[33mvalue\u001b[39m=\u001b[32m\"exact\"\u001b[39m\n          \u001b[36m>\u001b[39m\n            \u001b[0mТочное совпадение\u001b[0m\n          \u001b[36m</option>\u001b[39m\n          \u001b[36m<option\u001b[39m\n            \u001b[33mvalue\u001b[39m=\u001b[32m\"uncertain\"\u001b[39m\n          \u001b[36m>\u001b[39m\n            \u001b[0mНесколько кандидатов\u001b[0m\n          \u001b[36m</option>\u001b[39m\n          \u001b[36m<option\u001b[39m\n            \u001b[33mvalue\u001b[39m=\u001b[32m\"none\"\u001b[39m\n          \u001b[36m>\u001b[39m\n            \u001b[0mНет результата\u001b[0m\n          \u001b[36m</option>\u001b[39m\n          \u001b[36m<option\u001b[39m\n            \u001b[33mvalue\u001b[39m=\u001b[32m\"error\"\u001b[39m\n          \u001b[36m>\u001b[39m\n            \u001b[0mОшибка сервиса\u001b[0m\n          \u001b[36m</option>\u001b[39m\n        \u001b[36m</select>\u001b[39m\n        \u001b[36m<label\u001b[39m\n          \u001b[33mclass\u001b[39m=\u001b[32m\"permission-toggle\"\u001b[39m\n        \u001b[36m>\u001b[39m\n          \u001b[36m<input\u001b[39m\n            \u001b[33mtype\u001b[39m=\u001b[32m\"checkbox\"\u001b[39m\n          \u001b[36m/>\u001b[39m\n          \u001b[0m Симулировать отказ камеры\u001b[0m\n        \u001b[36m</label>\u001b[39m\n      \u001b[36m</aside>\u001b[39m\n      \u001b[36m<section\u001b[39m\n        \u001b[33mclass\u001b[39m=\u001b[32m\"phone\"\u001b[39m\n        \u001b[33mdata-testid\u001b[39m=\u001b[32m\"app-phone\"\u001b[39m\n      \u001b[36m>\u001b[39m\n        \u001b[36m<div\u001b[39m\n          \u001b[33mclass\u001b[39m=\u001b[32m\"demo-banner\"\u001b[39m\n        \u001b[36m>\u001b[39m\n          \u001b[36m<svg\u001b[39m\n            \u001b[33mfill\u001b[39m=\u001b[32m\"currentColor\"\u001b[39m\n            \u001b[33mheight\u001b[39m=\u001b[32m\"15\"\u001b[39m\n            \u001b[33mviewBox\u001b[39m=\u001b[32m\"0 0 256 256\"\u001b[39m\n            \u001b[33mwidth\u001b[39m=\u001b[32m\"15\"\u001b[39m\n            \u001b[33mxmlns\u001b[39m=\u001b[32m\"http://www.w3.org/2000/svg\"\u001b[39m\n          \u001b[36m>\u001b[39m\n            \u001b[36m<path\u001b[39m\n              \u001b[33md\u001b[39m=\u001b[32m\"M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Zm16-40a8,8,0,0,1-8,8,16,16,0,0,1-16-16V128a8,8,0,0,1,0-16,16,16,0,0,1,16,16v40A8,8,0,0,1,144,176ZM112,84a12,12,0,1,1,12,12A12,12,0,0,1,112,84Z\"\u001b[39m\n            \u001b[36m/>\u001b[39m\n          \u001b[36m</svg>\u001b[39m\n          \u001b[0m Интерактивный прототип. Результаты вымышлены.\u001b[0m\n        \u001b[36m</div>\u001b[39m\n        \u001b[36m<div\u001b[39m\n          \u001b[33mclass\u001b[39m=\u001b[32m\"page\"\u001b[39m\n          \u001b[33mid\u001b[39m=\u001b[32m\"UI-004\"\u001b[39m\n        \u001b[36m>\u001b[39m\n          \u001b[36m<header\u001b[39m\n            \u001b[33mclass\u001b[39m=\u001b[32m\"top\"\u001b[39m\n          \u001b[36m>\u001b[39m\n            \u001b[36m<button\u001b[39m\n              \u001b[33maria-label\u001b[39m=\u001b[32m\"Назад\"\u001b[39m\n            \u001b[36m>\u001b[39m\n              \u001b[36m<svg\u001b[39m\n                \u001b[33mfill\u001b[39m=\u001b[32m\"currentColor\"\u001b[39m\n                \u001b[33mheight\u001b[39m=\u001b[32m\"1em\"\u001b[39m\n                \u001b[33mviewBox\u001b[39m=\u001b[32m\"0 0 256 256\"\u001b[39m\n                \u001b[33mwidth\u001b[39m=\u001b[32m\"1em\"\u001b[39m\n                \u001b[33mxmlns\u001b[39m=\u001b[32m\"http://www.w3.org/2000/svg\"\u001b[39m\n              \u001b[36m>\u001b[39m\n                \u001b[36m<path\u001b[39m\n                  \u001b[33md\u001b[39m=\u001b[32m\"M224,128a8,8,0,0,1-8,8H59.31l58.35,58.34a8,8,0,0,1-11.32,11.32l-72-72a8,8,0,0,1,0-11.32l72-72a8,8,0,0,1,11.32,11.32L59.31,120H216A8,8,0,0,1,224,128Z\"\u001b[39m\n                \u001b[36m/>\u001b[39m\n              \u001b[36m</svg>\u001b[39m\n            \u001b[36m</button>\u001b[39m\n            \u001b[36m<b>\u001b[39m\n              \u001b[0mПоиск по фото\u001b[0m\n            \u001b[36m</b>\u001b[39m\n            \u001b[36m<span />\u001b[39m\n          \u001b[36m</header>\u001b[39m\n          \u001b[36m<h2>\u001b[39m\n            \u001b[0mУзнаём ваше вино\u001b[0m\n          \u001b[36m</h2>\u001b[39m\n          \u001b[36m<p>\u001b[39m\n            \u001b[0mСопоставляем этикетку с демонстрационным каталогом.\u001b[0m\n          \u001b[36m</p>\u001b[39m\n          \u001b[36m<button\u001b[39m\n            \u001b[33maria-label\u001b[39m=\u001b[32m\"Открыть исходную фотографию\"\u001b[39m\n            \u001b[33mclass\u001b[39m=\u001b[32m\"photo \"\u001b[39m\n            \u001b[33mtype\u001b[39m=\u001b[32m\"button\"\u001b[39m\n          \u001b[36m>\u001b[39m\n            \u001b[36m<img\u001b[39m\n              \u001b[33malt\u001b[39m=\u001b[32m\"Демонстрационное фото бутылки\"\u001b[39m\n              \u001b[33msrc\u001b[39m=\u001b[32m\"/assets/concept-bottle.png\"\u001b[39m\n            \u001b[36m/>\u001b[39m\n            \u001b[36m<span>\u001b[39m\n              \u001b[0mДемо-фото\u001b[0m\n            \u001b[36m</span>\u001b[39m\n          \u001b[36m</button>\u001b[39m\n          \u001b[36m<div\u001b[39m\n            \u001b[33mclass\u001b[39m=\u001b[32m\"scan-line\"\u001b[39m\n          \u001b[36m/>\u001b[39m\n          \u001b[36m<p\u001b[39m\n            \u001b[33mclass\u001b[39m=\u001b[32m\"status\"\u001b[39m\n            \u001b[33mrole\u001b[39m=\u001b[32m\"status\"\u001b[39m\n          \u001b[36m>\u001b[39m\n            \u001b[0mИщем совпадения\u001b[0m\n          \u001b[36m</p>\u001b[39m\n          \u001b[36m<button\u001b[39m\n            \u001b[33mclass\u001b[39m=\u001b[32m\"text-button bottom\"\u001b[39m\n          \u001b[36m>\u001b[39m\n            \u001b[0mОтменить поиск\u001b[0m\n          \u001b[36m</button>\u001b[39m\n        \u001b[36m</div>\u001b[39m\n        \u001b[36m<input\u001b[39m\n          \u001b[33maccept\u001b[39m=\u001b[32m\"image/*\"\u001b[39m\n          \u001b[33maria-label\u001b[39m=\u001b[32m\"Загрузить фотографию этикетки\"\u001b[39m\n          \u001b[33mcapture\u001b[39m=\u001b[32m\"environment\"\u001b[39m\n          \u001b[33mclass\u001b[39m=\u001b[32m\"visually-hidden\"\u001b[39m\n          \u001b[33mtype\u001b[39m=\u001b[32m\"file\"\u001b[39m\n        \u001b[36m/>\u001b[39m\n      \u001b[36m</section>\u001b[39m\n    \u001b[36m</main>\u001b[39m\n  \u001b[36m</div>\u001b[39m\n\u001b[36m</body>\u001b[39m\n    at Object.getElementError (/Users/skif/develop/brutforce-behavior-demo/apps/web/node_modules/@testing-library/dom/dist/config.js:37:19)\n    at /Users/skif/develop/brutforce-behavior-demo/apps/web/node_modules/@testing-library/dom/dist/query-helpers.js:76:38\n    at /Users/skif/develop/brutforce-behavior-demo/apps/web/node_modules/@testing-library/dom/dist/query-helpers.js:52:17\n    at /Users/skif/develop/brutforce-behavior-demo/apps/web/node_modules/@testing-library/dom/dist/query-helpers.js:95:19\n    at /Users/skif/develop/brutforce-behavior-demo/apps/web/src/App.test.tsx:20:484\n    at runNextTicks (node:internal/process/task_queues:65:5)\n    at processImmediate (node:internal/timers:472:9)\n    at file:///Users/skif/develop/brutforce-behavior-demo/apps/web/node_modules/@vitest/runner/dist/chunk-hooks.js:752:20"
+    },
+    {
+      "id": "UI-005",
+      "title": "Cancelled search stays retryable",
+      "status": "passed",
+      "durationMs": 87,
+      "reason": "Vitest-проверка: пройдена (mobile behavior demo UI-005 retry preserves scenario and query)",
+      "output": ""
+    },
+    {
+      "id": "UI-006",
+      "title": "Uncertain result exposes correction candidates",
+      "status": "passed",
+      "durationMs": 113,
+      "reason": "Vitest-проверка: пройдена (mobile behavior demo UI-006 opens original photo, corrects result, and does not reuse another wine image)",
+      "output": ""
+    },
+    {
+      "id": "UI-007",
+      "title": "Exact result opens synthetic source-backed details",
+      "status": "passed",
+      "durationMs": 71,
+      "reason": "Vitest-проверка: пройдена (mobile behavior demo UI-007 exposes the simulated source description)",
+      "output": ""
+    },
+    {
+      "id": "UI-008",
+      "title": "Manual search route is available",
+      "status": "passed",
+      "durationMs": 80,
+      "reason": "Vitest-проверка: пройдена (mobile behavior demo UI-008 sends none and UI-009 offers recovery)",
+      "output": ""
+    },
+    {
+      "id": "UI-009",
+      "title": "Empty API result remains recoverable",
+      "status": "passed",
+      "durationMs": 80,
+      "reason": "Vitest-проверка: пройдена (mobile behavior demo UI-008 sends none and UI-009 offers recovery)",
+      "output": ""
+    },
+    {
+      "id": "UI-010",
+      "title": "Service error remains recoverable",
+      "status": "passed",
+      "durationMs": 56,
+      "reason": "Vitest-проверка: пройдена (mobile behavior demo UI-010 rejects selectedId absent from candidates)",
+      "output": ""
+    }
+  ],
+  "artifacts": [
+    "data/runs/20260919T084411Z-fast-502d2b3a.api-go.jsonl",
+    "data/runs/20260919T084411Z-fast-502d2b3a.web-vitest.json"
+  ],
+  "sources": [
+    "data/runs/20260919T084411Z-fast-502d2b3a.sources/cases.json",
+    "data/runs/20260919T084411Z-fast-502d2b3a.sources/behavior-spec.md",
+    "data/runs/20260919T084411Z-fast-502d2b3a.sources/main_test.go",
+    "data/runs/20260919T084411Z-fast-502d2b3a.sources/App.test.tsx"
+  ]
+}

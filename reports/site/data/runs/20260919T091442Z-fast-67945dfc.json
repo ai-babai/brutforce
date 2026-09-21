@@ -1,0 +1,983 @@
+{
+  "schemaVersion": 2,
+  "id": "20260919T091442Z-fast-67945dfc",
+  "label": "v2 camera + design + timings",
+  "createdAt": "2026-09-19T09:14:42.468Z",
+  "revision": "working-tree",
+  "status": "passed",
+  "timing": {
+    "wallMs": 2584,
+    "suites": [
+      {
+        "id": "api",
+        "label": "Go API suite",
+        "processWallMs": 388,
+        "reportedMs": 189
+      },
+      {
+        "id": "ui",
+        "label": "Vitest UI suite",
+        "processWallMs": 2190,
+        "reportedMs": null
+      }
+    ]
+  },
+  "tests": [
+    {
+      "name": "TestAPI001ExactSelectsCabernet",
+      "status": "passed",
+      "durationMs": 0,
+      "durationText": "<1 мс (разрешение Go)",
+      "suite": "api"
+    },
+    {
+      "name": "TestAPI002UncertainReturnsCandidatesWithoutSelection",
+      "status": "passed",
+      "durationMs": 0,
+      "durationText": "<1 мс (разрешение Go)",
+      "suite": "api"
+    },
+    {
+      "name": "TestAPI003NoneReturnsEmptyCandidates",
+      "status": "passed",
+      "durationMs": 0,
+      "durationText": "<1 мс (разрешение Go)",
+      "suite": "api"
+    },
+    {
+      "name": "TestAPI004ErrorIsStructured503",
+      "status": "passed",
+      "durationMs": 0,
+      "durationText": "<1 мс (разрешение Go)",
+      "suite": "api"
+    },
+    {
+      "name": "TestAPI005ManualQueryFiltersCaseInsensitively",
+      "status": "passed",
+      "durationMs": 0,
+      "durationText": "<1 мс (разрешение Go)",
+      "suite": "api"
+    },
+    {
+      "name": "TestAPI006InvalidInputIs400",
+      "status": "passed",
+      "durationMs": 0,
+      "durationText": "<1 мс (разрешение Go)",
+      "suite": "api"
+    },
+    {
+      "name": "TestAPI007MethodAndUnknownAPIRouteReturnJSON4xx",
+      "status": "passed",
+      "durationMs": 0,
+      "durationText": "<1 мс (разрешение Go)",
+      "suite": "api"
+    },
+    {
+      "name": "TestAPI008Health",
+      "status": "passed",
+      "durationMs": 0,
+      "durationText": "<1 мс (разрешение Go)",
+      "suite": "api"
+    },
+    {
+      "name": "TestSearchBodyLimit",
+      "status": "passed",
+      "durationMs": 0,
+      "durationText": "<1 мс (разрешение Go)",
+      "suite": "api"
+    },
+    {
+      "name": "TestSPAHandlerServesFilesAndFallsBackToIndex",
+      "status": "passed",
+      "durationMs": 0,
+      "durationText": "<1 мс (разрешение Go)",
+      "suite": "api"
+    },
+    {
+      "name": "TestAPI010StoresPhotoAndSearchAcceptsReceipt",
+      "status": "passed",
+      "durationMs": 10,
+      "durationText": "10 мс",
+      "suite": "api"
+    },
+    {
+      "name": "TestAPI011RejectsInvalidAndOversizePhotos",
+      "status": "passed",
+      "durationMs": 10,
+      "durationText": "10 мс",
+      "suite": "api"
+    },
+    {
+      "name": "TestAPI012UploadUnavailableWithoutConfiguredStorage",
+      "status": "passed",
+      "durationMs": 0,
+      "durationText": "<1 мс (разрешение Go)",
+      "suite": "api"
+    },
+    {
+      "name": "TestAPI013UnknownPhotoIDIsNotFound",
+      "status": "passed",
+      "durationMs": 0,
+      "durationText": "<1 мс (разрешение Go)",
+      "suite": "api"
+    },
+    {
+      "name": "TestAPI014StorageLimitRejectsUpload",
+      "status": "passed",
+      "durationMs": 0,
+      "durationText": "<1 мс (разрешение Go)",
+      "suite": "api"
+    },
+    {
+      "name": "mobile behavior demo UI-001 to UI-002 starts live camera and separates camera from gallery",
+      "status": "passed",
+      "durationMs": 105,
+      "durationText": "105 мс",
+      "suite": "ui"
+    },
+    {
+      "name": "mobile behavior demo stops a camera stream that resolves after leaving UI-002",
+      "status": "passed",
+      "durationMs": 87,
+      "durationText": "87 мс",
+      "suite": "ui"
+    },
+    {
+      "name": "mobile behavior demo UI-003 offers fallbacks after permission denial",
+      "status": "passed",
+      "durationMs": 25,
+      "durationText": "25 мс",
+      "suite": "ui"
+    },
+    {
+      "name": "mobile behavior demo upload preview sends multipart receipt into search and reaches UI-007",
+      "status": "passed",
+      "durationMs": 21,
+      "durationText": "21 мс",
+      "suite": "ui"
+    },
+    {
+      "name": "mobile behavior demo UI-011 rejects a non-image before API use",
+      "status": "passed",
+      "durationMs": 14,
+      "durationText": "14 мс",
+      "suite": "ui"
+    },
+    {
+      "name": "mobile behavior demo UI-004 shows deterministic long wait and allows cancel",
+      "status": "passed",
+      "durationMs": 29,
+      "durationText": "29 мс",
+      "suite": "ui"
+    },
+    {
+      "name": "mobile behavior demo cancelled stale response cannot leave UI-005",
+      "status": "passed",
+      "durationMs": 68,
+      "durationText": "68 мс",
+      "suite": "ui"
+    },
+    {
+      "name": "mobile behavior demo UI-005 retry preserves scenario and query",
+      "status": "passed",
+      "durationMs": 73,
+      "durationText": "73 мс",
+      "suite": "ui"
+    },
+    {
+      "name": "mobile behavior demo UI-005 retry reuses a completed upload receipt",
+      "status": "passed",
+      "durationMs": 38,
+      "durationText": "38 мс",
+      "suite": "ui"
+    },
+    {
+      "name": "mobile behavior demo UI-006 manual candidates do not invent an original photo",
+      "status": "passed",
+      "durationMs": 74,
+      "durationText": "74 мс",
+      "suite": "ui"
+    },
+    {
+      "name": "mobile behavior demo UI-007 exposes the simulated source description",
+      "status": "passed",
+      "durationMs": 72,
+      "durationText": "72 мс",
+      "suite": "ui"
+    },
+    {
+      "name": "mobile behavior demo UI-008 sends none and UI-009 offers recovery",
+      "status": "passed",
+      "durationMs": 67,
+      "durationText": "67 мс",
+      "suite": "ui"
+    },
+    {
+      "name": "mobile behavior demo UI-010 rejects selectedId absent from candidates",
+      "status": "passed",
+      "durationMs": 58,
+      "durationText": "58 мс",
+      "suite": "ui"
+    },
+    {
+      "name": "atlas design contract DESIGN-001 uses the atlas wine token and 82px primary action",
+      "status": "passed",
+      "durationMs": 1,
+      "durationText": "1 мс",
+      "suite": "ui"
+    },
+    {
+      "name": "atlas design contract DESIGN-002 renders 24px camera and 28px scan glyph rules",
+      "status": "passed",
+      "durationMs": 82,
+      "durationText": "82 мс",
+      "suite": "ui"
+    },
+    {
+      "name": "atlas design contract DESIGN-003 declares the actual TrueType Onest files and every specified weight",
+      "status": "passed",
+      "durationMs": 1,
+      "durationText": "1 мс",
+      "suite": "ui"
+    },
+    {
+      "name": "atlas design contract DESIGN-004 declares the 390 768 and 1280 responsive rules",
+      "status": "passed",
+      "durationMs": 0,
+      "durationText": "0 мс",
+      "suite": "ui"
+    },
+    {
+      "name": "atlas design contract DESIGN-005 keeps the production root free of demo controls and device chrome",
+      "status": "passed",
+      "durationMs": 6,
+      "durationText": "6 мс",
+      "suite": "ui"
+    }
+  ],
+  "command": "go test -count=1 -json ./...; npm --prefix apps/web test -- --reporter=json",
+  "caveat": "Синтетический контракт demo и проверки состояний UI. Это не benchmark OCR, визуального поиска или конкурсного качества.",
+  "cases": [
+    {
+      "id": "API-001",
+      "area": "api",
+      "title": "Exact response orders candidates and selects Cabernet",
+      "source": "apps/api/README.md",
+      "spec": "docs/product/behavior-spec.md#demo-003",
+      "given": "сценарий exact",
+      "when": "POST /api/search",
+      "then": "выбран первый synthetic candidate",
+      "status": "passed",
+      "durationMs": 0,
+      "durationText": "<1 мс (разрешение Go)",
+      "reason": "Go-проверка TestAPI001ExactSelectsCabernet: пройдена",
+      "tests": [
+        {
+          "name": "TestAPI001ExactSelectsCabernet",
+          "status": "passed",
+          "durationMs": 0,
+          "durationText": "<1 мс (разрешение Go)"
+        }
+      ]
+    },
+    {
+      "id": "API-002",
+      "area": "api",
+      "title": "Uncertain response has candidates and no selection",
+      "source": "apps/api/README.md",
+      "spec": "docs/product/behavior-spec.md#demo-004",
+      "given": "сценарий uncertain",
+      "when": "POST /api/search",
+      "then": "есть кандидаты, selectedId отсутствует",
+      "status": "passed",
+      "durationMs": 0,
+      "durationText": "<1 мс (разрешение Go)",
+      "reason": "Go-проверка TestAPI002UncertainReturnsCandidatesWithoutSelection: пройдена",
+      "tests": [
+        {
+          "name": "TestAPI002UncertainReturnsCandidatesWithoutSelection",
+          "status": "passed",
+          "durationMs": 0,
+          "durationText": "<1 мс (разрешение Go)"
+        }
+      ]
+    },
+    {
+      "id": "API-003",
+      "area": "api",
+      "title": "No match returns an explicit empty candidates array",
+      "source": "apps/api/README.md",
+      "spec": "docs/product/behavior-spec.md#demo-006",
+      "given": "сценарий none",
+      "when": "POST /api/search",
+      "then": "candidates равен []",
+      "status": "passed",
+      "durationMs": 0,
+      "durationText": "<1 мс (разрешение Go)",
+      "reason": "Go-проверка TestAPI003NoneReturnsEmptyCandidates: пройдена",
+      "tests": [
+        {
+          "name": "TestAPI003NoneReturnsEmptyCandidates",
+          "status": "passed",
+          "durationMs": 0,
+          "durationText": "<1 мс (разрешение Go)"
+        }
+      ]
+    },
+    {
+      "id": "API-004",
+      "area": "api",
+      "title": "Synthetic backend failure is structured HTTP 503",
+      "source": "apps/api/README.md",
+      "spec": "docs/product/behavior-spec.md#demo-009",
+      "given": "сценарий error",
+      "when": "POST /api/search",
+      "then": "HTTP 503 содержит structured error",
+      "status": "passed",
+      "durationMs": 0,
+      "durationText": "<1 мс (разрешение Go)",
+      "reason": "Go-проверка TestAPI004ErrorIsStructured503: пройдена",
+      "tests": [
+        {
+          "name": "TestAPI004ErrorIsStructured503",
+          "status": "passed",
+          "durationMs": 0,
+          "durationText": "<1 мс (разрешение Go)"
+        }
+      ]
+    },
+    {
+      "id": "API-005",
+      "area": "api",
+      "title": "Manual name or winery query filters case-insensitively",
+      "source": "apps/api/README.md",
+      "spec": "docs/product/behavior-spec.md#demo-010",
+      "given": "текст названия или винодельни",
+      "when": "POST /api/search",
+      "then": "поиск без учёта регистра",
+      "status": "passed",
+      "durationMs": 0,
+      "durationText": "<1 мс (разрешение Go)",
+      "reason": "Go-проверка TestAPI005ManualQueryFiltersCaseInsensitively: пройдена",
+      "tests": [
+        {
+          "name": "TestAPI005ManualQueryFiltersCaseInsensitively",
+          "status": "passed",
+          "durationMs": 0,
+          "durationText": "<1 мс (разрешение Go)"
+        }
+      ]
+    },
+    {
+      "id": "API-006",
+      "area": "api",
+      "title": "Invalid input is a structured HTTP 400",
+      "source": "apps/api/README.md",
+      "spec": "docs/product/behavior-spec.md",
+      "given": "некорректный JSON или scenario",
+      "when": "POST /api/search",
+      "then": "HTTP 400 JSON error",
+      "status": "passed",
+      "durationMs": 0,
+      "durationText": "<1 мс (разрешение Go)",
+      "reason": "Go-проверка TestAPI006InvalidInputIs400: пройдена",
+      "tests": [
+        {
+          "name": "TestAPI006InvalidInputIs400",
+          "status": "passed",
+          "durationMs": 0,
+          "durationText": "<1 мс (разрешение Go)"
+        }
+      ]
+    },
+    {
+      "id": "API-007",
+      "area": "api",
+      "title": "Method and unknown API route are JSON 4xx",
+      "source": "apps/api/README.md",
+      "spec": "docs/product/behavior-spec.md",
+      "given": "неверный method или API path",
+      "when": "запрос к API",
+      "then": "JSON HTTP 405 либо 404",
+      "status": "passed",
+      "durationMs": 0,
+      "durationText": "<1 мс (разрешение Go)",
+      "reason": "Go-проверка TestAPI007MethodAndUnknownAPIRouteReturnJSON4xx: пройдена",
+      "tests": [
+        {
+          "name": "TestAPI007MethodAndUnknownAPIRouteReturnJSON4xx",
+          "status": "passed",
+          "durationMs": 0,
+          "durationText": "<1 мс (разрешение Go)"
+        }
+      ]
+    },
+    {
+      "id": "API-008",
+      "area": "api",
+      "title": "Health endpoint marks synthetic demo state",
+      "source": "apps/api/README.md",
+      "spec": "docs/product/behavior-spec.md",
+      "given": "сервер доступен",
+      "when": "GET /api/health",
+      "then": "ok и demo равны true",
+      "status": "passed",
+      "durationMs": 0,
+      "durationText": "<1 мс (разрешение Go)",
+      "reason": "Go-проверка TestAPI008Health: пройдена",
+      "tests": [
+        {
+          "name": "TestAPI008Health",
+          "status": "passed",
+          "durationMs": 0,
+          "durationText": "<1 мс (разрешение Go)"
+        }
+      ]
+    },
+    {
+      "id": "API-009",
+      "area": "api",
+      "title": "WEB_ROOT serves static files and SPA fallback",
+      "source": "apps/api/README.md",
+      "spec": "reports/site/index.html",
+      "given": "задан WEB_ROOT",
+      "when": "GET file или client route",
+      "then": "файл либо index.html отданы",
+      "status": "passed",
+      "durationMs": 0,
+      "durationText": "<1 мс (разрешение Go)",
+      "reason": "Go-проверка TestSPAHandlerServesFilesAndFallsBackToIndex: пройдена",
+      "tests": [
+        {
+          "name": "TestSPAHandlerServesFilesAndFallsBackToIndex",
+          "status": "passed",
+          "durationMs": 0,
+          "durationText": "<1 мс (разрешение Go)"
+        }
+      ]
+    },
+    {
+      "id": "API-010",
+      "area": "api",
+      "title": "Загрузка сохраняет байты фото и выдаёт receipt для поиска",
+      "source": "apps/api/main_test.go",
+      "spec": "docs/product/behavior-spec.md#demo-002",
+      "given": "валидный PNG upload",
+      "when": "POST upload, затем search по receipt",
+      "then": "байты и metadata сохранены, receipt принимается",
+      "status": "passed",
+      "durationMs": 10,
+      "durationText": "10 мс",
+      "reason": "Go-проверка TestAPI010StoresPhotoAndSearchAcceptsReceipt: пройдена",
+      "tests": [
+        {
+          "name": "TestAPI010StoresPhotoAndSearchAcceptsReceipt",
+          "status": "passed",
+          "durationMs": 10,
+          "durationText": "10 мс"
+        }
+      ]
+    },
+    {
+      "id": "API-011",
+      "area": "api",
+      "title": "Некорректное и слишком большое фото отклоняются",
+      "source": "apps/api/main_test.go",
+      "spec": "docs/product/behavior-spec.md#demo-007",
+      "given": "некорректное либо >10 MiB фото",
+      "when": "POST upload",
+      "then": "400 без записи",
+      "status": "passed",
+      "durationMs": 10,
+      "durationText": "10 мс",
+      "reason": "Go-проверка TestAPI011RejectsInvalidAndOversizePhotos: пройдена",
+      "tests": [
+        {
+          "name": "TestAPI011RejectsInvalidAndOversizePhotos",
+          "status": "passed",
+          "durationMs": 10,
+          "durationText": "10 мс"
+        }
+      ]
+    },
+    {
+      "id": "API-012",
+      "area": "api",
+      "title": "Без настроенного хранилища upload возвращает storage_unavailable",
+      "source": "apps/api/main_test.go",
+      "spec": "docs/product/behavior-spec.md",
+      "given": "UPLOAD_DIR не задан",
+      "when": "POST upload",
+      "then": "503 storage_unavailable",
+      "status": "passed",
+      "durationMs": 0,
+      "durationText": "<1 мс (разрешение Go)",
+      "reason": "Go-проверка TestAPI012UploadUnavailableWithoutConfiguredStorage: пройдена",
+      "tests": [
+        {
+          "name": "TestAPI012UploadUnavailableWithoutConfiguredStorage",
+          "status": "passed",
+          "durationMs": 0,
+          "durationText": "<1 мс (разрешение Go)"
+        }
+      ]
+    },
+    {
+      "id": "API-013",
+      "area": "api",
+      "title": "Неизвестный photoId возвращает photo_not_found",
+      "source": "apps/api/main_test.go",
+      "spec": "docs/product/behavior-spec.md",
+      "given": "неизвестный photoId",
+      "when": "POST search",
+      "then": "404 photo_not_found",
+      "status": "passed",
+      "durationMs": 0,
+      "durationText": "<1 мс (разрешение Go)",
+      "reason": "Go-проверка TestAPI013UnknownPhotoIDIsNotFound: пройдена",
+      "tests": [
+        {
+          "name": "TestAPI013UnknownPhotoIDIsNotFound",
+          "status": "passed",
+          "durationMs": 0,
+          "durationText": "<1 мс (разрешение Go)"
+        }
+      ]
+    },
+    {
+      "id": "API-014",
+      "area": "api",
+      "title": "Лимит хранилища отклоняет upload",
+      "source": "apps/api/main_test.go",
+      "spec": "docs/product/behavior-spec.md",
+      "given": "хранилище заполнено",
+      "when": "POST upload",
+      "then": "503 storage_full",
+      "status": "passed",
+      "durationMs": 0,
+      "durationText": "<1 мс (разрешение Go)",
+      "reason": "Go-проверка TestAPI014StorageLimitRejectsUpload: пройдена",
+      "tests": [
+        {
+          "name": "TestAPI014StorageLimitRejectsUpload",
+          "status": "passed",
+          "durationMs": 0,
+          "durationText": "<1 мс (разрешение Go)"
+        }
+      ]
+    },
+    {
+      "id": "UI-001",
+      "area": "web",
+      "title": "Welcome shows the scan entry",
+      "source": "apps/web/README.md; Wine UX Atlas",
+      "spec": "docs/product/behavior-spec.md#demo-001",
+      "given": "стартовый экран",
+      "when": "пользователь начинает путь",
+      "then": "есть вход в сканирование",
+      "status": "passed",
+      "durationMs": 105,
+      "durationText": "105 мс",
+      "reason": "Vitest-проверка: пройдена (mobile behavior demo UI-001 to UI-002 starts live camera and separates camera from gallery)",
+      "output": "",
+      "tests": [
+        {
+          "name": "mobile behavior demo UI-001 to UI-002 starts live camera and separates camera from gallery",
+          "status": "passed",
+          "durationMs": 105,
+          "durationText": "105 мс",
+          "output": ""
+        }
+      ]
+    },
+    {
+      "id": "UI-002",
+      "area": "web",
+      "title": "Scan entry opens simulated camera guidance",
+      "source": "apps/web/README.md; Wine UX Atlas",
+      "spec": "docs/product/behavior-spec.md#demo-001",
+      "given": "пользователь выбрал сканирование",
+      "when": "переход UI",
+      "then": "есть камера/выбор файла",
+      "status": "passed",
+      "durationMs": 87,
+      "durationText": "87 мс",
+      "reason": "Vitest-проверка: пройдена (mobile behavior demo stops a camera stream that resolves after leaving UI-002)",
+      "output": "",
+      "tests": [
+        {
+          "name": "mobile behavior demo UI-001 to UI-002 starts live camera and separates camera from gallery",
+          "status": "passed",
+          "durationMs": 105,
+          "durationText": "105 мс",
+          "output": ""
+        },
+        {
+          "name": "mobile behavior demo stops a camera stream that resolves after leaving UI-002",
+          "status": "passed",
+          "durationMs": 87,
+          "durationText": "87 мс",
+          "output": ""
+        }
+      ]
+    },
+    {
+      "id": "UI-003",
+      "area": "web",
+      "title": "Camera permission denial exposes gallery fallback",
+      "source": "apps/web/README.md; Wine UX Atlas",
+      "spec": "docs/product/behavior-spec.md#demo-008",
+      "given": "камера запрещена",
+      "when": "пользователь начинает путь",
+      "then": "доступны fallback действия",
+      "status": "passed",
+      "durationMs": 25,
+      "durationText": "25 мс",
+      "reason": "Vitest-проверка: пройдена (mobile behavior demo UI-003 offers fallbacks after permission denial)",
+      "output": "",
+      "tests": [
+        {
+          "name": "mobile behavior demo UI-003 offers fallbacks after permission denial",
+          "status": "passed",
+          "durationMs": 25,
+          "durationText": "25 мс",
+          "output": ""
+        }
+      ]
+    },
+    {
+      "id": "UI-004",
+      "area": "web",
+      "title": "Searching state is cancellable",
+      "source": "apps/web/README.md; Wine UX Atlas",
+      "spec": "docs/product/behavior-spec.md#demo-005",
+      "given": "поиск не завершился",
+      "when": "пользователь отменяет",
+      "then": "видно отменённое состояние",
+      "status": "passed",
+      "durationMs": 29,
+      "durationText": "29 мс",
+      "reason": "Vitest-проверка: пройдена (mobile behavior demo UI-004 shows deterministic long wait and allows cancel)",
+      "output": "",
+      "tests": [
+        {
+          "name": "mobile behavior demo UI-004 shows deterministic long wait and allows cancel",
+          "status": "passed",
+          "durationMs": 29,
+          "durationText": "29 мс",
+          "output": ""
+        }
+      ]
+    },
+    {
+      "id": "UI-005",
+      "area": "web",
+      "title": "Cancelled search stays retryable",
+      "source": "apps/web/README.md; Wine UX Atlas",
+      "spec": "docs/product/behavior-spec.md#demo-005",
+      "given": "поиск отменён",
+      "when": "пользователь повторяет",
+      "then": "сценарий и query сохранены",
+      "status": "passed",
+      "durationMs": 38,
+      "durationText": "38 мс",
+      "reason": "Vitest-проверка: пройдена (mobile behavior demo UI-005 retry reuses a completed upload receipt)",
+      "output": "",
+      "tests": [
+        {
+          "name": "mobile behavior demo cancelled stale response cannot leave UI-005",
+          "status": "passed",
+          "durationMs": 68,
+          "durationText": "68 мс",
+          "output": ""
+        },
+        {
+          "name": "mobile behavior demo UI-005 retry preserves scenario and query",
+          "status": "passed",
+          "durationMs": 73,
+          "durationText": "73 мс",
+          "output": ""
+        },
+        {
+          "name": "mobile behavior demo UI-005 retry reuses a completed upload receipt",
+          "status": "passed",
+          "durationMs": 38,
+          "durationText": "38 мс",
+          "output": ""
+        }
+      ]
+    },
+    {
+      "id": "UI-006",
+      "area": "web",
+      "title": "Uncertain result exposes correction candidates",
+      "source": "apps/web/README.md; Wine UX Atlas",
+      "spec": "docs/product/behavior-spec.md#demo-004",
+      "given": "API вернул кандидатов",
+      "when": "пользователь исправляет ответ",
+      "then": "можно выбрать другой результат",
+      "status": "passed",
+      "durationMs": 74,
+      "durationText": "74 мс",
+      "reason": "Vitest-проверка: пройдена (mobile behavior demo UI-006 manual candidates do not invent an original photo)",
+      "output": "",
+      "tests": [
+        {
+          "name": "mobile behavior demo UI-006 manual candidates do not invent an original photo",
+          "status": "passed",
+          "durationMs": 74,
+          "durationText": "74 мс",
+          "output": ""
+        }
+      ]
+    },
+    {
+      "id": "UI-007",
+      "area": "web",
+      "title": "Exact result opens synthetic wine details",
+      "source": "apps/web/README.md; Wine UX Atlas",
+      "spec": "docs/product/behavior-spec.md#demo-003",
+      "given": "mocked API вернул exact shape",
+      "when": "React применяет ответ",
+      "then": "видны synthetic details",
+      "status": "passed",
+      "durationMs": 72,
+      "durationText": "72 мс",
+      "reason": "Vitest-проверка: пройдена (mobile behavior demo UI-007 exposes the simulated source description)",
+      "output": "",
+      "tests": [
+        {
+          "name": "mobile behavior demo upload preview sends multipart receipt into search and reaches UI-007",
+          "status": "passed",
+          "durationMs": 21,
+          "durationText": "21 мс",
+          "output": ""
+        },
+        {
+          "name": "mobile behavior demo UI-007 exposes the simulated source description",
+          "status": "passed",
+          "durationMs": 72,
+          "durationText": "72 мс",
+          "output": ""
+        }
+      ]
+    },
+    {
+      "id": "UI-008",
+      "area": "web",
+      "title": "Manual search route is available",
+      "source": "apps/web/README.md; Wine UX Atlas",
+      "spec": "docs/product/behavior-spec.md#demo-010",
+      "given": "пользователь ищет вручную",
+      "when": "отправлен scenario none",
+      "then": "доступен экран no-match",
+      "status": "passed",
+      "durationMs": 67,
+      "durationText": "67 мс",
+      "reason": "Vitest-проверка: пройдена (mobile behavior demo UI-008 sends none and UI-009 offers recovery)",
+      "output": "",
+      "tests": [
+        {
+          "name": "mobile behavior demo UI-008 sends none and UI-009 offers recovery",
+          "status": "passed",
+          "durationMs": 67,
+          "durationText": "67 мс",
+          "output": ""
+        }
+      ]
+    },
+    {
+      "id": "UI-009",
+      "area": "web",
+      "title": "Empty API result remains recoverable",
+      "source": "apps/web/README.md; Wine UX Atlas",
+      "spec": "docs/product/behavior-spec.md#demo-006",
+      "given": "API вернул пустых кандидатов",
+      "when": "React применяет ответ",
+      "then": "доступно восстановление",
+      "status": "passed",
+      "durationMs": 67,
+      "durationText": "67 мс",
+      "reason": "Vitest-проверка: пройдена (mobile behavior demo UI-008 sends none and UI-009 offers recovery)",
+      "output": "",
+      "tests": [
+        {
+          "name": "mobile behavior demo UI-008 sends none and UI-009 offers recovery",
+          "status": "passed",
+          "durationMs": 67,
+          "durationText": "67 мс",
+          "output": ""
+        }
+      ]
+    },
+    {
+      "id": "UI-010",
+      "area": "web",
+      "title": "Service error remains recoverable",
+      "source": "apps/web/README.md; Wine UX Atlas",
+      "spec": "docs/product/behavior-spec.md#demo-009",
+      "given": "selectedId отсутствует в candidates",
+      "when": "React валидирует ответ",
+      "then": "видна recoverable error",
+      "status": "passed",
+      "durationMs": 58,
+      "durationText": "58 мс",
+      "reason": "Vitest-проверка: пройдена (mobile behavior demo UI-010 rejects selectedId absent from candidates)",
+      "output": "",
+      "tests": [
+        {
+          "name": "mobile behavior demo UI-010 rejects selectedId absent from candidates",
+          "status": "passed",
+          "durationMs": 58,
+          "durationText": "58 мс",
+          "output": ""
+        }
+      ]
+    },
+    {
+      "id": "UI-011",
+      "area": "web",
+      "title": "Non-image file is rejected before preview",
+      "source": "apps/web/src/App.test.tsx",
+      "spec": "docs/product/behavior-spec.md#demo-007",
+      "status": "passed",
+      "durationMs": 14,
+      "durationText": "14 мс",
+      "reason": "Vitest-проверка: пройдена (mobile behavior demo UI-011 rejects a non-image before API use)",
+      "output": "",
+      "tests": [
+        {
+          "name": "mobile behavior demo UI-011 rejects a non-image before API use",
+          "status": "passed",
+          "durationMs": 14,
+          "durationText": "14 мс",
+          "output": ""
+        }
+      ]
+    },
+    {
+      "id": "DESIGN-001",
+      "area": "design",
+      "title": "Винный токен Atlas и основное действие 82px",
+      "source": "apps/web/src/design.test.tsx",
+      "spec": "apps/web/design-specs.md",
+      "status": "passed",
+      "durationMs": 1,
+      "durationText": "1 мс",
+      "reason": "Vitest-проверка: пройдена (atlas design contract DESIGN-001 uses the atlas wine token and 82px primary action)",
+      "output": "",
+      "tests": [
+        {
+          "name": "atlas design contract DESIGN-001 uses the atlas wine token and 82px primary action",
+          "status": "passed",
+          "durationMs": 1,
+          "durationText": "1 мс",
+          "output": ""
+        }
+      ]
+    },
+    {
+      "id": "DESIGN-002",
+      "area": "design",
+      "title": "Иконки камеры 24px и сканера 28px",
+      "source": "apps/web/src/design.test.tsx",
+      "spec": "apps/web/design-specs.md",
+      "status": "passed",
+      "durationMs": 82,
+      "durationText": "82 мс",
+      "reason": "Vitest-проверка: пройдена (atlas design contract DESIGN-002 renders 24px camera and 28px scan glyph rules)",
+      "output": "",
+      "tests": [
+        {
+          "name": "atlas design contract DESIGN-002 renders 24px camera and 28px scan glyph rules",
+          "status": "passed",
+          "durationMs": 82,
+          "durationText": "82 мс",
+          "output": ""
+        }
+      ]
+    },
+    {
+      "id": "DESIGN-003",
+      "area": "design",
+      "title": "Подключены реальные файлы Onest и заявленные веса",
+      "source": "apps/web/src/design.test.tsx",
+      "spec": "apps/web/design-specs.md",
+      "status": "passed",
+      "durationMs": 1,
+      "durationText": "1 мс",
+      "reason": "Vitest-проверка: пройдена (atlas design contract DESIGN-003 declares the actual TrueType Onest files and every specified weight)",
+      "output": "",
+      "tests": [
+        {
+          "name": "atlas design contract DESIGN-003 declares the actual TrueType Onest files and every specified weight",
+          "status": "passed",
+          "durationMs": 1,
+          "durationText": "1 мс",
+          "output": ""
+        }
+      ]
+    },
+    {
+      "id": "DESIGN-004",
+      "area": "design",
+      "title": "Объявлены правила responsive 390, 768 и 1280",
+      "source": "apps/web/src/design.test.tsx",
+      "spec": "apps/web/design-specs.md",
+      "status": "passed",
+      "durationMs": 0,
+      "durationText": "0 мс",
+      "reason": "Vitest-проверка: пройдена (atlas design contract DESIGN-004 declares the 390 768 and 1280 responsive rules)",
+      "output": "",
+      "tests": [
+        {
+          "name": "atlas design contract DESIGN-004 declares the 390 768 and 1280 responsive rules",
+          "status": "passed",
+          "durationMs": 0,
+          "durationText": "0 мс",
+          "output": ""
+        }
+      ]
+    },
+    {
+      "id": "DESIGN-005",
+      "area": "design",
+      "title": "Production root без demo controls и device chrome",
+      "source": "apps/web/src/design.test.tsx",
+      "spec": "apps/web/design-specs.md",
+      "status": "passed",
+      "durationMs": 6,
+      "durationText": "6 мс",
+      "reason": "Vitest-проверка: пройдена (atlas design contract DESIGN-005 keeps the production root free of demo controls and device chrome)",
+      "output": "",
+      "tests": [
+        {
+          "name": "atlas design contract DESIGN-005 keeps the production root free of demo controls and device chrome",
+          "status": "passed",
+          "durationMs": 6,
+          "durationText": "6 мс",
+          "output": ""
+        }
+      ]
+    }
+  ],
+  "artifacts": [
+    "data/runs/20260919T091442Z-fast-67945dfc.api-go.jsonl",
+    "data/runs/20260919T091442Z-fast-67945dfc.web-vitest.json"
+  ],
+  "sources": [
+    "data/runs/20260919T091442Z-fast-67945dfc.sources/cases.json",
+    "data/runs/20260919T091442Z-fast-67945dfc.sources/behavior-spec.md",
+    "data/runs/20260919T091442Z-fast-67945dfc.sources/main.go",
+    "data/runs/20260919T091442Z-fast-67945dfc.sources/uploads.go",
+    "data/runs/20260919T091442Z-fast-67945dfc.sources/main_test.go",
+    "data/runs/20260919T091442Z-fast-67945dfc.sources/App.tsx",
+    "data/runs/20260919T091442Z-fast-67945dfc.sources/api.ts",
+    "data/runs/20260919T091442Z-fast-67945dfc.sources/types.ts",
+    "data/runs/20260919T091442Z-fast-67945dfc.sources/styles.css",
+    "data/runs/20260919T091442Z-fast-67945dfc.sources/overrides.css",
+    "data/runs/20260919T091442Z-fast-67945dfc.sources/App.test.tsx",
+    "data/runs/20260919T091442Z-fast-67945dfc.sources/design.test.tsx",
+    "data/runs/20260919T091442Z-fast-67945dfc.sources/design-specs.md"
+  ]
+}

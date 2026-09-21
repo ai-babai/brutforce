@@ -1,0 +1,143 @@
+{
+  "schemaVersion": 1,
+  "runId": "20260919T164059Z-fast-a8f6a2e3",
+  "recordedAt": "2026-09-19T16:41:03.674Z",
+  "files": [
+    {
+      "path": "data/runs/20260919T164059Z-fast-a8f6a2e3.json",
+      "sha256": "5c733181a8c0893b2ce89ac33d37fa6d456ea1d73e35ba4828e1c5064de6cfc3"
+    },
+    {
+      "path": "data/runs/20260919T164059Z-fast-a8f6a2e3.api-go.jsonl",
+      "sha256": "7cad839ccea5a0e3a4512bd6f7a2511b4eea9d6b0a9bce7a5dad2c9dee44aa14"
+    },
+    {
+      "path": "data/runs/20260919T164059Z-fast-a8f6a2e3.web-vitest.json",
+      "sha256": "9d6b2ff3a620dfd96d1fc7106699aa53dc0f4992e78e20829c1ab15d1fc87c73"
+    },
+    {
+      "path": "data/runs/20260919T164059Z-fast-a8f6a2e3.sources/cases.json",
+      "sha256": "5f976193f42d30be5ef1a82f93d2b90d0a6e1d607bed6090a9dd04e683e2a366"
+    },
+    {
+      "path": "data/runs/20260919T164059Z-fast-a8f6a2e3.sources/behavior-spec.md",
+      "sha256": "d4c1f69c4090b8d9e2c5602abb4206fddc40e6d9a8a636ad69ad2c7c8a06f5d0"
+    },
+    {
+      "path": "data/runs/20260919T164059Z-fast-a8f6a2e3.sources/security-spec.md",
+      "sha256": "35ce001d128b396f8994c76ac67ddb152bfe71236198001e132e3c12a1e0826e"
+    },
+    {
+      "path": "data/runs/20260919T164059Z-fast-a8f6a2e3.sources/demo-catalog.md",
+      "sha256": "2be1a0901286b951fbc3301a5b134c271a8866a1a812bafe4048a6644419fdd0"
+    },
+    {
+      "path": "data/runs/20260919T164059Z-fast-a8f6a2e3.sources/demo-search.schema.json",
+      "sha256": "7534a29ff7e70370d9689368fbaf4f67a7d82f9434e7808129d78820b9b1782f"
+    },
+    {
+      "path": "data/runs/20260919T164059Z-fast-a8f6a2e3.sources/api-versioning.md",
+      "sha256": "cfcef9f67f9dde1abcbbcc1b585b145518b160803c66074b9a342274462447e5"
+    },
+    {
+      "path": "data/runs/20260919T164059Z-fast-a8f6a2e3.sources/main.go",
+      "sha256": "673979f43111f37c08762cafd3e82f8806042f0b8944d5afa80fadc950a2c7f1"
+    },
+    {
+      "path": "data/runs/20260919T164059Z-fast-a8f6a2e3.sources/docs.go",
+      "sha256": "dd203f9280ab829a187e763263a9178b878d052cf871ccf87d83ba89ebc0b443"
+    },
+    {
+      "path": "data/runs/20260919T164059Z-fast-a8f6a2e3.sources/security.go",
+      "sha256": "510248658d83598fff75372c4fe9b9a41a35ed863be8d4e3a16709fd53ce6efa"
+    },
+    {
+      "path": "data/runs/20260919T164059Z-fast-a8f6a2e3.sources/uploads.go",
+      "sha256": "ed33f266be64f9239006fcdd807e25bd2fe51f09fae1a6f01ae0a8a9da8c8413"
+    },
+    {
+      "path": "data/runs/20260919T164059Z-fast-a8f6a2e3.sources/catalog.json",
+      "sha256": "042944ad783a095d8726708b7bb25eb784e1ab008cf354f23c5f6ded05b008f9"
+    },
+    {
+      "path": "data/runs/20260919T164059Z-fast-a8f6a2e3.sources/openapi.json",
+      "sha256": "b9d543c0c8cb3b21b03d6be851a6d762326f8a4be7c11fc807546208fa4eecf0"
+    },
+    {
+      "path": "data/runs/20260919T164059Z-fast-a8f6a2e3.sources/main_test.go",
+      "sha256": "619a4a24393e51b1bdac8c4f1372e4f4eb9fd7068d15c2e51102f7830e52cee1"
+    },
+    {
+      "path": "data/runs/20260919T164059Z-fast-a8f6a2e3.sources/docs_test.go",
+      "sha256": "b180921f515c319555b3c02f4b9d64b927ddf1df2546b5c3a4decf13bf9d4ff9"
+    },
+    {
+      "path": "data/runs/20260919T164059Z-fast-a8f6a2e3.sources/security_test.go",
+      "sha256": "ba9d2b5f16c8aac409a3bc4dad38635e0d41c5fcd81bc164eba29c74f3bc9a01"
+    },
+    {
+      "path": "data/runs/20260919T164059Z-fast-a8f6a2e3.sources/request_security_test.go",
+      "sha256": "b6525df7d74da3a6b09ac09267a6282907bdd76e35aaf5b158c46dac58b2a613"
+    },
+    {
+      "path": "data/runs/20260919T164059Z-fast-a8f6a2e3.sources/brutforce-demo.service",
+      "sha256": "d1044a834278569b1e988c76741b4f0191efabb405d5dc4b060a61609c68660e"
+    },
+    {
+      "path": "data/runs/20260919T164059Z-fast-a8f6a2e3.sources/App.tsx",
+      "sha256": "a93870ed6fd7f208aa551d104c6baf9056ae10506f7580e515fbe9920a625778"
+    },
+    {
+      "path": "data/runs/20260919T164059Z-fast-a8f6a2e3.sources/api.ts",
+      "sha256": "05150dfcbc855b647d3d5bba2372d5af150be9d7ec99df150e824f5a74557688"
+    },
+    {
+      "path": "data/runs/20260919T164059Z-fast-a8f6a2e3.sources/types.ts",
+      "sha256": "067160f2002f9fc436c0ce88cd10542dadbd2f52edfeb6aa9d1403c59ec24b2d"
+    },
+    {
+      "path": "data/runs/20260919T164059Z-fast-a8f6a2e3.sources/styles.css",
+      "sha256": "14096a1ba8e05c0e60ad650a17bc605511b4ff19c9a46db81d2fd6a21e39d145"
+    },
+    {
+      "path": "data/runs/20260919T164059Z-fast-a8f6a2e3.sources/overrides.css",
+      "sha256": "cb3ad47b103af766da36c9c2cf6a615769b86a1fe4c1115e547cb4be45e5953b"
+    },
+    {
+      "path": "data/runs/20260919T164059Z-fast-a8f6a2e3.sources/App.test.tsx",
+      "sha256": "20a92a37b25cebbb1942f2d16a8ca91fd7efd0dfbf20139624399c444979e1ef"
+    },
+    {
+      "path": "data/runs/20260919T164059Z-fast-a8f6a2e3.sources/design.test.tsx",
+      "sha256": "3551431970b1003eda0fc83961c4946f1784007e2d1b11258c4132f3c7af32d5"
+    },
+    {
+      "path": "data/runs/20260919T164059Z-fast-a8f6a2e3.sources/navigation.test.tsx",
+      "sha256": "fa6aedec0e3030b53766fab06c50cd87bbcffc8ceede9ee429bd45559917bafb"
+    },
+    {
+      "path": "data/runs/20260919T164059Z-fast-a8f6a2e3.sources/design-specs.md",
+      "sha256": "d664631ec44111214b222fdcfbdf30d5af86afab366ba7ab60a612d0cbeda1da"
+    },
+    {
+      "path": "data/runs/20260919T164059Z-fast-a8f6a2e3.sources/AtlasIcons.tsx",
+      "sha256": "6436b3c6da996624282d499fa8eee99a6115316c335aaf1027654b48e069e750"
+    },
+    {
+      "path": "data/runs/20260919T164059Z-fast-a8f6a2e3.sources/InstallApp.tsx",
+      "sha256": "d9cd75e5c45c68ff61fa04c4367ba8d1dde7e1c8a3e3e4984e3c01b94e8aa0f4"
+    },
+    {
+      "path": "data/runs/20260919T164059Z-fast-a8f6a2e3.sources/pwa.test.tsx",
+      "sha256": "ad911dfe86510fb66c19715bfc5d46bc9d418a1a593ae2f05ab5b3696545c9b3"
+    },
+    {
+      "path": "data/runs/20260919T164059Z-fast-a8f6a2e3.sources/manifest.webmanifest",
+      "sha256": "b81001b08550e936b3c6d741c4721c54bdb38ca85fc8d05c4eae664cd85062fa"
+    },
+    {
+      "path": "data/runs/20260919T164059Z-fast-a8f6a2e3.sources/index.html",
+      "sha256": "ad2e3c87de1c42aeaebd96290745fe54f1476192b910ce1f263724a29838c6e4"
+    }
+  ]
+}
