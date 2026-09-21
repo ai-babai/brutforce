@@ -86,6 +86,7 @@ def smoke(cfg, sha):
         try:
             require(http_json(base,'/v1/health')['ok'], 'Health failed'); break
         except Exception: time.sleep(.5)
+    else: raise RuntimeError('Health did not become ready')
     require(http_json(base,'/release.json')['revision']==sha, 'Runtime release differs from candidate')
     for path, body in [('/v1/search',{'query':'Каберне'}),('/v1/recommendations',{'wineId':'demo-cabernet-sauvignon-2023'})]:
         start=time.monotonic(); result=http_json(base,path,body); samples.append(round((time.monotonic()-start)*1000,2))
@@ -161,6 +162,11 @@ def main(args):
             require(result['revision']==sha and result['status'] in ('passed','failed'),'Invalid browser evidence')
             require(pathlib.Path(read(CONFIG)['environments']['test']['path'],'current').resolve().name==sha,'TEST has changed')
             require(r['gates']['test']['status']=='passed','HTTP smoke required')
+            require(datetime.datetime.fromisoformat(result['at'].replace('Z','+00:00')) >= datetime.datetime.fromisoformat(r['gates']['test']['at']), 'Browser evidence predates this deployment')
+            if result['status']=='passed':
+                expected={'release revision','desktop text search, card, recommendations','mobile text search, upload, card, recommendations'}
+                require(expected <= {c['name'] for c in result.get('checks',[]) if c['status']=='passed'}, 'Incomplete browser evidence')
+                require(result.get('observedRevision')==sha,'Browser observed another release')
             r['gates']['browser']=result; save(sha,r)
         elif cmd=='approve':
             r=load(sha); actor=args[2]; reference=args[3]
