@@ -907,11 +907,88 @@
       "spec": "docs/product/catalog-display-spec.md"
     },
     {
+      "id": "CAT-010",
+      "title": "Поиск нормализует ввод и требует совпадения всех слов",
+      "area": "api",
+      "source": "docs/product/catalog-display-spec.md",
+      "spec": "docs/product/catalog-display-spec.md"
+    },
+    {
+      "id": "CAT-011",
+      "title": "Префиксы и одна буквенная опечатка не исправляют числа",
+      "area": "api",
+      "source": "docs/product/catalog-display-spec.md",
+      "spec": "docs/product/catalog-display-spec.md"
+    },
+    {
+      "id": "CAT-012",
+      "title": "Точные результаты выше частичных и исправленных",
+      "area": "api",
+      "source": "docs/product/catalog-display-spec.md",
+      "spec": "docs/product/catalog-display-spec.md"
+    },
+    {
+      "id": "CAT-013",
+      "title": "Ранжированная выдача проходит страницы без потерь",
+      "area": "api",
+      "source": "docs/product/catalog-display-spec.md",
+      "spec": "docs/product/catalog-display-spec.md"
+    },
+    {
+      "id": "CAT-014",
+      "title": "PostgreSQL и HTTP сохраняют поиск, порядок и границы страниц",
+      "area": "database",
+      "source": "docs/product/catalog-display-spec.md",
+      "spec": "docs/product/catalog-display-spec.md"
+    },
+    {
       "id": "REPORT-004",
       "area": "ui",
       "title": "Провал одного слоя не скрывается успехом другого",
       "source": "apps/web/src/report.test.ts",
       "spec": "docs/product/reviews/be-045-bdd-audit.md"
+    },
+    {
+      "id": "CAT-015",
+      "area": "ui",
+      "title": "Поиск с первого символа остаётся под редактируемым полем",
+      "source": "apps/web/src/live-search.test.tsx",
+      "spec": "docs/product/catalog-display-spec.md"
+    },
+    {
+      "id": "CAT-016",
+      "area": "ui",
+      "title": "Поздний ответ не подменяет новый ввод даже до debounce",
+      "source": "apps/web/src/live-search.test.tsx",
+      "spec": "docs/product/catalog-display-spec.md"
+    },
+    {
+      "id": "CAT-017",
+      "area": "ui",
+      "title": "Очистка возвращает каталог, уход отменяет поиск",
+      "source": "apps/web/src/live-search.test.tsx",
+      "spec": "docs/product/catalog-display-spec.md"
+    },
+    {
+      "id": "CAT-018",
+      "area": "ui",
+      "title": "Enter без дубля, IME только после завершения ввода",
+      "source": "apps/web/src/live-search.test.tsx",
+      "spec": "docs/product/catalog-display-spec.md"
+    },
+    {
+      "id": "CAT-019",
+      "area": "ui",
+      "title": "Пагинация относится только к текущему запросу",
+      "source": "apps/web/src/live-search.test.tsx",
+      "spec": "docs/product/catalog-display-spec.md"
+    },
+    {
+      "id": "CAT-020",
+      "area": "ui",
+      "title": "Оба входа и возврат сохраняют контекст поиска",
+      "source": "apps/web/src/live-search.test.tsx",
+      "spec": "docs/product/catalog-display-spec.md"
     }
   ]
 }
