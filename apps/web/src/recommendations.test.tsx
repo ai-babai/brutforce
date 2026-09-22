@@ -40,8 +40,8 @@ async function openCard() {
 function mockApi(recommendationResponse: unknown) {
   const fetchMock = vi.fn((url: string) =>
     Promise.resolve(
-      url === "/v1/catalog"
-        ? response({ demo: true, candidates: [selected] })
+      url.startsWith("/v2/catalog")
+        ? response({ demo: true, candidates: [selected], catalogVersion: "demo-v2" })
         : url === "/v1/recommendations"
           ? response(recommendationResponse)
           : response({ demo: true, candidates: [selected] }),
@@ -83,8 +83,8 @@ describe("wine-card recommendations", () => {
       "fetch",
       vi.fn((url: string) =>
         Promise.resolve(
-          url === "/v1/catalog"
-            ? response({ demo: true, candidates: [selected] })
+          url.startsWith("/v2/catalog")
+            ? response({ demo: true, candidates: [selected], catalogVersion: "demo-v2" })
             : url === "/v1/recommendations"
               ? ++recommendations === 1
                 ? response({}, false)
@@ -107,7 +107,11 @@ describe("wine-card recommendations", () => {
         ? new Promise((resolve) => {
             resolveRecommendations = resolve;
           })
-        : Promise.resolve({ demo: true, candidates: [selected] }).then(response),
+        : Promise.resolve(
+            url.startsWith("/v2/catalog")
+              ? response({ demo: true, candidates: [selected], catalogVersion: "demo-v2" })
+              : response({ demo: true, candidates: [selected] }),
+          ),
     );
     vi.stubGlobal("fetch", fetchMock);
     const user = await openCard();

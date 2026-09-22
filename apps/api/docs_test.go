@@ -63,12 +63,13 @@ func TestAPI018OpenAPIMatchesImplementedDemoContract(t *testing.T) {
 	if err := json.Unmarshal(openAPISpec, &spec); err != nil {
 		t.Fatalf("decode OpenAPI: %v", err)
 	}
-	if spec.OpenAPI != "3.1.0" || spec.Info.Version != "1.2.0" {
+	if spec.OpenAPI != "3.1.0" || spec.Info.Version != "2.0.0" {
 		t.Fatalf("OpenAPI version=%q contract version=%q", spec.OpenAPI, spec.Info.Version)
 	}
 	wantMethods := map[string]string{
 		"/v1/health":          http.MethodGet,
-		"/v1/catalog":         http.MethodGet,
+		"/v2/catalog/{slug}": http.MethodGet,
+		"/v2/catalog":         http.MethodGet,
 		"/v1/photos":          http.MethodPost,
 		"/v1/search":          http.MethodPost,
 		"/v1/eval/predict":    http.MethodPost,
@@ -101,7 +102,7 @@ func TestAPI018OpenAPIMatchesImplementedDemoContract(t *testing.T) {
 		want               int
 	}{
 		{http.MethodGet, "/v1/health", "", http.StatusOK},
-		{http.MethodGet, "/v1/catalog", "", http.StatusOK},
+		{http.MethodGet, "/v2/catalog", "", http.StatusOK},
 		{http.MethodPost, "/v1/photos", "", http.StatusServiceUnavailable},
 		{http.MethodPost, "/v1/search", `{"scenario":"exact"}`, http.StatusOK},
 		{http.MethodPost, "/v1/search", `{"scenario":"error"}`, http.StatusServiceUnavailable},

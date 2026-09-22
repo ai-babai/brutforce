@@ -19,7 +19,7 @@ const merlot = {
   image: "",
   description: "Мягкое вино.",
 };
-const catalog = { demo: true, candidates: [cabernet, merlot] };
+const catalog = { demo: true, candidates: [cabernet, merlot], catalogVersion: "demo-v2" };
 const receipt = {
   id: "0123456789abcdef0123456789abcdef",
   createdAt: "2026-09-20T12:00:00Z",
@@ -44,7 +44,7 @@ const openCatalog = async () => {
 };
 
 describe("catalog navigation and saved wines", () => {
-  it("UI-016 bottom navigation opens the catalog, filters it, and resets section scroll", async () => {
+  it("UI-016 bottom navigation opens the catalog, searches on the server, and resets section scroll", async () => {
     mockCatalog();
     render(<App />);
     const nav = screen.getByRole("navigation", { name: "Основная навигация" });
@@ -63,17 +63,21 @@ describe("catalog navigation and saved wines", () => {
     ).toBeVisible();
     expect(screen.getByRole("button", { name: /Мерло/i })).toBeVisible();
     await userEvent.type(screen.getByLabelText(/Название вина/i), "мерло");
-    expect(
-      screen.queryByRole("button", { name: /Каберне Совиньон/i }),
-    ).not.toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /Мерло/i })).toBeVisible();
+    await userEvent.click(screen.getByRole("button", { name: "Искать" }));
+    await waitFor(() => expect(vi.mocked(fetch)).toHaveBeenLastCalledWith(
+      "/v2/catalog?limit=24&cursor=&q=%D0%BC%D0%B5%D1%80%D0%BB%D0%BE", expect.any(Object),
+    ));
     expect(screen.getByText("Наиболее похожее")).toBeVisible();
+    await userEvent.click(screen.getByRole("button", { name: "Назад" }));
     await userEvent.clear(screen.getByLabelText(/Название вина/i));
+    await waitFor(() => expect(vi.mocked(fetch)).toHaveBeenLastCalledWith(
+      "/v2/catalog?limit=24&cursor=&q=", expect.any(Object),
+    ));
     expect(screen.queryByText("Наиболее похожее")).not.toBeInTheDocument();
     content.scrollTop = 480;
     await userEvent.click(screen.getByRole("button", { name: "Сохранённое" }));
     expect(content.scrollTop).toBe(0);
-    expect(nav).toBeVisible();
+    expect(screen.getByRole("navigation", { name: "Основная навигация" })).toBeVisible();
   });
 
   it("UI-022 bottom Home returns to the start screen without starting camera capture", async () => {
@@ -293,45 +297,20 @@ describe("catalog navigation and saved wines", () => {
     ).toHaveAttribute("aria-pressed", "false");
   });
 
-  it("UI-024 submits the compact search field with its button and Enter", async () => {
-    const expected = JSON.stringify({ scenario: "exact", query: "Каберне" });
+  it("CAT002 submits the compact search field with its button and Enter", async () => {
+    const url = "/v2/catalog?limit=24&cursor=&q=%D0%9A%D0%B0%D0%B1%D0%B5%D1%80%D0%BD%D0%B5";
     mockCatalog();
     const first = render(<App />);
     await userEvent.click(screen.getByRole("button", { name: "Поиск" }));
     await userEvent.type(screen.getByLabelText(/Название вина/i), "Каберне");
     await userEvent.click(screen.getByRole("button", { name: "Искать" }));
-    await waitFor(() =>
-      expect(
-        vi.mocked(fetch).mock.calls.filter(([url]) => url === "/v1/search"),
-      ).toHaveLength(1),
-    );
-    expect(
-      (
-        vi
-          .mocked(fetch)
-          .mock.calls.find(([url]) => url === "/v1/search")![1] as RequestInit
-      ).body,
-    ).toBe(expected);
+    await waitFor(() => expect(vi.mocked(fetch)).toHaveBeenCalledWith(url, expect.any(Object)));
     first.unmount();
     mockCatalog();
     render(<App />);
     await userEvent.click(screen.getByRole("button", { name: "Поиск" }));
-    await userEvent.type(
-      screen.getByLabelText(/Название вина/i),
-      "Каберне{enter}",
-    );
-    await waitFor(() =>
-      expect(
-        vi.mocked(fetch).mock.calls.filter(([url]) => url === "/v1/search"),
-      ).toHaveLength(1),
-    );
-    expect(
-      (
-        vi
-          .mocked(fetch)
-          .mock.calls.find(([url]) => url === "/v1/search")![1] as RequestInit
-      ).body,
-    ).toBe(expected);
+    await userEvent.type(screen.getByLabelText(/Название вина/i), "Каберне{enter}");
+    await waitFor(() => expect(vi.mocked(fetch)).toHaveBeenCalledWith(url, expect.any(Object)));
   });
 
   it("returns from a catalog card to the same list position", async () => {

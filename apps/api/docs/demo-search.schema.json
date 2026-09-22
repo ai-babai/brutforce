@@ -8,7 +8,8 @@
   ],
   "properties": {
     "demo": {
-      "const": true
+      "type": "boolean",
+      "description": "Synthetic/reference response flag; catalog provenance is independent from recognition quality."
     },
     "selectedId": {
       "type": "string",
@@ -22,7 +23,6 @@
           "id",
           "name",
           "winery",
-          "year",
           "image",
           "description"
         ],
@@ -37,13 +37,124 @@
             "type": "string"
           },
           "year": {
-            "type": "integer"
+            "type": "integer",
+            "minimum": 1
           },
           "image": {
             "type": "string"
           },
           "description": {
             "type": "string"
+          },
+          "sourceUrl": {
+            "type": "string"
+          },
+          "sourceSnapshotDate": {
+            "type": "string"
+          },
+          "categoryAndSweetness": {
+            "type": "string"
+          },
+          "color": {
+            "type": "string"
+          },
+          "sugar": {
+            "type": "string"
+          },
+          "region": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "grapes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "alcoholPercent": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 100
+          },
+          "alcoholMinPercent": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 100
+          },
+          "alcoholMaxPercent": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 100
+          },
+          "volumeL": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          "ratings": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "kind",
+                "source_text"
+              ],
+              "properties": {
+                "kind": {
+                  "type": "string"
+                },
+                "source_text": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "imageVariants": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "role",
+                "path",
+                "width",
+                "height",
+                "mimeType",
+                "sha256",
+                "bytes"
+              ],
+              "properties": {
+                "role": {
+                  "enum": [
+                    "thumbnail",
+                    "card",
+                    "original"
+                  ]
+                },
+                "path": {
+                  "type": "string"
+                },
+                "width": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "height": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "bytes": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "mimeType": {
+                  "const": "image/webp"
+                },
+                "sha256": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                }
+              }
+            }
           }
         }
       }

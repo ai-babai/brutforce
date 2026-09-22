@@ -57,6 +57,12 @@ export function App({
   const [candidates, setCandidates] = useState<Candidate[]>([]);
   const [catalog, setCatalog] = useState<Candidate[]>([]);
   const [catalogError, setCatalogError] = useState("");
+  const [catalogNextCursor, setCatalogNextCursor] = useState<string>();
+  const [catalogVersion, setCatalogVersion] = useState("");
+  const [catalogDemo, setCatalogDemo] = useState(false);
+  const [catalogLoading, setCatalogLoading] = useState(false);
+  const [catalogQuery, setCatalogQuery] = useState("");
+  const [catalogInitialized, setCatalogInitialized] = useState(false);
   const [saved, setSaved] = useState<Candidate[]>([]);
   const [storageNotice, setStorageNotice] = useState("");
   const [selected, setSelected] = useState<Candidate>();
@@ -331,6 +337,9 @@ export function App({
     }
   };
   const retry = () =>
+    lastRequest.current.query
+      ? (setQuery(lastRequest.current.query), submitCatalogSearch())
+      :
     lastRequest.current.hasPhoto
       ? receipt
         ? runSearch(
@@ -348,6 +357,7 @@ export function App({
       : runSearch(lastRequest.current.scenario, lastRequest.current.query);
   const cancel = () => {
     abort.current?.abort();
+    catalogAbort.current?.abort();
     clearWaitTimer();
     setExpandedPhoto(false);
     setSection("scanner");
@@ -386,6 +396,10 @@ export function App({
     setSelected(undefined);
     setCandidates([]);
     setQuery("");
+    setCatalogQuery("");
+    setCatalog([]);
+    setCatalogNextCursor(undefined);
+    setCatalogInitialized(false);
     setCatalogOpen(false);
     setScreen("search");
   };
@@ -508,7 +522,7 @@ export function App({
     }
     if (candidateOrigin === "manual") {
       setSection("search");
-      setSearchOrigin("normal");
+      setSearchOrigin(correctionResult.current ? "correction" : "normal");
       setScreen("search");
       return;
     }
@@ -570,17 +584,28 @@ export function App({
       setStorageNotice("Сохранённый список был повреждён и очищен.");
     }
   }, []);
-  const loadCatalog = () => {
+  const loadCatalog = (next: { append?: boolean; q?: string } = {}) => {
     catalogAbort.current?.abort();
     const controller = new AbortController();
     catalogAbort.current = controller;
     setCatalogError("");
-    getCatalog(controller.signal)
+    setCatalogLoading(true);
+    setCatalogInitialized(true);
+    const q = next.q ?? catalogQuery;
+    getCatalog({ limit: 24, cursor: next.append ? catalogNextCursor : undefined, q, signal: controller.signal })
       .then((data) => {
-        if (!controller.signal.aborted && catalogAbort.current === controller)
-          setDemoMode(data.demo);
-        if (!controller.signal.aborted && catalogAbort.current === controller)
-          setCatalog(data.candidates);
+        if (!controller.signal.aborted && catalogAbort.current === controller) {
+          setCatalogDemo(data.demo);
+          setCatalog((current) => next.append ? [...current, ...data.candidates] : data.candidates);
+          if (q) {
+            setCandidates((current) => next.append ? [...current, ...data.candidates] : data.candidates);
+            setCandidateOrigin("manual");
+            setCandidateHasPhoto(false);
+            setScreen(data.candidates.length || next.append ? "candidates" : "missing");
+          }
+          setCatalogNextCursor(data.nextCursor);
+          setCatalogVersion(data.catalogVersion);
+        }
       })
       .catch((error) => {
         if (
@@ -589,18 +614,35 @@ export function App({
           (error as Error).name !== "AbortError"
         )
           setCatalogError("Не удалось открыть каталог. Попробуйте ещё раз.");
+        if (q) {
+          setErrorKind(classifyError(error));
+          setScreen("error");
+        }
+      })
+      .finally(() => {
+        if (!controller.signal.aborted && catalogAbort.current === controller)
+          setCatalogLoading(false);
       });
   };
   useEffect(() => {
     if (
       screen !== "search" ||
       catalog.length ||
-      (!catalogOpen && !query.trim())
+      !catalogOpen ||
+      catalogInitialized
     )
       return;
-    loadCatalog();
-    return () => catalogAbort.current?.abort();
-  }, [screen, catalog.length, catalogOpen, query]);
+    loadCatalog({ q: catalogQuery });
+  }, [screen, catalog.length, catalogOpen, catalogQuery, catalogInitialized]);
+  const updateCatalogQuery = (nextQuery: string) => {
+    setQuery(nextQuery);
+    if (catalogOpen && !nextQuery.trim() && catalogQuery) {
+      setCatalogQuery("");
+      setCatalog([]);
+      setCatalogNextCursor(undefined);
+      loadCatalog({ q: "" });
+    }
+  };
   const shown = selected;
   const persistSaved = (next: Candidate[], success: string) => {
     try {
@@ -618,11 +660,17 @@ export function App({
       exists ? "Удалено из сохранённых." : "Сохранено в этом браузере.",
     );
   };
-  const filteredCatalog = catalog.filter((item) =>
-    `${item.name} ${item.winery} ${item.year}`
-      .toLocaleLowerCase("ru")
-      .includes(query.trim().toLocaleLowerCase("ru")),
-  );
+  const submitCatalogSearch = () => {
+    const nextQuery = query.trim();
+    setCatalogQuery(nextQuery);
+    setCatalog([]);
+    setCatalogNextCursor(undefined);
+    setCatalogInitialized(true);
+    setCatalogOpen(true);
+    lastRequest.current = { scenario, query: nextQuery, hasPhoto: false };
+    setScreen("loading");
+    loadCatalog({ q: nextQuery });
+  };
   const showNav =
     !["camera", "loading", "waiting"].includes(screen) && !expandedPhoto;
 
@@ -641,7 +689,7 @@ export function App({
                     <h1>
                       Какое вино перед вами?
                     </h1>
-                    <p>Сфотографируйте этикетку.<br />Покажем карточки из демо-каталога.</p>
+                    <p>Сфотографируйте этикетку.<br />Покажем карточки из каталога.</p>
                   </div>
                   <MascotScene scene="home" />
                 </div>
@@ -840,6 +888,11 @@ export function App({
                 onChoose={choose}
                 leader
               />
+              {catalogNextCursor && candidateOrigin === "manual" && (
+                <button className="secondary" disabled={catalogLoading} onClick={() => loadCatalog({ append: true })}>
+                  {catalogLoading ? "Загружаем…" : "Показать ещё"}
+                </button>
+              )}
               <button className="secondary" onClick={openManualCorrection}>
                 Ни одно не подходит
               </button>
@@ -872,15 +925,12 @@ export function App({
                     }
                   />
                   <div className="result-hero">
-                    <CandidateImage candidate={shown} />
+                    <CandidateImage candidate={shown} role="card" priority />
                     <div>
-                      <span className="demo-label">
-                        <Check />
-                        Демо-карточка
-                      </span>
+                      {(resultOrigin === "catalog" ? catalogDemo : demoMode) && <span className="demo-label"><Check />{resultOrigin === "catalog" ? "Демо-карточка" : "Reference"}</span>}
                       <small>{shown.winery}</small>
                       <h2>{shown.name}</h2>
-                      <p>{shown.year}</p>
+                      <p>{displayYear(shown.year)}</p>
                     </div>
                   </div>
                   {storageNotice && (
@@ -932,8 +982,15 @@ export function App({
                       </div>
                       <div>
                         <dt>Год</dt>
-                        <dd>{shown.year}</dd>
+                        <dd>{displayYear(shown.year)}</dd>
                       </div>
+                      {shown.region?.length ? <div><dt>Регион</dt><dd>{shown.region.join(", ")}</dd></div> : null}
+                      {shown.grapes?.length ? <div><dt>Сорт винограда</dt><dd>{shown.grapes.join(", ")}</dd></div> : null}
+                      {shown.categoryAndSweetness ? <div><dt>Категория</dt><dd>{shown.categoryAndSweetness}</dd></div> : null}
+                      {shown.color ? <div><dt>Цвет</dt><dd>{shown.color}</dd></div> : null}
+                      {shown.sugar ? <div><dt>Сахар</dt><dd>{shown.sugar}</dd></div> : null}
+                      {alcoholLabel(shown) ? <div><dt>Алкоголь</dt><dd>{alcoholLabel(shown)}</dd></div> : null}
+                      {isPositiveFinite(shown.volumeL) ? <div><dt>Объём</dt><dd>{shown.volumeL} л</dd></div> : null}
                     </dl>
                   )}
                   {tab === "description" && (
@@ -945,17 +1002,11 @@ export function App({
                   {tab === "source" && (
                     <div className="tab-copy">
                       <h3>Источник</h3>
-                      <p>
-                        Эта карточка создана для прототипа. После подключения
-                        каталога здесь будет ссылка на исходную запись.
-                      </p>
-                      <a
-                        href="https://vino-svoe.ru/"
-                        target="_blank"
-                        rel="noreferrer"
-                      >
-                        Открыть платформу «Своё Вино»
-                      </a>
+                      {shown.sourceUrl ? <>
+                        <p>{shown.sourceSnapshotDate ? `Снимок источника: ${shown.sourceSnapshotDate}.` : "Исходная запись каталога."}</p>
+                        <a href={shown.sourceUrl} target="_blank" rel="noreferrer">Открыть исходную запись</a>
+                      </> : <p>Эта карточка создана для демо-каталога.</p>}
+                      {shown.ratings?.length ? <ul className="ratings">{shown.ratings.map((rating, index) => <li key={`${rating.kind}-${index}`}>{rating.kind}: {rating.source_text}</li>)}</ul> : null}
                     </div>
                   )}
                   <section className="recommendations" aria-labelledby="recommendations-title">
@@ -1009,7 +1060,7 @@ export function App({
                   e.preventDefault();
                   if (query.trim()) {
                     searchScroll.current = contentRef.current?.scrollTop ?? 0;
-                    runSearch(scenario, query.trim());
+                    submitCatalogSearch();
                   }
                 }}
               >
@@ -1018,7 +1069,7 @@ export function App({
                   <input
                     id="query"
                     value={query}
-                    onChange={(e) => setQuery(e.target.value)}
+                    onChange={(e) => updateCatalogQuery(e.target.value)}
                     placeholder="Например, Каберне"
                   />
                   <button aria-label="Искать" type="submit">
@@ -1041,27 +1092,32 @@ export function App({
                   </button>
                 </div>
               )}
-              {(query || catalogOpen) &&
+              {(catalogQuery || catalogOpen) &&
                 (catalogError ? (
                   <div className="catalog-error" role="alert">
                     <p>{catalogError}</p>
-                    <button className="secondary" onClick={loadCatalog}>
+                    <button className="secondary" onClick={() => loadCatalog({ q: catalogQuery })}>
                       Повторить
                     </button>
                   </div>
-                ) : catalog.length === 0 ? (
+                ) : catalogLoading && catalog.length === 0 ? (
                   <p role="status">Загружаем каталог</p>
-                ) : filteredCatalog.length ? (
+                ) : catalog.length ? (
                   <WineList
-                    wines={filteredCatalog}
+                    wines={catalog}
                     onChoose={chooseCatalog}
-                    leader={Boolean(query.trim())}
+                    leader={Boolean(catalogQuery)}
                   />
                 ) : (
                   <p className="empty-catalog">
                     По этому запросу ничего не найдено.
                   </p>
                 ))}
+              {catalogNextCursor && !catalogError && (
+                <button className="secondary" disabled={catalogLoading} onClick={() => loadCatalog({ append: true })}>
+                  {catalogLoading ? "Загружаем…" : "Показать ещё"}
+                </button>
+              )}
               <button className="text-button" onClick={newCapture}>
                 Сканировать этикетку
               </button>
@@ -1288,9 +1344,9 @@ function Tip() {
 }
 function DemoDisclosure() {
   return (
-    <aside className="demo-disclosure" role="note" aria-label="Режим демо">
-      <strong>Демо-режим</strong>
-      <span>Карточки и похожие варианты синтетические. Фото не распознаётся.</span>
+    <aside className="demo-disclosure" role="note" aria-label="Reference-режим">
+      <strong>Reference-режим</strong>
+      <span>Распознавание показывает справочные варианты; результат не является измеренной модельной оценкой.</span>
     </aside>
   );
 }
@@ -1318,12 +1374,21 @@ function Photo({
     </button>
   );
 }
-function CandidateImage({ candidate }: { candidate: Candidate }) {
+function CandidateImage({ candidate, role = "thumbnail", priority = false, size = "64px" }: { candidate: Candidate; role?: "thumbnail" | "card"; priority?: boolean; size?: string }) {
   const [broken, setBroken] = useState(false);
-  useEffect(() => setBroken(false), [candidate.image]);
-  return candidate.image && !broken ? (
+  const variants = (candidate.imageVariants ?? []).filter((variant) => variant.path);
+  const preferred = variants.find((variant) => variant.role === role) ?? variants[0];
+  const image = preferred?.path ?? candidate.image;
+  const srcSet = variants.length > 1 ? [...variants].sort((a, b) => b.width - a.width).filter((variant, index, all) => all.findIndex((item) => item.width === variant.width) === index).sort((a, b) => a.width - b.width).map((variant) => `${variant.path} ${variant.width}w`).join(", ") : undefined;
+  useEffect(() => setBroken(false), [image]);
+  return image && !broken ? (
     <img
-      src={candidate.image}
+      src={image}
+      srcSet={srcSet}
+      sizes={role === "card" ? "(min-width: 1024px) 180px, 44vw" : size}
+      width={preferred?.width}
+      height={preferred?.height}
+      loading={priority ? "eager" : "lazy"}
       alt={`Фото вина: ${candidate.name}`}
       onError={() => setBroken(true)}
     />
@@ -1357,7 +1422,7 @@ function WineList({
     <div className={`candidate-list${leader ? " leader-list" : ""}${className ? ` ${className}` : ""}`}>
       {wines.map((wine, index) => {
         const isLeader = leader && index === 0;
-        const year = wine.year > 0 ? wine.year : "Год не указан";
+        const year = displayYear(wine.year);
         const details = [wine.color, wine.sugar].filter(Boolean).join(" · ");
         return (
         <button
@@ -1366,7 +1431,7 @@ function WineList({
           onClick={() => onChoose(wine)}
           aria-label={`${wine.name}${wine.line ? `, ${wine.line}` : ""}, ${year}`}
         >
-            <CandidateImage candidate={wine} />
+            <CandidateImage candidate={wine} priority={index < 4} size={leader ? (isLeader ? "76px" : "56px") : "64px"} />
             <span>
             {isLeader && <em>Наиболее похожее</em>}
             <b>{wine.name}</b>
@@ -1431,6 +1496,21 @@ function ProductFooter() {
     <footer className="product-footer">Информация о российских винах</footer>
   );
 }
+function displayYear(year?: number) {
+  return year && year > 0 ? String(year) : "Год не указан";
+}
+function isPositiveFinite(value: number | undefined): value is number {
+  return typeof value === "number" && Number.isFinite(value) && value > 0;
+}
+function alcoholLabel(wine: Candidate) {
+  if (isPositiveFinite(wine.alcoholPercent)) return `${wine.alcoholPercent}%`;
+  const min = isPositiveFinite(wine.alcoholMinPercent) ? wine.alcoholMinPercent : undefined;
+  const max = isPositiveFinite(wine.alcoholMaxPercent) ? wine.alcoholMaxPercent : undefined;
+  if (min !== undefined && max !== undefined) return min <= max ? `${min}–${max}%` : "";
+  if (min !== undefined) return `от ${min}%`;
+  if (max !== undefined) return `до ${max}%`;
+  return "";
+}
 function isCandidateList(value: unknown): value is Candidate[] {
   return (
     Array.isArray(value) &&
@@ -1446,8 +1526,8 @@ function isCandidateList(value: unknown): value is Candidate[] {
         ["id", "name", "winery", "image", "description"].every(
           (key) => typeof candidate[key] === "string",
         ) &&
-        typeof candidate.year === "number" &&
-        Number.isInteger(candidate.year)
+        (candidate.year === undefined ||
+          (typeof candidate.year === "number" && Number.isInteger(candidate.year)))
       );
     })
   );

@@ -2,14 +2,14 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { getCatalog, getRecommendations, searchWine, uploadPhoto, InvalidPhotoError } from './api';
 
 const candidate = { id: 'cabernet', name: 'Каберне Совиньон', winery: 'Долина', year: 2023, image: '/assets/concept-bottle.png', description: 'Красное вино.' };
-const catalog = { demo: true, candidates: [candidate] };
+const catalog = { demo: true, candidates: [candidate], catalogVersion: 'demo-v2' };
 const receipt = { id: '0123456789abcdef0123456789abcdef', createdAt: '2026-09-19T09:00:00Z', bytes: 5, mime: 'image/jpeg', width: 100, height: 100 };
 const response = (data: unknown) => ({ ok: true, json: async () => data });
 
 afterEach(() => vi.unstubAllGlobals());
 
 describe('UI-025 versioned API client', () => {
-  it('requests the v1 catalog, uploads a photo receipt, and searches with the receipt body', async () => {
+  it('requests the v2 catalog, uploads a photo receipt, and searches with the receipt body', async () => {
     const fetchMock = vi.fn()
       .mockResolvedValueOnce(response(catalog))
       .mockResolvedValueOnce(response(receipt))
@@ -20,7 +20,7 @@ describe('UI-025 versioned API client', () => {
     await uploadPhoto(new File(['jpeg'], 'label.jpg', { type: 'image/jpeg' }));
     await searchWine('exact', 'Каберне', undefined, receipt.id);
 
-    expect(fetchMock).toHaveBeenNthCalledWith(1, '/v1/catalog', { signal: undefined });
+    expect(fetchMock).toHaveBeenNthCalledWith(1, '/v2/catalog?limit=24&cursor=&q=', { signal: undefined });
     const upload = fetchMock.mock.calls[1];
     expect(upload[0]).toBe('/v1/photos');
     expect(upload[1]).toMatchObject({ method: 'POST', signal: undefined });
@@ -62,4 +62,13 @@ it('validates recommendation responses and sends the bounded card request', asyn
   });
   vi.stubGlobal('fetch', vi.fn().mockResolvedValue(response({ demo: false, candidates: [{ id: candidate.id }] })));
   await expect(getRecommendations(candidate.id)).rejects.toThrow(/некорректные рекомендации/i);
+});
+
+it('rejects catalog records with a non-HTTP source URL', async () => {
+  vi.stubGlobal('fetch', vi.fn().mockResolvedValue(response({
+    demo: false,
+    catalogVersion: 'v2',
+    candidates: [{ ...candidate, sourceUrl: 'javascript:alert(1)' }],
+  })));
+  await expect(getCatalog()).rejects.toThrow(/некорректные данные/i);
 });

@@ -44,6 +44,7 @@ build_go brutforce-api .
 build_go reference-engine ./cmd/reference-engine
 build_go roman-conformance ./cmd/roman-conformance
 build_go catalog-migrate ./cmd/catalog-migrate
+build_go catalog-import ./cmd/catalog-import
 npm --prefix apps/web run build
 cp -R apps/web/dist/. "$stage/package/web/"
 cp -R apps/api/migrations/. "$stage/package/migrations/"

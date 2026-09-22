@@ -22,7 +22,7 @@ func TestDB006CatalogUnavailableReturnsStructured503(t *testing.T) {
 	for _, item := range []struct {
 		method, path, body string
 	}{
-		{http.MethodGet, "/v1/catalog", ""},
+		{http.MethodGet, "/v2/catalog", ""},
 		{http.MethodPost, "/v1/search", `{"scenario":"exact"}`},
 	} {
 		response := request(t, handler, item.method, item.path, item.body)

@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"os"
 	"reflect"
+	"sort"
 	"sync"
 	"testing"
 	"time"
@@ -123,8 +124,10 @@ func TestDB003ActualHTTPQueriesUsePostgresLiterally(t *testing.T) {
 	store, closeStore := realCatalog(t)
 	defer closeStore()
 	handler := newHandlerWithCatalog("", nil, store)
-	response := request(t, handler, http.MethodGet, "/v1/catalog", "")
-	if response.Code != 200 || !reflect.DeepEqual(decodeResponse(t, response).Candidates, demoWines) {
+	response := request(t, handler, http.MethodGet, "/v2/catalog", "")
+	wantCatalog := append([]wine(nil), demoWines...)
+	sort.Slice(wantCatalog, func(i, j int) bool { return wantCatalog[i].ID < wantCatalog[j].ID })
+	if response.Code != 200 || !reflect.DeepEqual(decodeResponse(t, response).Candidates, wantCatalog) {
 		t.Fatal("HTTP catalog does not match database seed")
 	}
 	for _, query := range []string{"КАбЕрНе", "Демо", "2022", "%", "_", "' OR 1=1 --", "not-a-wine"} {

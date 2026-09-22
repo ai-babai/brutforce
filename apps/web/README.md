@@ -1,6 +1,6 @@
 # Mobile wine behavior demo
 
-Runnable React/Vite prototype derived from `design/wine-ux-atlas`. Recognition and catalog data are simulated and labeled in the interface.
+Runnable React/Vite prototype derived from `design/wine-ux-atlas`. Recognition remains simulated; catalog provenance is shown independently for synthetic and imported records.
 
 ## Run
 
@@ -9,7 +9,7 @@ npm install
 npm run dev
 ```
 
-Open http://127.0.0.1:5190. Vite proxies `/v1` to http://localhost:8097 and keeps the API docs assets available under `/api/docs`.
+Open http://127.0.0.1:5190. Vite proxies `/v1`, `/v2` and `/catalog-assets` to http://localhost:8097 and keeps the API docs assets available under `/api/docs`.
 
 The scan action requests a live outward-facing camera when the browser supports it. Native capture and gallery inputs remain available as fallbacks. JPEG, PNG, and GIF files up to 10 MiB are previewed locally, uploaded to the private photo endpoint, then referenced by `photoId` in the search request.
 
@@ -25,7 +25,8 @@ Behavior tests use Vitest with jsdom and mocked `fetch`; they do not require Pla
 ## API
 
 - `GET /v1/health`
-- `GET /v1/catalog`
+- `GET /v2/catalog?limit=24&cursor=…&q=…` for all manual/catalog searches; «Показать ещё» loads subsequent pages.
+- `GET /v2/catalog/{slug}` resolves a canonical card or alias.
 - `POST /v1/search` with `{ "scenario": "exact" | "uncertain" | "none" | "error", "query"?: string }`
 - `POST /v1/photos` as multipart form data with field `photo`; returns `{ "id", "createdAt", "bytes", "mime", "width", "height" }`
 - `POST /v1/search` also accepts optional `photoId` from the upload receipt.

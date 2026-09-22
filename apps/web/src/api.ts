@@ -1,4 +1,4 @@
-import type { PhotoReceipt, RecommendationResponse, Scenario, SearchResponse } from './types';
+import type { CatalogResponse, Candidate, PhotoReceipt, RecommendationResponse, Scenario, SearchResponse } from './types';
 
 export class InvalidPhotoError extends Error {
   constructor() { super('Не удалось прочитать изображение. Выберите другое фото.'); this.name = 'InvalidPhotoError'; }
@@ -27,11 +27,12 @@ export async function uploadPhoto(file: File, signal?: AbortSignal): Promise<Pho
   return value;
 }
 
-export async function getCatalog(signal?: AbortSignal):Promise<SearchResponse>{
-  const response=await fetch('/v1/catalog',{signal});
+export async function getCatalog({ limit = 24, cursor, q, signal }: { limit?: number; cursor?: string; q?: string; signal?: AbortSignal } = {}):Promise<CatalogResponse>{
+  const params = new URLSearchParams({ limit: String(limit), cursor: cursor ?? '', q: q ?? '' });
+  const response=await fetch(`/v2/catalog?${params}`,{signal});
   if(!response.ok)throw new Error('Каталог временно недоступен');
   const data:unknown=await response.json();
-  if(!isSearchResponse(data)||new Set(data.candidates.map(item=>item.id)).size!==data.candidates.length)throw new Error('Каталог вернул некорректные данные');
+  if(!isCatalogResponse(data)||new Set(data.candidates.map(item=>item.id)).size!==data.candidates.length)throw new Error('Каталог вернул некорректные данные');
   return data;
 }
 
@@ -60,11 +61,7 @@ function isSearchResponse(value: unknown): value is SearchResponse {
   const validCandidates = data.candidates.every(candidate => {
     if (!candidate || typeof candidate !== 'object') return false;
     const item = candidate as Record<string, unknown>;
-    return ['id','name','winery','image','description'].every(key => typeof item[key] === 'string')
-      && ['line', 'color', 'sugar'].every(
-        key => item[key] === undefined || typeof item[key] === 'string',
-      )
-      && typeof item.year === 'number' && Number.isInteger(item.year);
+    return isCandidate(item);
   });
   if (!validCandidates) return false;
   if (data.selectedId === undefined) return true;
@@ -82,6 +79,16 @@ function isRecommendationResponse(value: unknown): value is RecommendationRespon
     );
 }
 
+function isCatalogResponse(value: unknown): value is CatalogResponse {
+  if (!value || typeof value !== 'object') return false;
+  const data = value as Record<string, unknown>;
+  return typeof data.demo === 'boolean'
+    && typeof data.catalogVersion === 'string'
+    && (data.nextCursor === undefined || typeof data.nextCursor === 'string')
+    && Array.isArray(data.candidates)
+    && data.candidates.every(isCandidate);
+}
+
 function isCandidate(candidate: unknown): candidate is Record<string, unknown> {
   if (!candidate || typeof candidate !== 'object') return false;
   const item = candidate as Record<string, unknown>;
@@ -89,5 +96,22 @@ function isCandidate(candidate: unknown): candidate is Record<string, unknown> {
     && ['line', 'color', 'sugar'].every(
       key => item[key] === undefined || typeof item[key] === 'string',
     )
-    && typeof item.year === 'number' && Number.isInteger(item.year);
+    && (item.year === undefined || (typeof item.year === 'number' && Number.isInteger(item.year)))
+    && ['sourceSnapshotDate', 'categoryAndSweetness'].every(key => item[key] === undefined || typeof item[key] === 'string')
+    && (item.sourceUrl === undefined || (typeof item.sourceUrl === 'string' && isHTTPURL(item.sourceUrl)))
+    && ['alcoholPercent', 'alcoholMinPercent', 'alcoholMaxPercent', 'volumeL'].every(key => item[key] === undefined || typeof item[key] === 'number')
+    && ['region', 'grapes'].every(key => item[key] === undefined || (Array.isArray(item[key]) && item[key].every(value => typeof value === 'string')))
+    && (item.ratings === undefined || (Array.isArray(item.ratings) && item.ratings.every(rating => rating && typeof rating === 'object' && typeof (rating as Record<string, unknown>).kind === 'string' && typeof (rating as Record<string, unknown>).source_text === 'string')))
+    && (item.imageVariants === undefined || (Array.isArray(item.imageVariants) && item.imageVariants.every(variant => isImageVariant(variant))));
+}
+
+function isHTTPURL(value: string): boolean {
+  try { return ["http:", "https:"].includes(new URL(value).protocol); } catch { return false; }
+}
+
+function isImageVariant(value: unknown): boolean {
+  if (!value || typeof value !== 'object') return false;
+  const variant = value as Record<string, unknown>;
+  return ['role', 'path', 'mimeType', 'sha256'].every(key => typeof variant[key] === 'string')
+    && ['width', 'height', 'bytes'].every(key => typeof variant[key] === 'number' && Number.isInteger(variant[key]) && (variant[key] as number) > 0);
 }

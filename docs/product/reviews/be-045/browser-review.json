@@ -1,0 +1,65 @@
+{
+  "scope": "Chromium; mocked paginated HTTP over 49 synthetic IDs with real image variants. Not DB or Android acceptance.",
+  "results": [
+    {
+      "width": 320,
+      "height": 740,
+      "dpr": 1,
+      "geo": {
+        "width": 64,
+        "height": 86,
+        "fit": "contain",
+        "currentSrc": "http://127.0.0.1:5194/catalog-assets/fixture/images/c8f2679fd36bd1413734bdd77b1354747307817ad947a866a8cd9bd81677e1db.webp",
+        "srcset": "/catalog-assets/fixture/images/c8f2679fd36bd1413734bdd77b1354747307817ad947a866a8cd9bd81677e1db.webp 112w, /catalog-assets/fixture/images/86bce6fe1a4bfbd49456943443da769a4373e0545cd02146b1324991c7b6ffcc.webp 225w, /catalog-assets/fixture/images/4fc3c3b287310039b7e81622c765f47f9637422df64492fde3af3a02dd171c3b.webp 281w",
+        "loading": "eager",
+        "overflow": false
+      },
+      "requests": [
+        "/v2/catalog?limit=24&cursor=&q=",
+        "/v2/catalog?limit=24&cursor=24&q=",
+        "/v2/catalog?limit=24&cursor=48&q="
+      ],
+      "passed": true
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "dpr": 2,
+      "geo": {
+        "width": 64,
+        "height": 86,
+        "fit": "contain",
+        "currentSrc": "http://127.0.0.1:5194/catalog-assets/fixture/images/86bce6fe1a4bfbd49456943443da769a4373e0545cd02146b1324991c7b6ffcc.webp",
+        "srcset": "/catalog-assets/fixture/images/c8f2679fd36bd1413734bdd77b1354747307817ad947a866a8cd9bd81677e1db.webp 112w, /catalog-assets/fixture/images/86bce6fe1a4bfbd49456943443da769a4373e0545cd02146b1324991c7b6ffcc.webp 225w, /catalog-assets/fixture/images/4fc3c3b287310039b7e81622c765f47f9637422df64492fde3af3a02dd171c3b.webp 281w",
+        "loading": "eager",
+        "overflow": false
+      },
+      "requests": [
+        "/v2/catalog?limit=24&cursor=&q=",
+        "/v2/catalog?limit=24&cursor=24&q=",
+        "/v2/catalog?limit=24&cursor=48&q="
+      ],
+      "passed": true
+    },
+    {
+      "width": 1440,
+      "height": 1000,
+      "dpr": 3,
+      "geo": {
+        "width": 64,
+        "height": 86,
+        "fit": "contain",
+        "currentSrc": "http://127.0.0.1:5194/catalog-assets/fixture/images/86bce6fe1a4bfbd49456943443da769a4373e0545cd02146b1324991c7b6ffcc.webp",
+        "srcset": "/catalog-assets/fixture/images/c8f2679fd36bd1413734bdd77b1354747307817ad947a866a8cd9bd81677e1db.webp 112w, /catalog-assets/fixture/images/86bce6fe1a4bfbd49456943443da769a4373e0545cd02146b1324991c7b6ffcc.webp 225w, /catalog-assets/fixture/images/4fc3c3b287310039b7e81622c765f47f9637422df64492fde3af3a02dd171c3b.webp 281w",
+        "loading": "eager",
+        "overflow": false
+      },
+      "requests": [
+        "/v2/catalog?limit=24&cursor=&q=",
+        "/v2/catalog?limit=24&cursor=24&q=",
+        "/v2/catalog?limit=24&cursor=48&q="
+      ],
+      "passed": true
+    }
+  ]
+}

@@ -44,7 +44,12 @@ afterEach(() => {
   vi.unstubAllGlobals();
 });
 function mock(data: unknown, ok = true) {
-  vi.stubGlobal("fetch", vi.fn().mockResolvedValue(response(data, ok)));
+  vi.stubGlobal("fetch", vi.fn((url: string) => {
+    const catalogData = data && typeof data === "object" && Array.isArray((data as { candidates?: unknown }).candidates)
+      ? { demo: Boolean((data as { demo?: unknown }).demo), candidates: (data as { candidates: unknown[] }).candidates, catalogVersion: "test-v2" }
+      : data;
+    return Promise.resolve(response(url.startsWith("/v2/catalog") ? catalogData : data, ok));
+  }));
 }
 async function submitManual(query = "Каберне", user = userEvent.setup()) {
   await user.click(screen.getByRole("button", { name: /По названию/i }));
@@ -264,7 +269,7 @@ describe("mobile behavior demo", () => {
     expect(await screen.findByText(/JPEG, PNG или GIF.*10 МБ/i)).toBeVisible();
   });
   it("UI-008 keeps the catalog hidden until the user asks for it", async () => {
-    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(response(exact)));
+    mock(exact);
     render(<App />);
     await userEvent.click(screen.getByRole("button", { name: /По названию/i }));
     expect(fetch).not.toHaveBeenCalled();
@@ -332,15 +337,13 @@ describe("mobile behavior demo", () => {
     ).not.toBeInTheDocument();
   });
   it("UI-005 retry preserves scenario and query", async () => {
-    let searches = 0;
+    let catalogRequests = 0;
     vi.stubGlobal(
       "fetch",
       vi.fn((url) =>
-        url === "/v1/catalog"
-          ? Promise.resolve(response(uncertain))
-          : ++searches === 1
-            ? new Promise(() => {})
-            : Promise.resolve(response(uncertain)),
+        url.startsWith("/v2/catalog") && ++catalogRequests === 1
+          ? new Promise(() => {})
+          : Promise.resolve(response({ ...uncertain, catalogVersion: "test-v2" })),
       ),
     );
     render(<App initialScenario="uncertain" />);
@@ -356,16 +359,10 @@ describe("mobile behavior demo", () => {
         screen.getByRole("heading", { name: /несколько похожих/i }),
       ).toBeVisible(),
     );
-    const calls = vi
-      .mocked(fetch)
-      .mock.calls.filter(([url]) => url === "/v1/search");
+    const calls = vi.mocked(fetch).mock.calls.filter(([url]) => String(url).startsWith("/v2/catalog"));
     expect(calls).toHaveLength(2);
-    expect((calls[0][1] as RequestInit).body).toBe(
-      JSON.stringify({ scenario: "uncertain", query: "Мерло" }),
-    );
-    expect((calls[1][1] as RequestInit).body).toBe(
-      (calls[0][1] as RequestInit).body,
-    );
+    expect(calls[0][0]).toContain("q=%D0%9C%D0%B5%D1%80%D0%BB%D0%BE");
+    expect(calls[1][0]).toBe(calls[0][0]);
   });
   it("UI-005 retry reuses a completed upload receipt", async () => {
     let searches = 0;
@@ -524,7 +521,7 @@ describe("mobile behavior demo", () => {
     await screen.findByRole("heading", { name: /несколько похожих/i });
     expect(vi.mocked(fetch).mock.calls.filter(([url]) => url === "/v1/search")).toHaveLength(1);
   });
-  it("UI-007 exposes the simulated source description after manual candidate choice", async () => {
+  it("UI-007 identifies a fixture card as demo when no source URL is provided", async () => {
     mock(exact);
     render(<App />);
     await submitManual();
@@ -537,10 +534,8 @@ describe("mobile behavior demo", () => {
       screen.getByRole("button", { name: /Каберне Совиньон/i }),
     );
     await userEvent.click(screen.getByRole("tab", { name: "Источник" }));
-    expect(screen.getByText(/карточка создана для прототипа/i)).toBeVisible();
-    expect(
-      screen.getByRole("link", { name: /Открыть платформу/i }),
-    ).toHaveAttribute("href", "https://vino-svoe.ru/");
+    expect(screen.getByText(/демо-каталога/i)).toBeVisible();
+    expect(screen.queryByRole("link", { name: /Открыть исходную запись/i })).not.toBeInTheDocument();
   });
   it("UI-008 does not send an empty manual query and keeps camera entry available", async () => {
     vi.stubGlobal("fetch", vi.fn().mockResolvedValue(response(exact)));
@@ -597,8 +592,8 @@ describe("mobile behavior demo", () => {
         Promise.resolve(
           url === "/v1/photos"
             ? response(receipt)
-            : url === "/v1/catalog"
-              ? response({ demo: true, candidates: [candidate] })
+            : String(url).startsWith("/v2/catalog")
+              ? response({ demo: true, candidates: [], catalogVersion: "test-v2" })
               : response(
                   ++searches === 1
                     ? exact
@@ -623,18 +618,16 @@ describe("mobile behavior demo", () => {
       ).toBeVisible(),
     );
     expect(fetch).toHaveBeenCalledWith(
-      "/v1/search",
-      expect.objectContaining({
-        body: JSON.stringify({ scenario: "exact", query: "Редкое вино" }),
-      }),
+      "/v2/catalog?limit=24&cursor=&q=%D0%A0%D0%B5%D0%B4%D0%BA%D0%BE%D0%B5+%D0%B2%D0%B8%D0%BD%D0%BE",
+      expect.any(Object),
     );
     expect(screen.queryByRole("button", { name: "Переснять этикетку" })).not.toBeInTheDocument();
     await userEvent.click(screen.getByRole("button", { name: "Изменить запрос" }));
     expect(screen.getByLabelText(/Название вина/i)).toHaveValue("Редкое вино");
     expect(screen.queryByRole("button", { name: /Открыть исходную фотографию/i })).not.toBeInTheDocument();
     expect(
-      vi.mocked(fetch).mock.calls.filter(([url]) => url === "/v1/search"),
-    ).toHaveLength(2);
+      vi.mocked(fetch).mock.calls.filter(([url]) => String(url).startsWith("/v2/catalog")),
+    ).toHaveLength(1);
   });
   it("UI-009 keeps returned candidates in the uncertain path", async () => {
     mock({ demo: true, candidates: [candidate] });
@@ -648,13 +641,13 @@ describe("mobile behavior demo", () => {
     expect(screen.getByRole("button", { name: /Каберне Совиньон/i })).toBeVisible();
     expect(screen.queryByRole("heading", { name: "Вино не найдено" })).not.toBeInTheDocument();
   });
-  it("UI-010 rejects selectedId absent from candidates", async () => {
+  it("UI-010 accepts catalog candidates without a recognition selection", async () => {
     mock({ ...exact, selectedId: "missing" });
     render(<App />);
     await submitManual();
     await waitFor(() =>
       expect(
-        screen.getByRole("heading", { name: "Сервис временно недоступен" }),
+        screen.getByRole("heading", { name: /несколько похожих/i }),
       ).toBeVisible(),
     );
   });
@@ -790,12 +783,11 @@ describe("mobile behavior demo", () => {
       expect(screen.getByText(/Сервис временно недоступен/i)).toBeVisible(),
     );
   });
-  it("UI-029 discloses that a demo search does not recognise a photo", async () => {
+  it("UI-029 keeps catalog provenance separate from photo recognition", async () => {
     mock(exact);
     render(<App />);
     await submitManual();
-    await waitFor(() => expect(screen.getByText("Демо-режим")).toBeVisible());
-    expect(screen.getByText(/Фото не распознаётся/i)).toBeVisible();
-    expect(screen.getByText(/Карточки и похожие варианты синтетические/i)).toBeVisible();
+    await waitFor(() => expect(screen.getByRole("heading", { name: /несколько похожих/i })).toBeVisible());
+    expect(screen.queryByText("Reference-режим")).not.toBeInTheDocument();
   });
 });

@@ -8,3 +8,7 @@ INSERT INTO demo_catalog (id, name, winery, year, image, description, display_or
     ('demo-cabernet-franc-2019', 'Каберне Фран', 'Каменный сад DEMO', 2019, '/assets/catalog/demo-cabernet-franc-2019.svg', 'Синтетическая карточка DEMO: красное сухое вино для проверки неоднозначного поиска.', 7),
     ('demo-tsimlyansky-black-2023', 'Цимлянский чёрный', 'Речная долина DEMO', 2023, '/assets/catalog/demo-tsimlyansky-black-2023.svg', 'Синтетическая карточка DEMO: красное сухое вино для проверки поиска по году.', 8)
 ON CONFLICT (id) DO NOTHING;
+
+INSERT INTO catalog_versions (version) VALUES ('demo-v1') ON CONFLICT DO NOTHING;
+INSERT INTO catalog_state (singleton, version) VALUES (true, 'demo-v1')
+ON CONFLICT (singleton) DO NOTHING;

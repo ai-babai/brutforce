@@ -18,6 +18,18 @@ func Open(url string) (*sql.DB, error) {
 	return stdlib.OpenDB(*config), nil
 }
 func Seed(ctx context.Context, db *sql.DB, dir string) error {
+	// An imported catalog owns the active state.  Never let the synthetic seed
+	// repopulate or overwrite it when migrations are re-applied.
+	var active bool
+	err := db.QueryRowContext(ctx, "SELECT EXISTS (SELECT 1 FROM catalog_state WHERE singleton)").Scan(&active)
+	if err == nil && active {
+		return nil
+	}
+	if err != nil {
+		// Before 00002 there is no catalog_state table.  Goose normally applies
+		// all migrations first, but retain compatibility for callers of Seed.
+		return err
+	}
 	seed, err := os.ReadFile(filepath.Join(dir, "seeds", "demo_catalog.sql"))
 	if err != nil {
 		return err

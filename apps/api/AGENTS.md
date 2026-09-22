@@ -4,15 +4,17 @@ This directory is the standalone demo HTTP server. Its contract is defined in
 [README.md](README.md); keep implementation and fast behavior specs aligned
 with it.
 
-- Use only synthetic `DEMO` wine data. Private uploads are allowed only through
+- BE-045 authorizes a validated real display-catalog adapter/importer and tests, not live import/deployment.
+  Full exports stay outside Git; see `../../contracts/catalog-display.md`.
+- Default fixtures remain synthetic `DEMO` wine data. Private uploads are allowed only through
   the documented `UPLOAD_DIR` store. The synthetic PostgreSQL catalog (embedded only when DATABASE_URL is unset) and its
-  `GET /v1/catalog` route follow
-  [`contracts/demo-catalog.md`](../../contracts/demo-catalog.md); do not add
+  `GET /v2/catalog` route follow
+  [`contracts/demo-catalog.md`](../../contracts/demo-catalog.md); do not commit
   real catalog exports, upload GET/list routes, secrets, or request-body
   logging.
 - The server is a prototype boundary only. Upload receipt persistence exists,
-  and the synthetic catalog is readable, but recognition, OCR, real
-  catalog lookup, authentication, and analytics remain deliberate stubs.
+  and imported display catalogs are readable. Recognition, OCR, authentication,
+  and analytics remain deliberate stubs.
 - Keep dependencies in the Go standard library except the approved
   `golang.org/x/image/webp` decoder used only by the contest adapter and the
   authorized PostgreSQL catalog dependencies `github.com/jackc/pgx/v5` and

@@ -1,9 +1,9 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "title": "BrutForce synthetic demo API",
-    "version": "1.2.0",
-    "description": "Application API with independently configurable search and recommendation engines. Demo catalog is synthetic. Contest adapter stays separate and unavailable until a real recognizer is wired."
+    "title": "BrutForce application API",
+    "version": "2.0.0",
+    "description": "Catalog may contain validated source records; reference recognition remains synthetic. Contest adapter is independent."
   },
   "paths": {
     "/v1/health": {
@@ -27,18 +27,18 @@
         }
       }
     },
-    "/v1/catalog": {
+    "/v2/catalog": {
       "get": {
         "operationId": "getCatalog",
-        "summary": "Read the synthetic wine catalog",
+        "summary": "Read a bounded page of the canonical catalog",
         "description": "Reads PostgreSQL when configured. Database failure returns 503 catalog_unavailable; no silent fallback.",
         "responses": {
           "200": {
-            "description": "Ordered synthetic candidates.",
+            "description": "Canonical catalog page; aliases excluded.",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/SearchResponse"
+                  "$ref": "#/components/schemas/CatalogPage"
                 }
               }
             }
@@ -48,8 +48,42 @@
           },
           "503": {
             "$ref": "#/components/responses/APIError"
+          },
+          "400": {
+            "$ref": "#/components/responses/APIError"
+          },
+          "409": {
+            "$ref": "#/components/responses/APIError"
           }
-        }
+        },
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 60,
+              "default": 24
+            }
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "maxLength": 256
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Opaque query/version-bound cursor; stale returns409."
+          }
+        ]
       }
     },
     "/v1/photos": {
@@ -292,6 +326,56 @@
           }
         }
       }
+    },
+    "/v2/catalog/{slug}": {
+      "get": {
+        "operationId": "getWine",
+        "summary": "Resolve a canonical slug or legacy alias",
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Canonical card",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "demo",
+                    "candidate",
+                    "canonicalId"
+                  ],
+                  "properties": {
+                    "demo": {
+                      "type": "boolean"
+                    },
+                    "candidate": {
+                      "$ref": "#/components/schemas/Wine"
+                    },
+                    "canonicalId": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/APIError"
+          },
+          "503": {
+            "$ref": "#/components/responses/APIError"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -500,6 +584,172 @@
             "minimum": 1,
             "maximum": 10,
             "default": 5
+          }
+        }
+      },
+      "Wine": {
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "winery",
+          "image",
+          "description"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "winery": {
+            "type": "string"
+          },
+          "year": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "image": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "sourceUrl": {
+            "type": "string"
+          },
+          "sourceSnapshotDate": {
+            "type": "string"
+          },
+          "categoryAndSweetness": {
+            "type": "string"
+          },
+          "color": {
+            "type": "string"
+          },
+          "sugar": {
+            "type": "string"
+          },
+          "region": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "grapes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "alcoholPercent": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 100
+          },
+          "alcoholMinPercent": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 100
+          },
+          "alcoholMaxPercent": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 100
+          },
+          "volumeL": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          "ratings": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "kind",
+                "source_text"
+              ],
+              "properties": {
+                "kind": {
+                  "type": "string"
+                },
+                "source_text": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "imageVariants": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "role",
+                "path",
+                "width",
+                "height",
+                "mimeType",
+                "sha256",
+                "bytes"
+              ],
+              "properties": {
+                "role": {
+                  "enum": [
+                    "thumbnail",
+                    "card",
+                    "original"
+                  ]
+                },
+                "path": {
+                  "type": "string"
+                },
+                "width": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "height": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "bytes": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "mimeType": {
+                  "const": "image/webp"
+                },
+                "sha256": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                }
+              }
+            }
+          }
+        }
+      },
+      "CatalogPage": {
+        "type": "object",
+        "required": [
+          "demo",
+          "candidates",
+          "catalogVersion"
+        ],
+        "properties": {
+          "demo": {
+            "type": "boolean"
+          },
+          "candidates": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Wine"
+            }
+          },
+          "catalogVersion": {
+            "type": "string"
+          },
+          "nextCursor": {
+            "type": "string"
           }
         }
       }

@@ -15,18 +15,15 @@ import (
 	"time"
 	"unicode"
 	"unicode/utf8"
+
+	"brutforce-behavior-demo/apps/api/internal/catalogmodel"
 )
 
 const maxRequestBody = 64 << 10
 
-type wine struct {
-	ID          string `json:"id"`
-	Name        string `json:"name"`
-	Winery      string `json:"winery"`
-	Year        int    `json:"year"`
-	Image       string `json:"image"`
-	Description string `json:"description"`
-}
+// wine is kept as an alias while the older search and recommendation handlers
+// are migrated. catalogmodel.Wine owns the JSON projection.
+type wine = catalogmodel.Wine
 
 type searchRequest struct {
 	Scenario string  `json:"scenario"`
@@ -44,6 +41,7 @@ type searchResponse struct {
 	Candidates     []wine    `json:"candidates"`
 	SelectedID     string    `json:"selectedId,omitempty"`
 	CatalogVersion string    `json:"catalogVersion,omitempty"`
+	NextCursor     string    `json:"nextCursor,omitempty"`
 	ModelVersion   string    `json:"modelVersion,omitempty"`
 	Error          *apiError `json:"error,omitempty"`
 }
@@ -110,7 +108,9 @@ func newHandlerWithCatalogAndServices(webRoot string, recognizer Recognizer, cat
 	mux.HandleFunc("/api/openapi.json", openAPIHandler)
 	mux.HandleFunc("/api/schema/demo-search.schema.json", demoSearchSchemaHandler)
 	mux.HandleFunc("/v1/health", healthHandler)
-	mux.HandleFunc("/v1/catalog", catalogHandler(catalog))
+	mux.HandleFunc("/v2/catalog", catalogHandler(catalog))
+	mux.HandleFunc("/v2/catalog/", catalogItemHandler(catalog))
+	mux.Handle("/catalog-assets/", catalogAssetsHandler(catalog, os.Getenv("CATALOG_ASSET_ROOT")))
 	mux.HandleFunc("/v1/photos", uploadHandler(store))
 	mux.HandleFunc("/v1/search", correlateServiceRequest(searchHandler(store, catalog, services)))
 	mux.HandleFunc("/v1/recommendations", correlateServiceRequest(recommendationsHandler(catalog, services)))
@@ -137,12 +137,45 @@ func catalogHandler(catalog catalogReader) http.HandlerFunc {
 			writeError(w, http.StatusMethodNotAllowed, "method_not_allowed", "use GET")
 			return
 		}
-		candidates, err := catalog.List(r.Context())
-		if err != nil {
+		page, status, code, message := catalogPageForRequest(r, catalog)
+		if status != 0 {
+			writeError(w, status, code, message)
+			return
+		}
+		if page.err != nil {
 			writeError(w, http.StatusServiceUnavailable, "catalog_unavailable", "catalog is temporarily unavailable")
 			return
 		}
-		writeJSON(w, http.StatusOK, searchResponse{Demo: true, Candidates: candidates})
+		writeJSON(w, http.StatusOK, searchResponse{Demo: page.demo, Candidates: page.candidates, NextCursor: page.nextCursor, CatalogVersion: page.version})
+	}
+}
+
+func catalogItemHandler(catalog catalogReader) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodGet {
+			writeError(w, http.StatusMethodNotAllowed, "method_not_allowed", "use GET")
+			return
+		}
+		slug := strings.TrimPrefix(r.URL.Path, "/v2/catalog/")
+		if slug == "" || strings.Contains(slug, "/") {
+			writeError(w, http.StatusNotFound, "not_found", "catalog item was not found")
+			return
+		}
+		item, canonicalID, info, err := catalogLookup(r.Context(), catalog, slug)
+		if err != nil {
+			if errors.Is(err, errCatalogNotFound) {
+				writeError(w, http.StatusNotFound, "not_found", "catalog item was not found")
+			} else {
+				writeError(w, http.StatusServiceUnavailable, "catalog_unavailable", "catalog is temporarily unavailable")
+			}
+			return
+		}
+		writeJSON(w, http.StatusOK, struct {
+			Demo           bool   `json:"demo"`
+			Candidate      wine   `json:"candidate"`
+			CanonicalID    string `json:"canonicalId"`
+			CatalogVersion string `json:"catalogVersion"`
+		}{info.Demo, item, canonicalID, info.Version})
 	}
 }
 
@@ -163,6 +196,15 @@ func searchHandler(store *photoStore, catalog catalogReader, services modelServi
 		request, err := decodeSearchRequest(r)
 		if err != nil {
 			writeError(w, http.StatusBadRequest, "invalid_request", err.Error())
+			return
+		}
+		info, err := catalogInfoFor(r.Context(), catalog)
+		if err != nil {
+			writeError(w, http.StatusServiceUnavailable, "catalog_unavailable", "catalog is temporarily unavailable")
+			return
+		}
+		if !info.Demo {
+			writeError(w, http.StatusServiceUnavailable, "recognition_unavailable", "reference recognition is unavailable for the imported catalog")
 			return
 		}
 		if request.PhotoID != nil {
@@ -242,6 +284,15 @@ func recommendationsHandler(catalog catalogReader, services modelServices) http.
 		}
 		if services.recommendations == nil {
 			writeError(w, http.StatusServiceUnavailable, "recommendations_unavailable", "recommendation service is not configured")
+			return
+		}
+		info, err := catalogInfoFor(r.Context(), catalog)
+		if err != nil {
+			writeError(w, http.StatusServiceUnavailable, "catalog_unavailable", "catalog is temporarily unavailable")
+			return
+		}
+		if !info.Demo {
+			writeError(w, http.StatusServiceUnavailable, "recommendations_unavailable", "reference recommendations are unavailable for the imported catalog")
 			return
 		}
 		var req recommendationsRequest

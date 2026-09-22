@@ -12,6 +12,7 @@
 | Контракты и конкурсный API | [contracts](contracts/README.md), [eval](contracts/eval-predict.md) |
 | Поиск и рекомендации Романа | [Контракт](contracts/wine-services.md), [онбординг](docs/agent-guide/ROMAN-SERVICES.md) |
 | Дизайн и макеты | [Переход на v2](docs/product/design-v2-migration-plan.md), [Atlas](design/wine-ux-atlas/README.md) |
+| Настоящий каталог | [BDD](docs/product/catalog-display-spec.md), [контракт](contracts/catalog-display.md) |
 | Проверки и история | [cases](cases/cases.json), `scripts/run-fast-checks.mjs`, reports/ |
 | Совместная работа | [RULES](docs/agent-guide/RULES.md), [BOARD](docs/agent-guide/BOARD.md) |
 | Выпуск, откат и среды | [PIPELINE](deploy/PIPELINE.md), [DATABASE](docs/agent-guide/DATABASE.md) |

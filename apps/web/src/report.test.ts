@@ -103,3 +103,14 @@ describe('report dashboard regressions', () => {
     expect(getComputedStyle(skipped!).backgroundColor).not.toBe('rgb(220, 238, 221)');
   });
 });
+
+it('REPORT-004 preserves a backend failure when UI passes the same behavior and records all IDs', async () => {
+  const {goCases, mergeCases} = await import('../../../scripts/report-results.mjs');
+  const backend = goCases(JSON.stringify({Test:'TestCAT001PaginationAndCAT002WholeCatalogQuery',Action:'fail',Elapsed:.002}));
+  expect([...backend.keys()]).toEqual(['CAT-001','CAT-002']);
+  const ui = new Map([['CAT-002',{status:'passed',tests:[{name:'UI full-catalog search'}]}]]);
+  for (const result of [mergeCases(backend,ui),mergeCases(ui,backend)]) {
+    expect(result.get('CAT-002')?.status).toBe('failed');
+    expect(result.get('CAT-002')?.tests).toHaveLength(2);
+  }
+});

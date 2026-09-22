@@ -2,7 +2,7 @@
 
 Minimal Go prototype for the Wine UX Atlas. It provides
 predictable synthetic outcomes for frontend integration; it does not recognize
-images or query a real wine catalog. It can retain a private uploaded image for
+images. A separately validated importer can load a real display catalog. It can retain a private uploaded image for
 the demo flow, but a stored receipt only gates the synthetic response.
 
 ## Synthetic catalog: PostgreSQL and standalone mode
@@ -10,9 +10,12 @@ the demo flow, but a stored receipt only gates the synthetic response.
 [`catalog.json`](catalog.json) defines eight synthetic red-dry wines with stable IDs.
 With DATABASE_URL set, catalog and search read PostgreSQL; without it, the embedded
 fixture serves standalone tests. A configured database failure never falls back to
-embedded data. These records are not a supplier feed or a real wine catalog. `GET /v1/catalog` returns its complete
-ordered candidate list as `{ "demo": true, "candidates": [...] }`. The same
-catalog is used by search, so catalog and search candidate IDs always match.
+embedded data. These default records are not a supplier feed. `GET /v2/catalog`
+returns bounded pages (default 24, maximum 60), with `catalogVersion` and optional
+`nextCursor`. All manual text searches use its `q` parameter. Real display records
+may be imported separately; see [catalog-display.md](../../contracts/catalog-display.md).
+The default photo/reference engine remains synthetic and is unavailable against
+an incompatible real catalog rather than inventing a match.
 
 Only the established Cabernet has the existing concept-bottle image. Merlot
 intentionally has an empty `image` field so the client can show its missing
@@ -167,7 +170,7 @@ quality:
 | API-012 | upload without `UPLOAD_DIR` | HTTP 503 `storage_unavailable` |
 | API-013 | unknown valid-format `photoId` | HTTP 404 `photo_not_found` |
 | API-014 | configured storage budget exhausted | HTTP 503 `storage_full` |
-| API-015 | embedded catalog | eight unique stable synthetic records and matching `GET /v1/catalog` response |
+| API-015 | embedded catalog | eight unique stable synthetic records and matching `GET /v2/catalog` response |
 | API-016 | name, winery, and year query | exact search filters the same embedded catalog and selects its first match |
 | API-017 | documentation route or bundled asset | `GET /api/docs` and its local Swagger assets work; its own errors remain JSON API errors |
 | API-018 | embedded OpenAPI and canonical schema | OpenAPI 3.1 documents the demo endpoints plus the separately defined contest adapter; the embedded schema matches the contract source |
@@ -211,3 +214,28 @@ No real images or competition data are needed for these tests.
 `POST /v1/recommendations` принимает `{"wineId":"demo-cabernet-sauvignon-2023","limit":3}`.
 Публичный API дополняет ID полями каталога, сохраняя порядок сервиса.
 Конкурсный endpoint отдельно; эталон не подключается к нему автоматически.
+
+## BE-045: реальный каталог
+
+Постраничная выдача: `GET /v2/catalog?limit=24&q=…&cursor=…`; карточка/alias:
+`GET /v2/catalog/{slug}`. Старый `/v1/catalog` возвращает JSON404.
+См. [контракт](../../contracts/catalog-display.md) и [BDD](../../docs/product/catalog-display-spec.md).
+
+Офлайн-проверка пакета (без подключения БД):
+```sh
+go run ./cmd/catalog-import -package /path/to/package -version catalog-display-20260922-v2 -dry-run
+```
+
+Импорт после отдельного согласования: применить миграции, сделать snapshot через
+`catalog-import -package … -version … -snapshot-out /private/path/before.json`
+с migration-role; assets разместить как `CATALOG_ASSET_ROOT/<version>/images/*`.
+Секреты только environment-file, не CLI-аргументы/логи. Snapshot содержит каталожные
+данные, сохраняется вне Git. Обратное переключение: `catalog-import -restore …`.
+Пакет v2 содержит public/wines.json и public/aliases.json; пустые/невалидные связи
+останавливают импорт до записи. Повтор версии с другим содержимым отклоняется.
+
+Миграция допускает SQL NULL года и защищает импортированный каталог от demo-seed.
+Файлы версионируются и остаются вне БД; не удалять старые assets при rollback.
+Reference-движок несовместим с реальными IDs: фото/рекомендации возвращают
+явную ошибку до подключения подходящего сервиса. Поиск по названию работает
+через каталог независимо от модели; качество распознавания не заявляется.

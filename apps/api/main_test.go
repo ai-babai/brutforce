@@ -38,6 +38,7 @@ func TestAPI019V1RoutesReplaceLegacyBusinessRoutes(t *testing.T) {
 	}{
 		{http.MethodGet, "/api/health", ""},
 		{http.MethodGet, "/api/catalog", ""},
+		{http.MethodGet, "/v1/catalog", ""},
 		{http.MethodPost, "/api/photos", ""},
 		{http.MethodPost, "/api/search", `{"scenario":"exact"}`},
 		{http.MethodGet, "/api/unknown", ""},
@@ -59,7 +60,7 @@ func TestAPI019V1RoutesReplaceLegacyBusinessRoutes(t *testing.T) {
 		want               int
 	}{
 		{http.MethodGet, "/v1/health", "", http.StatusOK},
-		{http.MethodGet, "/v1/catalog", "", http.StatusOK},
+		{http.MethodGet, "/v2/catalog", "", http.StatusOK},
 		{http.MethodPost, "/v1/photos", "", http.StatusServiceUnavailable},
 		{http.MethodPost, "/v1/search", `{"scenario":"exact"}`, http.StatusOK},
 	} {
@@ -179,14 +180,14 @@ func TestAPI015EmbeddedCatalogIsConsistent(t *testing.T) {
 	if demoWines[0].ID != "demo-cabernet-sauvignon-2023" || demoWines[1].ID != "demo-merlot-2022" || demoWines[0].Image == "" || demoWines[1].Image != "" {
 		t.Fatalf("catalog does not preserve established image/ID behavior: %+v", demoWines[:2])
 	}
-	recorder := request(t, newHandler(""), http.MethodGet, "/v1/catalog", "")
+	recorder := request(t, newHandler(""), http.MethodGet, "/v2/catalog", "")
 	response := decodeResponse(t, recorder)
 	if recorder.Code != http.StatusOK || !response.Demo || len(response.Candidates) != len(demoWines) {
 		t.Fatalf("catalog response: status=%d response=%+v", recorder.Code, response)
 	}
-	for index, candidate := range response.Candidates {
-		if candidate.ID != demoWines[index].ID {
-			t.Fatalf("catalog response id at %d=%q, want %q", index, candidate.ID, demoWines[index].ID)
+	for index := 1; index < len(response.Candidates); index++ {
+		if response.Candidates[index-1].ID >= response.Candidates[index].ID {
+			t.Fatalf("catalog response is not ordered by canonical id: %+v", response.Candidates)
 		}
 	}
 }
