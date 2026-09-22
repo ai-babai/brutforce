@@ -25,7 +25,7 @@ export async function checkCardPolish({ browser, contextOptions, baseURL, captur
           return { i, background: s.backgroundColor, photoBackground: ps.backgroundColor, width: r.width, height: r.height, contain: ps.objectFit, leader: e.classList.contains('candidate-leader'), badge: Boolean(e.querySelector('em')), overflow: e.scrollWidth > e.clientWidth + 1 };
         }));
         for (const t of tiles) {
-          if (t.background !== 'rgb(255, 255, 255)' || t.photoBackground !== 'rgb(255, 255, 255)' || t.width !== (t.i ? 72 : 84) || t.height !== (t.i ? 112 : 132) || t.overflow || t.leader !== (t.i === 0) || t.badge !== (t.i === 0)) throw Error('Tile geometry: '+JSON.stringify(t));
+          if (t.background !== 'rgb(255, 255, 255)' || t.photoBackground !== 'rgb(255, 255, 255)' || t.width !== (t.i ? 56 : 76) || t.height !== (t.i ? 98 : 132) || t.overflow || t.leader !== (t.i === 0) || t.badge !== (t.i === 0)) throw Error('Tile geometry: '+JSON.stringify(t));
         }
         const badgeWidth = await page.locator('.candidate-leader em').evaluate(e => e.getBoundingClientRect().width);
         if (badgeWidth >= 180) throw Error('Leader badge stretches across the row');
@@ -45,10 +45,10 @@ export async function checkCardPolish({ browser, contextOptions, baseURL, captur
           const r = x => { const b = x.getBoundingClientRect(); return { x:b.x,y:b.y,width:b.width,height:b.height,bottom:b.bottom,right:b.right }; };
           const controls = [...header.querySelectorAll('button')].map(r);
           const title = r(header.querySelector('b'));
-          return { page:r(el), header:r(header), hero:r(hero), photo:r(photo), title:r(h2), controls, headerTitle:title, paddingTop:getComputedStyle(el).paddingTop, white:getComputedStyle(hero).backgroundColor, contain:getComputedStyle(photo).objectFit, blend:getComputedStyle(photo).mixBlendMode, headingFont:getComputedStyle(h2).fontFamily, clipping:getComputedStyle(h2).overflowY !== 'visible' && h2.scrollHeight > h2.clientHeight+1, overflow:el.scrollWidth > el.clientWidth+1, bodyOverflow:document.documentElement.scrollWidth > innerWidth };
+          return { paper:getComputedStyle(document.querySelector('.app')).backgroundColor, ink:getComputedStyle(el).color, headingSize:parseFloat(getComputedStyle(h2).fontSize), page:r(el), header:r(header), hero:r(hero), photo:r(photo), title:r(h2), controls, headerTitle:title, paddingTop:getComputedStyle(el).paddingTop, white:getComputedStyle(hero).backgroundColor, contain:getComputedStyle(photo).objectFit, blend:getComputedStyle(photo).mixBlendMode, headingFont:getComputedStyle(h2).fontFamily, clipping:getComputedStyle(h2).overflowY !== 'visible' && h2.scrollHeight > h2.clientHeight+1, overflow:el.scrollWidth > el.clientWidth+1, bodyOverflow:document.documentElement.scrollWidth > innerWidth };
         });
         const m = await measure();
-        if (m.paddingTop !== '0px' || Math.abs(m.header.y-m.page.y)>1 || Math.abs(m.hero.y-m.page.y-64)>1 || Math.abs(m.hero.height-200)>1 || m.photo.height!==200 || m.photo.width<96 || m.photo.width>128 || m.white!=='rgb(255, 255, 255)' || m.contain!=='contain' || m.blend!=='normal' || !m.headingFont.includes('Playfair') || m.overflow || m.bodyOverflow || m.clipping || m.controls.some(b=>b.width<44 || b.height<44)) throw Error('Hero geometry: '+JSON.stringify(m));
+        if (m.paper!=='rgb(254, 253, 250)' || m.ink!=='rgb(44, 42, 40)' || m.headingSize!==25 || m.paddingTop !== (width>=1024 ? '14px' : '8px') || Math.abs(m.header.y-m.page.y-(width>=1024 ? 8 : 2))>1 || Math.abs(m.hero.y-m.page.y-(width>=1024 ? 68 : 62))>1 || Math.abs(m.hero.height-254)>1 || m.photo.height!==216 || m.photo.width<125 || m.photo.width>200 || m.white!=='rgb(255, 255, 255)' || m.contain!=='contain' || m.blend!=='normal' || !m.headingFont.includes('Playfair') || m.overflow || m.bodyOverflow || m.clipping || m.controls.some(b=>b.width<44 || b.height<44)) throw Error('Hero geometry: '+JSON.stringify(m));
         await page.evaluate(() => document.documentElement.style.fontSize = '200%');
         const normalEnlarged = await measure();
         if (normalEnlarged.overflow || normalEnlarged.bodyOverflow || normalEnlarged.clipping || normalEnlarged.title.right > normalEnlarged.hero.right+1) throw Error('200% ordinary title overflows');
@@ -56,7 +56,7 @@ export async function checkCardPolish({ browser, contextOptions, baseURL, captur
         // Simulate a nonzero inset through the same token used by the native env fallback.
         await page.evaluate(() => document.documentElement.style.setProperty('--safe-area-top', '24px'));
         const inset = await measure();
-        if (Math.abs(inset.header.height-72)>1 || Math.abs(inset.hero.y-inset.page.y-88)>1 || inset.paddingTop!=='0px') throw Error('Safe area counted twice: '+JSON.stringify(inset));
+        if (Math.abs(inset.header.height-48)>1 || Math.abs(inset.hero.y-m.hero.y-24)>1 || Math.abs(parseFloat(inset.paddingTop)-parseFloat(m.paddingTop)-24)>1) throw Error('Safe area counted twice: '+JSON.stringify(inset));
         await page.evaluate(() => document.documentElement.style.removeProperty('--safe-area-top'));
         await page.getByRole('button', { name: 'Сохранить вино', exact:true }).click();
         if (await page.getByRole('button', { name:'Удалить из сохранённых' }).getAttribute('aria-pressed') !== 'true') throw Error('Save toggle failed');
@@ -64,11 +64,11 @@ export async function checkCardPolish({ browser, contextOptions, baseURL, captur
         await page.getByRole('button', { name: 'Назад', exact:true }).click();
         if (await page.getByLabel(/Название вина/).inputValue() !== 'вино') throw Error('Back lost query');
         await rows.nth(1).click();
-        await page.locator('.result-hero-long').waitFor();
+        await page.getByRole('heading', {name:longName,exact:true}).waitFor();
         // 200% root text size exercises the rem-based hero and header without a screenshot scale trick.
         await page.evaluate(() => document.documentElement.style.fontSize = '200%');
         const enlarged = await measure();
-        if (await page.locator('.result-hero h2').textContent() !== longName || enlarged.photo.height !== 160 || enlarged.title.y < enlarged.photo.bottom || enlarged.title.width < 250 || enlarged.overflow || enlarged.bodyOverflow || enlarged.clipping || enlarged.headerTitle.x < enlarged.controls[0].right || (enlarged.headerTitle.right > enlarged.controls[1].x+1 && enlarged.headerTitle.bottom > enlarged.controls[1].y+1)) throw Error('Enlarged long title: '+JSON.stringify(enlarged));
+        if (await page.locator('.result-hero h2').textContent() !== longName || enlarged.photo.height !== 216 || enlarged.title.width < 145 || enlarged.overflow || enlarged.bodyOverflow || enlarged.clipping || enlarged.headerTitle.x < enlarged.controls[0].right || (enlarged.headerTitle.right > enlarged.controls[1].x+1 && enlarged.headerTitle.bottom > enlarged.controls[1].y+1)) throw Error('Enlarged long title: '+JSON.stringify(enlarged));
         if (width === 320) await capture(page, 'polish-long-200pct-320');
         await page.locator('.result-hero h2').evaluate(e => e.scrollIntoView({ block:'end' }));
         const scrollEnd = await page.locator('.result-hero h2').evaluate(e => ({ bottom:e.getBoundingClientRect().bottom, navTop:document.querySelector('.bottom-nav').getBoundingClientRect().top }));
