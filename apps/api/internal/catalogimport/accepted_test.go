@@ -1,6 +1,7 @@
 package catalogimport
 
 import (
+	"brutforce-behavior-demo/apps/api/internal/catalogmodel"
 	"strings"
 	"testing"
 )
@@ -39,5 +40,19 @@ func TestAcceptedProjectionRejectsVariantUpscale(t *testing.T) {
 func TestAcceptedProjectionCannotRunWithoutAcceptedReport(t *testing.T) {
 	if _, _, _, _, err := LoadAcceptedProjection(Options{}, "", "validator"); err == nil {
 		t.Fatal("accepted fast path ran without accepted report")
+	}
+}
+
+func TestAcceptedProjectionCanonicalizesEmptyOptionalSlices(t *testing.T) {
+	wine := acceptedTestWine()
+	wine.Region = []string{}
+	wine.Grapes = []string{}
+	wine.Ratings = []catalogmodel.Rating{}
+	got, err := acceptedWine(wine)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if got.Region != nil || got.Grapes != nil || got.Ratings != nil {
+		t.Fatalf("empty optional slices were not canonicalized: %#v", got)
 	}
 }
