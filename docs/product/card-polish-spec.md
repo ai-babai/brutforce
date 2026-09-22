@@ -1,9 +1,9 @@
 # FE-057 · Карточка вина и выдача
 
 Статус: согласовано уточнённое решение Макса от 23.09.2026. Источник:
-`/Users/skif/develop/brutforce-card-polish/design/card-polish/README.md`
+[канонический README](../../design/card-polish/README.md)
 (ревизия `c221f12`, проверена 23.09.2026), сравнительные
-`review.html` и `search-review.html` рядом с ним. Ранний вариант А/Б из
+[карточка](../../design/card-polish/review.html) и [выдача](../../design/card-polish/search-review.html) рядом с ним. Ранний вариант А/Б из
 `HISTORY.md` и `index.html` — история, его размеры не действуют.
 Сравнительные страницы статичны и не доказывают работу приложения.
 
