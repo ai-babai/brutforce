@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "revision": "83dc356596303ad996cc6e93acd4fe5060f206d5",
+  "command": "cd /tmp/catalog45-check && sudo -n /usr/local/bin/lct-db-test maks ./db-tests -test.v=test2json -test.run \"^Test(DB00[1-5]|CAT009)\" -test.count=1",
+  "wallMs": 1227,
+  "environment": "isolated lct_test_maks; API sources identical to binary build at 3d3be20; 83dc356 changes only UI test label"
+}

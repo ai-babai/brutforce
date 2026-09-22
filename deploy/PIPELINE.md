@@ -4,14 +4,34 @@
 Короткая ветка задачи → PR с CI → main → пакет → TEST → сводка → разрешение → PROD.
 Ветки окружений не создаём. Preview Макса/Ромы независимы от общей выкатки.
 
-## Режим до модели Романа
+## Составной кандидат
+
+Кандидат фиксирует Git SHA/архив приложения, SHA-256 точных байтов manifest каталога,
+режим и версию модели. Новый manifest при прежнем Git SHA — новый кандидат без пересборки.
+Разрешение PROD относится к `candidateId`; старые demo-записи по Git SHA сохраняются.
+
+Подготовленный каталог регистрируется после успешных DQ001..DQ008 и DQ011. Обязательные
+`missing`, `skipped`, `error` и `failed` блокируют регистрацию. Контроллер повторно сверяет
+manifest и все установленные bytes и запрещает повтор версии с другим manifest SHA:
+
+```bash
+sudo -n -u lct-release /usr/local/bin/lct-release register-data APP_FULL_SHA < data-quality.json
+```
+
+Полученный 64-символьный `candidateId` передаётся в `deploy.yml`. Перед первой мутацией БД
+импортёр экспортирует snapshot; после импорта DQ009 проверяет БД, DQ010 — публичный Caddy
+media URL, exact bytes/MIME/cache и закрытость internal. Browser evidence привязан к той же
+комбинации. Сырой отчёт остаётся защищённым; status.json содержит сводку для Ops.
+
+## Режим reference-модели
 
 `reference`, модель `reference-demo-v1`, каталог `demo-v1`: восемь синтетических карточек.
 Текст ищется по тестовому каталогу, рекомендации детерминированы. Фото валидируется,
 но НЕ распознаётся: результат показывает только работу интерфейса и HTTP-контракта.
 Конкурсный `/v1/eval/predict` к заглушке не подключён. ML-качество = `not_measured`.
 Переход на реальную модель — новый кандидат, каталог/индекс/контрольный набор и метрики;
-текущий выпускной инструмент намеренно принимает только согласованный reference-режим.
+реальный каталог допускается отдельным составным кандидатом; режим модели остаётся честно
+помеченным `reference`, пока отдельный выпуск не принесёт проверенную реальную модель.
 
 ## Проверки и артефакт
 
@@ -66,16 +86,16 @@ sudo -n -u lct-release /usr/local/bin/lct-release status
 Только после явного поручения Макса или Романа продвинуть **названный** кандидат:
 
 ```bash
-sudo -n -u lct-release /usr/local/bin/lct-release approve FULL_SHA maks 'telegram:<chat>:<message>'
+sudo -n -u lct-release /usr/local/bin/lct-release approve CANDIDATE_ID maks 'telegram:<chat>:<message>'
 # Для поручения Романа actor=roman, только из уже разрешённого доверенного чата.
 /opt/sigma-hermes/bin/sigma-gh workflow run deploy.yml --repo ai-babai/brutforce \
-  -f ci_run=RUN_ID -f target=prod
+  -f ci_run=RUN_ID -f target=prod -f candidate_id=CANDIDATE_ID
 ```
 
 Если Actions недоступен, после той же проверки и разрешения:
 
 ```bash
-sudo -n -u lct-release /usr/local/bin/lct-release promote FULL_SHA
+sudo -n -u lct-release /usr/local/bin/lct-release promote CANDIDATE_ID
 ```
 
 Разрешение содержит SHA, actor, ссылку на поручение и технического записавшего.
@@ -103,10 +123,18 @@ Sigma объясняет по-русски: что случилось, что у
 
 ## Структура и обслуживание
 
-`/srv/lct/releases/packages/<SHA>` — пакеты; `records/<SHA>.json` — журнал;
+`/srv/lct/releases/packages/<SHA>` — пакеты; `records/<candidateId>.json` — журнал
+(старые `<SHA>.json` сохраняются);
 `public/status.json` — сводка Ops. Это вывод выполнения, не ручные зелёные отметки.
 `/usr/local/bin/lct-release` → root-owned `release.py`, исполнение от lct-release.
 `/etc/lct-release` — конфиг и секретные env; в Git их значений нет.
 `bootstrap.py` — операторская установка, не шаг каждого релиза; меняет только зарегистрированные службы.
 Серверный runbook: `/srv/infra/lct-release/PIPELINE.md`. Меняешь pipeline — обнови этот файл,
 карту проекта и infra-os. В AGENTS оставляй ссылку, а не копию всех правил.
+
+## Runtime каталога BE-045
+
+Данные находятся в `/srv/lct/data/catalog/releases/<version>/`, общие неизменяемые
+изображения — в `/srv/lct/data/catalog/media/{400,800,original}/<sha>.webp`. Caddy отдаёт
+только `/media/catalog/<role>/<sha>.webp`; release/internal не являются web-root.
+Контроллер задаёт `CATALOG_VERSION` из кандидата и хранит фактическую комбинацию среды.

@@ -842,6 +842,76 @@
       "title": "Доступная компактная выдача на узком экране",
       "source": "apps/web/src/design.test.tsx",
       "spec": "docs/product/behavior-spec.md#фото-выделенный-лидер-и-вертикальный-список--fe-035"
+    },
+    {
+      "id": "CAT-001",
+      "title": "Каталог выдаётся страницами без дублей и потерь",
+      "area": "api",
+      "source": "docs/product/catalog-display-spec.md",
+      "spec": "docs/product/catalog-display-spec.md"
+    },
+    {
+      "id": "CAT-002",
+      "title": "Поиск идёт по полному каталогу",
+      "area": "api",
+      "source": "docs/product/catalog-display-spec.md",
+      "spec": "docs/product/catalog-display-spec.md"
+    },
+    {
+      "id": "CAT-003",
+      "title": "Изображения адаптивны, отложены и имеют fallback",
+      "area": "ui",
+      "source": "docs/product/catalog-display-spec.md",
+      "spec": "docs/product/catalog-display-spec.md"
+    },
+    {
+      "id": "CAT-004",
+      "title": "Неизвестные поля скрыты, диапазоны сохранены",
+      "area": "ui",
+      "source": "docs/product/catalog-display-spec.md",
+      "spec": "docs/product/catalog-display-spec.md"
+    },
+    {
+      "id": "CAT-005",
+      "title": "Спорные характеристики не показываются и не угадываются",
+      "area": "ui",
+      "source": "docs/product/catalog-display-spec.md",
+      "spec": "docs/product/catalog-display-spec.md"
+    },
+    {
+      "id": "CAT-006",
+      "title": "Aliases ведут к канонической карточке без дублей",
+      "area": "api",
+      "source": "docs/product/catalog-display-spec.md",
+      "spec": "docs/product/catalog-display-spec.md"
+    },
+    {
+      "id": "CAT-007",
+      "title": "Происхождение каталога и заглушка модели различаются",
+      "area": "ui",
+      "source": "docs/product/catalog-display-spec.md",
+      "spec": "docs/product/catalog-display-spec.md"
+    },
+    {
+      "id": "CAT-008",
+      "title": "Импорт валидируется до мутации, dry-run безопасен",
+      "area": "api",
+      "source": "docs/product/catalog-display-spec.md",
+      "spec": "docs/product/catalog-display-spec.md"
+    },
+    {
+      "id": "CAT-009",
+      "title": "Импорт атомарен и идемпотентен, seed не загрязняет каталог",
+      "area": "database",
+      "source": "docs/product/catalog-display-spec.md",
+      "spec": "docs/product/catalog-display-spec.md"
+    },
+    {
+      "id": "REPORT-004",
+      "area": "ui",
+      "title": "Провал одного слоя не скрывается успехом другого",
+      "source": "apps/web/src/report.test.ts",
+      "spec": "docs/product/reviews/be-045-bdd-audit.md"
     }
   ]
 }

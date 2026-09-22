@@ -12,9 +12,12 @@ const outputDir = resolve(process.env.SMOKE_OUTPUT_DIR || resolve(root, 'temp/br
 const user = process.env.TEST_HTTP_USER;
 const password = process.env.TEST_HTTP_PASSWORD;
 const expectedRevision = process.env.EXPECTED_REVISION;
+const expectedCandidate = process.env.EXPECTED_CANDIDATE_ID || expectedRevision;
+const expectedCatalog = process.env.EXPECTED_CATALOG_VERSION;
 const checks = [];
 const evidence = [];
 let revision;
+let catalogVersion;
 
 const check = async (name, work) => {
   try { await work(); checks.push({ name, status: 'passed' }); }
@@ -25,7 +28,7 @@ const check = async (name, work) => {
 };
 const runURL = process.env.GITHUB_SERVER_URL && process.env.GITHUB_REPOSITORY && process.env.GITHUB_RUN_ID
   ? `${process.env.GITHUB_SERVER_URL}/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID}` : undefined;
-const result = (status, error) => ({ revision: expectedRevision || revision || null, observedRevision: revision || null, status, at: new Date().toISOString(), checks, evidence, ...(runURL ? { githubRunURL: runURL } : {}), ...(error ? { error } : {}) });
+const result = (status, error) => ({ revision: expectedRevision || revision || null, candidateId: expectedCandidate || null, observedRevision: revision || null, catalogVersion: catalogVersion || null, status, at: new Date().toISOString(), checks, evidence, ...(runURL ? { githubRunURL: runURL } : {}), ...(error ? { error } : {}) });
 
 await mkdir(outputDir, { recursive: true });
 let browser;
@@ -42,10 +45,22 @@ try {
     revision = data.revision;
     if (expectedRevision && revision !== expectedRevision) throw new Error(`revision ${revision} does not match EXPECTED_REVISION`);
   });
+  let catalog;
+  await check('active catalog version and bounded first page', async () => {
+    const response = await releaseContext.request.get(`${baseURL}/v2/catalog`);
+    if (!response.ok()) throw new Error(`catalog returned ${response.status()}`);
+    catalog = await response.json();
+    catalogVersion = catalog.catalogVersion;
+    if (!catalogVersion || !catalog.candidates?.length || catalog.candidates.length > 24)
+      throw new Error('catalog version or bounded first page is invalid');
+    if (expectedCatalog && catalogVersion !== expectedCatalog) throw new Error('catalog does not match EXPECTED_CATALOG_VERSION');
+  });
   const capture = async (page, name) => {
     const path = resolve(outputDir, `${name}.png`);
-    await page.waitForFunction(() => [...document.images].every(image => image.complete), null, {timeout: 10_000});
-    const broken = await page.locator('img').evaluateAll(images => images.filter(image => !image.naturalWidth).map(image => image.getAttribute('src')));
+    await page.waitForFunction(() => [...document.images].filter(image => {
+      const r = image.getBoundingClientRect(); return r.bottom > 0 && r.top < innerHeight;
+    }).every(image => image.complete && image.naturalWidth > 0), null, {timeout: 10_000});
+    const broken = await page.locator('img').evaluateAll(images => images.filter(image => image.complete && !image.naturalWidth).map(image => image.getAttribute('src')));
     if (broken.length) throw new Error('Images failed to load: '+broken.join(', '));
     await page.screenshot({ path, fullPage: true, animations: 'disabled' });
     evidence.push(path);
@@ -68,15 +83,79 @@ try {
     await page.getByLabel(/Название вина/i).fill('Каберне');
     await page.getByRole('button', { name: 'Искать' }).click();
     await visible(page.getByRole('heading', { name: /Есть несколько похожих этикеток/i }), `${prefix} text list`);
-    await visible(page.getByText('Демо-режим'), `${prefix} demo disclosure`);
     await capture(page, `${prefix}-text-results`);
     await page.getByRole('button', { name: /Каберне Совиньон/i }).first().click();
     await visible(page.getByRole('heading', { name: 'Каберне Совиньон' }), `${prefix} text card`);
+    await page.getByRole('tab', {name:'Источник', exact:true}).click();
+    await visible(page.getByText('Эта карточка создана для демо-каталога.', {exact:true}), `${prefix} demo source disclosure`);
+    await page.getByRole('tab', {name:'Обзор', exact:true}).click();
     await visible(page.getByRole('heading', { name: /Вам также может подойти/i }), `${prefix} recommendations`);
     await recommendationsReady(page);
     await capture(page, `${prefix}-text-card-recommendations`);
     return { context, page };
   };
+  if (catalog.demo === false) {
+    if (!catalog.nextCursor) throw new Error('real catalog smoke requires a second page');
+    const response = await releaseContext.request.get(`${baseURL}/v2/catalog?cursor=${encodeURIComponent(catalog.nextCursor)}`);
+    if (!response.ok()) throw new Error('second catalog page unavailable');
+    const second = await response.json();
+    if (!second.candidates?.length || second.catalogVersion !== catalogVersion) throw new Error('second page is invalid');
+    const seen = new Set(catalog.candidates.map(item => item.id));
+    if (second.candidates.some(item => seen.has(item.id))) throw new Error('catalog pages overlap');
+    const query = second.candidates[0].name;
+    for (const [name, width, height, dpr] of [['desktop', 1440, 900, 1], ['mobile', 390, 844, 2], ['narrow', 320, 740, 3]]) {
+      await check(`${name} real catalog, pagination, search, image and source`, async () => {
+        const context = await browser.newContext({viewport:{width,height}, deviceScaleFactor:dpr, ...contextOptions});
+        const page = await context.newPage();
+        await page.goto(baseURL, {waitUntil:'networkidle'});
+        await page.getByRole('button', {name:/По названию/i}).click();
+        await page.getByRole('button', {name:'Открыть каталог', exact:true}).click();
+        await page.waitForFunction(n => document.querySelectorAll('.candidate-list > button').length === n, catalog.candidates.length);
+        await capture(page, `${name}-catalog-first-page`);
+        await page.getByRole('button', {name:'Показать ещё', exact:true}).click();
+        await page.waitForFunction(n => document.querySelectorAll('.candidate-list > button').length === n, catalog.candidates.length + second.candidates.length);
+        await page.getByLabel(/Название вина/i).fill(query);
+        const searchResponse = page.waitForResponse(r => r.url().includes('/v2/catalog?') && new URL(r.url()).searchParams.get('q') === query && r.ok());
+        await page.getByRole('button', {name:'Искать', exact:true}).click();
+        const search = await (await searchResponse).json();
+        if (!search.candidates.some(item => item.id === second.candidates[0].id)) throw new Error('search did not find the item beyond page one');
+        const chosen = search.candidates[0];
+        const first = page.locator('.candidate-list > button').first();
+        await visible(first, 'catalog search result');
+        if (!(await first.innerText()).includes(chosen.name)) throw new Error('UI did not display current search response');
+        await first.click();
+        await visible(page.getByRole('heading', {name:chosen.name, exact:true}), 'real wine detail');
+        const photo = page.locator('.result-hero > img');
+        await visible(photo, 'real wine photo');
+        await photo.evaluate(image => image.decode());
+        const image = await photo.evaluate(el => ({src:el.currentSrc, fit:getComputedStyle(el).objectFit, srcset:el.srcset}));
+        const validPaths = chosen.imageVariants.map(v => new URL(v.path, baseURL).href);
+        if (!validPaths.includes(image.src) || image.fit !== 'contain' || !image.srcset)
+          throw new Error('image selection or contain contract failed');
+        if (await page.locator('.demo-label').count()) throw new Error('real card is labelled synthetic');
+        if (await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1)) throw new Error('horizontal overflow');
+        await page.getByRole('tab', {name:'Источник', exact:true}).click();
+        if (await page.getByRole('link', {name:'Открыть исходную запись'}).getAttribute('href') !== chosen.sourceUrl)
+          throw new Error('source link differs from accepted catalog');
+        await visible(page.getByText('Не удалось загрузить рекомендации.', {exact:true}), 'unavailable reference recommendations');
+        await capture(page, `${name}-real-card-source`);
+        await context.close();
+      });
+    }
+    await check('real catalog upload does not invent model results', async () => {
+      const context = await browser.newContext({viewport:{width:390,height:844}, ...contextOptions});
+      const page = await context.newPage();
+      await page.goto(baseURL, {waitUntil:'networkidle'});
+      const searchResponse = page.waitForResponse(r => new URL(r.url()).pathname === '/v1/search');
+      await page.getByLabel(/Загрузить фотографию этикетки/i).setInputFiles(resolve(root, 'apps/web/public/assets/app-192.png'));
+      const response = await searchResponse;
+      const data = await response.json();
+      if (response.status() !== 503 || data.error?.code !== 'recognition_unavailable') throw new Error('reference model must reject incompatible catalog');
+      await visible(page.getByRole('heading', {name:'Сервис временно недоступен',exact:true}), 'honest unavailable model state');
+      await capture(page, 'mobile-model-unavailable');
+      await context.close();
+    });
+  } else {
   await check('desktop text search, card, recommendations', async () => {
     const { context } = await textFlow({ width: 1440, height: 900 }, 'desktop');
     await context.close();
@@ -86,7 +165,7 @@ try {
     await page.getByRole('button', { name: /Сканировать ещё/i }).click();
     await page.getByLabel(/Загрузить фотографию этикетки/i).setInputFiles(resolve(root, 'apps/web/public/assets/app-192.png'));
     await visible(page.getByRole('heading', { name: /Есть несколько похожих этикеток/i }), 'mobile photo list');
-    await visible(page.getByText(/Фото не распознаётся/i), 'mobile photo demo disclosure');
+    await visible(page.getByRole('note', {name:'Reference-режим'}), 'mobile photo demo disclosure');
     await capture(page, 'mobile-photo-results');
     await page.getByRole('button', { name: /Каберне Совиньон/i }).first().click();
     await visible(page.getByRole('heading', { name: 'Каберне Совиньон' }), 'mobile photo card');
@@ -95,6 +174,7 @@ try {
     await capture(page, 'mobile-photo-card-recommendations');
     await context.close();
   });
+  }
   await writeFile(resolve(outputDir, 'result.json'), `${JSON.stringify(result('passed'))}\n`);
   console.log(JSON.stringify(result('passed')));
 } catch (error) {

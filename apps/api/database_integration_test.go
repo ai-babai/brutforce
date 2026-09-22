@@ -4,16 +4,20 @@ package main
 
 import (
 	"brutforce-behavior-demo/apps/api/internal/catalogdb"
+	"brutforce-behavior-demo/apps/api/internal/catalogimport"
 	"context"
+	"database/sql"
 	"encoding/json"
 	"net/http"
 	"os"
 	"reflect"
+	"sort"
 	"sync"
 	"testing"
 	"time"
 
 	"github.com/jackc/pgx/v5/pgconn"
+	"github.com/pressly/goose/v3"
 )
 
 var integrationSetup struct {
@@ -46,7 +50,7 @@ func prepareDatabase(t *testing.T) {
 		if name != "lct_test_maks" {
 			t.Fatal("refusing integration outside lct_test_maks")
 		}
-		if err = db.QueryRowContext(ctx, "SELECT to_regclass('public.demo_catalog') IS NULL").Scan(&integrationSetup.fresh); err != nil {
+		if err = db.QueryRowContext(ctx, "SELECT to_regclass('public.catalog_items') IS NULL").Scan(&integrationSetup.fresh); err != nil {
 			integrationSetup.err = err
 			return
 		}
@@ -76,6 +80,46 @@ func realCatalog(t *testing.T) (catalogReader, func()) {
 	return store, closeStore
 }
 
+func TestDB000LegacySchemaSnapshotExport(t *testing.T) {
+	db, err := catalogdb.Open(os.Getenv("MIGRATION_DATABASE_URL"))
+	if err != nil {
+		t.Fatal("migration database unavailable")
+	}
+	defer db.Close()
+	var databaseName string
+	if err := db.QueryRow("SELECT current_database()").Scan(&databaseName); err != nil || databaseName != "lct_test_maks" {
+		t.Fatal("legacy export test requires registered lct_test_maks")
+	}
+	var existing sql.NullString
+	if err := db.QueryRow("SELECT to_regclass('public.catalog_items')::text").Scan(&existing); err != nil {
+		t.Fatal(err)
+	}
+	if existing.Valid {
+		t.Fatal("run legacy export first, before other integration tests, inside the registered reset wrapper")
+	}
+	if err := goose.SetDialect("postgres"); err != nil {
+		t.Fatal(err)
+	}
+	if err := goose.UpToContext(context.Background(), db, "migrations", 1); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := db.Exec(`INSERT INTO demo_catalog(id,name,winery,year,image,description,display_order) VALUES('legacy-id','Legacy','Cellar',2024,'','Demo',1)`); err != nil {
+		t.Fatal(err)
+	}
+	defer func() {
+		if _, err := db.Exec("DELETE FROM demo_catalog WHERE id='legacy-id'"); err != nil {
+			t.Error("cannot remove legacy test fixture")
+		}
+	}()
+	snapshot, err := catalogimport.Export(context.Background(), db)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if snapshot.Version != "demo-v1" || snapshot.ManifestSHA256 == "" || len(snapshot.Wines) != 1 || snapshot.Wines[0].Slug != snapshot.Wines[0].ID {
+		t.Fatalf("invalid legacy snapshot: %#v", snapshot)
+	}
+}
+
 func TestDB001FreshMigrationsAndReapply(t *testing.T) {
 	prepareDatabase(t)
 	if !integrationSetup.fresh {
@@ -87,7 +131,7 @@ func TestDB001FreshMigrationsAndReapply(t *testing.T) {
 	store, closeStore := realCatalog(t)
 	defer closeStore()
 	rows, err := store.List(context.Background())
-	if err != nil || !reflect.DeepEqual(rows, demoWines) {
+	if err != nil || !reflect.DeepEqual(rows, postgresDemoWines()) {
 		t.Fatal("migrated catalog differs from the synthetic fixture")
 	}
 }
@@ -100,10 +144,10 @@ func TestDB002SeedPreservesEditsAndDoesNotDuplicate(t *testing.T) {
 	}
 	defer db.Close()
 	id := demoWines[0].ID
-	if _, err = db.Exec("UPDATE demo_catalog SET name=$1 WHERE id=$2", "Edited synthetic card", id); err != nil {
+	if _, err = db.Exec("UPDATE catalog_items SET name=$1 WHERE id=$2", "Edited synthetic card", id); err != nil {
 		t.Fatal("fixture edit failed")
 	}
-	defer db.Exec("UPDATE demo_catalog SET name=$1 WHERE id=$2", demoWines[0].Name, id)
+	defer db.Exec("UPDATE catalog_items SET name=$1 WHERE id=$2", demoWines[0].Name, id)
 	for i := 0; i < 2; i++ {
 		if err := catalogdb.Seed(context.Background(), db, "migrations"); err != nil {
 			t.Fatal("repeated seed failed")
@@ -111,10 +155,10 @@ func TestDB002SeedPreservesEditsAndDoesNotDuplicate(t *testing.T) {
 	}
 	var count int
 	var name string
-	if err := db.QueryRow("SELECT count(*) FROM demo_catalog").Scan(&count); err != nil || count != len(demoWines) {
+	if err := db.QueryRow("SELECT count(*) FROM catalog_items").Scan(&count); err != nil || count != len(demoWines) {
 		t.Fatal("seed duplicated or removed rows")
 	}
-	if err := db.QueryRow("SELECT name FROM demo_catalog WHERE id=$1", id).Scan(&name); err != nil || name != "Edited synthetic card" {
+	if err := db.QueryRow("SELECT name FROM catalog_items WHERE id=$1", id).Scan(&name); err != nil || name != "Edited synthetic card" {
 		t.Fatal("seed overwrote existing data")
 	}
 }
@@ -123,8 +167,10 @@ func TestDB003ActualHTTPQueriesUsePostgresLiterally(t *testing.T) {
 	store, closeStore := realCatalog(t)
 	defer closeStore()
 	handler := newHandlerWithCatalog("", nil, store)
-	response := request(t, handler, http.MethodGet, "/v1/catalog", "")
-	if response.Code != 200 || !reflect.DeepEqual(decodeResponse(t, response).Candidates, demoWines) {
+	response := request(t, handler, http.MethodGet, "/v2/catalog", "")
+	wantCatalog := postgresDemoWines()
+	sort.Slice(wantCatalog, func(i, j int) bool { return wantCatalog[i].ID < wantCatalog[j].ID })
+	if response.Code != 200 || !reflect.DeepEqual(decodeResponse(t, response).Candidates, wantCatalog) {
 		t.Fatal("HTTP catalog does not match database seed")
 	}
 	for _, query := range []string{"КАбЕрНе", "Демо", "2022", "%", "_", "' OR 1=1 --", "not-a-wine"} {
@@ -135,12 +181,20 @@ func TestDB003ActualHTTPQueriesUsePostgresLiterally(t *testing.T) {
 				t.Fatalf("query returned HTTP %d", r.Code)
 			}
 			got := decodeResponse(t, r).Candidates
-			want := filterWineList(demoWines, &query)
+			want := filterWineList(postgresDemoWines(), &query)
 			if !reflect.DeepEqual(got, want) {
 				t.Fatal("PostgreSQL search differs from literal substring behavior")
 			}
 		})
 	}
+}
+
+func postgresDemoWines() []wine {
+	wines := append([]wine(nil), demoWines...)
+	for i := range wines {
+		wines[i].Slug = wines[i].ID
+	}
+	return wines
 }
 
 func TestDB004DataSurvivesRuntimeReconnect(t *testing.T) {
@@ -151,10 +205,10 @@ func TestDB004DataSurvivesRuntimeReconnect(t *testing.T) {
 	}
 	defer db.Close()
 	id := demoWines[0].ID
-	if _, err = db.Exec("UPDATE demo_catalog SET description=$1 WHERE id=$2", "Reconnect fixture", id); err != nil {
+	if _, err = db.Exec("UPDATE catalog_items SET description=$1 WHERE id=$2", "Reconnect fixture", id); err != nil {
 		t.Fatal("fixture write failed")
 	}
-	defer db.Exec("UPDATE demo_catalog SET description=$1 WHERE id=$2", demoWines[0].Description, id)
+	defer db.Exec("UPDATE catalog_items SET description=$1 WHERE id=$2", demoWines[0].Description, id)
 	for i := 0; i < 2; i++ {
 		store, closeStore := realCatalog(t)
 		rows, err := store.List(context.Background())

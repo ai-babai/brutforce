@@ -1,0 +1,14 @@
+(lct_catalog_media) {
+	route {
+		@catalogMedia path_regexp catalogMedia ^/media/catalog/(400|800|original)/([a-f0-9]{64})\.webp$
+		handle @catalogMedia {
+			uri strip_prefix /media/catalog
+			root * /srv/lct/data/catalog/media
+			header Cache-Control "public, max-age=31536000, immutable"
+			file_server
+		}
+		handle /media/catalog/* {
+			respond 404
+		}
+	}
+}

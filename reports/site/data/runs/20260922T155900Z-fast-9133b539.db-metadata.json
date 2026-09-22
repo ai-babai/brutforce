@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "revision": "3d3be2014b8a66243e0463ab22594c7b59955c29",
+  "command": "cd /tmp/catalog45-check && sudo -n /usr/local/bin/lct-db-test maks ./db-tests -test.v=test2json -test.run \"^Test(DB00[1-5]|CAT009)\" -test.count=1",
+  "wallMs": 671,
+  "environment": "isolated lct_test_maks via registered wrapper; includes SSH overhead"
+}
