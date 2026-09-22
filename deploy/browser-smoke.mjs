@@ -159,6 +159,75 @@ try {
       await capture(page, 'mobile-live-search-back');
     } finally { await context.close(); }
   });
+  await check('CAT021 mobile refinement keeps card and image in place while response is pending', async () => {
+    const context = await browser.newContext({viewport:{width:390,height:760}, ...contextOptions});
+    try {
+      const page = configurePage(await context.newPage());
+      await page.goto(baseURL, {waitUntil:'networkidle'});
+      await page.getByRole('button', {name:/По названию/i}).click();
+      const input = page.getByLabel(/Название вина/i);
+      const firstResponse = page.waitForResponse(response =>
+        new URL(response.url()).pathname === '/v2/catalog' && new URL(response.url()).searchParams.get('q') === 'Кабер');
+      await input.fill('Кабер');
+      const first = await (await firstResponse).json();
+      if (!first.candidates.length) throw new Error('CAT021 needs a matching first page');
+      await page.waitForFunction(count => document.querySelectorAll('.candidate-list > button').length === count, first.candidates.length);
+      await page.evaluate(() => {
+        window.__stableSearchCard = document.querySelector('.candidate-list > button');
+        window.__stableSearchImage = window.__stableSearchCard?.querySelector('img');
+      });
+      const stable = () => page.evaluate(() => {
+        const card = document.querySelector('.candidate-list > button');
+        const image = card?.querySelector('img');
+        return {count:document.querySelectorAll('.candidate-list > button').length,
+          sameCard:card === window.__stableSearchCard, sameImage:image === window.__stableSearchImage,
+          connected:window.__stableSearchCard?.isConnected,
+          listTop:document.querySelector('.candidate-list')?.getBoundingClientRect().top,
+          cardTop:card?.getBoundingClientRect().top};
+      });
+      const before = await stable();
+      if (!await page.evaluate(() => Boolean(window.__stableSearchImage)))
+        throw new Error('CAT021 needs a real first-card image');
+      let releaseResponse;
+      let requestArrived;
+      const held = new Promise(resolve => { releaseResponse = resolve; });
+      const arrived = new Promise(resolve => { requestArrived = resolve; });
+      let refined;
+      await page.route('**/v2/catalog?**', async route => {
+        if (new URL(route.request().url()).searchParams.get('q') !== 'Каберн') return route.continue();
+        const response = await route.fetch();
+        refined = await response.json();
+        requestArrived();
+        await held;
+        await route.fulfill({response});
+      });
+      try {
+        await input.fill('Каберн');
+        const debouncing = await stable();
+        await bounded(arrived, 'refined catalog request');
+        const pending = await stable();
+        for (const [phase, state] of [['debounce', debouncing], ['pending', pending]]) {
+          if (state.count !== before.count || !state.sameCard || !state.sameImage || !state.connected ||
+            Math.abs(state.listTop - before.listTop) > 0.5 || Math.abs(state.cardTop - before.cardTop) > 0.5)
+            throw new Error(`${phase} moved or remounted prior results: ${JSON.stringify(state)}`);
+        }
+        if (await page.getByRole('button', {name:'Показать ещё'}).count()) throw new Error('stale cursor remains available');
+        if (!await page.getByRole('status', {name:/прежние результаты/i}).isVisible())
+          throw new Error('pending search does not identify previous results');
+        if (refined.candidates[0]?.id !== first.candidates[0]?.id)
+          throw new Error('CAT021 fixture no longer has a common first card');
+        const response = page.waitForResponse(r => new URL(r.url()).pathname === '/v2/catalog' && new URL(r.url()).searchParams.get('q') === 'Каберн');
+        releaseResponse();
+        await response;
+        await page.waitForFunction(count => document.querySelectorAll('.candidate-list > button').length === count, refined.candidates.length);
+        await page.getByRole('status', {name:`Показано ${refined.candidates.length}`}).waitFor();
+        const after = await stable();
+        if (!after.sameCard || !after.sameImage || !after.connected ||
+          Math.abs(after.listTop - before.listTop) > 0.5 || Math.abs(after.cardTop - before.cardTop) > 0.5)
+          throw new Error('common first card or image moved/remounted after replacement: '+JSON.stringify(after));
+      } finally { releaseResponse(); }
+    } finally { await context.close(); }
+  });
   await check('CAT018 mobile IME searches visible text before composition ends', async () => {
     const context = await browser.newContext({viewport:{width:390,height:640}, isMobile:true, hasTouch:true, ...contextOptions});
     try {

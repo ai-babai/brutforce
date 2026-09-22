@@ -57,12 +57,14 @@ export function App({
   const [candidates, setCandidates] = useState<Candidate[]>([]);
   const [catalog, setCatalog] = useState<Candidate[]>([]);
   const [catalogError, setCatalogError] = useState("");
+  const [catalogFailedAppend, setCatalogFailedAppend] = useState(false);
   const [catalogNextCursor, setCatalogNextCursor] = useState<string>();
   const [catalogVersion, setCatalogVersion] = useState("");
   const [catalogDemo, setCatalogDemo] = useState(false);
   const [catalogLoading, setCatalogLoading] = useState(false);
   const [catalogDebouncing, setCatalogDebouncing] = useState(false);
   const [catalogQuery, setCatalogQuery] = useState("");
+  const [catalogDisplayedQuery, setCatalogDisplayedQuery] = useState("");
   const [catalogInitialized, setCatalogInitialized] = useState(false);
   const [saved, setSaved] = useState<Candidate[]>([]);
   const [storageNotice, setStorageNotice] = useState("");
@@ -618,6 +620,7 @@ export function App({
     const generation = catalogGeneration.current;
     catalogAbort.current = controller;
     setCatalogError("");
+    setCatalogFailedAppend(false);
     setCatalogLoading(true);
     setCatalogInitialized(true);
     const q = next.q ?? catalogQuery;
@@ -626,13 +629,16 @@ export function App({
         if (!controller.signal.aborted && catalogAbort.current === controller && generation === catalogGeneration.current) {
           setCatalogDemo(data.demo);
           setCatalog((current) => next.append ? [...current, ...data.candidates] : data.candidates);
+          if (!next.append) setCatalogDisplayedQuery(q);
           setCatalogNextCursor(data.nextCursor);
           setCatalogVersion(data.catalogVersion);
         }
       })
       .catch((error) => {
-        if (!controller.signal.aborted && catalogAbort.current === controller && generation === catalogGeneration.current && (error as Error).name !== "AbortError")
+        if (!controller.signal.aborted && catalogAbort.current === controller && generation === catalogGeneration.current && (error as Error).name !== "AbortError") {
+          setCatalogFailedAppend(Boolean(next.append));
           setCatalogError(next.append ? "Не удалось загрузить ещё вина." : "Не удалось загрузить вина");
+        }
       })
       .finally(() => {
         if (!controller.signal.aborted && catalogAbort.current === controller && generation === catalogGeneration.current)
@@ -648,7 +654,6 @@ export function App({
     if (catalogComposing.current || (catalogLoading && catalogQuery === nextQuery && catalogAbort.current && !catalogAbort.current.signal.aborted)) return;
     invalidateCatalogWork();
     setCatalogQuery(nextQuery);
-    setCatalog([]);
     setCatalogNextCursor(undefined);
     setCatalogOpen(true);
     setCatalogInitialized(true);
@@ -663,7 +668,6 @@ export function App({
     const nextQuery = value.trim();
     invalidateCatalogWork();
     setCatalogQuery(nextQuery);
-    setCatalog([]);
     setCatalogNextCursor(undefined);
     setCatalogOpen(true);
     setCatalogInitialized(true);
@@ -1132,14 +1136,17 @@ export function App({
               )}
               {(catalogQuery || catalogOpen) && <>
                 {(() => {
-                  const status = catalogDebouncing ? "Обновляем результаты…" : catalogLoading ? "Ищем вина…" : catalog.length ? `Показано ${catalog.length}` : "";
+                  const olderResults = catalog.length > 0 && catalogQuery !== catalogDisplayedQuery;
+                  const status = catalogDebouncing || catalogLoading
+                    ? olderResults ? "Обновляем · ниже прежние результаты" : catalogDebouncing ? "Обновляем результаты…" : "Ищем вина…"
+                    : olderResults ? "Показаны прежние результаты" : catalog.length ? `Показано ${catalog.length}` : "";
                   return <div className="catalog-status" role="status" aria-live="polite" aria-label={status}>{status}</div>;
                 })()}
-                {catalog.length ? <WineList wines={catalog} onChoose={chooseCatalog} leader={Boolean(catalogQuery)} /> : null}
+                {catalog.length ? <WineList wines={catalog} onChoose={chooseCatalog} leader={Boolean(catalogDisplayedQuery)} /> : null}
                 {catalogError ? (
                   <div className="catalog-error" role="alert" aria-label="Не удалось загрузить вина">
-                    <p>{catalogError}</p>
-                    <button className="secondary" onClick={() => loadCatalog({ q: catalogQuery, append: Boolean(catalog.length) })}>Повторить</button>
+                    <p>{catalogError}{catalog.length && catalogQuery !== catalogDisplayedQuery ? " Показаны прежние результаты." : ""}</p>
+                    <button className="secondary" onClick={() => loadCatalog({ q: catalogQuery, append: catalogFailedAppend })}>Повторить</button>
                   </div>
                 ) : !catalog.length && !catalogLoading && !catalogDebouncing && catalogInitialized ? (
                   <div className="empty-catalog"><p>Не нашли вина по этому запросу</p><p>Попробуйте другое название или винодельню</p></div>

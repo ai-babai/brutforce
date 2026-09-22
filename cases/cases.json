@@ -989,6 +989,13 @@
       "title": "Оба входа и возврат сохраняют контекст поиска",
       "source": "apps/web/src/live-search.test.tsx",
       "spec": "docs/product/catalog-display-spec.md"
+    },
+    {
+      "id": "CAT-021",
+      "area": "ui",
+      "title": "Уточнение поиска сохраняет карточки до нового ответа",
+      "source": "apps/web/src/live-search.test.tsx",
+      "spec": "docs/product/catalog-display-spec.md"
     }
   ]
 }
