@@ -70,6 +70,7 @@
           {
             "name": "q",
             "in": "query",
+            "description": "All normalized words match name, winery or exact numeric tokens, in any order. Word prefixes and one typo for words of at least five letters are supported. Results rank exact before prefix before typo, then canonical ID. Blank query lists by ID; see contracts/catalog-display.md.",
             "schema": {
               "type": "string",
               "maxLength": 256

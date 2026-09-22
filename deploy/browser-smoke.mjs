@@ -112,6 +112,34 @@ try {
     await capture(page, `${prefix}-text-card-recommendations`);
     return { context, page };
   };
+  await check('name search finds reordered words with a typo', async () => {
+    const exact = await releaseContext.request.get(`${baseURL}/v2/catalog`, {
+      params: {q:'Каберне Совиньон', limit:60}, timeout:apiTimeout,
+    });
+    if (!exact.ok()) throw new Error(`exact name query returned ${exact.status()}`);
+    const exactItems = (await exact.json()).candidates;
+    if (!exactItems?.length) throw new Error('name-search smoke needs the existing Cabernet Sauvignon records');
+    const context = await browser.newContext({viewport:{width:390,height:844}, ...contextOptions});
+    try {
+      const page = configurePage(await context.newPage());
+      await page.goto(baseURL, {waitUntil:'networkidle'});
+      await page.getByRole('button', {name:/По названию/i}).click();
+      const query = 'совиньон кабрене';
+      await page.getByLabel(/Название вина/i).fill(query);
+      const pending = page.waitForResponse(r => new URL(r.url()).pathname === '/v2/catalog' && new URL(r.url()).searchParams.get('q') === query);
+      await page.getByRole('button', {name:'Искать',exact:true}).click();
+      const response = await pending;
+      if (!response.ok()) throw new Error(`typo query returned ${response.status()}`);
+      const found = await bounded(response.json(), 'typo search JSON');
+      if (found.catalogVersion !== catalogVersion || !found.candidates?.some(item => item.id === exactItems[0].id))
+        throw new Error('reordered words with a typo did not find the known wine');
+      if (found.candidates.length > 24) throw new Error('search returned an unbounded page');
+      const first = page.locator('.candidate-list > button').first();
+      await visible(first, 'typo search result');
+      if (!(await first.innerText()).includes(found.candidates[0].name)) throw new Error('UI changed the API relevance order');
+      await capture(page, 'mobile-name-search-typo');
+    } finally { await context.close(); }
+  });
   if (catalog.demo === false) {
     if (!catalog.nextCursor) throw new Error('real catalog smoke requires a second page');
     const response = await releaseContext.request.get(`${baseURL}/v2/catalog?cursor=${encodeURIComponent(catalog.nextCursor)}`, {timeout:apiTimeout});

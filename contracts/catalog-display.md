@@ -17,9 +17,39 @@ Manifest `schema_version` is `catalog-release-1` and includes `catalog_version`,
 `media:[{path,sha256,bytes,width,height,mime_type}]`. Hashes cover exact bytes.
 
 GET /v2/catalog?limit=24&cursor=…&q=… → {demo:boolean,candidates:Wine[],nextCursor?:string,catalogVersion:string}.
-Default24, max60; q searches whole catalog (name/producer/year), NOT loaded browser page.
-Stable canonical ID order; slug may change without changing identity. Cursor is bound to query and catalog version; stale→409,
-invalid→400; no missing/duplicate canonical IDs within one version. Aliases not listed.
+Default24, max60; q searches whole catalog (name/winery/year), NOT loaded browser page.
+Blank q uses stable canonical ID order; nonblank q uses the relevance order below.
+Slug may change without changing identity. Cursor is bound to query and catalog
+version; stale→409, invalid→400; no missing/duplicate canonical IDs within one
+version. Aliases not listed.
+
+Search tokenizes `name`, `winery` and decimal `year`. Case is folded, `ё` equals
+`е`, punctuation separates words, and repeated whitespace is ignored. Query words
+may appear in any order and in different fields, but every non-empty query token
+must match. An unknown token therefore returns no candidate instead of the whole
+catalog. Only absent or whitespace-only q is blank and retains canonical ID order;
+a non-blank q with no searchable tokens, such as punctuation alone, returns none.
+
+For each alphabetic query token, the strongest match wins: whole word, then word
+prefix, then Damerau-Levenshtein distance 1. Typo matching, including one adjacent
+transposition, is available only when both the normalized query token and catalog
+word have at least 5 letters. Decimal tokens, including year, match a whole token
+exactly and are never completed or typo-corrected. Partial matching means a prefix
+of a catalog word; the previous arbitrary substring behavior is not supported.
+
+A candidate is exact when every query token has a whole-word match. It is typo
+ranked when at least one token needs typo matching; every other matched candidate
+is partial. Results are ordered exact, partial, typo, then canonical ID within a
+class. Ranking covers the full matching set before pagination. The cursor binds
+the original q after outer whitespace trim, catalog version and search-semantics
+version: another q or obsolete search cursor returns 400, and another catalog
+version returns 409. Changing search semantics invalidates existing search cursors;
+the unchanged blank-catalog cursor format remains valid.
+
+The PostgreSQL store applies the same matching, ranking and cursor rules as the
+HTTP contract. It selects matching IDs and rank across the full catalog, then
+loads full Wine projections only for the bounded page. CAT-014 is mandatory
+PostgreSQL+HTTP evidence; an in-memory or mocked store does not satisfy it.
 GET /v2/catalog/{slug} → {demo:boolean,candidate:Wine,canonicalId:string} resolves aliases.
 Missing→404 JSON. Catalog response demo describes catalog provenance, not ML validity.
 Recognition responses retain separate demo/modelVersion reference markings.

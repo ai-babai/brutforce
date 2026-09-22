@@ -183,7 +183,7 @@ func TestDB003ActualHTTPQueriesUsePostgresLiterally(t *testing.T) {
 			got := decodeResponse(t, r).Candidates
 			want := filterWineList(postgresDemoWines(), &query)
 			if !reflect.DeepEqual(got, want) {
-				t.Fatal("PostgreSQL search differs from literal substring behavior")
+				t.Fatal("PostgreSQL search differs from the shared token matcher")
 			}
 		})
 	}
