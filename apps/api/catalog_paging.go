@@ -72,11 +72,11 @@ func catalogPageForRequest(r *http.Request, store catalogReader) (catalogHTTPPag
 	if expectedVersion != "" && expectedVersion != info.Version {
 		return catalogHTTPPage{}, 409, "stale_cursor", "cursor belongs to an older catalog version"
 	}
-	items, err := store.Search(r.Context(), stringPtr(query))
+	items, err := store.List(r.Context())
 	if err != nil {
 		return catalogHTTPPage{err: err}, 0, "", ""
 	}
-	items = sortedWines(items)
+	items = rankWineList(items, query)
 	page := pageWineSlice(items, catalogPageRequest{AfterID: after, Limit: limit})
 	result := catalogHTTPPage{candidates: page.Candidates, version: info.Version, demo: info.Demo}
 	if page.HasMore && len(page.Candidates) > 0 {
@@ -107,6 +107,12 @@ func cursorMAC(version, query, id string) string {
 	_, _ = sum.Write([]byte(version))
 	_, _ = sum.Write([]byte{0})
 	_, _ = sum.Write([]byte(query))
+	// Text result order changed from the old SQL substring order. Blank catalog
+	// cursors remain compatible; prior text cursors are deliberately rejected.
+	if strings.TrimSpace(query) != "" {
+		_, _ = sum.Write([]byte{0})
+		_, _ = sum.Write([]byte("catalog-search-rank-v1"))
+	}
 	_, _ = sum.Write([]byte{0})
 	_, _ = sum.Write([]byte(id))
 	return base64.RawURLEncoding.EncodeToString(sum.Sum(nil))

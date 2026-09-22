@@ -37,6 +37,8 @@ media URL, exact bytes/MIME/cache и закрытость internal. Browser evid
 
 `.github/workflows/ci.yml`: Go/Vitest, настоящая временная PostgreSQL18,
 повторное применение миграций/seed и ограничения runtime-прав, контрактный прогон.
+CAT-010…CAT-013 проверяют текстовый поиск; CAT-014 обязателен на настоящей тестовой БД.
+Browser smoke проверяет переставленные слова с опечаткой через UI и рабочий API.
 `deploy/check.sh` отвергает partial, отсутствие DB evidence, ошибки и пропуски.
 `deploy/build.sh /absolute/output` создаёт пакет для Linux amd64 и SHA256 sidecar.
 Требует чистую выделенную копию и отдельные тестовые DATABASE_URL/MIGRATION_DATABASE_URL.

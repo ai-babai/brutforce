@@ -57,9 +57,10 @@ the stub hand-off only, not recognition quality.
 
 `scenario` is optional and defaults to `exact`. Its allowed values are
 `exact`, `uncertain`, `none`, and `error`. `query`, when supplied, must be a
-string and filters candidate names and wineries with a case-insensitive
-substring match; a year string such as `"2023"` filters the same catalog. It is
-only meaningful for the default/exact flow. `photoId`
+string. In the local catalog fallback it uses the lightweight token search
+specified in [catalog-display.md](../../contracts/catalog-display.md): normalized
+names/producer/year, word prefixes and one bounded typo; numeric tokens are exact.
+It is only meaningful for the default/exact flow. `photoId`
 is optional; when supplied, it must be an existing private upload receipt. It
 does not enable image recognition.
 

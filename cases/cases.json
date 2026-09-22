@@ -907,6 +907,41 @@
       "spec": "docs/product/catalog-display-spec.md"
     },
     {
+      "id": "CAT-010",
+      "title": "Поиск нормализует ввод и требует совпадения всех слов",
+      "area": "api",
+      "source": "docs/product/catalog-display-spec.md",
+      "spec": "docs/product/catalog-display-spec.md"
+    },
+    {
+      "id": "CAT-011",
+      "title": "Префиксы и одна буквенная опечатка не исправляют числа",
+      "area": "api",
+      "source": "docs/product/catalog-display-spec.md",
+      "spec": "docs/product/catalog-display-spec.md"
+    },
+    {
+      "id": "CAT-012",
+      "title": "Точные результаты выше частичных и исправленных",
+      "area": "api",
+      "source": "docs/product/catalog-display-spec.md",
+      "spec": "docs/product/catalog-display-spec.md"
+    },
+    {
+      "id": "CAT-013",
+      "title": "Ранжированная выдача проходит страницы без потерь",
+      "area": "api",
+      "source": "docs/product/catalog-display-spec.md",
+      "spec": "docs/product/catalog-display-spec.md"
+    },
+    {
+      "id": "CAT-014",
+      "title": "PostgreSQL и HTTP сохраняют поиск, порядок и границы страниц",
+      "area": "database",
+      "source": "docs/product/catalog-display-spec.md",
+      "spec": "docs/product/catalog-display-spec.md"
+    },
+    {
       "id": "REPORT-004",
       "area": "ui",
       "title": "Провал одного слоя не скрывается успехом другого",

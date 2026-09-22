@@ -56,7 +56,7 @@ db_started=$(node -e 'process.stdout.write(String(Date.now()))')
 set +e
 (cd apps/api &&
   go test -tags=integration -count=1 -json -run '^TestDB000' . &&
-  go test -tags=integration -count=1 -json -run '^Test(DB00[1-5]|CAT009)' .) >"$db_results" 2>&1
+  go test -tags=integration -count=1 -json -run '^Test(DB00[1-5]|CAT009|CAT014)' .) >"$db_results" 2>&1
 db_exit=$?
 set -e
 db_finished=$(node -e 'process.stdout.write(String(Date.now()))')
@@ -71,7 +71,7 @@ const [out,revision,wall]=process.argv.slice(1);
 fs.writeFileSync(out, JSON.stringify({
   schemaVersion: 1,
   revision,
-  command: "go test -tags=integration -count=1 -json -run ^TestDB000 . && go test -tags=integration -count=1 -json -run ^Test(DB00[1-5]|CAT009) .",
+  command: "go test -tags=integration -count=1 -json -run ^TestDB000 . && go test -tags=integration -count=1 -json -run ^Test(DB00[1-5]|CAT009|CAT014) .",
   wallMs: Number(wall),
   environment: "PostgreSQL integration; synthetic demo catalog only"
 }, null, 2)+"\n");
@@ -111,7 +111,7 @@ fs.writeFileSync(out, JSON.stringify({
   catalogVersion: "demo-v1",
   modelVersion: "reference-demo-v1",
   synthetic: true,
-  commands: ["python3 -m unittest discover -s deploy -p test_*.py", "npm --prefix apps/web ci", "go build ./cmd/reference-engine + roman-conformance against localhost", "go test -tags=integration -count=1 -json -run ^TestDB000 . && go test -tags=integration -count=1 -json -run ^Test(DB00[1-5]|CAT009) .", "node scripts/run-fast-checks.mjs"],
+  commands: ["python3 -m unittest discover -s deploy -p test_*.py", "npm --prefix apps/web ci", "go build ./cmd/reference-engine + roman-conformance against localhost", "go test -tags=integration -count=1 -json -run ^TestDB000 . && go test -tags=integration -count=1 -json -run ^Test(DB00[1-5]|CAT009|CAT014) .", "node scripts/run-fast-checks.mjs"],
   versions: {go: goVersion, node: nodeVersion},
   databaseEvidence: run.databaseEvidence,
   fastReport: "fast-report.json"

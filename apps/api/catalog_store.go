@@ -6,7 +6,6 @@ import (
 	"errors"
 	"os"
 	"sort"
-	"strconv"
 	"strings"
 	"time"
 
@@ -71,7 +70,7 @@ func (embeddedCatalogStore) Page(_ context.Context, req catalogPageRequest) (cat
 	if req.ExpectedVersion != "" && req.ExpectedVersion != defaultCatalogVersion {
 		return catalogPage{}, errCatalogStaleCursor
 	}
-	return pageWineSlice(filterWineList(sortedWines(demoWines), stringPtr(req.Query)), req), nil
+	return pageWineSlice(rankWineList(demoWines, req.Query), req), nil
 }
 func (embeddedCatalogStore) Resolve(_ context.Context, slug string) (wine, string, error) {
 	for _, item := range demoWines {
@@ -164,7 +163,61 @@ func (s postgresCatalogStore) Page(ctx context.Context, req catalogPageRequest) 
 	if req.ExpectedVersion != "" && req.ExpectedVersion != info.Version {
 		return catalogPage{}, errCatalogStaleCursor
 	}
-	rows, err := tx.Query(queryCtx, `SELECT id, slug, name, winery, year, image, description, metadata FROM catalog_items WHERE ($1 = '' OR strpos(lower(name), lower($1)) > 0 OR strpos(lower(winery), lower($1)) > 0 OR strpos(COALESCE(year::text, ''), $1) > 0) AND ($2 = '' OR id > $2) ORDER BY id LIMIT $3`, req.Query, req.AfterID, req.Limit+1)
+	if parseCatalogSearchQuery(req.Query).blank {
+		rows, err := tx.Query(queryCtx, `SELECT id, slug, name, winery, year, image, description, metadata FROM catalog_items WHERE ($1 = '' OR id > $1) ORDER BY id LIMIT $2`, req.AfterID, req.Limit+1)
+		if err != nil {
+			return catalogPage{}, errCatalogUnavailable
+		}
+		defer rows.Close()
+		items, err := scanWines(rows, info.Version)
+		if err != nil {
+			return catalogPage{}, err
+		}
+		if err := tx.Commit(queryCtx); err != nil {
+			return catalogPage{}, errCatalogUnavailable
+		}
+		return catalogPage{Candidates: items[:min(len(items), req.Limit)], HasMore: len(items) > req.Limit, Info: info}, nil
+	}
+	// Text search ranks in Go so embedded, fallback HTTP, and PostgreSQL share
+	// the same Unicode and typo semantics. Fetch only ranking fields first.
+	rows, err := tx.Query(queryCtx, `SELECT id, name, winery, year FROM catalog_items`)
+	if err != nil {
+		return catalogPage{}, errCatalogUnavailable
+	}
+	defer rows.Close()
+	rankingRows := make([]wine, 0, 2048)
+	for rows.Next() {
+		var item wine
+		var year *int
+		if err := rows.Scan(&item.ID, &item.Name, &item.Winery, &year); err != nil {
+			return catalogPage{}, errCatalogUnavailable
+		}
+		if year != nil {
+			item.Year = *year
+		}
+		rankingRows = append(rankingRows, item)
+	}
+	if rows.Err() != nil {
+		return catalogPage{}, errCatalogUnavailable
+	}
+	ranked, err := rankWineListContext(queryCtx, rankingRows, req.Query)
+	if err != nil {
+		return catalogPage{}, errCatalogUnavailable
+	}
+	page := pageWineSlice(ranked, req)
+	if len(page.Candidates) == 0 {
+		if err := tx.Commit(queryCtx); err != nil {
+			return catalogPage{}, errCatalogUnavailable
+		}
+		page.Info = info
+		return page, nil
+	}
+	ids := make([]string, len(page.Candidates))
+	for i := range page.Candidates {
+		ids[i] = page.Candidates[i].ID
+	}
+	rows.Close()
+	rows, err = tx.Query(queryCtx, `SELECT id, slug, name, winery, year, image, description, metadata FROM catalog_items WHERE id = ANY($1)`, ids)
 	if err != nil {
 		return catalogPage{}, errCatalogUnavailable
 	}
@@ -173,10 +226,23 @@ func (s postgresCatalogStore) Page(ctx context.Context, req catalogPageRequest) 
 	if err != nil {
 		return catalogPage{}, err
 	}
+	byID := make(map[string]wine, len(items))
+	for _, item := range items {
+		byID[item.ID] = item
+	}
+	items = make([]wine, 0, len(ids))
+	for _, id := range ids {
+		item, ok := byID[id]
+		if !ok {
+			return catalogPage{}, errCatalogUnavailable
+		}
+		items = append(items, item)
+	}
 	if err := tx.Commit(queryCtx); err != nil {
 		return catalogPage{}, errCatalogUnavailable
 	}
-	return catalogPage{Candidates: items[:min(len(items), req.Limit)], HasMore: len(items) > req.Limit, Info: info}, nil
+	page.Candidates, page.Info = items, info
+	return page, nil
 }
 func (s postgresCatalogStore) Resolve(ctx context.Context, slug string) (wine, string, error) {
 	item, canonical, _, err := s.ResolveDetail(ctx, slug)
@@ -303,14 +369,7 @@ func filterWineList(catalog []wine, query *string) []wine {
 	if query == nil {
 		return append([]wine(nil), catalog...)
 	}
-	needle := strings.ToLower(strings.TrimSpace(*query))
-	out := make([]wine, 0, len(catalog))
-	for _, item := range catalog {
-		if strings.Contains(strings.ToLower(item.Name), needle) || strings.Contains(strings.ToLower(item.Winery), needle) || (item.Year != 0 && strings.Contains(strconv.Itoa(item.Year), needle)) {
-			out = append(out, item)
-		}
-	}
-	return out
+	return rankWineList(catalog, *query)
 }
 func sortedWines(in []wine) []wine {
 	out := append([]wine(nil), in...)
@@ -319,7 +378,13 @@ func sortedWines(in []wine) []wine {
 }
 func pageWineSlice(items []wine, req catalogPageRequest) catalogPage {
 	start := 0
-	for start < len(items) && items[start].ID <= req.AfterID {
+	if req.AfterID != "" {
+		for start < len(items) && items[start].ID != req.AfterID {
+			start++
+		}
+		if start == len(items) {
+			return catalogPage{Info: catalogInfo{Version: defaultCatalogVersion, Demo: true}}
+		}
 		start++
 	}
 	end := min(start+req.Limit, len(items))
