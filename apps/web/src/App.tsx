@@ -658,13 +658,8 @@ export function App({
     loadCatalog({ q: nextQuery });
   };
   const scheduleCatalogSearch = (value: string) => {
+    if (value === query) return;
     setQuery(value);
-    if (catalogComposing.current) {
-      setCatalog([]);
-      setCatalogNextCursor(undefined);
-      setCatalogError("");
-      return;
-    }
     const nextQuery = value.trim();
     invalidateCatalogWork();
     setCatalogQuery(nextQuery);
@@ -1106,11 +1101,11 @@ export function App({
                     ref={queryRef}
                     value={query}
                     onChange={(e) => updateCatalogQuery(e.target.value)}
-                    onCompositionStart={() => { catalogComposing.current = true; invalidateCatalogWork(); }}
+                    onCompositionStart={() => { catalogComposing.current = true; }}
                     onCompositionEnd={(e) => {
                       if (!catalogComposing.current) return;
                       catalogComposing.current = false;
-                      scheduleCatalogSearch(e.currentTarget.value);
+                      if (e.currentTarget.value !== query) scheduleCatalogSearch(e.currentTarget.value);
                     }}
                     placeholder="Например, Каберне"
                   />

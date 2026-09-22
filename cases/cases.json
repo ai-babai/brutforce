@@ -972,7 +972,7 @@
     {
       "id": "CAT-018",
       "area": "ui",
-      "title": "Enter без дубля, IME только после завершения ввода",
+      "title": "Видимый текст IME ищется без ожидания завершения композиции",
       "source": "apps/web/src/live-search.test.tsx",
       "spec": "docs/product/catalog-display-spec.md"
     },

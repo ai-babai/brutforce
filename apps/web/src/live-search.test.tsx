@@ -187,38 +187,90 @@ describe("FE-052 live catalog search", () => {
     expect(screen.getByTestId("UI-001")).toBeVisible();
   });
 
-  it("CAT018 defers IME composition, while form submit and the search button cancel the timer and send only one immediate request", async () => {
+  it("CAT018 searches visible IME text after 250ms without compositionend and keeps focus", async () => {
     vi.useFakeTimers();
-    const pending = deferred<ReturnType<typeof response>>();
-    const fetchMock = vi.fn(() => pending.promise);
+    const fetchMock = vi.fn(() => Promise.resolve(response(page([cabernet]))));
     vi.stubGlobal("fetch", fetchMock);
     render(<App />);
     const input = openSearch();
 
     fireEvent.compositionStart(input);
+    fireEvent.change(input, { target: { value: "К" } });
+    await advance(100);
+    fireEvent.change(input, { target: { value: "Ка" } });
+    await advance(100);
     fireEvent.change(input, { target: { value: "Каб" } });
-    await advance(300);
+    await advance(100);
+    fireEvent.change(input, { target: { value: "Каб" } });
+    await advance(149);
     expect(catalogCalls(fetchMock)).toHaveLength(0);
+    await advance(1);
+    expect(catalogCalls(fetchMock)).toHaveLength(1);
+    expect(catalogCalls(fetchMock)[0][0]).toContain("q=%D0%9A%D0%B0%D0%B1");
+    expect(screen.getByText("Каберне")).toBeVisible();
+    expect(document.activeElement).toBe(input);
     fireEvent.submit(input.closest("form")!);
-    expect(catalogCalls(fetchMock)).toHaveLength(0);
+    expect(catalogCalls(fetchMock)).toHaveLength(1);
     fireEvent.compositionEnd(input, { data: "Каб" });
-    await advance(249);
-    expect(catalogCalls(fetchMock)).toHaveLength(0);
-    fireEvent.submit(input.closest("form")!);
-    await act(async () => { await Promise.resolve(); });
-    expect(catalogCalls(fetchMock)).toHaveLength(1);
-    fireEvent.submit(input.closest("form")!);
-    expect(catalogCalls(fetchMock)).toHaveLength(1);
     await advance(300);
     expect(catalogCalls(fetchMock)).toHaveLength(1);
+  });
 
-    await act(async () => { pending.resolve(response(page([cabernet]))); await Promise.resolve(); });
+  it("CAT018 keeps IME query cancellation and normal explicit submit", async () => {
+    vi.useFakeTimers();
+    const stale = deferred<ReturnType<typeof response>>();
+    const pending = deferred<ReturnType<typeof response>>();
+    const fetchMock = vi.fn(() => {
+      const count = catalogCalls(fetchMock).length;
+      return count === 1 ? stale.promise : count === 3 ? pending.promise : Promise.resolve(response(page([cabernet])));
+    });
+    vi.stubGlobal("fetch", fetchMock);
+    render(<App />);
+    const input = openSearch();
+    fireEvent.compositionStart(input);
+    fireEvent.change(input, { target: { value: "Ка" } });
+    await advance(250);
+    const staleSignal = catalogCalls(fetchMock)[0][1].signal as AbortSignal;
+    fireEvent.change(input, { target: { value: "Каб" } });
+    expect(staleSignal.aborted).toBe(true);
+    await act(async () => { stale.resolve(response(page([merlot]))); await Promise.resolve(); });
+    expect(screen.queryByText("Мерло")).not.toBeInTheDocument();
+    fireEvent.submit(input.closest("form")!);
+    expect(catalogCalls(fetchMock)).toHaveLength(1);
+    await advance(250);
+    expect(catalogCalls(fetchMock)).toHaveLength(2);
+    expect(screen.getByText("Каберне")).toBeVisible();
+    fireEvent.compositionEnd(input, { data: "Каб" });
+    await advance(300);
+    expect(catalogCalls(fetchMock)).toHaveLength(2);
+
     fireEvent.change(input, { target: { value: "Каберне" } });
     fireEvent.click(screen.getByRole("button", { name: "Искать" }));
     await act(async () => { await Promise.resolve(); });
-    expect(catalogCalls(fetchMock)).toHaveLength(2);
+    expect(catalogCalls(fetchMock)).toHaveLength(3);
+    fireEvent.submit(input.closest("form")!);
+    expect(catalogCalls(fetchMock)).toHaveLength(3);
     await advance(300);
+    expect(catalogCalls(fetchMock)).toHaveLength(3);
+    await act(async () => { pending.resolve(response(page([cabernet]))); await Promise.resolve(); });
+  });
+
+  it("CAT018 debounces changed committed IME text and ignores a repeated final input", async () => {
+    vi.useFakeTimers();
+    const fetchMock = vi.fn(() => Promise.resolve(response(page([cabernet]))));
+    vi.stubGlobal("fetch", fetchMock);
+    render(<App />);
+    const input = openSearch();
+    fireEvent.compositionStart(input);
+    fireEvent.change(input, { target: { value: "Каб" } });
+    await advance(250);
+    fireEvent.change(input, { target: { value: "Каберне" } });
+    fireEvent.compositionEnd(input, { data: "Каберне" });
+    await advance(249);
+    expect(catalogCalls(fetchMock)).toHaveLength(1);
+    await advance(1);
     expect(catalogCalls(fetchMock)).toHaveLength(2);
+    expect(catalogCalls(fetchMock)[1][0]).toContain("q=%D0%9A%D0%B0%D0%B1%D0%B5%D1%80%D0%BD%D0%B5");
   });
 
   it("CAT019 resets cursor and replaces the current page when the query changes", async () => {
