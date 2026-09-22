@@ -42,7 +42,7 @@ The selected Wine UX v2 assets come from design revision `29874e7`; approved nav
 
 ### Photo candidates · SR-001
 
-`UI-006` preserves photo-search order from the backend. With several candidates it never opens `selectedId` automatically. Results of photo and text search, plus recommendations, use the same leader list: the first row is cream with a burgundy accent and neutral label «Наиболее похожее», a 76×132 px contain photo and 18 px title. Other rows use 56×98 px contain photos and 14 px titles. The initial unfiltered catalog and saved wines do not use this emphasis. Each entire row is one accessible link target whose name includes the full wine name and year; title text wraps without ellipsis. Show catalog fields in order: name and line, winery, then year plus `color · sugar`; omit empty fields and show year `0` as «Год не указан». A missing or broken image has an accessible unavailable-photo placeholder. At 320/390/430 px and 200% text, rows and the label wrap inside the viewport.
+`UI-006` preserves photo-search order from the backend. With several candidates it never opens `selectedId` automatically. Results of photo and text search, plus recommendations, use the same leader list: the first row has a burgundy accent and neutral label «Наиболее похожее». The initial unfiltered catalog and saved wines do not use this emphasis. Each entire row is one accessible link target whose name includes the full wine name and year; title text wraps without ellipsis. Show catalog fields in order: name and line, winery, then year plus `color · sugar`; omit empty fields and show year `0` as «Год не указан». A missing or broken image has an accessible unavailable-photo placeholder. At 320/360/390/430 px and 200% text, rows and the label wrap inside the viewport. FE-057 replaces the earlier cream fill while preserving image dimensions; see [card-polish-spec](../../docs/product/card-polish-spec.md).
 
 The client makes no quality or probability claims. The source tab identifies the current catalog content as prototype data.
 
@@ -79,7 +79,7 @@ DESIGN-018: Активный раздел помечен `aria-current="page"` �
 
 ## Сохранение в карточке
 
-DESIGN-019: Действие сохранения находится справа в заголовке `UI-007`, а не отдельной широкой кнопкой под карточкой. Его область остаётся 92×48 CSS px в обоих состояниях: слева — кнопка «Назад» 48 px, заголовок имеет `min-width:0` и не выходит за экран шириной 320 px. Видимый текст — «Сохранить» или «Сохранено» (11 px), но доступное имя сохраняет прежние точные формулировки: «Сохранить вино» и «Удалить из сохранённых». Контурная `BookmarkSimple` становится залитой после успешного сохранения; действие без рамки и использует `#742c46`. Ошибка `localStorage` не меняет `aria-pressed`, подпись или иконку; сообщение под карточкой остаётся источником объяснения.
+DESIGN-019: Действие сохранения находится справа в заголовке `UI-007`, а не отдельной широкой кнопкой под карточкой. Его область остаётся 92×48 CSS px в обоих состояниях: слева — кнопка «Назад» 48 px, заголовок имеет `min-width:0` и не выходит за экран шириной 320 px. Видимый текст — «Сохранить» или «Сохранено» (11 px), но доступное имя сохраняет прежние точные формулировки: «Сохранить вино» и «Удалить из сохранённых». Контурная `BookmarkSimple` становится залитой после успешного сохранения; действие без рамки и использует `#742c46`. Ошибка `localStorage` не меняет `aria-pressed`, подпись или иконку; сообщение под карточкой остаётся источником объяснения. FE-057 уточняет верхний отступ страницы и минимальные цели в [DESIGN-024](../../docs/product/card-polish-spec.md#сценарии).
 
 Решение принято по просьбе Макса для компактного знакомого паттерна сохранения, без заявления о точном копировании чужих интерфейсов. В качестве ориентиров просмотрены: [Airbnb: save a listing](https://www.airbnb.com/help/article/1236) и [Google Maps: save places](https://support.google.com/maps/answer/7280933?hl=en-AU).
 
@@ -100,11 +100,11 @@ Given home, manual search, waiting, no-match or offline, the selected mascot use
 FE-027 responsive acceptance: 320×568 normal-text CTA must be fully above bottom navigation; short-height art is160px. At enlarged text sizes the content scrolls, action labels wrap inside their buttons, icons remain visible, no horizontal overflow. Fast checks cover wrapping rules; rendered geometry is verified separately.
 
 
-## FE-035 · Выдача фото, вариант В
+## FE-035 · Выдача фото, вариант В; уточнение FE-057
 
-SR-001…009: первый результат выделен кремовой поверхностью и винным контуром;
+SR-001…009: первый результат выделен белой поверхностью и винным контуром;
 бейдж «Наиболее похожее» без процента уверенности. Остальные строки компактны.
-Фото лидера 76×132, остальных 56×98 CSS px, contain; заголовки 18/14 px.
+Фото лидера 76×132, остальных ранжированных строк 56×98 CSS px, contain; заголовки 18/14 px. FE-057 меняет только поверхность: [DESIGN-026](../../docs/product/card-polish-spec.md#сценарии).
 Имя/линейка → производитель → год → известные цвет/сахар. Полные названия,
 неизвестный год «Год не указан», сломанное фото заменяется нейтральной заглушкой.
 Вся строка — кнопка; focus visible; бейдж ограничен шириной и переносится при

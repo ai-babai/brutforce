@@ -972,7 +972,7 @@
     {
       "id": "CAT-018",
       "area": "ui",
-      "title": "Enter без дубля, IME только после завершения ввода",
+      "title": "Видимый текст IME ищется без ожидания завершения композиции",
       "source": "apps/web/src/live-search.test.tsx",
       "spec": "docs/product/catalog-display-spec.md"
     },
@@ -989,6 +989,41 @@
       "title": "Оба входа и возврат сохраняют контекст поиска",
       "source": "apps/web/src/live-search.test.tsx",
       "spec": "docs/product/catalog-display-spec.md"
+    },
+    {
+      "id": "CAT-021",
+      "area": "ui",
+      "title": "Уточнение поиска сохраняет карточки до нового ответа",
+      "source": "apps/web/src/live-search.test.tsx",
+      "spec": "docs/product/catalog-display-spec.md"
+    },
+    {
+      "id": "DESIGN-023",
+      "area": "design",
+      "title": "Белые hero и плитки сохраняют палитру и выделение лидера",
+      "source": "docs/product/card-polish-spec.md",
+      "spec": "docs/product/card-polish-spec.md#сценарии"
+    },
+    {
+      "id": "DESIGN-024",
+      "area": "design",
+      "title": "Компактная шапка карточки сохраняет safe area и доступные действия",
+      "source": "docs/product/card-polish-spec.md",
+      "spec": "docs/product/card-polish-spec.md#сценарии"
+    },
+    {
+      "id": "DESIGN-025",
+      "area": "design",
+      "title": "Hero сохраняет две колонки и полное название",
+      "source": "docs/product/card-polish-spec.md",
+      "spec": "docs/product/card-polish-spec.md#сценарии"
+    },
+    {
+      "id": "DESIGN-026",
+      "area": "design",
+      "title": "Поисковые плитки сохраняют размеры фото и доступность",
+      "source": "docs/product/card-polish-spec.md",
+      "spec": "docs/product/card-polish-spec.md#сценарии"
     }
   ]
 }

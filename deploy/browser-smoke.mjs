@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import { mkdir, writeFile } from 'node:fs/promises';
+import { checkCardPolish } from './card-polish-check.mjs';
 import { createRequire } from 'node:module';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -93,6 +94,8 @@ try {
     if (await page.getByText('Подбираем рекомендации', {exact:true}).isVisible())
       throw new Error('Recommendations still loading');
   };
+  const polishMetrics = await checkCardPolish({ browser, contextOptions, baseURL, capture, check, sample: catalog.candidates[0] });
+  await writeFile(resolve(outputDir, 'card-polish-metrics.json'), JSON.stringify(polishMetrics, null, 2));
   const textFlow = async (viewport, prefix) => {
     const context = await browser.newContext({ viewport, ...contextOptions });
     const page = configurePage(await context.newPage());

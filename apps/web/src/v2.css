@@ -45,3 +45,21 @@
 
 /* FE-052: keep live-search controls on one row and reserve inline feedback space. */
 #UI-008 .search-field{grid-template-columns:minmax(0,1fr) 52px}#UI-008 .search-field.has-clear{grid-template-columns:minmax(0,1fr) 44px 52px}#UI-008 .search-field .clear-search{min-width:44px;min-height:44px;background:transparent;color:#74636d;font-size:25px;line-height:1}#UI-008 .catalog-status{min-height:24px;padding:5px 0;color:#74636d;font-size:12px;line-height:14px}#UI-008 .catalog-error{padding:4px 0 16px}#UI-008 .empty-catalog{padding:18px 0 24px}#UI-008 .empty-catalog p{margin:0;color:#74636d;text-align:center;font-size:13px;line-height:1.5}#UI-008 .empty-catalog p+p{margin-top:4px}
+
+/* FE-057 revised: retain the existing palette, typography and image columns. */
+#UI-007.page{padding-top:calc(8px + var(--safe-area-top,env(safe-area-inset-top,0px)))}
+#UI-007 .top{display:flex;flex-wrap:wrap;min-height:48px;margin-bottom:12px;flex-shrink:0}
+#UI-007 .top>button:first-child{flex:0 0 48px}
+#UI-007 .top b{flex:1;min-width:min-content;overflow:visible;white-space:normal;overflow-wrap:normal;font-size:.75rem;line-height:1.25}
+#UI-007 .top .save-header-action{width:auto;min-width:92px;min-height:48px;margin-left:auto;white-space:nowrap;font-size:.6875rem;line-height:1.25}
+#UI-007 .save-header-action svg{flex-shrink:0}
+#UI-007 .result-hero{min-height:254px;padding:14px 15px 14px 0;background:#fff;flex-shrink:0}
+#UI-007 .result-hero>img,#UI-007 .result-hero>.missing-image{height:216px;min-height:216px;background:#fff;object-fit:contain;mix-blend-mode:normal}
+#UI-007 .result-hero>div:last-child{min-width:0;overflow-wrap:anywhere}
+#UI-007 .result-hero h2{font-size:1.5625rem;overflow-wrap:anywhere}
+#UI-007 .result-hero small{font-size:.625rem}#UI-007 .result-hero p{font-size:.75rem}
+.candidate-list button,.candidate-list button:hover,.leader-list button.candidate-leader{background:#fff}
+.candidate-list img,.candidate-list .missing-image{background:#fff}
+.leader-list em{justify-self:start}
+@media(max-width:390px){#UI-007 .result-hero{margin-left:-18px;margin-right:-18px}}
+@media(min-width:1024px){#UI-007.page{padding-top:calc(14px + var(--safe-area-top,env(safe-area-inset-top,0px)))}}
