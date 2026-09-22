@@ -996,6 +996,34 @@
       "title": "Уточнение поиска сохраняет карточки до нового ответа",
       "source": "apps/web/src/live-search.test.tsx",
       "spec": "docs/product/catalog-display-spec.md"
+    },
+    {
+      "id": "DESIGN-023",
+      "area": "design",
+      "title": "Белые поверхности карточки и выдачи, лидер с контуром",
+      "source": "docs/product/card-polish-spec.md",
+      "spec": "docs/product/card-polish-spec.md#сценарии"
+    },
+    {
+      "id": "DESIGN-024",
+      "area": "design",
+      "title": "Шапка карточки учитывает safe area и доступные действия",
+      "source": "docs/product/card-polish-spec.md",
+      "spec": "docs/product/card-polish-spec.md#сценарии"
+    },
+    {
+      "id": "DESIGN-025",
+      "area": "design",
+      "title": "Hero показывает полное название и бутылку на узком экране",
+      "source": "docs/product/card-polish-spec.md",
+      "spec": "docs/product/card-polish-spec.md#сценарии"
+    },
+    {
+      "id": "DESIGN-026",
+      "area": "design",
+      "title": "Строки выдачи сохраняют фото, текст и доступность при увеличении",
+      "source": "docs/product/card-polish-spec.md",
+      "spec": "docs/product/card-polish-spec.md#сценарии"
     }
   ]
 }

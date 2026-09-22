@@ -939,6 +939,7 @@ export function App({
             shown &&
             (() => {
               const isSaved = saved.some((item) => item.id === shown.id);
+              const longTitle = [...shown.name].length > 64;
               return (
                 <Page id="UI-007">
                   <Top
@@ -958,8 +959,8 @@ export function App({
                       </button>
                     }
                   />
-                  <div className="result-hero">
-                    <CandidateImage candidate={shown} role="card" priority />
+                  <div className={`result-hero${longTitle ? " result-hero-long" : ""}`}>
+                    <CandidateImage candidate={shown} role="card" priority size={longTitle ? "160px" : "(max-width: 360px) 96px, 128px"} />
                     <div>
                       {(resultOrigin === "catalog" ? catalogDemo : demoMode) && <span className="demo-label"><Check />{resultOrigin === "catalog" ? "Демо-карточка" : "Reference"}</span>}
                       <small>{shown.winery}</small>
@@ -1413,7 +1414,7 @@ function Photo({
     </button>
   );
 }
-function CandidateImage({ candidate, role = "thumbnail", priority = false, size = "64px" }: { candidate: Candidate; role?: "thumbnail" | "card"; priority?: boolean; size?: string }) {
+function CandidateImage({ candidate, role = "thumbnail", priority = false, size = "72px" }: { candidate: Candidate; role?: "thumbnail" | "card"; priority?: boolean; size?: string }) {
   const [broken, setBroken] = useState(false);
   const variants = (candidate.imageVariants ?? []).filter((variant) => variant.path);
   const preferred = variants.find((variant) => variant.role === role) ?? variants[0];
@@ -1424,7 +1425,7 @@ function CandidateImage({ candidate, role = "thumbnail", priority = false, size 
     <img
       src={image}
       srcSet={srcSet}
-      sizes={role === "card" ? "(min-width: 1024px) 180px, 44vw" : size}
+      sizes={size}
       width={preferred?.width}
       height={preferred?.height}
       loading={priority ? "eager" : "lazy"}
@@ -1470,7 +1471,7 @@ function WineList({
           onClick={() => onChoose(wine)}
           aria-label={`${wine.name}${wine.line ? `, ${wine.line}` : ""}, ${year}`}
         >
-            <CandidateImage candidate={wine} priority={index < 4} size={leader ? (isLeader ? "76px" : "56px") : "64px"} />
+            <CandidateImage candidate={wine} priority={index < 4} size={isLeader ? "84px" : "72px"} />
             <span>
             {isLeader && <em>Наиболее похожее</em>}
             <b>{wine.name}</b>

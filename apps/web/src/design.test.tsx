@@ -80,15 +80,15 @@ describe('selected Wine UX 2.0 design contract', () => {
   });
 
   it('DESIGN-009 keeps candidate rows as full actionable surfaces with readable metadata', () => {
-    expect(css).toContain('.leader-list button{grid-template-columns:56px minmax(0,1fr)');
+    expect(css).toContain('.leader-list button{grid-template-columns:72px minmax(0,1fr)');
     expect(css).toContain('.leader-list b{overflow-wrap:anywhere;font-size:14px');
     expect(css).toContain('.leader-list small{overflow-wrap:anywhere;white-space:normal');
   });
 
   it('SR-009 constrains the leader badge and preserves full titles at enlarged text', () => {
-    expect(css).toContain('.leader-list button.candidate-leader{grid-template-columns:76px minmax(0,1fr)');
-    expect(css).toContain('.leader-list .candidate-leader img,.leader-list .candidate-leader .missing-image{width:76px;height:132px');
-    expect(css).toContain('.leader-list img,.leader-list .missing-image{width:56px;height:98px');
+    expect(css).toContain('.leader-list button.candidate-leader{grid-template-columns:84px minmax(0,1fr)');
+    expect(css).toContain('.leader-list .candidate-leader img,.leader-list .candidate-leader .missing-image{width:84px;height:132px');
+    expect(css).toContain('.leader-list img,.leader-list .missing-image{width:72px;height:112px');
     expect(css).toContain('max-inline-size:100%');
     expect(css).toContain('overflow-wrap:anywhere');
   });
@@ -170,8 +170,8 @@ describe('selected Wine UX 2.0 design contract', () => {
   });
 
   it('DESIGN-019 and DESIGN-020 keep compact save and a single search control', () => {
-    expect(css).toContain('.top-with-action{grid-template-columns:48px minmax(0,1fr) 92px}');
-    expect(css).toContain('.top .save-header-action{display:flex;width:92px;height:48px;min-width:92px');
+    expect(css).toContain('#UI-007 .top{display:flex;flex-wrap:wrap;');
+    expect(css).toContain('#UI-007 .top .save-header-action{width:auto;min-width:108px;min-height:44px');
     render(<App />);
     fireEvent.click(screen.getByRole('button', { name: 'Поиск' }));
     const input = screen.getByLabelText(/Название вина/i);
