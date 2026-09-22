@@ -345,6 +345,116 @@ describe("FE-052 live catalog search", () => {
     expect(catalogCalls(fetchMock).at(-1)![0]).toBe("/v2/catalog?limit=24&cursor=&q=%D0%9A%D0%B0%D0%B1");
   });
 
+  it("CAT021 retains card and image nodes through debounce, request, and overlapping replacement", async () => {
+    vi.useFakeTimers();
+    const refined = deferred<ReturnType<typeof response>>();
+    const fetchMock = vi.fn((url: string) => url.includes("%D0%9A%D0%B0%D0%B1")
+      ? refined.promise
+      : Promise.resolve(response(page([cabernet, merlot], "old-cursor"))));
+    vi.stubGlobal("fetch", fetchMock);
+    render(<App />);
+    const input = openSearch();
+    fireEvent.change(input, { target: { value: "Ка" } });
+    await advance(250);
+    const card = screen.getByText("Каберне").closest("button")!;
+    const image = card.querySelector("img")!;
+    expect(image).not.toBeNull();
+    const list = card.parentElement!;
+    const priorButtons = [...list.querySelectorAll("button")];
+
+    fireEvent.change(input, { target: { value: "Каб" } });
+    expect(screen.getByText("Каберне").closest("button")).toBe(card);
+    expect(card.querySelector("img")).toBe(image);
+    expect([...list.querySelectorAll("button")]).toEqual(priorButtons);
+    expect(screen.getByRole("status", { name: /прежние результаты/i })).toBeVisible();
+    expect(screen.queryByRole("button", { name: "Показать ещё" })).not.toBeInTheDocument();
+    await advance(250);
+    expect(screen.getByText("Каберне").closest("button")).toBe(card);
+    expect(card.querySelector("img")).toBe(image);
+    await act(async () => {
+      refined.resolve(response(page([{ ...cabernet, winery: "Новая винодельня" }])));
+      await Promise.resolve();
+    });
+    expect(screen.getByText("Каберне").closest("button")).toBe(card);
+    expect(card.querySelector("img")).toBe(image);
+    expect(screen.getByText("Новая винодельня")).toBeVisible();
+    expect(screen.queryByText("Мерло")).not.toBeInTheDocument();
+  });
+
+  it("CAT021 keeps old rows after a failed refinement and retries its first page", async () => {
+    vi.useFakeTimers();
+    let refinedAttempts = 0;
+    const fetchMock = vi.fn((url: string) => {
+      if (!url.includes("%D0%9D%D0%B5%D1%82")) return Promise.resolve(response(page([cabernet], "old-cursor")));
+      refinedAttempts += 1;
+      return refinedAttempts === 1 ? Promise.reject(new TypeError("offline")) : Promise.resolve(response(page([merlot])));
+    });
+    vi.stubGlobal("fetch", fetchMock);
+    render(<App />);
+    const input = openSearch();
+    fireEvent.change(input, { target: { value: "Ка" } });
+    await advance(250);
+    const card = screen.getByText("Каберне").closest("button")!;
+    fireEvent.change(input, { target: { value: "Нет" } });
+    await advance(250);
+    expect(screen.getByText("Каберне").closest("button")).toBe(card);
+    expect(screen.getByRole("status", { name: "Показаны прежние результаты" })).toBeVisible();
+    expect(screen.getByRole("alert", { name: "Не удалось загрузить вина" })).toHaveTextContent("прежние результаты");
+    expect(screen.queryByText("Не нашли вина по этому запросу")).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Повторить" }));
+    await act(async () => { await Promise.resolve(); });
+    expect(catalogCalls(fetchMock).at(-1)![0]).toBe("/v2/catalog?limit=24&cursor=&q=%D0%9D%D0%B5%D1%82");
+    expect(screen.getByText("Мерло")).toBeVisible();
+    expect(screen.queryByText("Каберне")).not.toBeInTheDocument();
+    expect(document.querySelectorAll(".candidate-list > button")).toHaveLength(1);
+  });
+
+  it("CAT021 clears retained rows only after a successful empty response", async () => {
+    vi.useFakeTimers();
+    const empty = deferred<ReturnType<typeof response>>();
+    const fetchMock = vi.fn((url: string) => url.includes("%D0%9D%D0%B5%D1%82")
+      ? empty.promise
+      : Promise.resolve(response(page([cabernet]))));
+    vi.stubGlobal("fetch", fetchMock);
+    render(<App />);
+    const input = openSearch();
+    fireEvent.change(input, { target: { value: "Ка" } });
+    await advance(250);
+    fireEvent.change(input, { target: { value: "Нет" } });
+    await advance(250);
+    expect(screen.getByText("Каберне")).toBeVisible();
+    expect(screen.queryByText("Не нашли вина по этому запросу")).not.toBeInTheDocument();
+    await act(async () => { empty.resolve(response(page([]))); await Promise.resolve(); });
+    expect(screen.queryByText("Каберне")).not.toBeInTheDocument();
+    expect(screen.getByText("Не нашли вина по этому запросу")).toBeVisible();
+  });
+
+  it("CAT021 returns from a previously shown card without claiming it matches the pending query", async () => {
+    vi.useFakeTimers();
+    const refined = deferred<ReturnType<typeof response>>();
+    const fetchMock = vi.fn((url: string) => url.includes("%D0%9D%D0%B5%D1%82")
+      ? refined.promise
+      : Promise.resolve(response(page([cabernet], "old-cursor"))));
+    vi.stubGlobal("fetch", fetchMock);
+    render(<App />);
+    const input = openSearch();
+    fireEvent.change(input, { target: { value: "Ка" } });
+    await advance(250);
+    fireEvent.change(input, { target: { value: "Нет" } });
+    await advance(250);
+    const staleSignal = catalogCalls(fetchMock).at(-1)![1].signal as AbortSignal;
+    fireEvent.click(screen.getByText("Каберне").closest("button")!);
+    expect(staleSignal.aborted).toBe(true);
+    await act(async () => { refined.resolve(response(page([merlot]))); await Promise.resolve(); });
+    fireEvent.click(screen.getByRole("button", { name: "Назад" }));
+    expect((screen.getByLabelText(/Название вина/i) as HTMLInputElement).value).toBe("Нет");
+    expect(screen.getByText("Каберне")).toBeVisible();
+    expect(screen.queryByText("Мерло")).not.toBeInTheDocument();
+    expect(screen.getByRole("status", { name: "Показаны прежние результаты" })).toBeVisible();
+    expect(screen.queryByRole("button", { name: "Показать ещё" })).not.toBeInTheDocument();
+    expect(catalogCalls(fetchMock)).toHaveLength(2);
+  });
+
   it("CAT020 preserves the query, order, scroll, and cursor after choosing an appended card and using Back", async () => {
     vi.useFakeTimers();
     const fetchMock = vi.fn((url: string) => Promise.resolve(response(
