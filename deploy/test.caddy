@@ -1,5 +1,6 @@
 test.ops.dzap.pw {
     import lct_preview_headers
+    import lct_catalog_media
     route {
         reverse_proxy 127.0.0.1:8103
     }

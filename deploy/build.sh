@@ -47,6 +47,7 @@ build_go catalog-migrate ./cmd/catalog-migrate
 build_go catalog-import ./cmd/catalog-import
 npm --prefix apps/web run build
 cp -R apps/web/dist/. "$stage/package/web/"
+cp -R reports/site "$stage/package/reports"
 cp -R apps/api/migrations/. "$stage/package/migrations/"
 printf '%s\n' "$revision" > "$stage/package/REVISION"
 node -e '

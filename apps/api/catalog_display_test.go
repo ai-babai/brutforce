@@ -110,7 +110,7 @@ func TestCAT007KeepsSyntheticFixtureAssetPaths(t *testing.T) {
 	if got := catalogAssetURL(defaultCatalogVersion, "/assets/catalog/demo.webp"); got != "/assets/catalog/demo.webp" {
 		t.Fatalf("demo asset path=%q", got)
 	}
-	if got := catalogAssetURL("real-v1", "images/red.webp"); got != "/catalog-assets/real-v1/images/red.webp" {
+	if got := catalogAssetURL("real-v1", "400/red.webp"); got != "/media/catalog/400/red.webp" {
 		t.Fatalf("imported asset path=%q", got)
 	}
 }

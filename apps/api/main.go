@@ -110,7 +110,6 @@ func newHandlerWithCatalogAndServices(webRoot string, recognizer Recognizer, cat
 	mux.HandleFunc("/v1/health", healthHandler)
 	mux.HandleFunc("/v2/catalog", catalogHandler(catalog))
 	mux.HandleFunc("/v2/catalog/", catalogItemHandler(catalog))
-	mux.Handle("/catalog-assets/", catalogAssetsHandler(catalog, os.Getenv("CATALOG_ASSET_ROOT")))
 	mux.HandleFunc("/v1/photos", uploadHandler(store))
 	mux.HandleFunc("/v1/search", correlateServiceRequest(searchHandler(store, catalog, services)))
 	mux.HandleFunc("/v1/recommendations", correlateServiceRequest(recommendationsHandler(catalog, services)))

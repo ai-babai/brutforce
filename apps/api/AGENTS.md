@@ -4,8 +4,9 @@ This directory is the standalone demo HTTP server. Its contract is defined in
 [README.md](README.md); keep implementation and fast behavior specs aligned
 with it.
 
-- BE-045 authorizes a validated real display-catalog adapter/importer and tests, not live import/deployment.
-  Full exports stay outside Git; see `../../contracts/catalog-display.md`.
+- INFRA-047 authorizes the validated real display-catalog importer for Maks and TEST after mandatory gates.
+  PROD still requires separate approval; follow `../../deploy/PIPELINE.md`. Full exports stay outside Git;
+  see `../../contracts/catalog-display.md`.
 - Default fixtures remain synthetic `DEMO` wine data. Private uploads are allowed only through
   the documented `UPLOAD_DIR` store. The synthetic PostgreSQL catalog (embedded only when DATABASE_URL is unset) and its
   `GET /v2/catalog` route follow

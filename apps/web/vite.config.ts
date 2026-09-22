@@ -9,7 +9,8 @@ export default defineConfig({
       // Preserve the browser Host so the API's same-origin write check remains valid.
       '/v1': { target: 'http://localhost:8097', changeOrigin: false },
       '/v2': { target: 'http://localhost:8097', changeOrigin: false },
-      '/catalog-assets': { target: 'http://localhost:8097', changeOrigin: false },
+      // Public immutable files live behind Caddy, not the API process.
+      '/media/catalog': { target: process.env.CATALOG_MEDIA_ORIGIN || 'https://test.ops.dzap.pw', changeOrigin: true },
       '/api/docs': 'http://localhost:8097',
       '/api/openapi.json': 'http://localhost:8097',
       '/api/schema': 'http://localhost:8097',

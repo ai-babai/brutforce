@@ -135,7 +135,7 @@ func (s postgresCatalogStore) List(ctx context.Context) ([]wine, error) {
 	}
 	queryCtx, cancel := context.WithTimeout(ctx, catalogQueryTimeout)
 	defer cancel()
-	rows, err := s.pool.Query(queryCtx, "SELECT id, name, winery, year, image, description, metadata FROM demo_catalog ORDER BY display_order")
+	rows, err := s.pool.Query(queryCtx, "SELECT id, slug, name, winery, year, image, description, metadata FROM catalog_items ORDER BY display_order")
 	if err != nil {
 		return nil, errCatalogUnavailable
 	}
@@ -164,7 +164,7 @@ func (s postgresCatalogStore) Page(ctx context.Context, req catalogPageRequest) 
 	if req.ExpectedVersion != "" && req.ExpectedVersion != info.Version {
 		return catalogPage{}, errCatalogStaleCursor
 	}
-	rows, err := tx.Query(queryCtx, `SELECT id, name, winery, year, image, description, metadata FROM demo_catalog WHERE ($1 = '' OR strpos(lower(name), lower($1)) > 0 OR strpos(lower(winery), lower($1)) > 0 OR strpos(COALESCE(year::text, ''), $1) > 0) AND ($2 = '' OR id > $2) ORDER BY id LIMIT $3`, req.Query, req.AfterID, req.Limit+1)
+	rows, err := tx.Query(queryCtx, `SELECT id, slug, name, winery, year, image, description, metadata FROM catalog_items WHERE ($1 = '' OR strpos(lower(name), lower($1)) > 0 OR strpos(lower(winery), lower($1)) > 0 OR strpos(COALESCE(year::text, ''), $1) > 0) AND ($2 = '' OR id > $2) ORDER BY id LIMIT $3`, req.Query, req.AfterID, req.Limit+1)
 	if err != nil {
 		return catalogPage{}, errCatalogUnavailable
 	}
@@ -198,7 +198,7 @@ func (s postgresCatalogStore) ResolveDetail(ctx context.Context, slug string) (w
 	if err := tx.QueryRow(queryCtx, "SELECT COALESCE((SELECT canonical_slug FROM catalog_aliases WHERE alias_slug=$1), $1)", slug).Scan(&canonical); err != nil {
 		return wine{}, "", catalogInfo{}, errCatalogUnavailable
 	}
-	rows, err := tx.Query(queryCtx, "SELECT id, name, winery, year, image, description, metadata FROM demo_catalog WHERE id=$1", canonical)
+	rows, err := tx.Query(queryCtx, "SELECT id, slug, name, winery, year, image, description, metadata FROM catalog_items WHERE slug=$1", canonical)
 	if err != nil {
 		return wine{}, "", catalogInfo{}, errCatalogUnavailable
 	}
@@ -233,7 +233,7 @@ func scanWines(rows pgx.Rows, version string) ([]wine, error) {
 		var item wine
 		var year *int
 		var metadata []byte
-		if err := rows.Scan(&item.ID, &item.Name, &item.Winery, &year, &item.Image, &item.Description, &metadata); err != nil {
+		if err := rows.Scan(&item.ID, &item.Slug, &item.Name, &item.Winery, &year, &item.Image, &item.Description, &metadata); err != nil {
 			return nil, errCatalogUnavailable
 		}
 		if year != nil {
@@ -265,11 +265,10 @@ func catalogAssetURL(version, value string) string {
 		return value
 	}
 	path := strings.TrimPrefix(value, "/")
-	path = strings.TrimPrefix(path, "catalog-assets/"+version+"/")
 	if path == "" || strings.HasPrefix(path, "../") || strings.Contains(path, "/../") {
 		return ""
 	}
-	return "/catalog-assets/" + version + "/" + path
+	return "/media/catalog/" + path
 }
 func catalogInfoFor(ctx context.Context, store catalogReader) (catalogInfo, error) {
 	if x, ok := store.(catalogInformer); ok {

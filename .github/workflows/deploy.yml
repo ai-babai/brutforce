@@ -10,6 +10,9 @@ on:
         options: [test, prod]
         default: test
         description: PROD requires separate recorded human approval on Sigma
+      candidate_id:
+        description: Registered 64-char app+data+model candidate; required for real catalog and PROD
+        required: false
 permissions:
   contents: read
   actions: read
@@ -25,6 +28,7 @@ jobs:
       REPO: ${{ github.repository }}
       CI_RUN: ${{ inputs.ci_run }}
       TARGET: ${{ inputs.target }}
+      CANDIDATE_ID: ${{ inputs.candidate_id }}
     steps:
       - name: Resolve successful main release
         id: resolve
@@ -56,6 +60,8 @@ jobs:
           printf '%s\n' "$KNOWN_HOSTS" > ~/.ssh/known_hosts
       - name: Install and deploy TEST, or promote approved PROD
         run: |
+          candidate=${CANDIDATE_ID:-$RELEASE_SHA}
+          [[ "$candidate" =~ ^[a-f0-9]{40}$|^[a-f0-9]{64}$ ]]
           if [ "$TARGET" = test ]; then
             checksum=$(cut -d ' ' -f1 "$RUNNER_TEMP/package/release-$RELEASE_SHA.tar.gz.sha256")
             # An immutable package may already exist after a failed smoke/retry.
@@ -65,9 +71,13 @@ jobs:
             else
               jq -e --arg sha "$RELEASE_SHA" --arg checksum "$checksum" '.releases[] | select(.revision == $sha) | .archiveSHA256 == $checksum' "$RUNNER_TEMP/status.json"
             fi
-            ssh -o BatchMode=yes lct-release@217.26.30.220 "deploy-test $RELEASE_SHA"
+            ssh -o BatchMode=yes lct-release@217.26.30.220 "deploy-test $candidate"
+            ssh -o BatchMode=yes lct-release@217.26.30.220 status > "$RUNNER_TEMP/deployed-status.json"
+            catalog_version=$(jq -er --arg candidate "$candidate" '.releases[] | select((.candidateId // .revision) == $candidate) | .catalogVersion' "$RUNNER_TEMP/deployed-status.json")
+            echo "EXPECTED_CATALOG_VERSION=$catalog_version" >> "$GITHUB_ENV"
           elif [ "$TARGET" = prod ]; then
-            ssh -o BatchMode=yes lct-release@217.26.30.220 "promote $RELEASE_SHA"
+            [[ "$candidate" =~ ^[a-f0-9]{64}$ ]] || { echo 'PROD requires exact candidate_id' >&2; exit 2; }
+            ssh -o BatchMode=yes lct-release@217.26.30.220 "promote $candidate"
           else
             exit 2
           fi
@@ -78,6 +88,8 @@ jobs:
           TEST_HTTP_USER: ${{ secrets.TEST_HTTP_USER }}
           TEST_HTTP_PASSWORD: ${{ secrets.TEST_HTTP_PASSWORD }}
           EXPECTED_REVISION: ${{ env.RELEASE_SHA }}
+          EXPECTED_CANDIDATE_ID: ${{ inputs.candidate_id || env.RELEASE_SHA }}
+          EXPECTED_CATALOG_VERSION: ${{ env.EXPECTED_CATALOG_VERSION }}
           SMOKE_OUTPUT_DIR: ${{ runner.temp }}/browser
         run: |
           npm --prefix apps/web ci
@@ -89,7 +101,8 @@ jobs:
         if: always() && inputs.target == 'test'
         run: |
           if [ -f "$RUNNER_TEMP/browser/result.json" ]; then
-            ssh -o BatchMode=yes lct-release@217.26.30.220 "browser-result $RELEASE_SHA" < "$RUNNER_TEMP/browser/result.json"
+            candidate=${CANDIDATE_ID:-$RELEASE_SHA}
+            ssh -o BatchMode=yes lct-release@217.26.30.220 "browser-result $candidate" < "$RUNNER_TEMP/browser/result.json"
           fi
       - name: Keep browser evidence
         if: always() && inputs.target == 'test'
@@ -106,4 +119,4 @@ jobs:
       - name: Summary
         if: always()
         run: |
-          printf '## Release %s\n\nEnvironment: %s\n\n[Ops releases](https://ops.dzap.pw/releases/)\n\nMode: synthetic reference; ML quality is not measured.\n' "$RELEASE_SHA" "$TARGET" >> "$GITHUB_STEP_SUMMARY"
+          printf '## Release %s\n\nCandidate: %s\n\nEnvironment: %s\n\n[Ops releases](https://ops.dzap.pw/releases/)\n\nML quality is not measured by catalog gates.\n' "$RELEASE_SHA" "${CANDIDATE_ID:-$RELEASE_SHA}" "$TARGET" >> "$GITHUB_STEP_SUMMARY"

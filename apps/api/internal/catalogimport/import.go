@@ -17,9 +17,11 @@ import (
 	_ "image/jpeg"
 	_ "image/png"
 	"io"
+	"io/fs"
 	"net/url"
 	"os"
 	"path/filepath"
+	"reflect"
 	"sort"
 	"strings"
 	"time"
@@ -35,6 +37,7 @@ const (
 
 type Options struct {
 	PackageDir string
+	MediaRoot  string
 	Version    string
 	DryRun     bool
 }
@@ -43,12 +46,14 @@ type Result struct {
 	Version        string
 	Wines, Aliases int
 	DryRun         bool
+	ManifestSHA256 string
 }
 
 type Snapshot struct {
-	Version string              `json:"version"`
-	Wines   []catalogmodel.Wine `json:"wines"`
-	Aliases []Alias             `json:"aliases"`
+	Version        string              `json:"version"`
+	ManifestSHA256 string              `json:"manifestSHA256"`
+	Wines          []catalogmodel.Wine `json:"wines"`
+	Aliases        []Alias             `json:"aliases"`
 }
 type Alias struct {
 	AliasSlug     string `json:"alias_slug"`
@@ -99,6 +104,7 @@ func (v *packageVariant) UnmarshalJSON(raw []byte) error {
 }
 
 type packageWine struct {
+	ID                   string                `json:"id"`
 	Slug                 string                `json:"slug"`
 	Title                string                `json:"title"`
 	Producer             string                `json:"producer"`
@@ -140,48 +146,267 @@ func (w *packageWine) UnmarshalJSON(raw []byte) error {
 }
 
 func Import(ctx context.Context, db *sql.DB, opts Options) (Result, error) {
-	wines, aliases, err := Load(opts.PackageDir, opts.Version)
+	wines, aliases, manifestSHA, err := load(opts.PackageDir, opts.MediaRoot, opts.Version)
 	if err != nil {
 		return Result{}, err
 	}
-	result := Result{Version: opts.Version, Wines: len(wines), Aliases: len(aliases), DryRun: opts.DryRun}
+	result := Result{Version: opts.Version, Wines: len(wines), Aliases: len(aliases), DryRun: opts.DryRun, ManifestSHA256: manifestSHA}
 	if opts.DryRun {
 		return result, nil
 	}
-	if err := replace(ctx, db, opts.Version, wines, aliases, fingerprint(wines, aliases)); err != nil {
+	if err := replace(ctx, db, opts.Version, wines, aliases, manifestSHA); err != nil {
 		return Result{}, err
 	}
 	return result, nil
 }
 
 func Load(packageDir, version string) ([]catalogmodel.Wine, []Alias, error) {
+	wines, aliases, _, err := load(packageDir, "", version)
+	return wines, aliases, err
+}
+
+type releaseManifest struct {
+	SchemaVersion  string `json:"schema_version"`
+	CatalogVersion string `json:"catalog_version"`
+	Files          []struct {
+		Path   string `json:"path"`
+		SHA256 string `json:"sha256"`
+		Bytes  int64  `json:"bytes"`
+	} `json:"files"`
+	Media []struct {
+		Path     string `json:"path"`
+		SHA256   string `json:"sha256"`
+		Bytes    int64  `json:"bytes"`
+		Width    int    `json:"width"`
+		Height   int    `json:"height"`
+		MIMEType string `json:"mime_type"`
+	} `json:"media"`
+}
+
+func loadRelease(root, mediaRoot, version string, rawManifest []byte) ([]catalogmodel.Wine, []Alias, string, error) {
+	var manifest releaseManifest
+	if err := json.Unmarshal(rawManifest, &manifest); err != nil {
+		return nil, nil, "", fmt.Errorf("parse manifest: %w", err)
+	}
+	if mediaRoot == "" {
+		mediaRoot = filepath.Join(filepath.Dir(filepath.Dir(root)), "media")
+	}
+	if manifest.SchemaVersion != "catalog-release-1" || manifest.CatalogVersion != version {
+		return nil, nil, "", errors.New("release requires catalog-release-1 manifest and matching version")
+	}
+	requiredFiles := map[string]bool{"wines.jsonl": false, "aliases.json": false, "catalog.json": false, "internal/display-policy.json": false, "PREPARATION.md": false}
+	for _, f := range manifest.Files {
+		if _, ok := requiredFiles[f.Path]; !ok || requiredFiles[f.Path] {
+			return nil, nil, "", fmt.Errorf("invalid or duplicate manifest file %q", f.Path)
+		}
+		requiredFiles[f.Path] = true
+		data, err := readSafe(root, f.Path)
+		if err != nil {
+			return nil, nil, "", fmt.Errorf("manifest file %s: %w", f.Path, err)
+		}
+		if f.Bytes != int64(len(data)) || !matchesSHA(data, f.SHA256) {
+			return nil, nil, "", fmt.Errorf("manifest file %s digest or bytes mismatch", f.Path)
+		}
+	}
+	for path, found := range requiredFiles {
+		if !found {
+			return nil, nil, "", fmt.Errorf("manifest missing required file %s", path)
+		}
+	}
+	if err := filepath.WalkDir(root, func(path string, entry fs.DirEntry, walkErr error) error {
+		if walkErr != nil {
+			return walkErr
+		}
+		if entry.Type()&os.ModeSymlink != 0 {
+			return errors.New("release symlink is forbidden")
+		}
+		if entry.IsDir() {
+			return nil
+		}
+		rel, err := filepath.Rel(root, path)
+		if err != nil {
+			return err
+		}
+		if rel != "manifest.json" && !requiredFiles[filepath.ToSlash(rel)] {
+			return fmt.Errorf("release file %s is not in manifest", rel)
+		}
+		return nil
+	}); err != nil {
+		return nil, nil, "", err
+	}
+	seenMedia := map[string]bool{}
+	for _, f := range manifest.Media {
+		if seenMedia[f.Path] || !validMediaKey(f.Path, f.SHA256) {
+			return nil, nil, "", fmt.Errorf("invalid manifest media path %q", f.Path)
+		}
+		seenMedia[f.Path] = true
+		data, err := readSafe(mediaRoot, f.Path)
+		if err != nil {
+			return nil, nil, "", fmt.Errorf("manifest media %s: %w", f.Path, err)
+		}
+		if f.Bytes != int64(len(data)) || !matchesSHA(data, f.SHA256) {
+			return nil, nil, "", fmt.Errorf("manifest media %s digest or bytes mismatch", f.Path)
+		}
+		_, actual, err := validateImage(mediaRoot, version, packageImage{Path: f.Path, SHA256: f.SHA256, MIMEType: f.MIMEType, Width: f.Width, Height: f.Height, Bytes: f.Bytes}, "", true, true)
+		if err != nil || actual.MIMEType != "image/webp" {
+			return nil, nil, "", fmt.Errorf("manifest media %s is not valid WebP: %v", f.Path, err)
+		}
+	}
+	catalog, err := readSafe(root, "catalog.json")
+	if err != nil {
+		return nil, nil, "", err
+	}
+	var policy struct {
+		SchemaVersion string `json:"schema_version"`
+	}
+	if json.Unmarshal(catalog, &policy) != nil || policy.SchemaVersion != "svoe-display-catalog-2.0.0" {
+		return nil, nil, "", errors.New("catalog.json requires schema_version svoe-display-catalog-2.0.0")
+	}
+	raw, err := readSafe(root, "wines.jsonl")
+	if err != nil {
+		return nil, nil, "", err
+	}
+	if err := validateDisplayPolicy(root, raw); err != nil {
+		return nil, nil, "", err
+	}
+	records, err := parseWines(raw)
+	if err != nil || len(records) == 0 {
+		return nil, nil, "", errors.New("release has no valid wines")
+	}
+	wines := make([]catalogmodel.Wine, 0, len(records))
+	ids, slugs := map[string]bool{}, map[string]bool{}
+	for _, r := range records {
+		if r.ID == "" {
+			return nil, nil, "", errors.New("release wine requires stable id")
+		}
+		w, err := toWine(mediaRoot, version, r, true)
+		if err != nil {
+			return nil, nil, "", err
+		}
+		if w.ID == "" || ids[w.ID] || slugs[w.Slug] {
+			return nil, nil, "", fmt.Errorf("duplicate catalog id or slug %q", w.ID)
+		}
+		ids[w.ID], slugs[w.Slug] = true, true
+		if w.Image == "" || !seenMedia[w.Image] || len(w.ImageVariants) != 3 {
+			return nil, nil, "", fmt.Errorf("%s requires all display image roles", w.Slug)
+		}
+		for _, v := range w.ImageVariants {
+			roleDir := map[string]string{"thumbnail": "400", "card": "800", "original": "original"}[v.Role]
+			if !seenMedia[v.Path] || !strings.HasPrefix(v.Path, roleDir+"/") {
+				return nil, nil, "", fmt.Errorf("%s references unmanifested media %s", w.Slug, v.Path)
+			}
+		}
+		wines = append(wines, w)
+	}
+	aliases, err := loadAliases(root, slugs)
+	if err != nil {
+		return nil, nil, "", err
+	}
+	sort.Slice(wines, func(i, j int) bool { return wines[i].ID < wines[j].ID })
+	sum := sha256.Sum256(rawManifest)
+	return wines, aliases, hex.EncodeToString(sum[:]), nil
+}
+func validateDisplayPolicy(root string, wines []byte) error {
+	raw, err := readSafe(root, "internal/display-policy.json")
+	if err != nil {
+		return err
+	}
+	var policy struct {
+		SchemaVersion     string `json:"schema_version"`
+		SourceManifestSHA string `json:"source_manifest_sha256"`
+		Suppressed        []struct {
+			Slug  string `json:"slug"`
+			Field string `json:"field"`
+		} `json:"suppressed_fields"`
+	}
+	if json.Unmarshal(raw, &policy) != nil || policy.SchemaVersion != "catalog-display-policy-1" || policy.SourceManifestSHA == "" {
+		return errors.New("invalid display policy")
+	}
+	rows := map[string]map[string]any{}
+	for _, line := range bytes.Split(wines, []byte{'\n'}) {
+		if len(bytes.TrimSpace(line)) == 0 {
+			continue
+		}
+		var row map[string]any
+		if json.Unmarshal(line, &row) != nil {
+			return errors.New("invalid wines JSONL")
+		}
+		slug, _ := row["slug"].(string)
+		rows[slug] = row
+	}
+	for _, rule := range policy.Suppressed {
+		row := rows[rule.Slug]
+		if row == nil || hasField(row, strings.Split(rule.Field, ".")) {
+			return fmt.Errorf("suppressed field %s remains on %s", rule.Field, rule.Slug)
+		}
+	}
+	return nil
+}
+func hasField(row map[string]any, parts []string) bool {
+	var cur any = row
+	for _, part := range parts {
+		m, ok := cur.(map[string]any)
+		if !ok {
+			return false
+		}
+		v, ok := m[part]
+		if !ok {
+			return false
+		}
+		cur = v
+	}
+	return true
+}
+func matchesSHA(data []byte, expected string) bool {
+	sum := sha256.Sum256(data)
+	return expected != "" && strings.EqualFold(expected, hex.EncodeToString(sum[:]))
+}
+func validMediaKey(path, sha string) bool {
+	parts := strings.Split(path, "/")
+	if len(parts) != 2 || (parts[0] != "400" && parts[0] != "800" && parts[0] != "original") || len(parts[1]) != 69 || !strings.HasSuffix(parts[1], ".webp") {
+		return false
+	}
+	name := strings.TrimSuffix(parts[1], ".webp")
+	if name != strings.ToLower(name) {
+		return false
+	}
+	decoded, err := hex.DecodeString(name)
+	return err == nil && len(decoded) == sha256.Size && strings.EqualFold(name, sha)
+}
+
+// load accepts the old offline source v2 public/ package and the installed
+// catalog-release-1 layout. The latter always has an explicit manifest.
+func load(packageDir, mediaRoot, version string) ([]catalogmodel.Wine, []Alias, string, error) {
 	if version == "" || strings.ContainsAny(version, "/\\") {
-		return nil, nil, errors.New("version must be a non-path identifier")
+		return nil, nil, "", errors.New("version must be a non-path identifier")
 	}
 	root, err := filepath.Abs(packageDir)
 	if err != nil {
-		return nil, nil, err
+		return nil, nil, "", err
+	}
+	if raw, err := readSafe(root, "manifest.json"); err == nil {
+		return loadRelease(root, mediaRoot, version, raw)
 	}
 	public := filepath.Join(root, "public")
 	if info, err := os.Lstat(public); err != nil || info.Mode()&os.ModeSymlink != 0 {
-		return nil, nil, errors.New("public directory must not be a symlink")
+		return nil, nil, "", errors.New("public directory must not be a symlink")
 	}
 	if info, err := os.Stat(public); err != nil || !info.IsDir() {
-		return nil, nil, errors.New("package must contain public directory")
+		return nil, nil, "", errors.New("package must contain public directory")
 	}
 	raw, err := readSafe(public, "wines.json")
 	if err != nil {
 		raw, err = readSafe(public, "wines.jsonl")
 		if err != nil {
-			return nil, nil, fmt.Errorf("read wines: %w", err)
+			return nil, nil, "", fmt.Errorf("read wines: %w", err)
 		}
 	}
 	records, err := parseWines(raw)
 	if err != nil {
-		return nil, nil, fmt.Errorf("parse wines: %w", err)
+		return nil, nil, "", fmt.Errorf("parse wines: %w", err)
 	}
 	if len(records) == 0 {
-		return nil, nil, errors.New("catalog has no wines")
+		return nil, nil, "", errors.New("catalog has no wines")
 	}
 	strictV2 := strings.Contains(strings.ToLower(version), "v2")
 	wines := make([]catalogmodel.Wine, 0, len(records))
@@ -189,20 +414,20 @@ func Load(packageDir, version string) ([]catalogmodel.Wine, []Alias, error) {
 	for _, r := range records {
 		w, err := toWine(public, version, r, strictV2)
 		if err != nil {
-			return nil, nil, err
+			return nil, nil, "", err
 		}
-		if seen[w.ID] {
-			return nil, nil, fmt.Errorf("duplicate slug %q", w.ID)
+		if seen[w.Slug] {
+			return nil, nil, "", fmt.Errorf("duplicate slug %q", w.Slug)
 		}
-		seen[w.ID] = true
+		seen[w.Slug] = true
 		wines = append(wines, w)
 	}
 	aliases, err := loadAliases(public, seen)
 	if err != nil {
-		return nil, nil, err
+		return nil, nil, "", err
 	}
 	sort.Slice(wines, func(i, j int) bool { return wines[i].ID < wines[j].ID })
-	return wines, aliases, nil
+	return wines, aliases, fingerprint(wines, aliases), nil
 }
 
 func parseWines(raw []byte) ([]packageWine, error) {
@@ -248,14 +473,14 @@ func loadAliases(public string, known map[string]bool) ([]Alias, error) {
 	return data.Aliases, nil
 }
 func toWine(public, version string, r packageWine, strictV2 bool) (catalogmodel.Wine, error) {
-	if r.Slug == "" || strings.ContainsAny(r.Slug, "/\\") || r.Title == "" || r.Producer == "" {
+	if r.Slug == "" || strings.ContainsAny(r.Slug, "/\\") || (r.ID != "" && strings.ContainsAny(r.ID, "/\\")) || r.Title == "" || r.Producer == "" {
 		return catalogmodel.Wine{}, fmt.Errorf("wine requires safe slug, title and producer")
 	}
 	if r.Year != nil && (*r.Year < 1000 || *r.Year > time.Now().Year()+1) {
 		return catalogmodel.Wine{}, fmt.Errorf("invalid year for %q", r.Slug)
 	}
 	parsedURL, err := url.Parse(r.SourceURL)
-	if err != nil || r.SourceURL == "" || (parsedURL.Scheme != "https" && parsedURL.Scheme != "http") || parsedURL.Host == "" {
+	if r.SourceURL != "" && (err != nil || (parsedURL.Scheme != "https" && parsedURL.Scheme != "http") || parsedURL.Host == "") {
 		return catalogmodel.Wine{}, fmt.Errorf("invalid source_url for %q", r.Slug)
 	}
 	sanitizeAlcohol(&r)
@@ -266,12 +491,16 @@ func toWine(public, version string, r packageWine, strictV2 bool) (catalogmodel.
 	var master catalogmodel.ImageVariant
 	if !r.imageNull {
 		var err error
-		imageURL, master, err = validateImage(public, version, r.Image, "", strictV2)
+		imageURL, master, err = validateImage(public, version, r.Image, "", strictV2, false)
 		if err != nil {
 			return catalogmodel.Wine{}, fmt.Errorf("%s image: %w", r.Slug, err)
 		}
 	}
-	w := catalogmodel.Wine{ID: r.Slug, Name: r.Title, Winery: r.Producer, Description: r.Description, Image: imageURL, SourceURL: r.SourceURL, SourceSnapshotDate: r.SourceSnapshotDate, Region: r.Region, Grapes: r.Grapes, CategoryAndSweetness: r.CategoryAndSweetness, Color: r.Color, Sugar: r.Sugar, AlcoholPercent: r.AlcoholPercent, AlcoholMinPercent: r.AlcoholMinPercent, AlcoholMaxPercent: r.AlcoholMaxPercent, VolumeL: r.VolumeL, Ratings: r.Ratings}
+	id := r.ID
+	if id == "" {
+		id = r.Slug
+	}
+	w := catalogmodel.Wine{ID: id, Slug: r.Slug, Name: r.Title, Winery: r.Producer, Description: r.Description, Image: imageURL, SourceURL: r.SourceURL, SourceSnapshotDate: r.SourceSnapshotDate, Region: r.Region, Grapes: r.Grapes, CategoryAndSweetness: r.CategoryAndSweetness, Color: r.Color, Sugar: r.Sugar, AlcoholPercent: r.AlcoholPercent, AlcoholMinPercent: r.AlcoholMinPercent, AlcoholMaxPercent: r.AlcoholMaxPercent, VolumeL: r.VolumeL, Ratings: r.Ratings}
 	if r.Year != nil {
 		w.Year = *r.Year
 	}
@@ -284,14 +513,20 @@ func toWine(public, version string, r packageWine, strictV2 bool) (catalogmodel.
 			return catalogmodel.Wine{}, fmt.Errorf("invalid image variant role %q", v.Role)
 		}
 		roles[v.Role] = true
-		_, iv, err := validateImage(public, version, v.packageImage, v.Role, strictV2)
+		_, iv, err := validateImage(public, version, v.packageImage, v.Role, strictV2, false)
 		if err != nil {
 			return catalogmodel.Wine{}, err
 		}
-		if iv.Width > master.Width || iv.Height > master.Height || (v.Role == "thumbnail" && iv.Width > 400) || (v.Role == "card" && iv.Width > 800) || (v.Role == "original" && iv.Width > 1600) {
+		if err := validateVariantGeometry(master, iv); err != nil {
+			return catalogmodel.Wine{}, fmt.Errorf("image variant %q: %w", v.Role, err)
+		}
+		if (v.Role == "thumbnail" && maxSide(iv.Width, iv.Height) > 400) || (v.Role == "card" && maxSide(iv.Width, iv.Height) > 800) || (v.Role == "original" && maxSide(iv.Width, iv.Height) > 1600) {
 			return catalogmodel.Wine{}, fmt.Errorf("image variant %q exceeds master or role bound", v.Role)
 		}
 		w.ImageVariants = append(w.ImageVariants, iv)
+	}
+	if !r.imageNull && maxSide(master.Width, master.Height) > 1600 {
+		return catalogmodel.Wine{}, errors.New("master image exceeds long-side bound")
 	}
 	if strictV2 && !r.imageNull && !(roles["thumbnail"] && roles["card"] && roles["original"]) {
 		return catalogmodel.Wine{}, errors.New("v2 image requires thumbnail, card and original variants")
@@ -311,7 +546,7 @@ func sanitizeAlcohol(r *packageWine) {
 		r.VolumeL = nil
 	}
 }
-func validateImage(public, version string, spec packageImage, role string, strictV2 bool) (string, catalogmodel.ImageVariant, error) {
+func validateImage(public, version string, spec packageImage, role string, strictV2, fullDecode bool) (string, catalogmodel.ImageVariant, error) {
 	if strictV2 && (spec.SHA256 == "" || spec.MIMEType == "" || spec.Width < 1 || spec.Height < 1 || spec.Bytes < 1) {
 		return "", catalogmodel.ImageVariant{}, errors.New("v2 image metadata is incomplete")
 	}
@@ -343,11 +578,42 @@ func validateImage(public, version string, spec packageImage, role string, stric
 	if cfg.Width < 1 || cfg.Height < 1 || cfg.Width > maxImageDimension || cfg.Height > maxImageDimension || cfg.Width*cfg.Height > maxImagePixels {
 		return "", catalogmodel.ImageVariant{}, errors.New("image dimensions exceed bounds")
 	}
+	// DecodeConfig accepts malformed bodies with a valid header. Decode the
+	// bounded input completely before accepting a public media reference.
+	if fullDecode {
+		decoded, _, err := image.Decode(bytes.NewReader(data))
+		if err != nil || decoded.Bounds().Dx() != cfg.Width || decoded.Bounds().Dy() != cfg.Height {
+			return "", catalogmodel.ImageVariant{}, errors.New("image cannot be fully decoded")
+		}
+	}
 	if spec.Width > 0 && spec.Width != cfg.Width || spec.Height > 0 && spec.Height != cfg.Height || spec.Bytes > 0 && spec.Bytes != int64(len(data)) {
 		return "", catalogmodel.ImageVariant{}, errors.New("image dimensions or bytes mismatch")
 	}
-	url := "/catalog-assets/" + version + "/" + filepath.ToSlash(spec.Path)
-	return url, catalogmodel.ImageVariant{Role: role, Path: url, Width: cfg.Width, Height: cfg.Height, Bytes: int64(len(data)), MIMEType: mimeType, SHA256: hex.EncodeToString(sum[:])}, nil
+	key := filepath.ToSlash(spec.Path)
+	return key, catalogmodel.ImageVariant{Role: role, Path: key, Width: cfg.Width, Height: cfg.Height, Bytes: int64(len(data)), MIMEType: mimeType, SHA256: hex.EncodeToString(sum[:])}, nil
+}
+func maxSide(width, height int) int {
+	if width > height {
+		return width
+	}
+	return height
+}
+
+func validateVariantGeometry(master, variant catalogmodel.ImageVariant) error {
+	if variant.Width > master.Width || variant.Height > master.Height {
+		return errors.New("upscales the master image")
+	}
+	// Encoders may round a scaled dimension by one pixel. Cross multiplication
+	// keeps the comparison deterministic without floating-point ratios.
+	delta := variant.Width*master.Height - variant.Height*master.Width
+	if delta < 0 {
+		delta = -delta
+	}
+	tolerance := max(master.Width, master.Height)
+	if delta > tolerance {
+		return errors.New("aspect ratio differs from the master image")
+	}
+	return nil
 }
 func readSafe(root, relative string) ([]byte, error) {
 	if filepath.IsAbs(relative) || relative == "" {
@@ -384,12 +650,55 @@ func readSafe(root, relative string) ([]byte, error) {
 }
 
 func Export(ctx context.Context, db *sql.DB) (Snapshot, error) {
-	var s Snapshot
-	err := db.QueryRowContext(ctx, "SELECT version FROM catalog_state WHERE singleton").Scan(&s.Version)
+	var stateTable, itemTable sql.NullString
+	if err := db.QueryRowContext(ctx, "SELECT to_regclass('public.catalog_state')::text, to_regclass('public.catalog_items')::text").Scan(&stateTable, &itemTable); err != nil {
+		return Snapshot{}, err
+	}
+	if !stateTable.Valid || !itemTable.Valid {
+		return exportLegacy(ctx, db)
+	}
+	return export(ctx, db)
+}
+
+func exportLegacy(ctx context.Context, db snapshotQuerier) (Snapshot, error) {
+	s := Snapshot{Version: "demo-v1", Aliases: []Alias{}}
+	rows, err := db.QueryContext(ctx, "SELECT id,name,winery,year,image,description FROM demo_catalog ORDER BY display_order")
 	if err != nil {
 		return s, err
 	}
-	rows, err := db.QueryContext(ctx, "SELECT id,name,winery,year,image,description,metadata FROM demo_catalog ORDER BY display_order")
+	defer rows.Close()
+	for rows.Next() {
+		var w catalogmodel.Wine
+		if err := rows.Scan(&w.ID, &w.Name, &w.Winery, &w.Year, &w.Image, &w.Description); err != nil {
+			return s, err
+		}
+		w.Slug = w.ID
+		s.Wines = append(s.Wines, w)
+	}
+	if err := rows.Err(); err != nil {
+		return s, err
+	}
+	if len(s.Wines) == 0 {
+		return s, errors.New("legacy catalog snapshot has no wines")
+	}
+	s.ManifestSHA256 = fingerprint(s.Wines, nil)
+	return s, nil
+}
+
+type snapshotQuerier interface {
+	QueryRowContext(context.Context, string, ...any) *sql.Row
+	QueryContext(context.Context, string, ...any) (*sql.Rows, error)
+}
+
+func export(ctx context.Context, db snapshotQuerier) (Snapshot, error) {
+	s := Snapshot{Aliases: []Alias{}}
+	err := db.QueryRowContext(ctx, `SELECT s.version, v.package_sha256
+		FROM catalog_state s JOIN catalog_versions v ON v.version=s.version
+		WHERE s.singleton`).Scan(&s.Version, &s.ManifestSHA256)
+	if err != nil {
+		return s, err
+	}
+	rows, err := db.QueryContext(ctx, "SELECT id,slug,name,winery,year,image,description,metadata FROM catalog_items ORDER BY display_order")
 	if err != nil {
 		return s, err
 	}
@@ -398,7 +707,7 @@ func Export(ctx context.Context, db *sql.DB) (Snapshot, error) {
 		var w catalogmodel.Wine
 		var year sql.NullInt64
 		var metadata []byte
-		if err := rows.Scan(&w.ID, &w.Name, &w.Winery, &year, &w.Image, &w.Description, &metadata); err != nil {
+		if err := rows.Scan(&w.ID, &w.Slug, &w.Name, &w.Winery, &year, &w.Image, &w.Description, &metadata); err != nil {
 			return s, err
 		}
 		if year.Valid {
@@ -424,7 +733,13 @@ func Export(ctx context.Context, db *sql.DB) (Snapshot, error) {
 		}
 		s.Aliases = append(s.Aliases, x)
 	}
-	return s, a.Err()
+	if err := a.Err(); err != nil {
+		return s, err
+	}
+	if s.ManifestSHA256 == "" {
+		s.ManifestSHA256 = fingerprint(s.Wines, s.Aliases)
+	}
+	return s, nil
 }
 func replace(ctx context.Context, db *sql.DB, version string, wines []catalogmodel.Wine, aliases []Alias, packageSHA string) error {
 	tx, err := db.BeginTx(ctx, nil)
@@ -446,6 +761,13 @@ func replace(ctx context.Context, db *sql.DB, version string, wines []catalogmod
 		return versionErr
 	}
 	if active == version {
+		actual, exportErr := export(ctx, tx)
+		if exportErr != nil {
+			return exportErr
+		}
+		if actual.ManifestSHA256 != packageSHA || !equalProjection(actual, wines, aliases) {
+			return errors.New("active catalog version content differs from requested package")
+		}
 		return nil
 	}
 	if versionErr == nil && registered == "" {
@@ -459,7 +781,7 @@ func replace(ctx context.Context, db *sql.DB, version string, wines []catalogmod
 	if _, err = tx.ExecContext(ctx, "DELETE FROM catalog_aliases"); err != nil {
 		return err
 	}
-	if _, err = tx.ExecContext(ctx, "DELETE FROM demo_catalog"); err != nil {
+	if _, err = tx.ExecContext(ctx, "DELETE FROM catalog_items"); err != nil {
 		return err
 	}
 	for i, w := range wines {
@@ -471,7 +793,7 @@ func replace(ctx context.Context, db *sql.DB, version string, wines []catalogmod
 		if w.Year > 0 {
 			year = w.Year
 		}
-		if _, err = tx.ExecContext(ctx, "INSERT INTO demo_catalog(id,name,winery,year,image,description,display_order,metadata) VALUES($1,$2,$3,$4,$5,$6,$7,$8)", w.ID, w.Name, w.Winery, year, w.Image, w.Description, i+1, m); err != nil {
+		if _, err = tx.ExecContext(ctx, "INSERT INTO catalog_items(id,slug,name,winery,year,image,description,display_order,metadata) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9)", w.ID, w.Slug, w.Name, w.Winery, year, w.Image, w.Description, i+1, m); err != nil {
 			return err
 		}
 	}
@@ -502,7 +824,7 @@ func metadata(w catalogmodel.Wine) ([]byte, error) {
 	if err = json.Unmarshal(raw, &m); err != nil {
 		return nil, err
 	}
-	for _, key := range []string{"id", "name", "winery", "year", "image", "description"} {
+	for _, key := range []string{"id", "slug", "name", "winery", "year", "image", "description"} {
 		delete(m, key)
 	}
 	return json.Marshal(m)
@@ -510,20 +832,27 @@ func metadata(w catalogmodel.Wine) ([]byte, error) {
 
 // Restore validates the saved snapshot before atomically making it active.
 func Restore(ctx context.Context, db *sql.DB, snapshot Snapshot) error {
-	if snapshot.Version == "" || len(snapshot.Wines) == 0 {
+	if snapshot.Version == "" || snapshot.ManifestSHA256 == "" || len(snapshot.Wines) == 0 {
 		return errors.New("invalid snapshot")
 	}
-	seen := make(map[string]bool, len(snapshot.Wines))
+	ids := make(map[string]bool, len(snapshot.Wines))
+	slugs := make(map[string]bool, len(snapshot.Wines))
 	for _, wine := range snapshot.Wines {
-		if wine.ID == "" || seen[wine.ID] {
+		if wine.ID == "" || wine.Slug == "" || ids[wine.ID] || slugs[wine.Slug] {
 			return errors.New("invalid snapshot wines")
 		}
-		seen[wine.ID] = true
+		ids[wine.ID], slugs[wine.Slug] = true, true
 	}
+	aliases := make(map[string]bool, len(snapshot.Aliases))
 	for _, alias := range snapshot.Aliases {
-		if alias.AliasSlug == "" || !seen[alias.CanonicalSlug] {
+		if alias.AliasSlug == "" || aliases[alias.AliasSlug] || slugs[alias.AliasSlug] || !slugs[alias.CanonicalSlug] {
 			return errors.New("invalid snapshot aliases")
 		}
+		aliases[alias.AliasSlug] = true
 	}
-	return replace(ctx, db, snapshot.Version, snapshot.Wines, snapshot.Aliases, fingerprint(snapshot.Wines, snapshot.Aliases))
+	return replace(ctx, db, snapshot.Version, snapshot.Wines, snapshot.Aliases, snapshot.ManifestSHA256)
+}
+
+func equalProjection(snapshot Snapshot, wines []catalogmodel.Wine, aliases []Alias) bool {
+	return reflect.DeepEqual(snapshot.Wines, wines) && reflect.DeepEqual(snapshot.Aliases, aliases)
 }

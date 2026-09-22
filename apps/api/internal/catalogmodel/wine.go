@@ -16,6 +16,7 @@ type Rating struct {
 }
 type Wine struct {
 	ID                   string         `json:"id"`
+	Slug                 string         `json:"slug,omitempty"`
 	Name                 string         `json:"name"`
 	Winery               string         `json:"winery"`
 	Year                 int            `json:"year,omitempty"` // 0 is internal unknown; DB stores NULL, API omits.

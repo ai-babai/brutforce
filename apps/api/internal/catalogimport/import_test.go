@@ -2,6 +2,7 @@ package catalogimport
 
 import (
 	"encoding/base64"
+	"encoding/json"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -46,7 +47,7 @@ func TestCAT008LoadValidatesPackageAndKeepsTypedProjection(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if len(wines) != 1 || wines[0].Year != 2024 || wines[0].AlcoholPercent != nil || wines[0].Image != "/catalog-assets/public-v2/images/wine.webp" {
+	if len(wines) != 1 || wines[0].Year != 2024 || wines[0].AlcoholPercent != nil || wines[0].Image != "images/wine.webp" {
 		t.Fatalf("unexpected projection: %#v", wines)
 	}
 	if len(wines[0].ImageVariants) != 3 || len(aliases) != 1 {
@@ -146,5 +147,41 @@ func TestCAT008ProjectsOnlyContractFields(t *testing.T) {
 			}
 			test.check(t, wines[0])
 		})
+	}
+}
+
+func TestMetadataExcludesCanonicalColumns(t *testing.T) {
+	raw, err := metadata(catalogmodel.Wine{ID: "stable-id", Slug: "public-slug", Name: "Wine", Winery: "Cellar", Year: 2024, Image: "image.webp", Description: "Description", Region: []string{"Kuban"}})
+	if err != nil {
+		t.Fatal(err)
+	}
+	var got map[string]any
+	if err := json.Unmarshal(raw, &got); err != nil {
+		t.Fatal(err)
+	}
+	for _, key := range []string{"id", "slug", "name", "winery", "year", "image", "description"} {
+		if _, exists := got[key]; exists {
+			t.Fatalf("canonical column %q duplicated in metadata", key)
+		}
+	}
+	if _, exists := got["region"]; !exists {
+		t.Fatal("extended projection missing from metadata")
+	}
+}
+
+func TestContentAddressedMediaKeyRequiresMatchingHexDigest(t *testing.T) {
+	sha := strings.Repeat("a", 64)
+	if !validMediaKey("400/"+sha+".webp", sha) {
+		t.Fatal("valid content-addressed key rejected")
+	}
+	for _, key := range []string{
+		"400/" + strings.Repeat("g", 64) + ".webp",
+		"400/" + strings.Repeat("b", 64) + ".webp",
+		"400/" + strings.Repeat("A", 64) + ".webp",
+		"400/" + sha + ".png",
+	} {
+		if validMediaKey(key, sha) {
+			t.Fatalf("invalid content-addressed key accepted: %s", key)
+		}
 	}
 }

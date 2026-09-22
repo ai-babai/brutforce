@@ -11,7 +11,7 @@ def sql(text): run('runuser','-u','postgres','--','psql','-X','-v','ON_ERROR_STO
 try: pwd.getpwnam('lct-release')
 except KeyError: run('useradd','--system','--create-home','--shell','/bin/bash','lct-release')
 u=pwd.getpwnam('lct-release')
-for p in ['/srv/lct/releases/packages','/srv/lct/releases/records','/srv/lct/releases/public','/srv/lct/stage','/srv/lct/data/stage/photos','/srv/lct/data/prod/photos']:
+for p in ['/srv/lct/releases/packages','/srv/lct/releases/records','/srv/lct/releases/public','/srv/lct/stage','/srv/lct/data/stage/photos','/srv/lct/data/prod/photos','/srv/lct/data/catalog/releases','/srv/lct/data/catalog/media/400','/srv/lct/data/catalog/media/800','/srv/lct/data/catalog/media/original','/srv/lct/backups/catalog/test','/srv/lct/backups/catalog/test/approvals','/srv/lct/backups/catalog/prod','/srv/lct/backups/catalog/prod/approvals']:
     pathlib.Path(p).mkdir(parents=True,exist_ok=True); os.chown(p,u.pw_uid,u.pw_gid); os.chmod(p,0o750)
 # Existing /srv/lct/prod/public placeholder remains untouched.
 run('setfacl','-m','u:lct-release:rwx','/srv/lct/prod')
@@ -20,6 +20,14 @@ for p in ['/srv/lct','/srv/lct/data','/srv/lct/data/stage','/srv/lct/data/prod']
 os.chown('/srv/lct/releases',u.pw_uid,u.pw_gid)
 run('setfacl','-m','u:caddy:--x','/srv/lct/releases')
 run('setfacl','-m','u:caddy:r-x,d:u:caddy:r-x','/srv/lct/releases/public')
+run('setfacl','-m','u:caddy:--x','/srv/lct/data','/srv/lct/data/catalog')
+run('setfacl','-m','u:caddy:r-x,d:u:caddy:r-x','/srv/lct/data/catalog/media')
+run('setfacl','-R','-m','u:caddy:r-X','/srv/lct/data/catalog/media')
+for role in ('400','800','original'):
+    run('setfacl','-m','d:u:caddy:r-x',f'/srv/lct/data/catalog/media/{role}')
+file('/etc/caddy/sites-enabled/lct-catalog-media.caddy',(BASE/'catalog-media.caddy').read_text())
+postgres=pwd.getpwnam('postgres'); pg_backups=pathlib.Path('/srv/lct/data/backups/postgres')
+pg_backups.mkdir(parents=True,exist_ok=True); os.chown(pg_backups,postgres.pw_uid,postgres.pw_gid); os.chmod(pg_backups,0o700)
 # Create new production roles only once; never rotate existing credentials.
 prod=pathlib.Path('/etc/lct-release/prod-runtime.env')
 if not prod.exists():
@@ -47,15 +55,20 @@ backup=pathlib.Path('/usr/local/sbin/lct-db-backup')
 text=backup.read_text().replace('lct_shared lct_maks lct_roman;', 'lct_shared lct_maks lct_roman lct_prod;')
 text=text.replace("-name 'lct_roman-*.dump' ", "-name 'lct_roman-*.dump' -o -name 'lct_prod-*.dump' ")
 backup.write_text(text)
-config={'environments':{}}
+config={'environments':{},'catalogDataRoot':'/srv/lct/data/catalog/releases','catalogMediaRoot':'/srv/lct/data/catalog/media','catalogBackupRoot':'/srv/lct/backups/catalog'}
 for name,folder,port,engine in [('test','stage',8103,8113),('prod','prod',8104,8114)]:
     root=f'/srv/lct/{folder}/current'
-    config['environments'][name]={'path':f'/srv/lct/{folder}','url':f'http://127.0.0.1:{port}','migrationEnv':f'/etc/lct-release/{name}-migration.env'}
+    catalog_env=f'/srv/lct/{folder}/catalog.env'
+    if not pathlib.Path(catalog_env).exists(): file(catalog_env,'CATALOG_VERSION=demo-v1\n',0o640,'lct-release')
+    config['environments'][name]={'name':name,'path':f'/srv/lct/{folder}','url':f'http://127.0.0.1:{port}','publicURL':('https://test.ops.dzap.pw' if name=='test' else 'https://app.dzap.pw'),'migrationEnv':f'/etc/lct-release/{name}-migration.env','catalogEnv':catalog_env}
     common=f'User=lct-release\nGroup=lct-release\nWorkingDirectory={root}\nNoNewPrivileges=true\nPrivateTmp=true\nProtectSystem=strict\nProtectHome=true\nRestart=on-failure\nMemoryMax=512M\nCPUQuota=100%\nTasksMax=64\n'
     file(f'/etc/systemd/system/brutforce-{name}-reference.service',f'[Unit]\nDescription=BrutForce {name} SYNTHETIC reference engine\nAfter=network.target\n[Service]\n{common}Environment=ADDRESS=127.0.0.1:{engine}\nExecStart={root}/reference-engine\n[Install]\nWantedBy=multi-user.target\n')
-    file(f'/etc/systemd/system/brutforce-{name}.service',f'[Unit]\nDescription=BrutForce {name} application\nAfter=network.target postgresql.service brutforce-{name}-reference.service\nRequires=brutforce-{name}-reference.service\n[Service]\n{common}EnvironmentFile=/etc/lct-release/{name}-runtime.env\nEnvironment=ADDRESS=127.0.0.1:{port}\nEnvironment=WEB_ROOT={root}/web\nEnvironment=UPLOAD_DIR=/srv/lct/data/{folder}/photos\nEnvironment=UPLOAD_MAX_BYTES=209715200\nEnvironment=SEARCH_SERVICE_URL=http://127.0.0.1:{engine}\nEnvironment=RECOMMENDATION_SERVICE_URL=http://127.0.0.1:{engine}\nEnvironment=CATALOG_VERSION=demo-v1\nReadWritePaths=/srv/lct/data/{folder}/photos\nExecStart={root}/brutforce-api\n[Install]\nWantedBy=multi-user.target\n')
+    file(f'/etc/systemd/system/brutforce-{name}.service',f'[Unit]\nDescription=BrutForce {name} application\nAfter=network.target postgresql.service brutforce-{name}-reference.service\nRequires=brutforce-{name}-reference.service\n[Service]\n{common}EnvironmentFile=/etc/lct-release/{name}-runtime.env\nEnvironmentFile={catalog_env}\nEnvironment=ADDRESS=127.0.0.1:{port}\nEnvironment=WEB_ROOT={root}/web\nEnvironment=UPLOAD_DIR=/srv/lct/data/{folder}/photos\nEnvironment=UPLOAD_MAX_BYTES=209715200\nEnvironment=SEARCH_SERVICE_URL=http://127.0.0.1:{engine}\nEnvironment=RECOMMENDATION_SERVICE_URL=http://127.0.0.1:{engine}\nReadWritePaths=/srv/lct/data/{folder}/photos\nExecStart={root}/brutforce-api\n[Install]\nWantedBy=multi-user.target\n')
 file('/etc/lct-release/config.json',json.dumps(config,indent=2)+'\n')
 file('/usr/local/lib/lct-release/release.py',(BASE/'release.py').read_text(),0o755)
+file('/srv/lct/releases/public/index.html',(BASE/'releases.html').read_text(),0o640,'lct-release')
+file('/srv/lct/releases/public/app.js',(BASE/'releases.js').read_text(),0o640,'lct-release')
+file('/srv/lct/releases/public/style.css',(BASE/'releases.css').read_text(),0o640,'lct-release')
 file('/usr/local/bin/lct-release','#!/bin/sh\nexec /usr/bin/python3 /usr/local/lib/lct-release/release.py "$@"\n',0o755)
 file('/usr/local/sbin/lct-release-service',r'''#!/bin/sh
 set -eu
@@ -83,7 +96,7 @@ import subprocess
 p=Path('/etc/caddy/sites-enabled/lct-previews.caddy')
 old=p.read_text()
 placeholder='root * /srv/lct/prod/public\n\tfile_server'
-new=old.replace(placeholder,'reverse_proxy 127.0.0.1:8104')
+new=old.replace(placeholder,'import lct_catalog_media\n\treverse_proxy 127.0.0.1:8104')
 if new==old and 'reverse_proxy 127.0.0.1:8104' not in old: raise SystemExit('Unexpected app route; no edit')
 if new!=old:
     Path('/etc/lct-release/pre-prod-caddy.backup').write_text(old)
