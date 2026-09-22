@@ -531,7 +531,23 @@ func toWine(public, version string, r packageWine, strictV2 bool) (catalogmodel.
 	if strictV2 && !r.imageNull && !(roles["thumbnail"] && roles["card"] && roles["original"]) {
 		return catalogmodel.Wine{}, errors.New("v2 image requires thumbnail, card and original variants")
 	}
+	normalizeWine(&w)
 	return w, nil
+}
+
+func normalizeWine(w *catalogmodel.Wine) {
+	if len(w.Region) == 0 {
+		w.Region = nil
+	}
+	if len(w.Grapes) == 0 {
+		w.Grapes = nil
+	}
+	if len(w.Ratings) == 0 {
+		w.Ratings = nil
+	}
+	if len(w.ImageVariants) == 0 {
+		w.ImageVariants = nil
+	}
 }
 func sanitizeAlcohol(r *packageWine) {
 	for _, p := range []*(*float64){&r.AlcoholPercent, &r.AlcoholMinPercent, &r.AlcoholMaxPercent} {

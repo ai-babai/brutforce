@@ -50,7 +50,7 @@ func acceptedIntegrationPackage(t *testing.T, version string) (string, string) {
 		t.Fatal(err)
 	}
 	sha := strings.Repeat("a", 64)
-	wines := fmt.Sprintf(`{"id":"accepted-id","slug":"accepted-slug","title":"Accepted wine","producer":"Test cellar","source_url":"https://example.test/accepted","image":{"path":"original/%[1]s.webp","sha256":"%[1]s","mime_type":"image/webp","width":1000,"height":500,"bytes":100,"variants":[{"role":"thumbnail","path":"400/%[1]s.webp","sha256":"%[1]s","mime_type":"image/webp","width":400,"height":200,"bytes":40},{"role":"card","path":"800/%[1]s.webp","sha256":"%[1]s","mime_type":"image/webp","width":800,"height":400,"bytes":80},{"role":"original","path":"original/%[1]s.webp","sha256":"%[1]s","mime_type":"image/webp","width":1000,"height":500,"bytes":100}]}}`, sha)
+	wines := fmt.Sprintf(`{"id":"accepted-id","slug":"accepted-slug","title":"Accepted wine","producer":"Test cellar","source_url":"https://example.test/accepted","ratings":[],"image":{"path":"original/%[1]s.webp","sha256":"%[1]s","mime_type":"image/webp","width":1000,"height":500,"bytes":100,"variants":[{"role":"thumbnail","path":"400/%[1]s.webp","sha256":"%[1]s","mime_type":"image/webp","width":400,"height":200,"bytes":40},{"role":"card","path":"800/%[1]s.webp","sha256":"%[1]s","mime_type":"image/webp","width":800,"height":400,"bytes":80},{"role":"original","path":"original/%[1]s.webp","sha256":"%[1]s","mime_type":"image/webp","width":1000,"height":500,"bytes":100}]}}`, sha)
 	files := map[string]string{
 		"wines.jsonl":                  wines + "\n",
 		"aliases.json":                 `{"aliases":[]}`,

@@ -226,6 +226,7 @@ func acceptedWine(r packageWine) (catalogmodel.Wine, error) {
 		return catalogmodel.Wine{}, errors.New("accepted wine requires bounded thumbnail, card and original variants")
 	}
 	sort.Slice(w.ImageVariants, func(i, j int) bool { return w.ImageVariants[i].Role < w.ImageVariants[j].Role })
+	normalizeWine(&w)
 	return w, nil
 }
 
@@ -292,11 +293,33 @@ func verifyProjection(ctx context.Context, db *sql.DB, version string, wines []c
 			dq.Failures = append(dq.Failures, QualityFailure{Message: "registered manifest SHA differs"})
 		}
 		if !reflect.DeepEqual(actual.Wines, wines) {
-			dq.Failures = append(dq.Failures, QualityFailure{Message: "catalog item projection differs"})
+			dq.Failures = append(dq.Failures, QualityFailure{Message: firstProjectionDifference(actual.Wines, wines)})
 		}
 		if !reflect.DeepEqual(actual.Aliases, aliases) {
 			dq.Failures = append(dq.Failures, QualityFailure{Message: "alias projection differs"})
 		}
 	}
 	return dq
+}
+
+func firstProjectionDifference(actual, expected []catalogmodel.Wine) string {
+	if len(actual) != len(expected) {
+		return fmt.Sprintf("catalog item projection differs: row count %d, expected %d", len(actual), len(expected))
+	}
+	for i := range expected {
+		if reflect.DeepEqual(actual[i], expected[i]) {
+			continue
+		}
+		if actual[i].ID != expected[i].ID {
+			return fmt.Sprintf("catalog item projection differs at row %d: id %q, expected %q", i, actual[i].ID, expected[i].ID)
+		}
+		actualValue, expectedValue := reflect.ValueOf(actual[i]), reflect.ValueOf(expected[i])
+		typeOfWine := actualValue.Type()
+		for field := 0; field < actualValue.NumField(); field++ {
+			if !reflect.DeepEqual(actualValue.Field(field).Interface(), expectedValue.Field(field).Interface()) {
+				return fmt.Sprintf("catalog item projection differs for id %q slug %q: field %s", expected[i].ID, expected[i].Slug, typeOfWine.Field(field).Name)
+			}
+		}
+	}
+	return "catalog item projection differs"
 }
