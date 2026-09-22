@@ -16,15 +16,33 @@ const expectedCandidate = process.env.EXPECTED_CANDIDATE_ID || expectedRevision;
 const expectedCatalog = process.env.EXPECTED_CATALOG_VERSION;
 const checks = [];
 const evidence = [];
+const actionTimeout = 15_000;
+const apiTimeout = 20_000;
 let revision;
 let catalogVersion;
 
 const check = async (name, work) => {
-  try { await work(); checks.push({ name, status: 'passed' }); }
+  console.error(`[smoke] start: ${name}`);
+  try { await work(); checks.push({ name, status: 'passed' }); console.error(`[smoke] pass: ${name}`); }
   catch (error) {
     checks.push({ name, status: 'failed', error: error instanceof Error ? error.message : String(error) });
+    console.error(`[smoke] fail: ${name}`);
     throw error;
   }
+};
+const bounded = async (promise, description, timeout = apiTimeout) => {
+  let timer;
+  try {
+    return await Promise.race([
+      promise,
+      new Promise((_, reject) => { timer = setTimeout(() => reject(new Error(`${description} timed out after ${timeout}ms`)), timeout); }),
+    ]);
+  } finally { clearTimeout(timer); }
+};
+const configurePage = page => {
+  page.setDefaultTimeout(actionTimeout);
+  page.setDefaultNavigationTimeout(actionTimeout);
+  return page;
 };
 const runURL = process.env.GITHUB_SERVER_URL && process.env.GITHUB_REPOSITORY && process.env.GITHUB_RUN_ID
   ? `${process.env.GITHUB_SERVER_URL}/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID}` : undefined;
@@ -38,7 +56,7 @@ try {
   const contextOptions = user ? { httpCredentials: { username: user, password } } : {};
   const releaseContext = await browser.newContext(contextOptions);
   await check('release revision', async () => {
-    const response = await releaseContext.request.get(`${baseURL}/release.json`);
+    const response = await releaseContext.request.get(`${baseURL}/release.json`, {timeout:apiTimeout});
     if (!response.ok()) throw new Error(`/release.json returned ${response.status()}`);
     const data = await response.json();
     if (!data || typeof data.revision !== 'string' || !data.revision) throw new Error('/release.json has no revision');
@@ -47,7 +65,7 @@ try {
   });
   let catalog;
   await check('active catalog version and bounded first page', async () => {
-    const response = await releaseContext.request.get(`${baseURL}/v2/catalog`);
+    const response = await releaseContext.request.get(`${baseURL}/v2/catalog`, {timeout:apiTimeout});
     if (!response.ok()) throw new Error(`catalog returned ${response.status()}`);
     catalog = await response.json();
     catalogVersion = catalog.catalogVersion;
@@ -77,7 +95,7 @@ try {
   };
   const textFlow = async (viewport, prefix) => {
     const context = await browser.newContext({ viewport, ...contextOptions });
-    const page = await context.newPage();
+    const page = configurePage(await context.newPage());
     await page.goto(baseURL, { waitUntil: 'networkidle' });
     await page.getByRole('button', { name: /По названию/i }).click();
     await page.getByLabel(/Название вина/i).fill('Каберне');
@@ -96,7 +114,7 @@ try {
   };
   if (catalog.demo === false) {
     if (!catalog.nextCursor) throw new Error('real catalog smoke requires a second page');
-    const response = await releaseContext.request.get(`${baseURL}/v2/catalog?cursor=${encodeURIComponent(catalog.nextCursor)}`);
+    const response = await releaseContext.request.get(`${baseURL}/v2/catalog?cursor=${encodeURIComponent(catalog.nextCursor)}`, {timeout:apiTimeout});
     if (!response.ok()) throw new Error('second catalog page unavailable');
     const second = await response.json();
     if (!second.candidates?.length || second.catalogVersion !== catalogVersion) throw new Error('second page is invalid');
@@ -106,7 +124,7 @@ try {
     for (const [name, width, height, dpr] of [['desktop', 1440, 900, 1], ['mobile', 390, 844, 2], ['narrow', 320, 740, 3]]) {
       await check(`${name} real catalog, pagination, search, image and source`, async () => {
         const context = await browser.newContext({viewport:{width,height}, deviceScaleFactor:dpr, ...contextOptions});
-        const page = await context.newPage();
+        const page = configurePage(await context.newPage());
         await page.goto(baseURL, {waitUntil:'networkidle'});
         await page.getByRole('button', {name:/По названию/i}).click();
         await page.getByRole('button', {name:'Открыть каталог', exact:true}).click();
@@ -144,13 +162,17 @@ try {
     }
     await check('real catalog upload does not invent model results', async () => {
       const context = await browser.newContext({viewport:{width:390,height:844}, ...contextOptions});
-      const page = await context.newPage();
+      const page = configurePage(await context.newPage());
       await page.goto(baseURL, {waitUntil:'networkidle'});
       const searchResponse = page.waitForResponse(r => new URL(r.url()).pathname === '/v1/search');
       await page.getByLabel(/Загрузить фотографию этикетки/i).setInputFiles(resolve(root, 'apps/web/public/assets/app-192.png'));
       const response = await searchResponse;
-      const data = await response.json();
-      if (response.status() !== 503 || data.error?.code !== 'recognition_unavailable') throw new Error('reference model must reject incompatible catalog');
+      if (response.status() !== 503) throw new Error(`reference model returned HTTP ${response.status()}, expected 503`);
+      const requestData = response.request().postDataJSON();
+      const apiResponse = await context.request.post(`${baseURL}/v1/search`, {data:requestData, timeout:apiTimeout});
+      if (apiResponse.status() !== 503) throw new Error(`repeated reference request returned HTTP ${apiResponse.status()}, expected 503`);
+      const data = await bounded(apiResponse.json(), 'recognition error JSON');
+      if (data.error?.code !== 'recognition_unavailable') throw new Error('reference model must return recognition_unavailable');
       await visible(page.getByRole('heading', {name:'Сервис временно недоступен',exact:true}), 'honest unavailable model state');
       await capture(page, 'mobile-model-unavailable');
       await context.close();
