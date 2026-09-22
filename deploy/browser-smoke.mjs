@@ -174,10 +174,11 @@ try {
       await input.focus();
       await input.evaluate(element => { element.addEventListener('compositionend', () => { window.__imeEnded = true; }); });
       const cdp = await context.newCDPSession(page);
+      const pendingResponse = page.waitForResponse(response =>
+        new URL(response.url()).pathname === '/v2/catalog' && new URL(response.url()).searchParams.get('q') === 'Каб');
       for (const text of ['К', 'Ка', 'Каб'])
         await cdp.send('Input.imeSetComposition', {text, selectionStart:text.length, selectionEnd:text.length});
-      const response = await page.waitForResponse(response =>
-        new URL(response.url()).pathname === '/v2/catalog' && new URL(response.url()).searchParams.get('q') === 'Каб');
+      const response = await pendingResponse;
       if (!response.ok()) throw new Error(`IME query returned ${response.status()}`);
       const matches = (await response.json()).candidates;
       if (!matches.length) throw new Error('IME query returned no known Cabernet candidate');
