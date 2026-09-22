@@ -86,12 +86,16 @@ func TestDB000LegacySchemaSnapshotExport(t *testing.T) {
 		t.Fatal("migration database unavailable")
 	}
 	defer db.Close()
+	var databaseName string
+	if err := db.QueryRow("SELECT current_database()").Scan(&databaseName); err != nil || databaseName != "lct_test_maks" {
+		t.Fatal("legacy export test requires registered lct_test_maks")
+	}
 	var existing sql.NullString
 	if err := db.QueryRow("SELECT to_regclass('public.catalog_items')::text").Scan(&existing); err != nil {
 		t.Fatal(err)
 	}
 	if existing.Valid {
-		t.Skip("requires the registered reset wrapper before other integration tests")
+		t.Fatal("run legacy export first, before other integration tests, inside the registered reset wrapper")
 	}
 	if err := goose.SetDialect("postgres"); err != nil {
 		t.Fatal(err)
@@ -102,6 +106,11 @@ func TestDB000LegacySchemaSnapshotExport(t *testing.T) {
 	if _, err := db.Exec(`INSERT INTO demo_catalog(id,name,winery,year,image,description,display_order) VALUES('legacy-id','Legacy','Cellar',2024,'','Demo',1)`); err != nil {
 		t.Fatal(err)
 	}
+	defer func() {
+		if _, err := db.Exec("DELETE FROM demo_catalog WHERE id='legacy-id'"); err != nil {
+			t.Error("cannot remove legacy test fixture")
+		}
+	}()
 	snapshot, err := catalogimport.Export(context.Background(), db)
 	if err != nil {
 		t.Fatal(err)
