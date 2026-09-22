@@ -297,7 +297,7 @@ describe("catalog navigation and saved wines", () => {
     ).toHaveAttribute("aria-pressed", "false");
   });
 
-  it("CAT002 submits the compact search field with its button and Enter", async () => {
+  it("UI-024 CAT002 submits the compact search field with its button and Enter", async () => {
     const url = "/v2/catalog?limit=24&cursor=&q=%D0%9A%D0%B0%D0%B1%D0%B5%D1%80%D0%BD%D0%B5";
     mockCatalog();
     const first = render(<App />);
