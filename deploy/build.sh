@@ -53,7 +53,7 @@ printf '%s\n' "$revision" > "$stage/package/REVISION"
 node -e '
 const fs=require("fs"), path=require("path");
 const [web,revision]=process.argv.slice(1);
-fs.writeFileSync(path.join(web,"release.json"),JSON.stringify({revision,mode:"reference",catalogVersion:"demo-v1",modelVersion:"reference-demo-v1",synthetic:true},null,2)+"\n");
+fs.writeFileSync(path.join(web,"release.json"),JSON.stringify({revision,mode:"reference",modelVersion:"reference-demo-v1",catalogState:"/v2/catalog"},null,2)+"\n");
 ' "$stage/package/web" "$revision"
 
 node -e '
