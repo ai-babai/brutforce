@@ -947,6 +947,48 @@
       "title": "Провал одного слоя не скрывается успехом другого",
       "source": "apps/web/src/report.test.ts",
       "spec": "docs/product/reviews/be-045-bdd-audit.md"
+    },
+    {
+      "id": "CAT-015",
+      "area": "ui",
+      "title": "Поиск с первого символа остаётся под редактируемым полем",
+      "source": "apps/web/src/live-search.test.tsx",
+      "spec": "docs/product/catalog-display-spec.md"
+    },
+    {
+      "id": "CAT-016",
+      "area": "ui",
+      "title": "Поздний ответ не подменяет новый ввод даже до debounce",
+      "source": "apps/web/src/live-search.test.tsx",
+      "spec": "docs/product/catalog-display-spec.md"
+    },
+    {
+      "id": "CAT-017",
+      "area": "ui",
+      "title": "Очистка возвращает каталог, уход отменяет поиск",
+      "source": "apps/web/src/live-search.test.tsx",
+      "spec": "docs/product/catalog-display-spec.md"
+    },
+    {
+      "id": "CAT-018",
+      "area": "ui",
+      "title": "Enter без дубля, IME только после завершения ввода",
+      "source": "apps/web/src/live-search.test.tsx",
+      "spec": "docs/product/catalog-display-spec.md"
+    },
+    {
+      "id": "CAT-019",
+      "area": "ui",
+      "title": "Пагинация относится только к текущему запросу",
+      "source": "apps/web/src/live-search.test.tsx",
+      "spec": "docs/product/catalog-display-spec.md"
+    },
+    {
+      "id": "CAT-020",
+      "area": "ui",
+      "title": "Оба входа и возврат сохраняют контекст поиска",
+      "source": "apps/web/src/live-search.test.tsx",
+      "spec": "docs/product/catalog-display-spec.md"
     }
   ]
 }

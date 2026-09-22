@@ -61,6 +61,7 @@ export function App({
   const [catalogVersion, setCatalogVersion] = useState("");
   const [catalogDemo, setCatalogDemo] = useState(false);
   const [catalogLoading, setCatalogLoading] = useState(false);
+  const [catalogDebouncing, setCatalogDebouncing] = useState(false);
   const [catalogQuery, setCatalogQuery] = useState("");
   const [catalogInitialized, setCatalogInitialized] = useState(false);
   const [saved, setSaved] = useState<Candidate[]>([]);
@@ -89,6 +90,9 @@ export function App({
   const [demoMode, setDemoMode] = useState(false);
   const abort = useRef<AbortController | undefined>(undefined);
   const catalogAbort = useRef<AbortController | undefined>(undefined);
+  const catalogTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  const catalogGeneration = useRef(0);
+  const catalogComposing = useRef(false);
   const recommendationAbort = useRef<AbortController | undefined>(undefined);
   const waitTimer = useRef<ReturnType<typeof setTimeout> | undefined>(
     undefined,
@@ -100,6 +104,7 @@ export function App({
   }>({ scenario: "exact", hasPhoto: false });
   const cameraRef = useRef<HTMLInputElement>(null);
   const galleryRef = useRef<HTMLInputElement>(null);
+  const queryRef = useRef<HTMLInputElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const streamRef = useRef<MediaStream | undefined>(undefined);
@@ -140,6 +145,7 @@ export function App({
     () => () => {
       abort.current?.abort();
       catalogAbort.current?.abort();
+      if (catalogTimer.current) clearTimeout(catalogTimer.current);
       recommendationAbort.current?.abort();
       stopCamera();
       if (waitTimer.current) clearTimeout(waitTimer.current);
@@ -358,6 +364,10 @@ export function App({
   const cancel = () => {
     abort.current?.abort();
     catalogAbort.current?.abort();
+    if (catalogTimer.current) clearTimeout(catalogTimer.current);
+    setCatalogLoading(false);
+    setCatalogDebouncing(false);
+    catalogGeneration.current += 1;
     clearWaitTimer();
     setExpandedPhoto(false);
     setSection("scanner");
@@ -369,6 +379,11 @@ export function App({
     discardCandidateResultHistory();
     abort.current?.abort();
     catalogAbort.current?.abort();
+    if (catalogTimer.current) clearTimeout(catalogTimer.current);
+    setCatalogLoading(false);
+    setCatalogDebouncing(false);
+    catalogComposing.current = false;
+    catalogGeneration.current += 1;
     if (waitTimer.current) clearTimeout(waitTimer.current);
     stopCamera();
     setExpandedPhoto(false);
@@ -460,6 +475,7 @@ export function App({
     setScreen("result");
   };
   const chooseCatalog = (c: Candidate) => {
+    invalidateCatalogWork();
     listScroll.current = contentRef.current?.scrollTop ?? 0;
     setSelected(c);
     setCandidates([]);
@@ -567,7 +583,11 @@ export function App({
     return () => window.removeEventListener("popstate", onPopState);
   }, [candidateOrigin, resultHasPhoto, screen]);
   const backFromSearch = () => {
-    if (searchOrigin === "correction" && restoreCorrection()) return;
+    if (searchOrigin === "correction") {
+      invalidateCatalogWork();
+      catalogComposing.current = false;
+      if (restoreCorrection()) return;
+    }
     back();
   };
   useEffect(() => {
@@ -584,9 +604,18 @@ export function App({
       setStorageNotice("Сохранённый список был повреждён и очищен.");
     }
   }, []);
+  const invalidateCatalogWork = () => {
+    catalogGeneration.current += 1;
+    catalogAbort.current?.abort();
+    if (catalogTimer.current) clearTimeout(catalogTimer.current);
+    catalogTimer.current = undefined;
+    setCatalogDebouncing(false);
+    setCatalogLoading(false);
+  };
   const loadCatalog = (next: { append?: boolean; q?: string } = {}) => {
     catalogAbort.current?.abort();
     const controller = new AbortController();
+    const generation = catalogGeneration.current;
     catalogAbort.current = controller;
     setCatalogError("");
     setCatalogLoading(true);
@@ -594,55 +623,72 @@ export function App({
     const q = next.q ?? catalogQuery;
     getCatalog({ limit: 24, cursor: next.append ? catalogNextCursor : undefined, q, signal: controller.signal })
       .then((data) => {
-        if (!controller.signal.aborted && catalogAbort.current === controller) {
+        if (!controller.signal.aborted && catalogAbort.current === controller && generation === catalogGeneration.current) {
           setCatalogDemo(data.demo);
           setCatalog((current) => next.append ? [...current, ...data.candidates] : data.candidates);
-          if (q) {
-            setCandidates((current) => next.append ? [...current, ...data.candidates] : data.candidates);
-            setCandidateOrigin("manual");
-            setCandidateHasPhoto(false);
-            setScreen(data.candidates.length || next.append ? "candidates" : "missing");
-          }
           setCatalogNextCursor(data.nextCursor);
           setCatalogVersion(data.catalogVersion);
         }
       })
       .catch((error) => {
-        if (
-          !controller.signal.aborted &&
-          catalogAbort.current === controller &&
-          (error as Error).name !== "AbortError"
-        )
-          setCatalogError("Не удалось открыть каталог. Попробуйте ещё раз.");
-        if (q) {
-          setErrorKind(classifyError(error));
-          setScreen("error");
-        }
+        if (!controller.signal.aborted && catalogAbort.current === controller && generation === catalogGeneration.current && (error as Error).name !== "AbortError")
+          setCatalogError(next.append ? "Не удалось загрузить ещё вина." : "Не удалось загрузить вина");
       })
       .finally(() => {
-        if (!controller.signal.aborted && catalogAbort.current === controller)
+        if (!controller.signal.aborted && catalogAbort.current === controller && generation === catalogGeneration.current)
           setCatalogLoading(false);
       });
   };
   useEffect(() => {
-    if (
-      screen !== "search" ||
-      catalog.length ||
-      !catalogOpen ||
-      catalogInitialized
-    )
-      return;
+    if (screen !== "search" || catalog.length || !catalogOpen || catalogInitialized) return;
     loadCatalog({ q: catalogQuery });
   }, [screen, catalog.length, catalogOpen, catalogQuery, catalogInitialized]);
-  const updateCatalogQuery = (nextQuery: string) => {
-    setQuery(nextQuery);
-    if (catalogOpen && !nextQuery.trim() && catalogQuery) {
-      setCatalogQuery("");
+  const requestCatalogNow = (value = query) => {
+    const nextQuery = value.trim();
+    if (catalogComposing.current || (catalogLoading && catalogQuery === nextQuery && catalogAbort.current && !catalogAbort.current.signal.aborted)) return;
+    invalidateCatalogWork();
+    setCatalogQuery(nextQuery);
+    setCatalog([]);
+    setCatalogNextCursor(undefined);
+    setCatalogOpen(true);
+    setCatalogInitialized(true);
+    setCatalogLoading(false);
+    if (screen !== "search") setScreen("search");
+    lastRequest.current = { scenario, query: nextQuery, hasPhoto: false };
+    loadCatalog({ q: nextQuery });
+  };
+  const scheduleCatalogSearch = (value: string) => {
+    setQuery(value);
+    if (catalogComposing.current) {
       setCatalog([]);
       setCatalogNextCursor(undefined);
-      loadCatalog({ q: "" });
+      setCatalogError("");
+      return;
     }
+    const nextQuery = value.trim();
+    invalidateCatalogWork();
+    setCatalogQuery(nextQuery);
+    setCatalog([]);
+    setCatalogNextCursor(undefined);
+    setCatalogOpen(true);
+    setCatalogInitialized(true);
+    setCatalogError("");
+    if (!nextQuery) {
+      setCatalogLoading(false);
+      loadCatalog({ q: "" });
+      return;
+    }
+    setCatalogDebouncing(true);
+    const generation = catalogGeneration.current;
+    catalogTimer.current = setTimeout(() => {
+      if (generation !== catalogGeneration.current) return;
+      catalogTimer.current = undefined;
+      setCatalogDebouncing(false);
+      loadCatalog({ q: nextQuery });
+    }, 250);
   };
+  const updateCatalogQuery = (nextQuery: string) => scheduleCatalogSearch(nextQuery);
+  const submitCatalogSearch = () => requestCatalogNow();
   const shown = selected;
   const persistSaved = (next: Candidate[], success: string) => {
     try {
@@ -659,17 +705,6 @@ export function App({
       exists ? saved.filter((item) => item.id !== wine.id) : [...saved, wine],
       exists ? "Удалено из сохранённых." : "Сохранено в этом браузере.",
     );
-  };
-  const submitCatalogSearch = () => {
-    const nextQuery = query.trim();
-    setCatalogQuery(nextQuery);
-    setCatalog([]);
-    setCatalogNextCursor(undefined);
-    setCatalogInitialized(true);
-    setCatalogOpen(true);
-    lastRequest.current = { scenario, query: nextQuery, hasPhoto: false };
-    setScreen("loading");
-    loadCatalog({ q: nextQuery });
   };
   const showNav =
     !["camera", "loading", "waiting"].includes(screen) && !expandedPhoto;
@@ -1058,20 +1093,28 @@ export function App({
               <form
                 onSubmit={(e) => {
                   e.preventDefault();
-                  if (query.trim()) {
+                  if (query.trim() && !catalogComposing.current) {
                     searchScroll.current = contentRef.current?.scrollTop ?? 0;
                     submitCatalogSearch();
                   }
                 }}
               >
                 <label htmlFor="query">Название вина или винодельня</label>
-                <div className="search-field">
+                <div className={`search-field${query ? " has-clear" : ""}`}>
                   <input
                     id="query"
+                    ref={queryRef}
                     value={query}
                     onChange={(e) => updateCatalogQuery(e.target.value)}
+                    onCompositionStart={() => { catalogComposing.current = true; invalidateCatalogWork(); }}
+                    onCompositionEnd={(e) => {
+                      if (!catalogComposing.current) return;
+                      catalogComposing.current = false;
+                      scheduleCatalogSearch(e.currentTarget.value);
+                    }}
                     placeholder="Например, Каберне"
                   />
+                  {query && <button className="clear-search" aria-label="Очистить поиск" type="button" onClick={() => { catalogComposing.current = false; scheduleCatalogSearch(""); queryRef.current?.focus(); }}>×</button>}
                   <button aria-label="Искать" type="submit">
                     <MagnifyingGlass />
                   </button>
@@ -1092,32 +1135,26 @@ export function App({
                   </button>
                 </div>
               )}
-              {(catalogQuery || catalogOpen) &&
-                (catalogError ? (
-                  <div className="catalog-error" role="alert">
+              {(catalogQuery || catalogOpen) && <>
+                {(() => {
+                  const status = catalogDebouncing ? "Обновляем результаты…" : catalogLoading ? "Ищем вина…" : catalog.length ? `Показано ${catalog.length}` : "";
+                  return <div className="catalog-status" role="status" aria-live="polite" aria-label={status}>{status}</div>;
+                })()}
+                {catalog.length ? <WineList wines={catalog} onChoose={chooseCatalog} leader={Boolean(catalogQuery)} /> : null}
+                {catalogError ? (
+                  <div className="catalog-error" role="alert" aria-label="Не удалось загрузить вина">
                     <p>{catalogError}</p>
-                    <button className="secondary" onClick={() => loadCatalog({ q: catalogQuery })}>
-                      Повторить
-                    </button>
+                    <button className="secondary" onClick={() => loadCatalog({ q: catalogQuery, append: Boolean(catalog.length) })}>Повторить</button>
                   </div>
-                ) : catalogLoading && catalog.length === 0 ? (
-                  <p role="status">Загружаем каталог</p>
-                ) : catalog.length ? (
-                  <WineList
-                    wines={catalog}
-                    onChoose={chooseCatalog}
-                    leader={Boolean(catalogQuery)}
-                  />
-                ) : (
-                  <p className="empty-catalog">
-                    По этому запросу ничего не найдено.
-                  </p>
-                ))}
-              {catalogNextCursor && !catalogError && (
-                <button className="secondary" disabled={catalogLoading} onClick={() => loadCatalog({ append: true })}>
-                  {catalogLoading ? "Загружаем…" : "Показать ещё"}
-                </button>
-              )}
+                ) : !catalog.length && !catalogLoading && !catalogDebouncing && catalogInitialized ? (
+                  <div className="empty-catalog"><p>Не нашли вина по этому запросу</p><p>Попробуйте другое название или винодельню</p></div>
+                ) : null}
+                {catalogNextCursor && (!catalogError || catalog.length > 0) && (
+                  <button className="secondary" disabled={catalogLoading || catalogDebouncing} onClick={() => loadCatalog({ append: true })}>
+                    {catalogLoading ? "Загружаем…" : "Показать ещё"}
+                  </button>
+                )}
+              </>}
               <button className="text-button" onClick={newCapture}>
                 Сканировать этикетку
               </button>
@@ -1311,7 +1348,7 @@ export function App({
 
 function Page({ children, id }: { children: React.ReactNode; id: string }) {
   return (
-    <div className="page" id={id}>
+    <div className="page" id={id} data-testid={id}>
       {children}
     </div>
   );

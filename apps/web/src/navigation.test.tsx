@@ -68,7 +68,6 @@ describe("catalog navigation and saved wines", () => {
       "/v2/catalog?limit=24&cursor=&q=%D0%BC%D0%B5%D1%80%D0%BB%D0%BE", expect.any(Object),
     ));
     expect(screen.getByText("Наиболее похожее")).toBeVisible();
-    await userEvent.click(screen.getByRole("button", { name: "Назад" }));
     await userEvent.clear(screen.getByLabelText(/Название вина/i));
     await waitFor(() => expect(vi.mocked(fetch)).toHaveBeenLastCalledWith(
       "/v2/catalog?limit=24&cursor=&q=", expect.any(Object),
@@ -333,7 +332,7 @@ describe("catalog navigation and saved wines", () => {
     await userEvent.click(screen.getByRole("button", { name: "Поиск" }));
     await userEvent.type(screen.getByLabelText(/Название вина/i), "Мерло");
     await userEvent.click(screen.getByRole("button", { name: "Искать" }));
-    await screen.findByRole("heading", { name: /несколько похожих/i });
+    await screen.findByRole("button", { name: /Мерло/i });
     await userEvent.click(screen.getByRole("button", { name: "Сохранённое" }));
     await userEvent.click(screen.getByRole("button", { name: /Каберне Совиньон/i }));
     await userEvent.click(screen.getByRole("button", { name: /Не это вино/i }));
