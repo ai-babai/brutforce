@@ -100,7 +100,7 @@ try {
     await page.getByRole('button', { name: /По названию/i }).click();
     await page.getByLabel(/Название вина/i).fill('Каберне');
     await page.getByRole('button', { name: 'Искать' }).click();
-    await visible(page.getByRole('heading', { name: /Есть несколько похожих этикеток/i }), `${prefix} text list`);
+    await visible(page.locator('.candidate-list > button').first(), `${prefix} inline text list`);
     await capture(page, `${prefix}-text-results`);
     await page.getByRole('button', { name: /Каберне Совиньон/i }).first().click();
     await visible(page.getByRole('heading', { name: 'Каберне Совиньон' }), `${prefix} text card`);
@@ -112,6 +112,53 @@ try {
     await capture(page, `${prefix}-text-card-recommendations`);
     return { context, page };
   };
+  await check('CAT015 CAT017 CAT020 mobile live search keeps input and clears to catalog', async () => {
+    const context = await browser.newContext({viewport:{width:390,height:844}, ...contextOptions});
+    try {
+      const page = configurePage(await context.newPage());
+      await page.goto(baseURL, {waitUntil:'networkidle'});
+      await page.getByRole('button', {name:/По названию/i}).click();
+      const input = page.getByLabel(/Название вина/i);
+      const searchGeometry = async () => {
+        const geometry = await page.locator('.search-field').evaluate(field => {
+          const box = field.getBoundingClientRect();
+          return {height:box.height, width:box.width, controls:[...field.children].map(el => {
+            const r=el.getBoundingClientRect(); return {top:r.top-box.top,bottom:r.bottom-box.top,width:r.width,height:r.height};
+          })};
+        });
+        if (geometry.height > 64 || geometry.controls.some(c => c.top > 5 || c.bottom > geometry.height + 1))
+          throw new Error('search input/clear/submit must share one row: '+JSON.stringify(geometry));
+        if (geometry.controls.slice(1).some(c => c.width < 44 || c.height < 44))
+          throw new Error('search button tap target is smaller than 44px');
+      };
+      await searchGeometry();
+      const fetchQuery = async (q, action = () => input.fill(q)) => {
+        const pending = page.waitForResponse(r => new URL(r.url()).pathname === '/v2/catalog' && new URL(r.url()).searchParams.get('q') === q);
+        await action();
+        const response = await pending;
+        if (!response.ok()) throw new Error(`live query returned ${response.status()}`);
+        const body = await response.json();
+        if (body.catalogVersion !== catalogVersion || body.candidates.length > 24) throw new Error('live query changed catalog or page bounds');
+        if (!await input.isVisible() || !await input.evaluate(el => el === document.activeElement)) throw new Error('live query lost editable input focus');
+        await searchGeometry();
+        await page.waitForFunction(n => document.querySelectorAll('.candidate-list > button').length === n, body.candidates.length);
+        return body;
+      };
+      const first = await fetchQuery('К');
+      if (!first.candidates.length) throw new Error('first-letter live search returned no known Cabernet candidate');
+      await fetchQuery('Каберне');
+      await capture(page, 'mobile-live-search');
+      const cleared = await fetchQuery('', () => page.getByRole('button', {name:'Очистить поиск',exact:true}).click());
+      if (cleared.candidates[0]?.id !== catalog.candidates[0].id) throw new Error('clear did not restore initial catalog');
+      const chosen = cleared.candidates[0];
+      await page.locator('.candidate-list > button').first().click();
+      await visible(page.getByRole('heading', {name:chosen.name, exact:true}), 'chosen live-search card');
+      await page.getByRole('button', {name:'Назад',exact:true}).click();
+      await visible(input, 'restored search input');
+      if (await input.inputValue() !== '') throw new Error('Back lost query');
+      await capture(page, 'mobile-live-search-back');
+    } finally { await context.close(); }
+  });
   await check('name search finds reordered words with a typo', async () => {
     const exact = await releaseContext.request.get(`${baseURL}/v2/catalog`, {
       params: {q:'Каберне Совиньон', limit:60}, timeout:apiTimeout,

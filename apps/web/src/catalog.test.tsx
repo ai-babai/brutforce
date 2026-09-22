@@ -151,7 +151,7 @@ describe("BE-045 catalog display", () => {
     const input = screen.getByLabelText(/Название вина/i);
     await user.type(input, "Ка");
     await user.click(screen.getByRole("button", { name: "Искать" }));
-    await user.click(screen.getByRole("button", { name: /Отменить поиск/i }));
+    await user.click(screen.getByRole("button", { name: "Назад" }));
     await user.click(screen.getByRole("button", { name: "Поиск" }));
     const nextInput = screen.getByLabelText(/Название вина/i);
     await user.clear(nextInput);

@@ -31,7 +31,7 @@ async function openCard() {
   await user.click(screen.getByRole("button", { name: /По названию/i }));
   await user.type(screen.getByLabelText(/Название вина/i), "Каберне");
   await user.click(screen.getByRole("button", { name: "Искать" }));
-  await screen.findByRole("heading", { name: /несколько похожих/i });
+  await screen.findByRole("button", { name: /Каберне Совиньон/i });
   await user.click(screen.getByRole("button", { name: /Каберне Совиньон/i }));
   await screen.findByRole("heading", { name: "Каберне Совиньон" });
   return user;

@@ -326,7 +326,7 @@ describe("mobile behavior demo", () => {
     render(<App />);
     await submitManual();
     await userEvent.click(
-      screen.getByRole("button", { name: /Отменить поиск/i }),
+      screen.getByRole("button", { name: "Назад" }),
     );
     resolveFetch(response(exact));
     await Promise.resolve();
@@ -349,16 +349,12 @@ describe("mobile behavior demo", () => {
     render(<App initialScenario="uncertain" />);
     await submitManual("Мерло");
     await userEvent.click(
-      screen.getByRole("button", { name: /Отменить поиск/i }),
+      screen.getByRole("button", { name: "Назад" }),
     );
     await userEvent.click(
       screen.getByRole("button", { name: /Продолжить поиск/i }),
     );
-    await waitFor(() =>
-      expect(
-        screen.getByRole("heading", { name: /несколько похожих/i }),
-      ).toBeVisible(),
-    );
+    await screen.findAllByRole("button", { name: /Каберне Совиньон|Мерло/i });
     const calls = vi.mocked(fetch).mock.calls.filter(([url]) => String(url).startsWith("/v2/catalog"));
     expect(calls).toHaveLength(2);
     expect(calls[0][0]).toContain("q=%D0%9C%D0%B5%D1%80%D0%BB%D0%BE");
@@ -410,11 +406,7 @@ describe("mobile behavior demo", () => {
     mock(uncertain);
     render(<App initialScenario="uncertain" />);
     await submitManual("Мерло");
-    await waitFor(() =>
-      expect(
-        screen.getByRole("heading", { name: /несколько похожих/i }),
-      ).toBeVisible(),
-    );
+    await screen.findAllByRole("button", { name: /Каберне Совиньон|Мерло/i });
     expect(
       screen.queryByRole("button", { name: /Открыть исходную фотографию/i }),
     ).not.toBeInTheDocument();
@@ -445,7 +437,7 @@ describe("mobile behavior demo", () => {
     mock({ demo: true, candidates: [unknown] });
     render(<App />);
     await submitManual("Резерв");
-    await screen.findByRole("heading", { name: /несколько похожих/i });
+    await screen.findByRole("button", { name: new RegExp(unknown.name) });
     expect(screen.getByRole("button", { name: `${unknown.name}, Год не указан` })).toBeVisible();
     expect(screen.getByText("Год не указан")).toBeVisible();
     fireEvent.error(screen.getByRole("img", { name: `Фото вина: ${unknown.name}` }));
@@ -478,7 +470,7 @@ describe("mobile behavior demo", () => {
       screen.getByLabelText(/Загрузить фотографию/i),
       new File(["photo"], "wine.jpg", { type: "image/jpeg" }),
     );
-    await screen.findByRole("heading", { name: /несколько похожих/i });
+    await screen.findAllByRole("button", { name: /Каберне Совиньон|Мерло/i });
     expect(screen.getByText("Наиболее похожее")).toBeVisible();
     expect(screen.getAllByRole("button", { name: /Каберне Совиньон|Резерв с очень/i }).map((button) => button.getAttribute("aria-label")))
       .toEqual(["Каберне Совиньон, 2023", `${second.name}, ${second.line}, 2021`]);
@@ -489,7 +481,7 @@ describe("mobile behavior demo", () => {
     expect(screen.getByRole("heading", { name: second.name })).toBeVisible();
     expect(screen.getAllByText("2021").length).toBeGreaterThan(1);
     await userEvent.click(screen.getByRole("button", { name: "Назад" }));
-    await screen.findByRole("heading", { name: /несколько похожих/i });
+    await screen.findAllByRole("button", { name: /Каберне Совиньон|Мерло/i });
     expect(content.scrollTop).toBe(83);
     expect(vi.mocked(fetch).mock.calls.filter(([url]) => url === "/v1/search")).toHaveLength(1);
     expect(vi.mocked(fetch).mock.calls.filter(([url]) => url === "/v1/photos")).toHaveLength(1);
@@ -515,21 +507,17 @@ describe("mobile behavior demo", () => {
       screen.getByLabelText(/Загрузить фотографию/i),
       new File(["photo"], "wine.jpg", { type: "image/jpeg" }),
     );
-    await screen.findByRole("heading", { name: /несколько похожих/i });
+    await screen.findAllByRole("button", { name: /Каберне Совиньон|Мерло/i });
     await userEvent.click(screen.getByRole("button", { name: /Второе вино/i }));
     fireEvent.popState(window);
-    await screen.findByRole("heading", { name: /несколько похожих/i });
+    await screen.findAllByRole("button", { name: /Каберне Совиньон|Мерло/i });
     expect(vi.mocked(fetch).mock.calls.filter(([url]) => url === "/v1/search")).toHaveLength(1);
   });
   it("UI-007 identifies a fixture card as demo when no source URL is provided", async () => {
     mock(exact);
     render(<App />);
     await submitManual();
-    await waitFor(() =>
-      expect(
-        screen.getByRole("heading", { name: /несколько похожих/i }),
-      ).toBeVisible(),
-    );
+    await screen.findAllByRole("button", { name: /Каберне Совиньон|Мерло/i });
     await userEvent.click(
       screen.getByRole("button", { name: /Каберне Совиньон/i }),
     );
@@ -612,17 +600,12 @@ describe("mobile behavior demo", () => {
     await userEvent.click(screen.getByRole("button", { name: "Ни одно не подходит" }));
     await userEvent.type(screen.getByLabelText(/Название вина/i), "Редкое вино");
     await userEvent.click(screen.getByRole("button", { name: "Искать" }));
-    await waitFor(() =>
-      expect(
-        screen.getByRole("heading", { name: "Вино не найдено" }),
-      ).toBeVisible(),
-    );
+    await screen.findByText("Не нашли вина по этому запросу");
     expect(fetch).toHaveBeenCalledWith(
       "/v2/catalog?limit=24&cursor=&q=%D0%A0%D0%B5%D0%B4%D0%BA%D0%BE%D0%B5+%D0%B2%D0%B8%D0%BD%D0%BE",
       expect.any(Object),
     );
     expect(screen.queryByRole("button", { name: "Переснять этикетку" })).not.toBeInTheDocument();
-    await userEvent.click(screen.getByRole("button", { name: "Изменить запрос" }));
     expect(screen.getByLabelText(/Название вина/i)).toHaveValue("Редкое вино");
     expect(screen.queryByRole("button", { name: /Открыть исходную фотографию/i })).not.toBeInTheDocument();
     expect(
@@ -633,11 +616,7 @@ describe("mobile behavior demo", () => {
     mock({ demo: true, candidates: [candidate] });
     render(<App initialScenario="none" />);
     await submitManual("Каберне");
-    await waitFor(() =>
-      expect(
-        screen.getByRole("heading", { name: /несколько похожих/i }),
-      ).toBeVisible(),
-    );
+    await screen.findAllByRole("button", { name: /Каберне Совиньон|Мерло/i });
     expect(screen.getByRole("button", { name: /Каберне Совиньон/i })).toBeVisible();
     expect(screen.queryByRole("heading", { name: "Вино не найдено" })).not.toBeInTheDocument();
   });
@@ -645,11 +624,7 @@ describe("mobile behavior demo", () => {
     mock({ ...exact, selectedId: "missing" });
     render(<App />);
     await submitManual();
-    await waitFor(() =>
-      expect(
-        screen.getByRole("heading", { name: /несколько похожих/i }),
-      ).toBeVisible(),
-    );
+    await screen.findAllByRole("button", { name: /Каберне Совиньон|Мерло/i });
   });
   it("UI-026 preview returns to its settled async origin instead of restoring stale loading", async () => {
     let resolveSearch!: (value: ReturnType<typeof response>) => void;
@@ -690,11 +665,7 @@ describe("mobile behavior demo", () => {
     mock(uncertain);
     render(<App initialScenario="uncertain" />);
     await submitManual("Мерло");
-    await waitFor(() =>
-      expect(
-        screen.getByRole("heading", { name: /несколько похожих/i }),
-      ).toBeVisible(),
-    );
+    await screen.findAllByRole("button", { name: /Каберне Совиньон|Мерло/i });
     await userEvent.click(
       screen.getByRole("button", { name: /Каберне Совиньон/i }),
     );
@@ -703,37 +674,19 @@ describe("mobile behavior demo", () => {
     ).toBeVisible();
     await userEvent.click(screen.getByRole("tab", { name: "Описание" }));
     await userEvent.click(screen.getByRole("button", { name: /Не это вино/i }));
-    await userEvent.click(
-      screen.getByRole("button", { name: "Ни одно не подходит" }),
-    );
     expect(
       screen.getByRole("heading", { name: "Найдём вручную" }),
     ).toBeVisible();
     await userEvent.click(screen.getByRole("button", { name: "Искать" }));
-    await waitFor(() =>
-      expect(
-        screen.getByRole("heading", { name: /несколько похожих/i }),
-      ).toBeVisible(),
-    );
+    await screen.findAllByRole("button", { name: /Каберне Совиньон|Мерло/i });
     await userEvent.click(screen.getByRole("button", { name: /Мерло/i }));
     expect(screen.getByRole("heading", { name: "Мерло" })).toBeVisible();
     await userEvent.click(screen.getByRole("button", { name: "Назад" }));
-    expect(
-      screen.getByRole("heading", { name: /несколько похожих/i }),
-    ).toBeVisible();
-    await userEvent.click(screen.getByRole("button", { name: "Назад" }));
-    expect(
-      screen.getByRole("heading", { name: "Найдём вручную" }),
-    ).toBeVisible();
+    expect(screen.getAllByRole("button", { name: /Каберне Совиньон|Мерло/i })[0]).toBeVisible();
     expect(screen.getByLabelText(/Название вина/i)).toHaveValue("Мерло");
     await userEvent.click(screen.getByRole("button", { name: "Назад" }));
-    expect(
-      screen.getByRole("heading", { name: "Каберне Совиньон" }),
-    ).toBeVisible();
-    expect(screen.getByRole("tab", { name: "Описание" })).toHaveAttribute(
-      "aria-selected",
-      "true",
-    );
+    expect(screen.getByRole("heading", { name: "Каберне Совиньон" })).toBeVisible();
+    expect(screen.getByRole("tab", { name: "Описание" })).toHaveAttribute("aria-selected", "true");
   });
   it("UI-028 distinguishes network and server failures and retries a retained receipt", async () => {
     let searches = 0;
@@ -780,14 +733,14 @@ describe("mobile behavior demo", () => {
     render(<App />);
     await submitManual("Сервер");
     await waitFor(() =>
-      expect(screen.getByText(/Сервис временно недоступен/i)).toBeVisible(),
+      expect(screen.getByText(/Не удалось загрузить вина/i)).toBeVisible(),
     );
   });
   it("UI-029 keeps catalog provenance separate from photo recognition", async () => {
     mock(exact);
     render(<App />);
     await submitManual();
-    await waitFor(() => expect(screen.getByRole("heading", { name: /несколько похожих/i })).toBeVisible());
+    await screen.findAllByRole("button", { name: /Каберне Совиньон|Мерло/i });
     expect(screen.queryByText("Reference-режим")).not.toBeInTheDocument();
   });
 });
