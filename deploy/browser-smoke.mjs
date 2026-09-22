@@ -159,6 +159,38 @@ try {
       await capture(page, 'mobile-live-search-back');
     } finally { await context.close(); }
   });
+  await check('CAT018 mobile IME searches visible text before composition ends', async () => {
+    const context = await browser.newContext({viewport:{width:390,height:640}, isMobile:true, hasTouch:true, ...contextOptions});
+    try {
+      const page = configurePage(await context.newPage());
+      const queries = [];
+      page.on('request', request => {
+        if (new URL(request.url()).pathname === '/v2/catalog')
+          queries.push(new URL(request.url()).searchParams.get('q'));
+      });
+      await page.goto(baseURL, {waitUntil:'networkidle'});
+      await page.getByRole('button', {name:/По названию/i}).click();
+      const input = page.getByLabel(/Название вина/i);
+      await input.focus();
+      await input.evaluate(element => { element.addEventListener('compositionend', () => { window.__imeEnded = true; }); });
+      const cdp = await context.newCDPSession(page);
+      for (const text of ['К', 'Ка', 'Каб'])
+        await cdp.send('Input.imeSetComposition', {text, selectionStart:text.length, selectionEnd:text.length});
+      const response = await page.waitForResponse(response =>
+        new URL(response.url()).pathname === '/v2/catalog' && new URL(response.url()).searchParams.get('q') === 'Каб');
+      if (!response.ok()) throw new Error(`IME query returned ${response.status()}`);
+      const matches = (await response.json()).candidates;
+      if (!matches.length) throw new Error('IME query returned no known Cabernet candidate');
+      await page.waitForFunction(n => document.querySelectorAll('.candidate-list > button').length === n, matches.length);
+      if (await input.inputValue() !== 'Каб' || !await input.evaluate(element => element === document.activeElement))
+        throw new Error('IME query lost visible text or input focus');
+      if (await page.evaluate(() => window.__imeEnded)) throw new Error('IME composition ended before live results');
+      await cdp.send('Input.insertText', {text:'Каб'});
+      await page.waitForTimeout(350);
+      if (queries.length !== 1 || queries[0] !== 'Каб') throw new Error(`IME query was duplicated or changed: ${JSON.stringify(queries)}`);
+      await capture(page, 'mobile-ime-live-search');
+    } finally { await context.close(); }
+  });
   await check('name search finds reordered words with a typo', async () => {
     const exact = await releaseContext.request.get(`${baseURL}/v2/catalog`, {
       params: {q:'Каберне Совиньон', limit:60}, timeout:apiTimeout,
