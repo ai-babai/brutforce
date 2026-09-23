@@ -54,7 +54,7 @@ Example submission:
   "basket_ids":["IMG-09"],
   "solution":{"name":"my-model","version":"0.1","commit":null,"config_hash":null,"weights_version":null,"catalog_version":null},
   "submitted_by":"team-agent",
-  "results":[{"case_id":"case-000036","status":"ok","prediction":{"slug":"some-slug"},"latency_ms":420}]
+  "results":[{"case_id":"case-000046","status":"ok","prediction":{"slug":"some-slug"},"latency_ms":420}]
 }
 ```
 
