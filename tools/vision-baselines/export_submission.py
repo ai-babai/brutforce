@@ -15,14 +15,15 @@ from run import MODELS, OUT
 
 def main():
     p = argparse.ArgumentParser()
-    p.add_argument('--model', choices=[*MODELS, 'paddle'], required=True)
+    p.add_argument('--model', choices=[*MODELS, 'paddle', 'deepseek-v2', 'qwen-v2', 'rrf60'], required=True)
     p.add_argument('--track', choices=['service', 'retrieval'], required=True)
     p.add_argument('--case-id', action='append')
     p.add_argument('--name', required=True)
     args = p.parse_args()
     suite = json.loads((DATA / 'baskets/v1.json').read_text())
     wanted = set(args.case_id or [])
-    source = OUT / ('paddle.jsonl' if args.model == 'paddle' else f'{args.model}-prompt-v1.jsonl')
+    sources = {'paddle': 'paddle.jsonl', 'deepseek-v2': 'deepseek-matcher-v2.jsonl', 'qwen-v2': 'qwen-matcher-v2.jsonl', 'rrf60': 'rrf60-cached-parallel-v1.jsonl'}
+    source = OUT / sources.get(args.model, f'{args.model}-prompt-v1.jsonl')
     records = [json.loads(line) for line in source.read_text().splitlines()]
     records = [r for r in records if r['track'] == args.track and (not wanted or r['case_id'] in wanted)]
     if any(r.get('suite_hash') != suite['suite_hash'] for r in records):
@@ -48,11 +49,18 @@ def main():
         if status == 'ok':
             item['prediction'] = r['prediction']
         results.append(item)
-    source_files = ('paddle_remote.py', 'postprocess_paddle.py', 'matcher.py') if args.model == 'paddle' else ('run.py', 'matcher.py')
+    if args.model == 'paddle':
+        source_files = ('paddle_remote.py', 'postprocess_paddle.py', 'matcher.py')
+    elif args.model in ('deepseek-v2', 'qwen-v2', 'rrf60'):
+        source_files = ('offline_variants.py', 'run.py', 'matcher.py')
+    else:
+        source_files = ('run.py', 'matcher.py')
     code = b''.join((Path(__file__).parent / n).read_bytes() for n in source_files)
-    weights = MODELS.get(args.model, 'PaddleOCR 3.7.0 PP-OCRv5 eslav mobile CPU')
+    weights_map = {**MODELS, 'paddle': 'PaddleOCR 3.7.0 PP-OCRv5 eslav mobile CPU', 'deepseek-v2': MODELS['deepseek'], 'qwen-v2': MODELS['qwen'], 'rrf60': MODELS['deepseek'] + ' + ' + MODELS['qwen']}
+    weights = weights_map[args.model]
+    solution_name = 'cached-parallel-rrf60-deepseek-qwen' if args.model == 'rrf60' else f'{args.model}-ocr-lexical'
     submission = {'submission_id': args.name, 'suite_version': suite['version'], 'suite_hash': suite['suite_hash'], 'track': args.track, 'basket_ids': baskets,
-                  'solution': {'name': f'{args.model}-ocr-lexical-v1', 'version': '0.1', 'commit': None, 'config_hash': hashlib.sha256(code).hexdigest()[:16], 'weights_version': weights, 'catalog_version': suite['catalog_sha256'][:16]},
+                  'solution': {'name': solution_name, 'version': '0.1', 'commit': None, 'config_hash': hashlib.sha256(code).hexdigest()[:16], 'weights_version': weights, 'catalog_version': suite['catalog_sha256'][:16]},
                   'submitted_by': 'vision-baselines', 'results': results}
     path = OUT / f'{args.name}.submission.json'
     path.write_text(json.dumps(submission, ensure_ascii=False, indent=2) + '\n')

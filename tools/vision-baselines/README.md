@@ -59,3 +59,19 @@ query than models that can extract fields.
 `export_submission.py` makes one service and one retrieval submission JSON
 per model. It reads recorded predictions only. Its output is private until
 the evaluation service scores it.
+
+## Offline development variants
+
+After both API baselines have been scored independently,
+`offline_variants.py` can derive three new 213-case files from their frozen
+OCR and candidate lists without new model calls:
+
+- DeepSeek OCR + matcher v2, and Qwen OCR + matcher v2: a generic catalog
+  rerank that treats common Latin/Cyrillic grape spellings as equivalents.
+- RRF60: rank fusion of the two v1 top-20 lists. Service uses a conservative
+  `no_match` vote gate before selecting the fused top slug.
+
+The RRF latency is the maximum of the two separately measured local totals,
+which models parallel completion. It is **not** a live HTTP timing result.
+All three variants were devised after seeing baseline scores on this same
+suite; their scores are development findings, not independent validation.
