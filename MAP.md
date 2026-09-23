@@ -21,3 +21,8 @@
 | Обновление структуры | [GUIDE-FORMAT](docs/agent-guide/GUIDE-FORMAT.md) |
 
 Заметки описывают реальность или явно обозначенное предложение. Существование папки не означает готовность модуля.
+
+## Vision pilot and standalone recognition
+
+- Per-wine images, lineage and generation: [tools/vision-pilot/README.md](tools/vision-pilot/README.md).
+- Frozen-suite OCR baselines and measured findings: [tools/vision-baselines/README.md](tools/vision-baselines/README.md).

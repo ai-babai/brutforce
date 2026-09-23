@@ -68,7 +68,11 @@ def main():
                 status='rejected';reason.append('Identity changed or target absent')
             elif j.get('realistic')=='no' or (v and v.get('realistic')=='no'):
                 status='rejected';reason.append('Unrealistic physical scene')
-            elif q and v and j.get('suggested_qc')=='accepted' and v.get('identity')=='yes' and v.get('realistic')=='yes' and v.get('scenario_fulfilled')=='yes':
+            elif (q and v and j.get('suggested_qc')=='accepted'
+                  and j.get('identity_correct')=='yes' and j.get('realistic')=='yes'
+                  and j.get('scenario_fulfilled')=='yes' and not j.get('label_changed')
+                  and v.get('identity')=='yes' and v.get('realistic')=='yes'
+                  and v.get('scenario_fulfilled')=='yes'):
                 status='accepted';reason.append('Passed two-agent pilot visual screen; not exhaustive fine-text verification')
             else:reason.append('Conditions, physical plausibility or identity require review; do not auto-export to training')
             if v and v.get('concern'):reason.append(v['concern'])

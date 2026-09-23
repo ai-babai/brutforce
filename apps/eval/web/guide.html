@@ -58,5 +58,8 @@ curl -H "Authorization: Bearer $LCT_EVAL_PARTICIPANT_TOKEN" \
 <pre>curl -H "Authorization: Bearer $LCT_EVAL_PARTICIPANT_TOKEN" "$BASE/api/runs"
 curl -H "Authorization: Bearer $LCT_EVAL_PARTICIPANT_TOKEN" "$BASE/api/runs/my-service-002"</pre>
 <p>Это доверенный стенд для регрессии и разбора: участник видит результат каждого своего кейса. Разделение файлов защищает эталон от случайной выдачи во входном пакете, но не делает набор слепым после повторных прогонов. Токен в браузере хранится только в текущей сессии.</p></section>
+<section class="panel"><h2>6. Пилот изображений и готовые бейзлайны</h2>
+<p><a href="/data/">Галерея по винам</a> · <a href="/data/report.html">Отчёт эксперимента</a>. Здесь отдельно хранятся каталожный референс, настоящая сцена, генерация и обычные аугментации. Условия запроса и фактические наблюдения разделены. AI-кадры явно отмечены; accepted означает прохождение визуального отбора пилота, а не полную проверку мелкого текста.</p>
+<p>Файлы пилота: <code>/srv/lct/data/vision/manifest.jsonl</code>. Результаты распознавания: <code>/srv/lct/data/vision-baselines/20260924</code>. Для всех агентов инструкции: <code>tools/vision-pilot/README.md</code> и <code>tools/vision-baselines/README.md</code> в BrutForce. Замороженные корзины v1 не изменялись; синтетика пилота в них не добавляется.</p></section>
 </main><footer>Исходный контракт и протокол работы — README.md и AGENTS.md в репозитории сервиса.</footer>
 </body></html>

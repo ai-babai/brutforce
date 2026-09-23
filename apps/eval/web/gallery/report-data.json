@@ -1,0 +1,115 @@
+{
+  "outputs": 100,
+  "augmentations": 27,
+  "wines": 10,
+  "generation": [
+    {
+      "name": "Nano Banana / Gemini 3.1 Flash Image",
+      "outputs": 24,
+      "unit_cost": 0.06892366666666665,
+      "accepted": 7,
+      "pending": 9,
+      "rejected": 4,
+      "cost_per_accepted": 0.19697814285714282
+    },
+    {
+      "name": "FLUX.2 Pro",
+      "outputs": 20,
+      "unit_cost": 0.06000000000000003,
+      "accepted": 6,
+      "pending": 10,
+      "rejected": 4,
+      "cost_per_accepted": 0.2000000000000001
+    },
+    {
+      "name": "Qwen Image 3",
+      "outputs": 56,
+      "unit_cost": 0.03600000000000002,
+      "accepted": 7,
+      "pending": 8,
+      "rejected": 5,
+      "cost_per_accepted": 0.10285714285714287
+    }
+  ],
+  "recognition": [
+    {
+      "name": "DeepSeek OCR + matcher v1",
+      "base": true,
+      "service": 98,
+      "top1": 39,
+      "top5": 54,
+      "top20": 58,
+      "latency": "2.55 / 2.82 s",
+      "mrr": 0.7573152653797814
+    },
+    {
+      "name": "Qwen OCR + matcher v1",
+      "base": true,
+      "service": 101,
+      "top1": 43,
+      "top5": 57,
+      "top20": 57,
+      "latency": "2.47 / 2.82 s",
+      "mrr": 0.8064516129032258
+    },
+    {
+      "name": "PaddleOCR CPU + matcher v1",
+      "base": true,
+      "service": 47,
+      "top1": 23,
+      "top5": 42,
+      "top20": 48,
+      "latency": "1.65 / 2.00 s",
+      "mrr": 0.5186066904233287
+    },
+    {
+      "name": "DeepSeek + matcher v2 (cached)",
+      "base": false,
+      "service": 108,
+      "top1": 45,
+      "top5": 56,
+      "top20": 58,
+      "latency": "reuses OCR",
+      "mrr": 0.8104838709677419
+    },
+    {
+      "name": "Qwen + matcher v2 (cached)",
+      "base": false,
+      "service": 111,
+      "top1": 49,
+      "top5": 57,
+      "top20": 57,
+      "latency": "reuses OCR",
+      "mrr": 0.8548387096774194
+    },
+    {
+      "name": "DeepSeek + Qwen RRF60 (cached v1)",
+      "base": false,
+      "service": 109,
+      "top1": 43,
+      "top5": 58,
+      "top20": 58,
+      "latency": "modeled, not measured",
+      "mrr": 0.8145161290322581
+    }
+  ],
+  "generation_cost_usd": 4.870167999999995,
+  "qa_cost_usd": 0.05714769599999999,
+  "recognition_cost_usd": 0.13688779859999997,
+  "confirmed_total_usd": 5.064203494599996,
+  "uncertain_reserve_usd": 0.8980000000000004,
+  "observed_key_usage_delta_usd": 5.072747395,
+  "unattributed_delta_usd": 0.008543900400004745,
+  "qc_totals": {
+    "accepted": 24,
+    "pending": 59,
+    "rejected": 17
+  },
+  "notes": [
+    "No RunPod created; final inventory zero.",
+    "QA calls include superseded v1 smoke.",
+    "Confirmed costs are response usage.cost, unknown failures retain conservative reserves.",
+    "Key-wide usage delta is a window observation, not per-call attribution.",
+    "100 outputs include 60 paired comparisons and 36 Qwen + 4 Banana fallback extension."
+  ]
+}

@@ -17,3 +17,11 @@ Missing predictions stay in graded denominators; ungraded cases stay visible.
 
 The user's turnkey test-stand request authorizes permanent tests in this module.
 Run `go test ./...` and the README smoke flow before deployment.
+
+## Generated-image pilot and baselines
+
+For per-slug pilot images use `/data/` and `../../tools/vision-pilot/README.md`.
+Read `../../tools/vision-baselines/README.md` before reproducing baseline runs.
+Pilot data lives in `/srv/lct/data/vision`, separate from frozen evaluation data.
+Requested conditions are not observed labels; keep AI origin, QC and lineage visible.
+Runtime copies: `/srv/lct/data/vision/README.md` and `/srv/lct/data/vision-baselines/20260924/README.md`.
