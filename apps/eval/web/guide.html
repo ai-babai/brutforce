@@ -12,14 +12,14 @@
 <p><strong>retrieval</strong> получает проверенный кроп целевого вина. Верните упорядоченный список slug; стенд считает top-1, top-5, top-20 и MRR.</p>
 <p>Каждый кейс принадлежит одному треку. Метка «из каталожного референса» означает, что запрос может быть связан с референсом и его результат нельзя считать независимой проверкой.</p></section>
 <section class="panel"><h2>2. Получите данные и токен</h2>
-<p>Попросите у оператора токен участника. Токен разбора выдаётся отдельно. Сервис получает их из <code>/etc/lct-eval.env</code> через переменные окружения <code>LCT_EVAL_PARTICIPANT_TOKEN</code> и <code>LCT_EVAL_REVIEW_TOKEN</code>. Для авторизованных агентов участнический токен находится в <code>/srv/lct/eval-access/participant.env</code>; токен разбора — в <code>/srv/lct/eval-access/review.token</code>. Эти файлы не раздаются через сайт и не входят в архив. Не помещайте токен в URL или файл submission.</p>
+<p>Используйте общий пароль участника, согласованный с Максом. Для API он передаётся как Bearer-токен; значение не записывайте в код или отчёты. Токен разбора выдаётся отдельно. Сервис получает их из <code>/etc/lct-eval.env</code> через переменные окружения <code>LCT_EVAL_PARTICIPANT_TOKEN</code> и <code>LCT_EVAL_REVIEW_TOKEN</code>. Для авторизованных агентов участнический токен находится в <code>/srv/lct/eval-access/participant.env</code>; токен разбора — в <code>/srv/lct/eval-access/review.token</code>. Эти файлы не раздаются через сайт и не входят в архив. Не помещайте токен в URL или файл submission.</p>
 <pre>export LCT_EVAL_PARTICIPANT_TOKEN='&lt;ваш токен&gt;'
-BASE='https://reps.maks.dzap.pw/vision'
+BASE='https://cv.ops.dzap.pw'
 curl -H "Authorization: Bearer $LCT_EVAL_PARTICIPANT_TOKEN" "$BASE/api/baskets"
 curl -H "Authorization: Bearer $LCT_EVAL_PARTICIPANT_TOKEN" "$BASE/api/baskets/v1/download" -o lct-eval-v1.zip</pre>
 <p>Архив содержит публичный манифест, изображения и при наличии список допустимых slug. В нём нет правильных ответов. Хеш каждого изображения и suite_hash связывают прогон с точной версией. На сервере бинарник находится в <code>/srv/lct/maks/eval/current/lct-eval</code>, набор — в <code>/srv/lct/data/eval</code>, а процесс запускается unit <code>lct-eval.service</code>. Права на файлы доступа назначает оператор; если доступа к ним нет, запросите токен у него.</p>
-<h3>PowerShell</h3><pre>$token = Read-Host 'Participant token'
-$base = 'https://reps.maks.dzap.pw/vision'
+<h3>PowerShell</h3><pre>$token = Read-Host 'Participant password or token'
+$base = 'https://cv.ops.dzap.pw'
 $headers = @{ Authorization = "Bearer $token" }
 Invoke-RestMethod -Headers $headers "$base/api/baskets"
 Invoke-WebRequest -Headers $headers "$base/api/baskets/v1/download" -OutFile lct-eval-v1.zip

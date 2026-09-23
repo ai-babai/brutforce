@@ -1,6 +1,6 @@
 # LCT evaluation service
 
-Start with README.md and the hosted `/vision/guide.html`.
+Start with README.md and the hosted `/guide.html`.
 `internal/eval/model.go` defines the JSON contract and scoring.
 `cmd/lct-eval/main.go` serves the API and static UI; `client.go` runs solutions.
 

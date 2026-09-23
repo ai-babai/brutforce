@@ -11,7 +11,7 @@ go build -o lct-eval ./cmd/lct-eval
 LCT_EVAL_PARTICIPANT_TOKEN='...' LCT_EVAL_REVIEW_TOKEN='...' ./lct-eval serve -data /srv/lct/data/eval -web ./web -listen 127.0.0.1:8124
 ```
 
-Keep the two tokens distinct and inject them through the service environment. Deployment uses `/etc/lct-eval.env` (root:lct 0640) for both service tokens, `/srv/lct/eval-access/participant.env` (lct:lct 0640) for authorized participant agents, and `/srv/lct/eval-access/review.token` (lct:lct 0640) for reviewers. None is in the web root or archive. Caddy strips `/vision` and forwards to `127.0.0.1:8124`. The browser uses relative paths, so `/vision/` serves the UI correctly. Protect this route at Caddy if team access control exists; the API additionally requires a bearer token. `GET /healthz` is public.
+Keep the two tokens distinct and inject them through the service environment. Deployment uses `/etc/lct-eval.env` (root:lct 0640) for both service tokens, `/srv/lct/eval-access/participant.env` (lct:lct 0640) for authorized participant agents, and `/srv/lct/eval-access/review.token` (lct:lct 0640) for reviewers. None is in the web root or archive. Caddy routes `cv.ops.dzap.pw` to `127.0.0.1:8124`. The previous `/vision/` URL remains a compatibility alias. The browser uses relative paths. Protect this route at Caddy if team access control exists; the API additionally requires a bearer token. `GET /healthz` is public.
 
 ## Data layout
 
@@ -64,8 +64,8 @@ Example submission:
 
 ```sh
 export LCT_EVAL_PARTICIPANT_TOKEN='...'
-./lct-eval run -source api -base https://reps.maks.dzap.pw/vision -track service -endpoint http://127.0.0.1:8080/v1/eval/predict -submission-id run-001 -solution model -solution-version 0.1 -commit abc123 -config-hash cfg-v1 -weights-version w1 -catalog-version c1
-./lct-eval run -source archive -archive lct-eval-v1.zip -base https://reps.maks.dzap.pw/vision -track retrieval -endpoint http://127.0.0.1:8080/v1/eval/predict -submission-id run-002 -solution model -solution-version 0.1 -commit abc123 -config-hash cfg-v1 -weights-version w1 -catalog-version c1
+./lct-eval run -source api -base https://cv.ops.dzap.pw -track service -endpoint http://127.0.0.1:8080/v1/eval/predict -submission-id run-001 -solution model -solution-version 0.1 -commit abc123 -config-hash cfg-v1 -weights-version w1 -catalog-version c1
+./lct-eval run -source archive -archive lct-eval-v1.zip -base https://cv.ops.dzap.pw -track retrieval -endpoint http://127.0.0.1:8080/v1/eval/predict -submission-id run-002 -solution model -solution-version 0.1 -commit abc123 -config-hash cfg-v1 -weights-version w1 -catalog-version c1
 ```
 
 The runner sends multipart `image` with the original image extension and accepts HTTP 200/201 with object `slug` or the first array item's `slug`, matching the organizer script. It also accepts `ranked_slugs` for retrieval diagnostics. A single `slug` counts as a one-item retrieval ranking. Connection timeout is 5 seconds; overall per image timeout is 10 seconds. It writes an optional submission JSON with `-output PATH`, then posts it. It never inserts model answers itself. Optional `-commit`, `-config-hash`, `-weights-version`, and `-catalog-version` record reproducibility metadata in the submission.

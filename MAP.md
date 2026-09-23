@@ -12,7 +12,7 @@
 | Связь модулей, конкурсный API | [contracts](contracts/README.md), [eval](contracts/eval-predict.md) |
 | Поиск/рекомендации Романа | [Контракт](contracts/wine-services.md), [онбординг](docs/agent-guide/ROMAN-SERVICES.md) |
 | Дизайн и макеты | [Переход на v2](docs/product/design-v2-migration-plan.md), design/ |
-| Тестовые фото, поиск и сервисные проверки | [Eval onboarding](apps/eval/AGENTS.md), [стенд](https://reps.maks.dzap.pw/vision/), [инструкция](https://reps.maks.dzap.pw/vision/guide.html) |
+| Тестовые фото, поиск и сервисные проверки | [Eval onboarding](apps/eval/AGENTS.md), [стенд](https://cv.ops.dzap.pw/), [инструкция](https://cv.ops.dzap.pw/guide.html) |
 | Проверки и история | [cases](cases/cases.json), scripts/run-fast-checks.mjs, reports/ |
 | Совместная работа | [RULES](docs/agent-guide/RULES.md), [BOARD](docs/agent-guide/BOARD.md) |
 | Выпуск и откат | [deploy](deploy/README.md), deploy/releases/ |

@@ -64,4 +64,4 @@ Python: `/srv/infra/environments/MAP.md`; БД: `/srv/infra/lct-db/DATABASE.md`.
 ## Проверить своё решение на тестовых корзинах
 
 Общий для всех агентов онбординг: [EVAL.md](docs/agent-guide/EVAL.md).
-Страница примеров и результатов: https://reps.maks.dzap.pw/vision/ .
+Страница примеров и результатов: https://cv.ops.dzap.pw/ .

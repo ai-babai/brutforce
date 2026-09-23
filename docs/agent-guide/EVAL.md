@@ -2,8 +2,8 @@
 
 Начни с [apps/eval/AGENTS.md](../../apps/eval/AGENTS.md).
 
-- Стенд и галерея: https://reps.maks.dzap.pw/vision/
-- Общий онбординг: https://reps.maks.dzap.pw/vision/guide.html
+- Стенд и галерея: https://cv.ops.dzap.pw/
+- Общий онбординг: https://cv.ops.dzap.pw/guide.html
 - Контракт, команды и ограничения: [README](../../apps/eval/README.md).
 - Sigma: `/srv/lct/maks/eval/current/AGENTS.md`; данные `/srv/lct/data/eval/`.
 - Агентский токен участника: `/srv/lct/eval-access/participant.env`; получай через свой разрешённый SSH-доступ.
