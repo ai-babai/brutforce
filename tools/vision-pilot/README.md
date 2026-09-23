@@ -27,7 +27,8 @@ observed conditions and QC. Scene refs can have no target slug; this is intentio
 `parent_ids`, `identity_reference_id` and `scene_reference_id` preserve lineage.
 `origin` distinguishes real images, AI edits and deterministic augmentations.
 `jobs.jsonl` holds exact prompts and requested conditions. The two stages are:
-20 paired jobs across three models, then 40 different jobs with the chosen model.
+20 paired jobs across three models, then 40 different jobs: 36 Qwen outputs and
+4 Banana fallbacks after repeated Qwen provider failures.
 These 40 must not be used as an equal-size head-to-head comparison.
 
 `requested_conditions` are intentions; `observed_conditions` are the judge's
