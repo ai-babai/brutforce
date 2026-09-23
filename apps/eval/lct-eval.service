@@ -1,0 +1,25 @@
+[Unit]
+Description=LCT image evaluation baskets and submissions
+After=network.target
+
+[Service]
+Type=simple
+User=lct
+Group=lct
+WorkingDirectory=/srv/lct/maks/eval/current
+EnvironmentFile=/etc/lct-eval.env
+ExecStart=/srv/lct/maks/eval/current/lct-eval serve -data /srv/lct/data/eval -web /srv/lct/maks/eval/current/web -listen 127.0.0.1:8124
+Restart=on-failure
+RestartSec=3
+UMask=0027
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectHome=true
+ProtectSystem=strict
+ReadWritePaths=/srv/lct/data/eval
+MemoryMax=512M
+CPUQuota=100%
+TasksMax=64
+
+[Install]
+WantedBy=multi-user.target
