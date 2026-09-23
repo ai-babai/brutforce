@@ -14,7 +14,7 @@ async function api(path) {
 
 function filters() {
   const params = new URLSearchParams();
-  for (const id of ['scenario','origin','model','qc']) if ($('#' + id).value) params.set(id, $('#' + id).value);
+  for (const id of ['scenario','role','origin','model','qc']) if ($('#' + id).value) params.set(id, $('#' + id).value);
   if ($('#search').value.trim()) params.set('q', $('#search').value.trim());
   return params;
 }
@@ -26,7 +26,8 @@ function setNotice(message, error=false) {
 
 function fillFacet(id, values) {
   const select = $('#' + id), current = select.value;
-  select.innerHTML = '<option value="">Все</option>' + values.map(value => `<option value="${esc(value)}">${esc(value)}</option>`).join('');
+  const roleLabels = {identity_reference:'Исходная бутылка',scene_reference:'Референс сцены',output:'AI-результат',augmentation:'Аугментация'};
+  select.innerHTML = '<option value="">Все</option>' + values.map(value => `<option value="${esc(value)}">${esc(id === 'role' ? roleLabels[value] || value : value)}</option>`).join('');
   select.value = current;
 }
 
@@ -177,6 +178,7 @@ async function load() {
     await api('/api/auth');
     const facets = await (await api('/api/data/facets')).json();
     fillFacet('scenario', facets.scenarios || []);
+    fillFacet('role', facets.roles || []);
     fillFacet('origin', facets.origins || []);
     fillFacet('model', facets.models || []);
     fillFacet('qc', facets.qc || []);
