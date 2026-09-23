@@ -8,10 +8,43 @@ Small Go service for frozen diagnostic wine image baskets. It serves an interact
 go test ./...
 go build -o lct-eval ./cmd/lct-eval
 ./lct-eval seal -data /srv/lct/data/eval
-LCT_EVAL_PARTICIPANT_TOKEN='...' LCT_EVAL_REVIEW_TOKEN='...' ./lct-eval serve -data /srv/lct/data/eval -web ./web -listen 127.0.0.1:8124
+LCT_EVAL_PARTICIPANT_TOKEN='...' LCT_EVAL_REVIEW_TOKEN='...' ./lct-eval serve -data /srv/lct/data/eval -vision-data /srv/lct/data/vision -web ./web -listen 127.0.0.1:8124
 ```
 
 Keep the two tokens distinct and inject them through the service environment. Deployment uses `/etc/lct-eval.env` (root:lct 0640) for both service tokens, `/srv/lct/eval-access/participant.env` (lct:lct 0640) for authorized participant agents, and `/srv/lct/eval-access/review.token` (lct:lct 0640) for reviewers. None is in the web root or archive. Caddy routes `cv.ops.dzap.pw` to `127.0.0.1:8124`. The previous `/vision/` URL remains a compatibility alias. The browser uses relative paths. Protect this route at Caddy if team access control exists; the API additionally requires a bearer token. `GET /healthz` is public.
+
+`-vision-data` (or `LCT_EVAL_VISION_DATA`) selects a separate, read-only image corpus. `/data/` is the per-slug training/pilot gallery. The service starts with an empty gallery if `manifest.jsonl` has not yet been assembled, and reloads the manifest when its modification time or size changes. Write updates to a temporary file in the same directory and rename it to `manifest.jsonl` so readers see complete snapshots. Keep the vision root outside the sealed evaluation root; the server rejects nested roots.
+
+## Vision gallery manifest
+
+The corpus lives outside Git and outside `/srv/lct/data/eval`:
+
+```text
+/srv/lct/data/vision/
+  manifest.jsonl
+  images/<image-id>.jpg
+  thumbnails/<image-id>.webp
+```
+
+Each line is one JSON object. The following is an example shape; use real IDs and metadata from the pipeline, not invented examples in the live corpus:
+
+```json
+{"image_id":"output-001","slug":"wine-slug","role":"output","path":"images/output-001.jpg","thumbnail_path":"thumbnails/output-001.webp","origin":"ai_generated","scenario_ids":["table-scene"],"identity_reference_id":"bottle-001","scene_reference_id":"scene-001","requested_conditions":{"lighting":"warm"},"observed_conditions":{"label_readable":true},"model":"image-model","provider":"provider","cost_usd":0.02,"latency_ms":7000,"qc":{"status":"pending","reason":"review needed"},"split":"pilot","parent_ids":["bottle-001","scene-001"],"source":{"source_id":"source-001","url":"https://example.org/provenance"},"source_group":"catalog-batch-001"}
+```
+
+Required: `image_id`, `role`, `path`, `origin`; `slug` is also required except for reusable `scene_reference` rows. Roles: `identity_reference`, `scene_reference`, `output`, `augmentation`. Origins: `real`, `augmentation`, `ai_edited`, `ai_generated`. `qc.status`: `accepted`, `rejected`, or `pending` when supplied. `thumbnail_path` can be omitted while thumbnail production is pending; the gallery shows a placeholder. Paths are relative to the vision root, use image extensions, and cannot traverse directories or follow symlinks. Referenced image IDs must occur in the same manifest. `split` distinguishes train/pilot/test candidates; association with a slug alone never means the output passed QC or is a verified evaluation case.
+
+The manifest may retain additional `source` fields for pipeline bookkeeping. Browser responses include only safe source IDs, title, attribution, license, and an HTTPS provenance URL. Local source paths, `source_locator`, and credentials are never returned. The gallery has no route to evaluation gold or private suite files.
+
+Gallery API, authenticated with the same bearer token as the evaluation API:
+
+- `GET /api/data/facets` lists values for filter controls.
+- `GET /api/data/slugs?page=1&per_page=24&scenario=...&origin=...&model=...&qc=...&q=...` returns `items` with role/origin/QC counts and cost, plus `total_slugs`, `total_images`, `page`, `per_page`.
+- `GET /api/data/images?slug=...&page=1&per_page=24` returns paginated image metadata; it accepts the same filters.
+- `GET /api/data/images/{image_id}` returns one image record, including links by ID to identity and scene references.
+- `GET /api/data/images/{image_id}/thumbnail` and `/image` return the image bytes. The page loads thumbnails only as cards enter the viewport and originals on opening an image.
+
+`per_page` is limited to 100. Image bytes and metadata require a token; no token is put in a URL. The API does not put corpus files into the sealed suite archive.
 
 ## Data layout
 

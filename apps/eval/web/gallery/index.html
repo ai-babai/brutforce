@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>LCT · Данные обучения и пилота</title>
+  <link rel="stylesheet" href="../style.css">
+  <link rel="stylesheet" href="data.css">
+</head>
+<body>
+  <header>
+    <div><div class="eyebrow">LCT / VISION DATA</div><h1>Данные обучения и пилота</h1><p>Исходные бутылки, сцены и полученные изображения по каждому slug.</p></div>
+    <nav><a href="../">Тестовые корзины</a><a href="../guide.html">Инструкция</a><button id="logout" hidden>Выйти</button></nav>
+  </header>
+  <main>
+    <section id="login" class="panel">
+      <h2>Доступ к данным</h2>
+      <p>Введите пароль участника или токен разбора. Он хранится только в текущей сессии браузера.</p>
+      <form id="login-form"><label>Пароль или токен <input id="token" type="password" autocomplete="off" required></label><button type="submit">Открыть</button></form>
+      <p id="login-error" class="error"></p>
+    </section>
+    <div id="workspace" hidden>
+      <section class="panel filters">
+        <label>Найти slug <input id="search" type="search" placeholder="Название или slug"></label>
+        <label>Сценарий <select id="scenario"><option value="">Все</option></select></label>
+        <label>Происхождение <select id="origin"><option value="">Все</option></select></label>
+        <label>Модель <select id="model"><option value="">Все</option></select></label>
+        <label>QC <select id="qc"><option value="">Все</option></select></label>
+        <button id="apply">Применить</button>
+      </section>
+      <div id="notice" role="status"></div>
+      <div id="counts" class="summary"></div>
+      <section id="slugs" aria-label="Список slug"></section>
+      <div id="slug-pager" class="pager"></div>
+      <section id="images-panel" hidden>
+        <div class="section-heading"><h2 id="slug-title"></h2><button id="close-slug">Вернуться к списку</button></div>
+        <div id="image-counts" class="summary"></div>
+        <div id="images" class="cards"></div>
+        <div id="image-pager" class="pager"></div>
+      </section>
+      <section id="detail" class="panel" hidden></section>
+    </div>
+  </main>
+  <footer>Связь изображения со slug показывает его происхождение. Статус QC и эталоны тестовых корзин учитываются отдельно.</footer>
+  <script src="data.js"></script>
+</body>
+</html>

@@ -25,6 +25,7 @@ import (
 
 type app struct {
 	root                string
+	vision              *visionCatalog
 	suite               eval.Suite
 	gold                eval.Gold
 	participant, review string
@@ -117,6 +118,7 @@ func serve(args []string) {
 	root := fs.String("data", "", "suite data directory")
 	addr := fs.String("listen", "127.0.0.1:8124", "listen address")
 	web := fs.String("web", "web", "web asset directory")
+	visionRoot := fs.String("vision-data", os.Getenv("LCT_EVAL_VISION_DATA"), "separate vision image data directory")
 	fs.Parse(args)
 	if *root == "" {
 		fatal("-data required")
@@ -135,6 +137,15 @@ func serve(args []string) {
 		fatal(e.Error())
 	}
 	a := &app{root: *root, suite: s, gold: g, participant: participant, review: review, runs: map[string]eval.Report{}, runsPath: filepath.Join(*root, "runs.jsonl")}
+	if *visionRoot != "" {
+		if sameOrNestedRoot(*root, *visionRoot) {
+			fatal("-vision-data must be separate from the sealed evaluation data")
+		}
+		a.vision = &visionCatalog{root: *visionRoot}
+		if _, e := a.vision.snapshot(); e != nil {
+			fatal("vision data: " + e.Error())
+		}
+	}
 	if e = a.loadRuns(); e != nil {
 		fatal(e.Error())
 	}
@@ -149,6 +160,13 @@ func serve(args []string) {
 	mux.HandleFunc("POST /api/submissions", a.submit)
 	mux.HandleFunc("GET /api/runs", a.listRuns)
 	mux.HandleFunc("GET /api/runs/{id}", a.run)
+	mux.HandleFunc("GET /api/data/slugs", a.dataSlugs)
+	mux.HandleFunc("GET /api/data/facets", a.dataFacets)
+	mux.HandleFunc("GET /api/data/images", a.dataImages)
+	mux.HandleFunc("GET /api/data/images/{id}", a.dataImageInfo)
+	mux.HandleFunc("GET /api/data/images/{id}/image", a.dataImage)
+	mux.HandleFunc("GET /api/data/images/{id}/thumbnail", a.dataThumbnail)
+	mux.Handle("GET /data/", http.StripPrefix("/data/", http.FileServer(http.Dir(filepath.Join(*web, "gallery")))))
 	mux.Handle("/", http.FileServer(http.Dir(*web)))
 	srv := &http.Server{Addr: *addr, Handler: mux, ReadHeaderTimeout: 5 * time.Second, MaxHeaderBytes: 1 << 16}
 	log.Printf("lct-eval listening %s suite=%s cases=%d", *addr, s.Hash, len(s.Cases))
