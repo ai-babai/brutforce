@@ -108,3 +108,15 @@ all` is the actual returned response; other branches are diagnostic rankings,
 with no returned-response accuracy or deadline score. Cached composition stage
 sums are not live HTTP latency. These are local agent-reviewed labels, not an organizer answer
 key. Publish annotation coverage and prior-seen split alongside accuracy.
+
+Before scoring a new review, use `merge_reviews.py --queries PUBLIC_QUERIES
+--suite FROZEN_SUITE --catalog PUBLIC_CATALOG --review FIRST_REVIEW
+--review SECOND_REVIEW --out VERSIONED_PRIVATE_JSONL --summary PRIVATE_AUDIT_JSON`.
+This requires all unique photos, validates identities and catalog membership,
+rebuilds prior-seen groups from image hashes, and refuses to overwrite outputs.
+`compare_reviewed.py` can then compare frozen prediction files listed in a JSON
+array (`name`, `path`, optional `variants`). Its public aggregates include coverage,
+ranking errors, and an equal-weight average over reviewed scene groups. A group
+is a repeated product/scene identity, not an independent new wine per photograph.
+Catalog aliases and title/photo conflicts require explicit review; visual similarity
+to a reference alone is not proof of a unique organizer slug.
