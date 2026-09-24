@@ -13,7 +13,7 @@
 | Поиск/рекомендации Романа | [Контракт](contracts/wine-services.md), [онбординг](docs/agent-guide/ROMAN-SERVICES.md) |
 | Дизайн и макеты | [Переход на v2](docs/product/design-v2-migration-plan.md), design/ |
 | Тестовые фото, поиск и сервисные проверки | [Eval onboarding](apps/eval/AGENTS.md), [стенд](https://cv.ops.dzap.pw/), [инструкция](https://cv.ops.dzap.pw/guide.html) |
-| Данные, эталоны, дубли и версии разметки | [Правила и навигация](docs/data/README.md) |
+| Данные, эталоны, дубли и версии разметки | [Правила и навигация](docs/agent-guide/DATA-RULES.md) |
 | Проверки и история | [cases](cases/cases.json), scripts/run-fast-checks.mjs, reports/ |
 | Совместная работа | [RULES](docs/agent-guide/RULES.md), [BOARD](docs/agent-guide/BOARD.md) |
 | Выпуск и откат | [deploy](deploy/README.md), deploy/releases/ |

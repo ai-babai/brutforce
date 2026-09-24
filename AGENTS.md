@@ -28,7 +28,7 @@
 - Совместная работа и ветки: docs/agent-guide/RULES.md; доска: docs/agent-guide/BOARD.md.
 - Агенту Романа: ROMAN-START.md, затем docs/agent-guide/ROMAN-SERVICES.md для поиска/рекомендаций.
 - Модули и контракты: contracts/README.md и contracts/api-versioning.md.
-- Эталоны, разметка и исправления каталога: docs/data/README.md.
+- Эталоны, разметка и исправления каталога: docs/agent-guide/DATA-RULES.md.
 - Работа с данными: раздел «Данные и результаты» в docs/agent-guide/OPERATING-RULES.md.
 - Проверки и сдача: раздел «Проверки и поставка» в том же файле.
 - Выпуск: deploy/README.md. База данных: docs/agent-guide/DATABASE.md.
