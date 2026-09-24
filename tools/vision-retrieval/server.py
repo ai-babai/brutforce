@@ -51,7 +51,7 @@ class Pipeline:
    standalone=None
    if target is None and selection['selection_reason']=='no_bottle_detected':
     region,standalone=self.model.label_region(image)
-    if standalone['source'].startswith('owlv2') and standalone['score']>=.15:
+    if standalone['source'].startswith(('owlv2','yoloe26s')) and standalone['score']>=.15:
      target=region;selection['selected_box']=standalone['box']
      selection['selection_reason']='standalone_label_no_bottle'
   else:
