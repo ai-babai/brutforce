@@ -26,3 +26,6 @@
 
 - Per-wine images, lineage and generation: [tools/vision-pilot/README.md](tools/vision-pilot/README.md).
 - Frozen-suite OCR baselines and measured findings: [tools/vision-baselines/README.md](tools/vision-baselines/README.md).
+- Pretrained bottle/label/OCR composition, without training: [tools/vision-retrieval/README.md](tools/vision-retrieval/README.md).
+- All organizer photos and prior synthetic errors: [tools/organizer-audit/README.md](tools/organizer-audit/README.md).
+- Measured composition report: https://cv.ops.dzap.pw/data/next.html.
