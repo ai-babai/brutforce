@@ -34,4 +34,6 @@ function renderSection(section) {
     ? `Обновлено: ${new Intl.DateTimeFormat('ru-RU', {dateStyle:'medium', timeStyle:'short', timeZone:'Europe/Moscow'}).format(updated)}`
     : 'Результаты следующего эксперимента готовятся';
   $('#report-sections').innerHTML = data.sections.map(renderSection).join('');
+  const nav = $('#report-nav');
+  if (nav) nav.innerHTML = '<a href="#architecture-title">Схемы решений</a>' + data.sections.map(section => `<a href="#${esc(section.id)}">${esc(section.title)}</a>`).join('');
 }catch(error){ $('#report-status').textContent = `Не удалось загрузить отчёт: ${error.message}`; }})();

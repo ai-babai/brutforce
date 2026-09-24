@@ -64,6 +64,19 @@ def report(root,old,gold=None):
       'summary':'Полезная замена детектора должна проходить сложные случаи, а не только чаще выдавать рамку.',
       'tables':[table('Проверки поведения',[('basket','Корзина')]+[(name,name) for name in loaded],basket_rows)],
       'notes':['Число обнаружений не является точностью детекции. Полной ручной разметки всех рамок плотной полки здесь нет: mAP и полноту всех бутылок не заявляем.']})
+    if 'OWLv2 · v2' in loaded:
+        baseline={r['case_id']:r for r in loaded['OWLv2 · v2'][2]['cases'] if r['graded']}
+        paired=[]
+        for name,(_,_,service,_) in loaded.items():
+            if name=='OWLv2 · v2':continue
+            candidate={r['case_id']:r for r in service['cases'] if r['graded']}
+            if set(candidate)!=set(baseline):raise ValueError('paired service cases differ')
+            wins=sum(candidate[k]['correct'] and not baseline[k]['correct'] for k in baseline)
+            losses=sum(baseline[k]['correct'] and not candidate[k]['correct'] for k in baseline)
+            paired.append({'model':name,'improved':wins,'regressed':losses,'net':wins-losses})
+        sections[-1]['tables'].append(table('Что изменилось относительно OWLv2 на тех же 141 случаях',
+          [('model','Решение'),('improved','Ошибка → верно'),('regressed','Верно → ошибка'),('net','Изменение числа верных')],paired))
+        sections[-1]['notes'].append('Это парная диагностика на повторно используемых случаях, а не статистическое доказательство преимущества на новых фотографиях.')
     if gold:
         gold_by_id={r['case_id']:r for r in gold['cases']}
         outcome_rows=[]
@@ -81,6 +94,23 @@ def report(root,old,gold=None):
           'tables':[table('Правильное действие по типу входа',[('model','Решение'),('real_match','Реальное вино'),('real_negative','Реальное не-вино'),('aug_match','Вино: аугментации'),('ai_match','Вино: AI'),('insufficient','AI без достаточных данных')],outcome_rows)],
           'notes':['Случай с бутылкой без этикетки требует insufficient_information. Отказ no_match тоже не проходит этот контракт: отсутствие данных и отсутствие вина различаются.',
                    'Десять положительных реальных случаев повторяют небольшой набор вин; это ограниченный диагностический контроль. Расширенный аудит 100 фото приведён отдельно.']})
+    gray_rows=[]
+    for mode,label in [('color','Цвет'),('gray','Чёрно-белая этикетка'),('color_gray_equal_rrf60','Цвет + ч/б, равные ранги')]:
+        folder=old/'eval-v2-label-context/reports' if mode=='color' else root/'detectors/gray-label/reports'
+        prefix='' if mode=='color' else 'report-'+mode+'-'
+        for branch in ('label','label_ocr','all'):
+            svc=read(folder/(prefix+branch+'-service.json'));ret=read(folder/(prefix+branch+'-retrieval.json'))
+            if svc and ret:
+                gray_rows.append({'mode':label,'branch':branch_names[branch],
+                  'service':fraction(svc['overall']),'top1':fraction(ret['overall']),
+                  'top5':fraction(ret['overall'],'correct_top5'),'top20':fraction(ret['overall'],'correct_top20')})
+    if len(gray_rows)>3:
+        sections.append({'id':'gray','title':'Помогает ли убрать цвет','status':'ready',
+          'summary':'Одинаковые OWLv2-фрагменты и SigLIP2 Base-224. В ч/б переводится и каталожная этикетка, и запрос; исходная ветвь бутылки и OCR сохраняются.',
+          'tables':[table('Отдельная этикетка и сочетания',[('mode','Преобразование'),('branch','Ветви'),('service','Service /141'),('top1','Top‑1 /62'),('top5','Top‑5 /62'),('top20','Top‑20 /62')],gray_rows)],
+          'notes':['Ч/б не дало общего улучшения: три ветви вместе 61/141 против цветных 64/141. Цвет + ч/б повысил retrieval Top‑1 с 32 до 33/62, но также снизил service до 61/141.',
+                   'Это пересчёт качества с сохранёнными фрагментами, а не измерение нового полного HTTP-запроса. Время стадий не объявляется сквозной задержкой.',
+                   'Результат не обосновывает добавление второй ветви в основной сервис. Веса сочетания не подбирались под ответы корзин. Негатив не запускали: подтверждённой потребности в таком входе не найдено.']})
     gate=read(root/'catalog-audit/index-reference-gated-v1/index-info.json')
     sections.append({'id':'reference-audit','title':'Каталог: восстановили границу доверия','status':'ready' if gate else 'partial',
       'summary':'Проверка прежнего аудита выявила возврат 17 карантинных изображений через архивный fallback. Ещё два несоответствия нашли при просмотре оригинальных этикеток.',
@@ -88,6 +118,19 @@ def report(root,old,gold=None):
       'notes':['Исходный каталог, прошлые результаты и frozen v1 не переписаны. Исправление проверяется отдельными прогонами.',
                'Сокращённый манифест также скрывал различие сухого, полусухого и полусладкого вина. Для разметки теперь используются полные метаданные; одинаковые названия не объединяются автоматически.',
                '2061 оставшийся снимок не означает новую визуальную сертификацию всего каталога. Целостность файла, display-фото, ML-reference и правильный ответ теста — разные проверки.']})
+    gate_rows=[]
+    for key,name in [('owlv2','OWLv2 · v2'),('yoloe26s','YOLOE-26s')]:
+        folder=root/'detectors/reference-gated'/key/'reports'
+        svc=read(folder/'report-all-service.json');ret=read(folder/'report-all-retrieval.json')
+        if svc and ret and name in loaded:
+            previous=loaded[name]
+            gate_rows.append({'model':name,'before_service':fraction(previous[2]['overall']),
+              'after_service':fraction(svc['overall']),'before_top1':fraction(previous[3]['overall']),
+              'after_top1':fraction(ret['overall']),'after_top20':fraction(ret['overall'],'correct_top20')})
+    if gate_rows:
+        sections[-1]['tables'].append(table('Отдельные реальные прогоны после исключения 19 изображений',
+          [('model','Решение'),('before_service','Service: до'),('after_service','После'),('before_top1','Retrieval Top‑1: до'),('after_top1','После'),('after_top20','Top‑20 после')],gate_rows))
+        sections[-1]['notes'].append('Исключение спорных изображений восстанавливает правило допуска эталонов. Оно само по себе не гарантирует роста метрик; отсутствие изменения на небольшом наборе не оправдывает возврат ошибочных фото.')
     audit=read(root/'annotation/sealed-v1-audit.json');comparison=read(root/'annotation/comparison-v1.json')
     annotation_tables=[]
     if audit:
@@ -97,8 +140,12 @@ def report(root,old,gold=None):
         for item in comparison['models']:
             if item['variant'] not in ('standalone','all'):continue
             s=item['all'];n=s['exact_denominator']
-            real_rows.append({'model':item['name'],'n':n,'top1':s['top1'],'top5':s['top5'],'top20':s['top20'],'groups':item.get('exact_product_groups'),'macro':round(item['product_macro_top1']*100,1) if item.get('product_macro_top1') is not None else '—'})
-        annotation_tables.append(table('Только подтверждённые ответы',[('model','Решение'),('n','Фото с эталоном'),('top1','Top‑1'),('top5','Top‑5'),('top20','Top‑20'),('groups','Разных wine ID'),('macro','Средний Top‑1 по винам, %')],real_rows))
+            row={'model':item['name'],'n':n,'top1':s['top1'],'top5':s['top5'],'top20':s['top20'],'groups':item.get('exact_product_groups'),'macro':round(item['product_macro_top1']*100,1) if item.get('product_macro_top1') is not None else '—'}
+            for key in ('familiar12','newly_reviewed88'):
+                subset=item['by_prior_seen'].get(key,{})
+                row[key]=f"{subset.get('top1',0)}/{subset.get('exact_denominator',0)}"
+            real_rows.append(row)
+        annotation_tables.append(table('Только подтверждённые ответы',[('model','Решение'),('n','Фото с эталоном'),('top1','Top‑1'),('top5','Top‑5'),('top20','Top‑20'),('familiar12','Top‑1: уже были в v1'),('newly_reviewed88','Top‑1: остальные фото'),('groups','Разных wine ID'),('macro','Средний Top‑1 по винам, %')],real_rows))
     sections.append({'id':'real-photos','title':'100 реальных фотографий организаторов','status':'ready' if comparison else 'partial',
       'summary':'103 исходных файла содержат 100 разных изображений. Разметка проверяется по оригиналам и полным метаданным; ошибочный первый черновик отозван и не участвует в метриках.',
       'tables':annotation_tables,'notes':['Локальные агентские ответы не являются официальным ключом организаторов. Неоднозначные или неразрешённые изображения остаются в учёте покрытия, но не превращаются в выдуманный точный ответ.',

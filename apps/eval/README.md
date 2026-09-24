@@ -63,6 +63,12 @@ sources have been added. Keep organizer real-photo metrics, frozen-basket
 ablations, and stage latency/hardware/cost separate. Do not publish private
 gold, individual submitted predictions, local source paths, or credentials in
 this static JSON.
+
+`/data/detectors.html` uses the same renderer with `detectors-data.json` for the
+September25 no-training detector/encoder comparison. Build only aggregate rows
+using `tools/organizer-audit/build_detector_report.py`; optional `--private-gold`
+is a reviewer-side input for grouped outcome counts, never a file to deploy.
+The strict real-photo review is separately versioned; it does not replace v1 gold.
 Optional `examples[]` in a section shows input, bottle crop, and label crop
 previews. Each example has `title`, `note`, and `images: [{label,url}]`; image
 URLs must be local `/data/evidence/crops/` files, and the browser loads them

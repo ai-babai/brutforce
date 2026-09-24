@@ -30,3 +30,4 @@
 - Pretrained bottle/label/OCR composition, without training: [tools/vision-retrieval/README.md](tools/vision-retrieval/README.md).
 - All organizer photos and prior synthetic errors: [tools/organizer-audit/README.md](tools/organizer-audit/README.md).
 - Measured composition report: https://cv.ops.dzap.pw/data/next.html.
+- Detector comparison, reference audit and real-photo review: https://cv.ops.dzap.pw/data/detectors.html.
