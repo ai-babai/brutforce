@@ -2,6 +2,7 @@
 
 The source images, model responses, ledgers, and labels live outside Git in
 `/Users/skif/ml-data/brutforce/vision-retrieval-20260924/organizer-audit`.
+Set `BRUTFORCE_AUDIT_ROOT` to use another data root, such as the copy on Sigma.
 The public manifests contain case IDs, image paths, SHA-256 and catalog refs;
 `labels-private.json` and `synthetic-private-targets.json` are read only by
 `analyze.py`, after predictions are frozen. They never enter the OCR runner,
@@ -19,6 +20,67 @@ Paddle process, or catalog matcher.
 - `derive_v2.py`: existing cached cultivar rerank, development only.
 - `analyze.py`: produces aggregate JSON and private case-level traces using
   agent-verified local matches and synthetic pilot metadata.
+- `benchmark_pipeline.py`: public-only, SHA-checked HTTP timing client. It
+  separates the first request after service readiness from warm requests.
+- `score_composition.py`: reviewer-side aggregate for the seven fused
+  retrieval variants. It reads private local labels only after predictions
+  are frozen; never copy labels to an inference host.
+
+## Reproducing on Sigma
+
+The public images and manifests are at
+`/srv/lct/data/vision-retrieval/20260924/organizer-audit`. The organizer
+manifest (`queries-server.json`) contains absolute Sigma image paths. The
+synthetic manifest is `synthetic-server.json`. The script and frozen v1 matcher
+sources are installed alongside the data under `code/organizer-audit` and
+`code/vision-baselines`; the public CSV and allowed slugs are under
+`public-catalog`. Use the existing Paddle environment for OCR. For example:
+
+```sh
+export BRUTFORCE_AUDIT_ROOT=/srv/lct/data/vision-retrieval/20260924/organizer-audit
+export BRUTFORCE_EVAL_ROOT="$BRUTFORCE_AUDIT_ROOT/public-catalog"
+export BRUTFORCE_CATALOG_CSV="$BRUTFORCE_EVAL_ROOT/strapi_output0709.csv"
+export OMP_NUM_THREADS=2 OPENBLAS_NUM_THREADS=2 MKL_NUM_THREADS=2
+cd "$BRUTFORCE_AUDIT_ROOT/code"
+/srv/lct/maks/vision-baselines/venv/bin/python organizer-audit/paddle_remote.py \
+  --manifest "$BRUTFORCE_AUDIT_ROOT/queries-server.json" \
+  --out "$BRUTFORCE_AUDIT_ROOT/paddle-ocr.jsonl"
+/srv/lct/maks/vision-baselines/venv/bin/python organizer-audit/postprocess_paddle.py \
+  --input "$BRUTFORCE_AUDIT_ROOT/paddle-ocr.jsonl" \
+  --output "$BRUTFORCE_AUDIT_ROOT/paddle-standalone.jsonl"
+```
+
+The standalone DeepSeek/Qwen runner uses the same public CSV and allowed
+slugs. Set `BRUTFORCE_OPENROUTER_KEY_FILE` to a readable secret-file path and
+run, for example, `python organizer-audit/run_standalone.py --model deepseek
+--manifest "$BRUTFORCE_AUDIT_ROOT/queries-server.json"`. The runner writes an
+attempt ledger and enforces a combined USD cap. Existing results are complete;
+do not repeat paid calls to reproduce the report. For local postprocessing,
+`BRUTFORCE_BASELINE_ROOT` points to frozen v1 baseline JSONL files and
+`BRUTFORCE_PILOT_ROOT` points to prior synthetic pilot metadata.
+
+Keep private `labels-private.json` and `synthetic-private-targets.json` away
+from inference hosts. `analyze.py` needs these only after predictions are
+frozen; unlabeled organizer images have no accuracy denominator.
+
+## HTTP timing
+
+Use the same `benchmark-queries.json` and original image bytes on each host.
+The client verifies every input SHA and the SHA echoed by the endpoint, calls
+`/healthz` to record model load time, then sends one sequential loopback HTTP
+request per image. The first request is separate. Warm p50/p95/max include
+distinct later images; `full_pipeline_warm_*` further requires OCR to have
+executed without error. It is a sequential local latency check, not a network
+or concurrent-load benchmark. Example (after starting `server.py`):
+
+```sh
+python organizer-audit/benchmark_pipeline.py \
+  --manifest "$BRUTFORCE_AUDIT_ROOT/benchmark-queries.json" \
+  --image-root "$BRUTFORCE_AUDIT_ROOT" \
+  --url http://127.0.0.1:8080/v1/eval/predict \
+  --hardware-label rtx4090 --device cuda --cpu-threads 2 --omp-threads 1 \
+  --out "$BRUTFORCE_AUDIT_ROOT/benchmark-rtx4090.json" --limit 24
+```
 
 The frozen v1 suite, gold, and baseline code were not changed. See
 `ERROR-REPORT.ru.md` in the data directory for measured counts, provenance,

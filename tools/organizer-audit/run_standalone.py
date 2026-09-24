@@ -6,6 +6,7 @@ paid attempt before writing predictions and resumes by image SHA + model.
 import argparse
 import hashlib
 import json
+import os
 import signal
 import sys
 import time
@@ -14,9 +15,13 @@ from pathlib import Path
 BASE = Path(__file__).resolve().parents[1] / 'vision-baselines'
 sys.path.insert(0, str(BASE))
 import run as baseline
+import matcher as catalog_matcher
 from matcher import Matcher
 
-DATA = Path('/Users/skif/ml-data/brutforce/vision-retrieval-20260924/organizer-audit')
+DATA = Path(os.environ.get('BRUTFORCE_AUDIT_ROOT', '/Users/skif/ml-data/brutforce/vision-retrieval-20260924/organizer-audit'))
+catalog_matcher.DATA = Path(os.environ.get('BRUTFORCE_EVAL_ROOT', str(catalog_matcher.DATA)))
+catalog_matcher.CSV = Path(os.environ.get('BRUTFORCE_CATALOG_CSV', str(catalog_matcher.CSV)))
+baseline.KEY = Path(os.environ.get('BRUTFORCE_OPENROUTER_KEY_FILE', str(baseline.KEY)))
 QUERY = DATA / 'queries-public.json'
 
 

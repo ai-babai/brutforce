@@ -1,13 +1,14 @@
 """Sigma CPU PaddleOCR on public organizer originals; no labels or catalog."""
 import argparse
 import hashlib
+import os
 import json
 import time
 from pathlib import Path
 from PIL import Image
 from paddleocr import PaddleOCR
 
-ROOT = Path('/srv/lct/data/vision-retrieval/20260924/organizer-audit')
+ROOT = Path(os.environ.get('BRUTFORCE_AUDIT_ROOT', '/srv/lct/data/vision-retrieval/20260924/organizer-audit'))
 MANIFEST = ROOT / 'queries-server.json'
 OUT = ROOT / 'paddle-ocr.jsonl'
 

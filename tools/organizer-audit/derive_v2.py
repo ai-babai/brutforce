@@ -1,13 +1,17 @@
 """Apply pre-existing generic cultivar rerank to cached organizer OCR."""
 import json
+import os
 import sys
 from pathlib import Path
 
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'vision-baselines'))
+import matcher as catalog_matcher
 from matcher import Matcher
 from offline_variants import v2_record
 
-ROOT=Path('/Users/skif/ml-data/brutforce/vision-retrieval-20260924/organizer-audit')
+ROOT=Path(os.environ.get('BRUTFORCE_AUDIT_ROOT', '/Users/skif/ml-data/brutforce/vision-retrieval-20260924/organizer-audit'))
+catalog_matcher.DATA=Path(os.environ.get('BRUTFORCE_EVAL_ROOT',str(catalog_matcher.DATA)))
+catalog_matcher.CSV=Path(os.environ.get('BRUTFORCE_CATALOG_CSV',str(catalog_matcher.CSV)))
 
 def main():
     matcher=Matcher()

@@ -6,11 +6,12 @@ They are never imported by OCR runners or the catalog matcher.
 import collections
 import hashlib
 import json
+import os
 import statistics
 from pathlib import Path
 
-ROOT=Path('/Users/skif/ml-data/brutforce/vision-retrieval-20260924/organizer-audit')
-PILOT=Path('/Users/skif/ml-data/brutforce/vision-pilot-20260924')
+ROOT=Path(os.environ.get('BRUTFORCE_AUDIT_ROOT', '/Users/skif/ml-data/brutforce/vision-retrieval-20260924/organizer-audit'))
+PILOT=Path(os.environ.get('BRUTFORCE_PILOT_ROOT', '/Users/skif/ml-data/brutforce/vision-pilot-20260924'))
 MODELS=('deepseek','qwen','paddle')
 
 

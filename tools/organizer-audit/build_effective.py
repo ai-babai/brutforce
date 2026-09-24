@@ -4,11 +4,12 @@ No labels or gold are read. The three eval aliases reuse the corresponding
 100-photo record by SHA. Fresh outputs remain archived for replicate analysis.
 """
 import json
+import os
 from pathlib import Path
 
-ROOT=Path('/Users/skif/ml-data/brutforce/vision-retrieval-20260924/organizer-audit')
-V1=Path('/Users/skif/ml-data/brutforce/eval-v1')
-OLD=Path('/Users/skif/ml-data/brutforce/vision-baselines-20260924')
+ROOT=Path(os.environ.get('BRUTFORCE_AUDIT_ROOT', '/Users/skif/ml-data/brutforce/vision-retrieval-20260924/organizer-audit'))
+V1=Path(os.environ.get('BRUTFORCE_EVAL_ROOT', '/Users/skif/ml-data/brutforce/eval-v1'))
+OLD=Path(os.environ.get('BRUTFORCE_BASELINE_ROOT', '/Users/skif/ml-data/brutforce/vision-baselines-20260924'))
 FILES={'deepseek':'deepseek-prompt-v1.jsonl','qwen':'qwen-prompt-v1.jsonl','paddle':'paddle.jsonl'}
 
 def read(path):return [json.loads(s) for s in path.read_text().splitlines()]
