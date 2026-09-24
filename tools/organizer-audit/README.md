@@ -120,3 +120,18 @@ ranking errors, and an equal-weight average over reviewed scene groups. A group
 is a repeated product/scene identity, not an independent new wine per photograph.
 Catalog aliases and title/photo conflicts require explicit review; visual similarity
 to a reference alone is not proof of a unique organizer slug.
+
+## Reference quarantine gate
+
+`reference_gate.py --catalog EXACT_INDEX_MANIFEST --index OLD_INDEX
+--decisions VERSIONED_DECISIONS --out NEW_INDEX` copies the index and disables
+only exact slug/image-SHA pairs supported by evidence. It verifies the original
+manifest digest and slug order, refuses existing output directories, preserves
+all text-catalog entries, and records index/decision hashes. Four tests cover
+isolation, replaced-image mismatch, order mismatch and missing evidence.
+
+The September25 gate excludes17 previously quarantined images accidentally
+restored through archive fallback plus2 newly confirmed mismatches. It leaves
+2061 visual references and42 unavailable slots out of2103; this is not full
+semantic certification of every remaining photo. Old experiment files and scores
+remain immutable; only separately named reruns use the gated index.

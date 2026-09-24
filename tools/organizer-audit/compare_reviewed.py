@@ -19,7 +19,7 @@ def compare(labels, specs):
             summary,traces=score(labels,predictions,variant)
             groups=defaultdict(list)
             for trace in traces:
-                if trace['annotation_status']=='exact':groups[trace['scene_group']].append(trace)
+                if trace['annotation_status']=='exact':groups[trace['expected_slug']].append(trace)
             exact=[r for r in traces if r['annotation_status']=='exact']
             errors={
                 'missing_or_error':sum(r['status']!='ok' for r in exact),
@@ -29,8 +29,8 @@ def compare(labels, specs):
             }
             summary['name']=spec['name'];summary['family']=spec.get('family','unknown')
             summary['prediction_sha256']=hashlib.sha256(path.read_bytes()).hexdigest()
-            summary['exact_scene_groups']=len(groups)
-            summary['scene_macro_top1']=sum(sum(r['rank']==1 for r in rows)/len(rows) for rows in groups.values())/len(groups) if groups else None
+            summary['exact_product_groups']=len(groups)
+            summary['product_macro_top1']=sum(sum(r['rank']==1 for r in rows)/len(rows) for rows in groups.values())/len(groups) if groups else None
             summary['rank_error_breakdown']=errors
             results.append(summary)
     return {'scope':'Post-hoc diagnostic, no inference or weight fitting. Reviewed subset and repeated identities can bias accuracy.', 'models':results}

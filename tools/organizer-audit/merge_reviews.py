@@ -35,6 +35,7 @@ def build(queries, suite, catalog, reviews):
              'status_counts':dict(counts),'exact_images':counts['exact'],
              'exact_scene_groups':len({r['scene_group'] for r in output if r['status']=='exact'}),
              'all_scene_groups':len({r['scene_group'] for r in output}),
+             'exact_product_groups':len({r['exact_slug'] for r in output if r['status']=='exact'}),
              'prior_seen_counts':dict(Counter(r['review']['prior_seen_group'] for r in output)),
              'limitations':['Agent-reviewed labels are not the organizer answer key.',
                            'Catalog-unresolved is not evidence that a wine is absent.',
