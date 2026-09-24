@@ -31,3 +31,5 @@
 - All organizer photos and prior synthetic errors: [tools/organizer-audit/README.md](tools/organizer-audit/README.md).
 - Measured composition report: https://cv.ops.dzap.pw/data/next.html.
 - Detector comparison, reference audit and real-photo review: https://cv.ops.dzap.pw/data/detectors.html.
+
+- Проверка простых правил после OCR без обучения: [attribute rerank](tools/vision-attribute-rerank/README.md).

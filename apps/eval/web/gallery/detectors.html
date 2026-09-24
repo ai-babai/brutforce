@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>LCT · Детекторы и реальные фото</title><link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="next.css"></head>
+<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>LCT · Поиск вина без обучения</title><link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="next.css"></head>
 <body data-report-source="detectors-data.json">
 <header><div class="brand"><a href="/">LCT / VISION EVAL</a><span class="header-tag">Сравнение без обучения</span></div><nav aria-label="Разделы"><a href="/">Корзины</a><a href="/data/next.html">Первый опыт</a><a aria-current="page" href="/data/detectors.html">Детекторы</a><a href="/guide.html">Инструкция</a></nav></header>
 <main>
-<section class="intro"><div><div class="eyebrow">25 СЕНТЯБРЯ · ГОТОВЫЕ ВЕСА</div><h1>Найти нужное вино.<br><em>Проверить каждый шаг.</em></h1></div><p>Меняем поиск бутылки и этикетки. Сравниваем на тех же корзинах и отдельно на реальных фотографиях организаторов.</p></section>
+<section class="intro"><div><div class="eyebrow">25 СЕНТЯБРЯ · ГОТОВЫЕ ВЕСА</div><h1>Найти нужное вино.<br><em>Проверить каждый шаг.</em></h1></div><p>Сравниваем выбор бутылки, визуальные признаки и поиск по тексту на одних корзинах и отдельно на реальных фотографиях организаторов.</p></section>
 <nav id="report-nav" class="report-nav" aria-label="Разделы отчёта"><a href="#architecture-title">Схемы решений</a></nav>
 <section class="architecture" aria-labelledby="architecture-title"><h2 id="architecture-title">Что именно сравниваем</h2><p class="architecture-lead">Детектор выделяет область изображения. Он ещё не знает, какая карточка каталога ей соответствует. За поиск карточки отвечают следующие ступени.</p>
 <div class="architecture-grid">
@@ -57,8 +57,19 @@ SigLIP2 + выбор винной цели
 OWLv2: этикетка + контекст
   |
 визуальный поиск + OCR</pre><p>Ещё одна замена только первого детектора. Сохраняем дальнейшие шаги, чтобы сравнение не смешивало несколько изменений. Код и выбранные веса доступны под Apache 2.0.</p></article>
+<article class="architecture-card"><h3>6. RT-DETR + SO400M · сильная композиция</h3><pre>RT-DETR: бутылки
+  |
+Base-224: выбрать центральное вино
+  |
+цель целиком + OWLv2: этикетка
+  |
+SO400M: два визуальных вектора
+  |
+кандидаты по фото + PaddleOCR
+  |
+объединение → slug</pre><p>Меняется энкодер поиска; классификатор винной цели остаётся Base. Упрощённая ветвь использует только изображение цели: после выбора бутылки пропускает обычный поиск этикетки и OCR. Запасной путь отдельной этикетки сохранён.</p></article>
 </div>
-<div class="architecture-card" style="margin-top:14px"><h3>Общая часть после выбора цели</h3><pre>                выбранная цель
+<div class="architecture-card" style="margin-top:14px"><h3>Общая схема поиска после выбора цели</h3><pre>                выбранная цель
         +-------------+-------------+
         |             |             |
    SigLIP2:      SigLIP2:       PaddleOCR:
@@ -71,7 +82,7 @@ OWLv2: этикетка + контекст
                       |
            объединение списков (RRF)
                       |
-               slug карточки</pre><p>Один визуальный энкодер SigLIP2 Base-224 обрабатывает два разных фрагмента. Каталожные векторы рассчитаны заранее. OCR добавляет собственных кандидатов. Сначала оцениваем каждую ветвь отдельно, затем пары и все три; веса 25/35/40% фиксированы, обучения нет.</p></div>
+               slug карточки</pre><p>Один визуальный энкодер — Base-224 в первом опыте или SO400M-384 в новой композиции — обрабатывает два разных фрагмента. Каталожные векторы рассчитаны заранее. OCR добавляет собственных кандидатов. Сначала оцениваем каждую ветвь отдельно, затем пары и все три; веса 25/35/40% фиксированы, обучения нет. RRF даёт карточке тем больше баллов, чем выше её место в каждом списке.</p></div>
 <p class="architecture-foot"><strong>Service и retrieval разделены.</strong> Полный кадр проходит выбор центрального вина. В поисковой корзине уже дан кроп: поиск бутылки пропускается. «Цель целиком» здесь означает весь переданный кроп. Результаты этих двух режимов нельзя складывать в одну точность.</p>
 <p class="architecture-foot"><strong>Отдельные проверки эмбеддинга.</strong> SO400M-384 заменяет Base-224 при сохранённых фрагментах, OCR и правилах объединения. В опыте с чёрно-белым изображением меняем только цвет этикетки одновременно у запроса и каталога. Эти пересчёты рангов показывают вклад признаков; они не выдают себя за измеренный полный HTTP-сервис.</p>
 <details class="architecture-card"><summary>Как устроены отдельные текстовые бейзлайны</summary><pre>полный кадр

@@ -6,3 +6,5 @@
 .report-nav{display:flex;flex-wrap:wrap;gap:8px 20px;margin:0 0 24px;font-size:12px;line-height:1.7}.report-nav a{color:#365b37;text-underline-offset:3px}.report-section{scroll-margin-top:20px}
 
 #real-photos .result-table td:not(:first-child){min-width:80px}details.architecture-card{margin-top:16px}details.architecture-card summary{cursor:pointer;font-weight:700}details.architecture-card[open] summary{margin-bottom:18px}
+
+.report-section table.compact-table{min-width:0}.report-section table.compact-table td:not(:first-child){min-width:60px}@media(max-width:480px){.report-section table:not(.compact-table) th:first-child,.report-section table:not(.compact-table) td:first-child{min-width:170px;max-width:170px}}

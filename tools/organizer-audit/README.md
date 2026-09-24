@@ -138,8 +138,78 @@ manifest digest and slug order, refuses existing output directories, preserves
 all text-catalog entries, and records index/decision hashes. Four tests cover
 isolation, replaced-image mismatch, order mismatch and missing evidence.
 
-The September25 gate excludes17 previously quarantined images accidentally
+The September25 gate v1 excludes17 previously quarantined images accidentally
 restored through archive fallback plus2 newly confirmed mismatches. It leaves
 2061 visual references and42 unavailable slots out of2103; this is not full
 semantic certification of every remaining photo. Old experiment files and scores
 remain immutable; only separately named reruns use the gated index.
+
+Gate v2 adds one image whose printed semi-sweet identity contradicts its brut
+catalog card:20 exclusions,2060 visual references,43 unavailable slots. Compare
+Base and SO400M only with the same v2 gate; keep earlier v1 reruns identifiable.
+`catalog-audit/reference-gate-v2.json` records exact image hashes and evidence.
+
+## Frozen v1 erratum (25 September)
+
+An incorrect wine variant propagated to13 service and7 retrieval cases. The
+private `annotation/frozen-v1-errata.json` pins evidence, original hashes and
+corrected answers. It is NOT an inference input. `correct_frozen_report.py`
+creates separate corrected copies of complete service/retrieval reports and a
+public aggregate; it verifies the old scores and all image/source hashes first.
+The historical API still scores against its original sealed gold. Read the
+erratum before interpreting its scores. Do not rewrite historical submissions.
+
+Reviewer-side example on Sigma, after predictions have been exported:
+
+```sh
+ROOT=/srv/lct/data/vision-retrieval/20260925
+SUITE=/srv/lct/data/eval
+python3 "$ROOT/code/organizer-audit/correct_frozen_report.py" \
+  --suite "$SUITE/baskets/v1.json" --gold "$SUITE/private/gold-v1.json" \
+  --provenance "$SUITE/private/provenance-v1.json" --image-root "$SUITE" \
+  --erratum "$ROOT/annotation/frozen-v1-errata.json" \
+  --report /absolute/path/to/full-track-report.json \
+  --out-dir "$ROOT/annotation/new-corrected-report-v1" \
+  --public-out "$ROOT/new-corrected-report-v1-public.json"
+```
+
+Use a new output version each time. `--reports-root DIR --all-branches` discovers
+valid scored reports under directories named `reports`, including gray ablations.
+This strict tool expects complete tracks containing all affected cases; a partial
+basket submission is not silently treated as a full corrected benchmark.
+`build_detector_report.py` requires a matching corrected copy for every displayed
+frozen report, preventing a mixture of old and corrected answers in one table.
+The separately sealed100-photo annotations and their scoring are independent of
+this historical erratum. Their source paths can point to the original workstation;
+on Sigma resolve image IDs/SHA through the public `queries-server.json` manifest.
+
+## September25 final comparison
+
+Public result: https://cv.ops.dzap.pw/data/detectors.html . The strong composition
+is RT-DETR R18 → Base wine selection → OWLv2 label context → SO400M whole/label
+vectors + PaddleOCR → fixed rank fusion. The separate whole-only CPU server skips
+routine label/OCR work; its speed cannot be assigned to the full composition.
+
+Reproduce scoring on Sigma without renting a GPU or making paid API requests:
+
+```sh
+ROOT=/srv/lct/data/vision-retrieval/20260925
+python3 "$ROOT/code/organizer-audit/compare_reviewed.py" \
+  --labels "$ROOT/annotation/sealed-v1.jsonl" \
+  --specs "$ROOT/annotation/comparison-specs-sigma.json" \
+  --out /tmp/lct-real-photo-recheck.json
+```
+
+`annotation/comparison-v1.json` holds the workstation aggregate; the Sigma specs
+resolve the same immutable prediction bytes to server paths. Gold stays private.
+For frozen metrics use the separate erratum corrections, not the historical
+matrix score as an unqualified current answer. The metadata/reference gate and
+query gold are different artifacts.
+
+Public-report builders consume reviewer-side files and export aggregates only:
+`build_timing_sections.py` (five Base architectures),
+`build_strong_serving_sections.py` (RT+SO live316, GPU24 and CPU whole24), then
+`build_detector_report.py` (quality, architectures, sources and limitations).
+Their JSON outputs belong under the experiment root until curated into the web
+release. Raw predictions, benchmark records and corrected gold reports must never
+be copied to the web directory. See `DATA-RULES.md` for the stable policy.

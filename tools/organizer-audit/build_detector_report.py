@@ -176,6 +176,52 @@ def report(root,old,gold=None):
            {'kind':'Карточки без визуального эталона','value':len(gate2['missing'])}]))
         sections[-1]['notes'].append('После первых прогонов найден ещё один конфликт: фото полусладкого вина в карточке брют. Gate v2 исключает его отдельно. Старые прогоны gate v1 сохранены; сравнение Base и SO400M использует одинаковый gate v2. Версия допуска не равна версии фрагментов этикетки.')
     audit=read(root/'annotation/sealed-v1-audit.json');comparison=read(root/'annotation/comparison-v1.json')
+    if comparison:
+        lookup={(m['name'],m['variant']):m for m in comparison['models']}
+        encoder_rows=[]
+        for variant,label in branch_names.items():
+            row={'branch':label}
+            for short,folder,name in [('base','base224-gatev2','OWLv2 + Base · gate v2'),
+                                      ('so','so400m-gatev2','OWLv2 + SO400M · gate v2')]:
+                folder=root/'detectors'/folder/'reports'
+                svc=scored(folder/('report-'+variant+'-service.json'))
+                ret=scored(folder/('report-'+variant+'-retrieval.json'))
+                item=lookup.get((name,variant))
+                row[short+'_svc']=fraction(svc['overall']) if svc else '—'
+                row[short+'_ret']=fraction(ret['overall']) if ret else '—'
+                row[short+'_real']=str(item['all']['top1'])+'/54' if item else '—'
+            encoder_rows.append(row)
+        sections.append({'id':'encoder-size','title':'Более сильный визуальный энкодер: Base и SO400M',
+          'status':'ready' if all(r['so_svc']!='—' for r in encoder_rows) else 'partial',
+          'summary':'Одинаковые выбранные области OWLv2, тот же OCR и фиксированное объединение. Оба индекса используют gate v2: 2060 разрешённых фото из 2103 карточек.',
+          'tables':[table('Размер модели при тех же входах',
+            [('branch','Признаки'),('base_svc','Service Base'),('so_svc','Service SO400M'),
+             ('base_ret','Retrieval Base'),('so_ret','Retrieval SO400M'),
+             ('base_real','Реальные Base'),('so_real','Реальные SO400M')],encoder_rows)],
+          'notes':['Сравниваются google/siglip2-base-patch16-224 и google/siglip2-so400m-patch16-384. Бутылка и этикетка используют один выбранный энкодер; классификатор винной цели и координаты остаются от исходного прохода.',
+                   'Обе модели получают области из оригиналов по сохранённым координатам. Для прямого сравнения используйте новый парный Base из этой таблицы: прежние результаты относятся к другим версиям допуска эталонов.',
+                   'Это offline-пересчёт признаков и рангов. Для сильнейшей композиции RT-DETR + SO400M отдельно выполнен полный HTTP-прогон; его измерения вынесены ниже. Работа под конкурентной нагрузкой не проверялась.',
+                   'Числа по frozen-корзинам учитывают отдельный erratum. Service /141, retrieval /62, подтверждённые реальные фото /54 не объединяются в одну точность.']})
+    if comparison and ('RT-DETR + SO400M · gate v2','all') in lookup:
+        rt_encoder_rows=[]
+        for variant,label in branch_names.items():
+            row={'branch':label}
+            for short,folder,name in [('base','rtdetr-base224-gatev2','RT-DETR + Base · gate v2'),
+                                      ('so','rtdetr-so400m-gatev2','RT-DETR + SO400M · gate v2')]:
+                folder=root/'detectors'/folder/'reports'
+                svc=scored(folder/('report-'+variant+'-service.json'))
+                ret=scored(folder/('report-'+variant+'-retrieval.json'))
+                item=lookup.get((name,variant))
+                row[short+'_svc']=fraction(svc['overall']) if svc else '—'
+                row[short+'_ret']=fraction(ret['overall']) if ret else '—'
+                row[short+'_real']=str(item['all']['top1'])+'/54' if item else '—'
+            rt_encoder_rows.append(row)
+        sections[-1]['tables'].append(table('Композиция с RT-DETR: тот же парный контроль',
+            [('branch','Признаки'),('base_svc','Service Base'),('so_svc','Service SO400M'),
+             ('base_ret','Retrieval Base'),('so_ret','Retrieval SO400M'),
+             ('base_real','Реальные Base'),('so_real','Реальные SO400M')],rt_encoder_rows))
+        sections[-1]['notes'].append('Во второй таблице сохранены области и OCR от RT-DETR + OWLv2. Меняется только визуальный энкодер с тем же gate v2. Это отдельная композиция уже проверенных компонентов.')
+        if any(r['so_svc']=='—' for r in rt_encoder_rows):sections[-1]['status']='partial'
     annotation_tables=[]
     if audit:
         annotation_tables.append(table('Покрытие разметки',[('status','Статус'),('count','Фото')],[{'status':{'exact':'Однозначный ответ','ambiguous':'Несколько возможных вариантов','catalog_unresolved':'Связь с каталогом не разрешена'}.get(k,k),'count':v} for k,v in audit['status_counts'].items()]))
@@ -191,18 +237,108 @@ def report(root,old,gold=None):
             real_rows.append(row)
         annotation_tables.append(table('Только подтверждённые ответы',[('model','Решение'),('returned','Верный конечный ответ'),('top1','Top‑1'),('top5','Top‑5'),('top20','Top‑20'),('familiar12','Top‑1: уже были в v1'),('newly_reviewed88','Top‑1: остальные фото'),('macro','Средний Top‑1 по винам, %')],real_rows,note=f"Одинаковая выборка: {audit['exact_images']} фото, {audit['exact_product_groups']} разных wine ID. Все значения Top‑K — число верных среди этих фото." if audit else ''))
     sections.append({'id':'real-photos','title':'100 реальных фотографий организаторов','status':'ready' if comparison else 'partial',
-      'summary':'103 исходных файла содержат 100 разных изображений. Разметка проверяется по оригиналам и полным метаданным; ошибочный первый черновик отозван и не участвует в метриках.',
+      'summary':'103 исходных файла содержат 100 разных изображений. Все 100 фото просмотрены по оригиналам и полным метаданным; ошибочный первый черновик отозван и не участвует в метриках.',
       'tables':annotation_tables,'notes':['Локальные агентские ответы не являются официальным ключом организаторов. Неоднозначные или неразрешённые изображения остаются в учёте покрытия, но не превращаются в выдуманный точный ответ.',
       'Повторные фото одного вина не являются новыми независимыми винами. Поэтому рядом с обычной точностью приведено среднее с равным весом каждого подтверждённого wine ID.',
       'DeepSeek OCR используется как дополнительное наблюдение; его согласие не заменяет проверку. Такой аудит не полностью независим от DeepSeek-бейзлайна.',
       'Top‑1 относится к списку кандидатов; конечный ответ дополнительно зависит от выбора цели и отказа. Эти показатели показаны раздельно.',
       'У кешированных композиций и offline-абляций ответ пересчитан из сохранённых данных. Это проверка качества, а не новое измерение обслуженного HTTP-запроса.']})
+    if comparison:
+        rank_rows=[]
+        for item in comparison['models']:
+            if item['variant'] not in ('standalone','all'):continue
+            errors=item.get('rank_error_breakdown',{})
+            rank_rows.append({'model':item['name'],'top1':errors.get('top1_correct','—'),
+              'rerank':errors.get('correct_in_top20_not_top1','—'),
+              'absent':errors.get('correct_not_in_top20','—'),
+              'error':errors.get('missing_or_error','—')})
+        sections[-1]['tables'].append(table('Где теряется правильный ответ: те же 54 фото',
+          [('model','Решение'),('top1','Сразу Top‑1'),('rerank','Есть в Top‑20, ниже первого'),
+           ('absent','Нет в Top‑20'),('error','Нет результата / ошибка')],rank_rows))
+        sections[-1]['notes'].append('Если верное вино уже в Top‑20, можно исследовать переупорядочивание. Если его там нет, нужны другой фрагмент, лучший поиск кандидатов или самостоятельная текстовая ветвь. Это диагноз этапа, а не обещание, что переупорядочивание исправит каждый случай.')
+        selected=['OWLv2 + Base v2','YOLOE-26s + Base','RT-DETR R18 + OWLv2 + Base']
+        by_model={(m['name'],m['variant']):m for m in comparison['models']}
+        real_branches=[]
+        for variant,label in branch_names.items():
+            row={'branch':label}
+            for name in selected:
+                item=by_model.get((name,variant));row[name]=item['all']['top1'] if item else '—'
+            real_branches.append(row)
+        sections[-1]['tables'].append(table('Отдельные признаки на реальных фото: Top‑1 из 54',
+          [('branch','Признаки')]+[(name,name) for name in selected],real_branches))
+        sections[-1]['notes'].append('Простое объединение всех трёх списков не всегда лучше двух. Эти ветви пересчитаны из одних предсказаний; их скорость отдельно не измерялась. Выбор сочетания по этой таблице требует нового независимого контроля.')
+    rerank=read(root/'attribute-rerank/public-summary-v3.json')
+    if rerank:
+        runs={r['name']:r for r in rerank['runs']};rows=[]
+        for key,name in [('paddle','PaddleOCR → текстовый поиск'),('deepseek','DeepSeek → текстовый поиск'),
+                         ('qwen','Qwen → текстовый поиск'),('owlv2','OWLv2 + Base v2'),
+                         ('yoloe','YOLOE-26s + Base'),('rtdetr','RT-DETR R18 + Base')]:
+            frozen=runs['frozen-'+key]['by_track'];real=runs['organizer-'+key]
+            rows.append({'model':name,'before':real['baseline_top1'],'after':real['rerank_top1'],
+              'fixed':real['fixed'],'regressed':real['regressed'],
+              'service':str(frozen['service']['baseline_top1'])+' → '+str(frozen['service']['rerank_top1']),
+              'retrieval':str(frozen['retrieval']['baseline_top1'])+' → '+str(frozen['retrieval']['rerank_top1'])})
+        so_rerank=read(root/'attribute-rerank/public-summary-so-v1.json')
+        if so_rerank:
+            so_runs={r['name']:r for r in so_rerank['runs']}
+            real=so_runs['organizer-rtso']; frozen=so_runs['frozen-rtso']['by_track']
+            rows.append({'model':'RT-DETR + SO400M · gate v2','before':real['baseline_top1'],
+              'after':real['rerank_top1'],'fixed':real['fixed'],'regressed':real['regressed'],
+              'service':str(frozen['service']['baseline_top1'])+' → '+str(frozen['service']['rerank_top1']),
+              'retrieval':str(frozen['retrieval']['baseline_top1'])+' → '+str(frozen['retrieval']['rerank_top1'])})
+        sections.append({'id':'attribute-rerank','title':'Небольшое правило после поиска: цвет и сладость',
+          'status':'ready','summary':'Сохранённый OCR → явные атрибуты → перестановка близких карточек внутри прежнего Top‑20. Без новых кандидатов, вызовов моделей и обучения.',
+          'tables':[table('Диагностический опыт после разбора ошибок',
+            [('model','Исходный поиск'),('before','Реальные: до /54'),('after','После /54'),
+             ('fixed','Исправлено Top‑1'),('regressed','Испорчено Top‑1'),
+             ('service','Service /141: до → после'),('retrieval','Retrieval /62: до → после')],rows)],
+          'notes':['Правило работает только внутри группы с одним производителем и названием, когда OCR подтверждает достаточно отличительных слов. Неизвестные и противоречивые поля нейтральны; no_match, ошибки и пустые списки не меняются.',
+                   'Год используется лишь при явном согласованном поле каталога. У обнаруженной пары разных винтажей такого поля нет, поэтому правило не угадывает год по суффиксу slug.',
+                   'Это опыт на наборе разработки после просмотра ошибок. Правила и выходы сохранены до подсчёта, но независимой проверкой этот результат не становится: нужен новый набор сцен.',
+                   'У сильной RT-DETR + SO400M то же правило не дало прироста: 42/54 осталось 42/54. Поэтому оно не включается автоматически в рекомендуемый сервис.',
+                   '14 улучшений Top‑1 суммируются по разным системам, а не означают 14 разных фотографий. Два ответа опустились со второго на третье место; покрытие Top‑5 и Top‑20 не изменилось.',
+                   'Полный HTTP-пайплайн с новым правилом не запускался. Отдельное время лёгкой перестановки не заменяет замер задержки сервиса.']})
+    timing=read(root/'public-timing-sections.json')
+    if timing:sections.extend(timing['sections'])
+    strong=read(root/'public-strong-serving-sections.json')
+    if strong:
+        for sec in strong['sections']:
+            live_folder=root/'detectors/rtdetr-so400m-gatev2/live-reports'
+            live_s=scored(live_folder/'report-all-service.json')
+            live_r=scored(live_folder/'report-all-retrieval.json')
+            if live_s and live_r:
+                sec['tables'].insert(0,table('Фактически возвращённые ответы на frozen-корзинах',
+                  [('service','Service'),('top1','Retrieval Top‑1'),('top5','Top‑5'),('top20','Top‑20')],
+                  [{'service':fraction(live_s['overall']),'top1':fraction(live_r['overall']),
+                    'top5':fraction(live_r['overall'],'correct_top5'),'top20':fraction(live_r['overall'],'correct_top20')}]))
+                sec['tables'].append(table('Сильная композиция: сложные сервисные случаи',
+                  [('basket','Проверка'),('score','Прошли')],
+                  [{'basket':bid+' · '+title,'score':fraction(live_s['by_basket'].get(bid))} for bid,title in chosen.items()]))
+                sec['notes'].insert(0,'Это ответы полного HTTP-сервиса, пересчитанные с тем же erratum. Остальные ветви из full HTTP являются диагностическими альтернативами; сервис возвращал all.')
+        sections.extend(strong['sections'])
+    qwen=read(root/'public-qwen-sections.json')
+    if qwen:sections.extend(qwen['sections'])
     extra=read(root/'public-extra-sections.json')
     if extra:sections.extend(extra)
     sections.append({'id':'licenses','title':'Что можно переносить в основную ветку','status':'ready',
       'summary':'Лицензионные условия оцениваются отдельно от качества. Эти эксперименты не означают автоматический выбор модели для закрытого сервиса.',
       'tables':[table('Код и веса',[('model','Компонент'),('terms','Условия'),('scope','Роль сейчас')],[{'model':'OWLv2 / SigLIP2 / RT-DETR R18','terms':'Apache 2.0','scope':'Основы композиции и дополнительный детектор'},{'model':'YOLOE-26 / YOLO26','terms':'AGPL-3.0 или Enterprise','scope':'Сравнительный эксперимент'},{'model':'MobileCLIP2 в текстовой подготовке YOLOE','terms':'Веса: некоммерческие исследования; код MIT','scope':'Отдельное ограничение зависимости'}])],
       'sources':[{'label':'Ultralytics','url':'https://www.ultralytics.com/license'},{'label':'OWLv2','url':'https://huggingface.co/google/owlv2-base-patch16-ensemble'},{'label':'RT-DETR R18','url':'https://huggingface.co/PekingU/rtdetr_r18vd'},{'label':'MobileCLIP2 weights','url':'https://github.com/apple/ml-mobileclip/blob/main/LICENSE_MODELS'}]})
+    if comparison:
+        strong_real=next((m for m in comparison['models'] if m['name']=='RT-DETR + SO400M · полный HTTP' and m['variant']=='all'),None)
+        if strong_real:
+            quality=strong_real['all']
+            sections.insert(0,{'id':'conclusion','title':'Что получилось без обучения','status':'ready',
+              'summary':'Главный выигрыш дали более сильный визуальный энкодер и удачный выбор области. RT-DETR + SigLIP2 SO400M + PaddleOCR вернул правильное вино на '+str(quality['exact_response'])+' из 54 подтверждённых реальных фото.',
+              'tables':[table('Результат, который можно интерпретировать',
+                [('measure','Проверка'),('result','Результат')],
+                [{'measure':'Точный ответ полного локального HTTP-сервиса','result':str(quality['exact_response'])+'/54'},
+                 {'measure':'Правильное вино среди первых 5 / 20','result':str(quality['top5'])+'/54 · '+str(quality['top20'])+'/54'},
+                 {'measure':'Все уникальные фото организаторов','result':'100 просмотрены: 54 однозначных, 3 неоднозначных, 43 не сопоставлены'},
+                 {'measure':'Что не оправдало усложнение','result':'Чёрно-белая ветвь; правило атрибутов поверх сильной композиции'}])],
+              'notes':['Это не 78% на всех100 фото и не закрытый независимый тест: рассматриваем54 разрешённых случая и повторно используемые диагностические корзины.',
+                'Дообучение пока не является обязательным следующим шагом. Сначала — новая проверка на независимых сценах, корректный отказ при нехватке информации, выбор центрального вина и качество OCR.',
+                'Сравнения самостоятельных методов, сочетаний, service/retrieval и CPU/GPU ниже. Каталожная очистка уже существовала: здесь исправлен обход её карантина в ML-индексе.']})
     return {'schema_version':1,'updated_at':datetime.now(timezone.utc).isoformat(),'sections':sections}
 
 

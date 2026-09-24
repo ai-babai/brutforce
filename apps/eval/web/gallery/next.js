@@ -3,7 +3,7 @@ const $ = selector => document.querySelector(selector);
 function renderTable(table) {
   if (!Array.isArray(table.rows) || !table.rows.length) return `<div class="pending-table"><h3>${esc(table.title)}</h3><p>Измерения ожидаются.</p></div>`;
   const columns = table.columns || [];
-  return `<div class="result-table"><h3>${esc(table.title)}</h3><div class="matrix-wrap"><table><thead><tr>${columns.map(col => `<th>${esc(col.label)}</th>`).join('')}</tr></thead><tbody>${table.rows.map(row => `<tr>${columns.map(col => `<td>${esc(row[col.key])}</td>`).join('')}</tr>`).join('')}</tbody></table></div>${table.note ? `<p class="table-note">${esc(table.note)}</p>` : ''}</div>`;
+  return `<div class="result-table"><h3>${esc(table.title)}</h3><div class="matrix-wrap"><table class="${columns.length <= 2 ? 'compact-table' : 'wide-table'}"><thead><tr>${columns.map(col => `<th>${esc(col.label)}</th>`).join('')}</tr></thead><tbody>${table.rows.map(row => `<tr>${columns.map(col => `<td>${esc(row[col.key])}</td>`).join('')}</tr>`).join('')}</tbody></table></div>${table.note ? `<p class="table-note">${esc(table.note)}</p>` : ''}</div>`;
 }
 function renderExamples(examples) {
   if (!Array.isArray(examples) || !examples.length) return '';
