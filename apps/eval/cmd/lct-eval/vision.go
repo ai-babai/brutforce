@@ -293,9 +293,6 @@ func (c *visionCatalog) snapshot() (*visionSnapshot, error) {
 }
 
 func (a *app) visionData(w http.ResponseWriter, r *http.Request) *visionSnapshot {
-	if a.require(w, r) == "" {
-		return nil
-	}
 	if a.vision == nil {
 		http.Error(w, "vision data is not configured", http.StatusServiceUnavailable)
 		return nil

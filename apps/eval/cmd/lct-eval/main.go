@@ -199,15 +199,13 @@ func jsonOut(w http.ResponseWriter, status int, v any) {
 	json.NewEncoder(w).Encode(v)
 }
 func (a *app) authInfo(w http.ResponseWriter, r *http.Request) {
-	role := a.require(w, r)
-	if role != "" {
-		jsonOut(w, 200, map[string]string{"role": role})
+	role := a.role(r)
+	if role == "" {
+		role = "public"
 	}
+	jsonOut(w, 200, map[string]string{"role": role})
 }
 func (a *app) baskets(w http.ResponseWriter, r *http.Request) {
-	if a.require(w, r) == "" {
-		return
-	}
 	jsonOut(w, 200, []eval.Suite{a.suite})
 }
 func (a *app) versionOK(w http.ResponseWriter, r *http.Request) bool {
@@ -226,7 +224,7 @@ func (a *app) lookupCase(id string) *eval.Case {
 	return nil
 }
 func (a *app) caseInfo(w http.ResponseWriter, r *http.Request) {
-	if a.require(w, r) == "" || !a.versionOK(w, r) {
+	if !a.versionOK(w, r) {
 		return
 	}
 	c := a.lookupCase(r.PathValue("id"))
@@ -237,7 +235,7 @@ func (a *app) caseInfo(w http.ResponseWriter, r *http.Request) {
 	jsonOut(w, 200, c)
 }
 func (a *app) image(w http.ResponseWriter, r *http.Request) {
-	if a.require(w, r) == "" || !a.versionOK(w, r) {
+	if !a.versionOK(w, r) {
 		return
 	}
 	c := a.lookupCase(r.PathValue("id"))
@@ -249,7 +247,7 @@ func (a *app) image(w http.ResponseWriter, r *http.Request) {
 	http.ServeFile(w, r, filepath.Join(a.root, filepath.FromSlash(c.ImagePath)))
 }
 func (a *app) catalog(w http.ResponseWriter, r *http.Request) {
-	if a.require(w, r) == "" || !a.versionOK(w, r) {
+	if !a.versionOK(w, r) {
 		return
 	}
 	if a.suite.CatalogPath == "" {
@@ -259,7 +257,7 @@ func (a *app) catalog(w http.ResponseWriter, r *http.Request) {
 	http.ServeFile(w, r, filepath.Join(a.root, filepath.FromSlash(a.suite.CatalogPath)))
 }
 func (a *app) download(w http.ResponseWriter, r *http.Request) {
-	if a.require(w, r) == "" || !a.versionOK(w, r) {
+	if !a.versionOK(w, r) {
 		return
 	}
 	w.Header().Set("Content-Type", "application/zip")
@@ -424,22 +422,36 @@ func sanitize(rep eval.Report, review bool, g eval.Gold, track string) eval.Repo
 	}
 	return rep
 }
-func (a *app) listRuns(w http.ResponseWriter, r *http.Request) {
-	if a.require(w, r) == "" {
-		return
+
+// publicReport hides submitted answers and submitter identity. A correct
+// prediction would otherwise disclose a private gold answer in public runs.
+func publicReport(rep eval.Report) eval.Report {
+	rep.Submission.SubmittedBy = ""
+	rep.Submission.Results = nil
+	rep.Cases = append([]eval.CaseScore(nil), rep.Cases...)
+	for i := range rep.Cases {
+		rep.Cases[i].Prediction = eval.Prediction{}
+		rep.Cases[i].ExpectedSlug = ""
+		rep.Cases[i].ExpectedAction = ""
 	}
+	return rep
+}
+func (a *app) listRuns(w http.ResponseWriter, r *http.Request) {
 	a.mu.Lock()
 	defer a.mu.Unlock()
 	out := make([]eval.Report, 0, len(a.order))
 	for _, id := range a.order {
-		out = append(out, sanitize(a.runs[id], a.role(r) == "review", a.gold, a.runs[id].Submission.Track))
+		rep := a.runs[id]
+		if role := a.role(r); role == "review" {
+			rep = sanitize(rep, true, a.gold, rep.Submission.Track)
+		} else if role == "" {
+			rep = publicReport(rep)
+		}
+		out = append(out, rep)
 	}
 	jsonOut(w, 200, out)
 }
 func (a *app) run(w http.ResponseWriter, r *http.Request) {
-	if a.require(w, r) == "" {
-		return
-	}
 	a.mu.Lock()
 	rep, ok := a.runs[r.PathValue("id")]
 	a.mu.Unlock()
@@ -447,5 +459,10 @@ func (a *app) run(w http.ResponseWriter, r *http.Request) {
 		http.NotFound(w, r)
 		return
 	}
-	jsonOut(w, 200, sanitize(rep, a.role(r) == "review", a.gold, rep.Submission.Track))
+	if role := a.role(r); role == "review" {
+		rep = sanitize(rep, true, a.gold, rep.Submission.Track)
+	} else if role == "" {
+		rep = publicReport(rep)
+	}
+	jsonOut(w, 200, rep)
 }

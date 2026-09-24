@@ -11,7 +11,7 @@ go build -o lct-eval ./cmd/lct-eval
 LCT_EVAL_PARTICIPANT_TOKEN='...' LCT_EVAL_REVIEW_TOKEN='...' ./lct-eval serve -data /srv/lct/data/eval -vision-data /srv/lct/data/vision -web ./web -listen 127.0.0.1:8124
 ```
 
-Keep the two tokens distinct and inject them through the service environment. Deployment uses `/etc/lct-eval.env` (root:lct 0640) for both service tokens, `/srv/lct/eval-access/participant.env` (lct:lct 0640) for authorized participant agents, and `/srv/lct/eval-access/review.token` (lct:lct 0640) for reviewers. None is in the web root or archive. Caddy routes `cv.ops.dzap.pw` to `127.0.0.1:8124`. The previous `/vision/` URL remains a compatibility alias. The browser uses relative paths. Protect this route at Caddy if team access control exists; the API additionally requires a bearer token. `GET /healthz` is public.
+Keep the two tokens distinct and inject them through the service environment. Deployment uses `/etc/lct-eval.env` (root:lct 0640) for both service tokens, `/srv/lct/eval-access/participant.env` (lct:lct 0640) for authorized participant agents, and `/srv/lct/eval-access/review.token` (lct:lct 0640) for reviewers. None is in the web root or archive. Caddy routes `cv.ops.dzap.pw` to `127.0.0.1:8124`. The previous `/vision/` URL remains a compatibility alias. The browser uses relative paths. The site and read-only API are public; only submissions and review-only answer fields require bearer credentials. `GET /healthz` is public.
 
 `-vision-data` (or `LCT_EVAL_VISION_DATA`) selects a separate, read-only image corpus. `/data/` is the per-slug training/pilot gallery. The service starts with an empty gallery if `manifest.jsonl` has not yet been assembled, and reloads the manifest when its modification time or size changes. Write updates to a temporary file in the same directory and rename it to `manifest.jsonl` so readers see complete snapshots. Keep the vision root outside the sealed evaluation root; the server rejects nested roots.
 
@@ -36,7 +36,7 @@ Required: `image_id`, `role`, `path`, `origin`; `slug` is also required except f
 
 The manifest may retain additional `source` fields for pipeline bookkeeping. Browser responses include only safe source IDs, title, attribution, license, and an HTTPS provenance URL. Local source paths, `source_locator`, and credentials are never returned. The gallery has no route to evaluation gold or private suite files.
 
-Gallery API, authenticated with the same bearer token as the evaluation API:
+Public gallery API (no token required):
 
 - `GET /api/data/facets` lists values for filter controls.
 - `GET /api/data/slugs?page=1&per_page=24&scenario=...&origin=...&model=...&qc=...&q=...` returns `items` with role/origin/QC counts and cost, plus `total_slugs`, `total_images`, `page`, `per_page`.
@@ -44,7 +44,7 @@ Gallery API, authenticated with the same bearer token as the evaluation API:
 - `GET /api/data/images/{image_id}` returns one image record, including links by ID to identity and scene references.
 - `GET /api/data/images/{image_id}/thumbnail` and `/image` return the image bytes. The page loads thumbnails only as cards enter the viewport and originals on opening an image.
 
-`per_page` is limited to 100. Image bytes and metadata require a token; no token is put in a URL. The API does not put corpus files into the sealed suite archive.
+`per_page` is limited to 100. Image bytes and metadata are public; the API does not put corpus files into the sealed suite archive.
 
 ## Data layout
 
@@ -65,16 +65,15 @@ To build a suite, first write both JSON files with empty hashes. `seal -data DIR
 
 ## API
 
-All `/api` routes require `Authorization: Bearer <participant-or-review-token>`. No token may appear in a URL. Participants can fetch:
+Read-only `/api` routes are public and need no bearer token. No token may appear in a URL. Public readers can fetch:
 
 - `GET /api/baskets`
 - `GET /api/baskets/{version}/download`
 - `GET /api/baskets/{version}/catalog` when present
 - `GET /api/baskets/{version}/cases/{id}` and `/image`
-- `POST /api/submissions`
 - `GET /api/runs` and `GET /api/runs/{id}`
 
-The archive contains only the public manifest, images, and optional allowed-candidates catalog. Participant reports show per-case correctness, prediction, score status, and aggregates, but no expected slug/action. This is a trusted regression stand: score feedback can reveal answers over repeated submissions, so the gold split prevents accidental input disclosure rather than guaranteeing a blind challenge. Review token responses add expected values to scored case details. The UI stores a typed token in browser `sessionStorage` only.
+The archive contains only the public manifest, images, and optional allowed-candidates catalog. Public run reports show scores and per-case correctness but omit submitted predictions, submitter identity, and expected slug/action. `POST /api/submissions` requires `Authorization: Bearer <participant-or-review-token>`; participant responses include their predictions but never gold, and review-token responses add expected values. This is a regression stand: repeated authorized submissions can reveal answers from score feedback, so the gold split prevents accidental input disclosure rather than guaranteeing a blind challenge. The browser UI does not request or store tokens.
 
 Example submission:
 

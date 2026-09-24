@@ -70,10 +70,10 @@ func writeVisionRows(t *testing.T, root string, rows []visionImage) {
 
 func TestVisionContractFiltersAndReferences(t *testing.T) {
 	_, mux, _ := visionFixture(t)
-	if got := request(t, mux, "GET", "/api/data/slugs", "", nil); got.Code != 401 {
+	if got := request(t, mux, "GET", "/api/data/slugs", "", nil); got.Code != 200 {
 		t.Fatalf("unauthenticated data request: %d", got.Code)
 	}
-	got := request(t, mux, "GET", "/api/data/slugs?page=1&per_page=1", "participant", nil)
+	got := request(t, mux, "GET", "/api/data/slugs?page=1&per_page=1", "", nil)
 	if got.Code != 200 {
 		t.Fatalf("slugs: %d %s", got.Code, got.Body.String())
 	}
@@ -96,7 +96,7 @@ func TestVisionContractFiltersAndReferences(t *testing.T) {
 	if got.Code != 200 || !strings.Contains(got.Body.String(), `"image_id":"result"`) || strings.Contains(got.Body.String(), `"image_id":"bottle"`) {
 		t.Fatalf("image filter: %d %s", got.Code, got.Body.String())
 	}
-	got = request(t, mux, "GET", "/api/data/images/result", "participant", nil)
+	got = request(t, mux, "GET", "/api/data/images/result", "", nil)
 	if got.Code != 200 || !strings.Contains(got.Body.String(), `"scene_reference_id":"scene"`) || !strings.Contains(got.Body.String(), `"identity_reference_id":"bottle"`) {
 		t.Fatalf("reference links: %d %s", got.Code, got.Body.String())
 	}
@@ -112,7 +112,7 @@ func TestVisionContractFiltersAndReferences(t *testing.T) {
 	if got.Code != 200 || strings.Contains(got.Body.String(), `"slug"`) {
 		t.Fatalf("shared scene should have no slug: %d %s", got.Code, got.Body.String())
 	}
-	got = request(t, mux, "GET", "/api/data/images/result/thumbnail", "participant", nil)
+	got = request(t, mux, "GET", "/api/data/images/result/thumbnail", "", nil)
 	if got.Code != 200 || got.Header().Get("Content-Type") != "image/png" || got.Header().Get("X-Content-Type-Options") != "nosniff" {
 		t.Fatalf("thumbnail response: %d %s", got.Code, got.Header())
 	}

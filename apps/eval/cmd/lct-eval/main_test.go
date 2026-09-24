@@ -45,12 +45,15 @@ func testApp(t *testing.T) (*app, *http.ServeMux) {
 	}
 	a := &app{root: root, suite: s, gold: g, participant: "participant-secret", review: "review-secret", runs: map[string]eval.Report{}, runsPath: filepath.Join(root, "runs.jsonl")}
 	mux := http.NewServeMux()
+	mux.HandleFunc("GET /api/auth", a.authInfo)
 	mux.HandleFunc("GET /api/baskets", a.baskets)
 	mux.HandleFunc("GET /api/baskets/{version}/download", a.download)
 	mux.HandleFunc("GET /api/baskets/{version}/cases/{id}", a.caseInfo)
 	mux.HandleFunc("GET /api/baskets/{version}/cases/{id}/image", a.image)
+	mux.HandleFunc("GET /api/baskets/{version}/catalog", a.catalog)
 	mux.HandleFunc("POST /api/submissions", a.submit)
 	mux.HandleFunc("GET /api/runs", a.listRuns)
+	mux.HandleFunc("GET /api/runs/{id}", a.run)
 	return a, mux
 }
 func request(t *testing.T, h http.Handler, method, path, token string, body []byte) *httptest.ResponseRecorder {
@@ -69,14 +72,22 @@ func testSubmission(s eval.Suite) eval.Submission {
 func TestPrivacyIdempotencyAndPersistence(t *testing.T) {
 	a, mux := testApp(t)
 	w := request(t, mux, "GET", "/api/baskets", "", nil)
-	if w.Code != 401 {
+	if w.Code != 200 {
 		t.Fatal(w.Code)
 	}
-	w = request(t, mux, "GET", "/api/baskets/v1/cases/IMG-01-001", "participant-secret", nil)
+	w = request(t, mux, "GET", "/api/auth", "", nil)
+	if w.Code != 200 || !strings.Contains(w.Body.String(), `"role":"public"`) {
+		t.Fatalf("public auth: %d %s", w.Code, w.Body.String())
+	}
+	w = request(t, mux, "GET", "/api/baskets/v1/cases/IMG-01-001", "", nil)
 	if strings.Contains(w.Body.String(), "secret-slug") {
 		t.Fatal("gold leaked in case")
 	}
-	w = request(t, mux, "GET", "/api/baskets/v1/download", "participant-secret", nil)
+	w = request(t, mux, "GET", "/api/baskets/v1/cases/IMG-01-001/image", "", nil)
+	if w.Code != 200 || !bytes.Equal(w.Body.Bytes(), []byte("image bytes")) {
+		t.Fatalf("public image: %d", w.Code)
+	}
+	w = request(t, mux, "GET", "/api/baskets/v1/download", "", nil)
 	if w.Code != 200 {
 		t.Fatal(w.Code)
 	}
@@ -97,6 +108,10 @@ func TestPrivacyIdempotencyAndPersistence(t *testing.T) {
 	}
 	sub := testSubmission(a.suite)
 	payload, _ := json.Marshal(sub)
+	w = request(t, mux, "POST", "/api/submissions", "", payload)
+	if w.Code != 401 {
+		t.Fatalf("anonymous submit: %d", w.Code)
+	}
 	w = request(t, mux, "POST", "/api/submissions", "participant-secret", payload)
 	if w.Code != 201 {
 		t.Fatalf("submit %d %s", w.Code, w.Body.String())
@@ -119,6 +134,17 @@ func TestPrivacyIdempotencyAndPersistence(t *testing.T) {
 	}
 	if strings.Contains(string(first), "secret-slug") {
 		t.Fatal("gold persisted in runs")
+	}
+	for _, path := range []string{"/api/runs", "/api/runs/run-1"} {
+		w = request(t, mux, "GET", path, "", nil)
+		if w.Code != 200 {
+			t.Fatalf("public %s: %d", path, w.Code)
+		}
+		for _, secret := range []string{"participant-secret", "review-secret", `"submitted_by":"agent"`, `"slug":"wrong"`, "secret-slug"} {
+			if strings.Contains(w.Body.String(), secret) {
+				t.Fatalf("public %s leaked %s", path, secret)
+			}
+		}
 	}
 	sub.Results[0].Prediction.Slug = "different"
 	payload, _ = json.Marshal(sub)
@@ -162,6 +188,31 @@ func TestInvalidHashUnknownAndDamagedTail(t *testing.T) {
 	w = request(t, mux2, "POST", "/api/submissions", "participant-secret", b)
 	if w.Code != 503 {
 		t.Fatal("accepted submission on damaged history")
+	}
+}
+func TestPublicRunRedactsCorrectAnswer(t *testing.T) {
+	a, mux := testApp(t)
+	sub := testSubmission(a.suite)
+	sub.Results[0].Prediction.Slug = "secret-slug"
+	sub.SubmittedBy = "private-agent"
+	payload, _ := json.Marshal(sub)
+	if got := request(t, mux, "POST", "/api/submissions", "participant-secret", payload); got.Code != 201 {
+		t.Fatalf("submit: %d %s", got.Code, got.Body.String())
+	}
+	for _, path := range []string{"/api/runs", "/api/runs/run-1"} {
+		got := request(t, mux, "GET", path, "", nil)
+		if got.Code != 200 || !strings.Contains(got.Body.String(), `"correct":true`) {
+			t.Fatalf("public score: %d %s", got.Code, got.Body.String())
+		}
+		for _, secret := range []string{"secret-slug", "private-agent", "participant-secret", "review-secret"} {
+			if strings.Contains(got.Body.String(), secret) {
+				t.Fatalf("public %s leaked %s", path, secret)
+			}
+		}
+	}
+	got := request(t, mux, "GET", "/api/runs/run-1", "review-secret", nil)
+	if !strings.Contains(got.Body.String(), `"expected_slug":"secret-slug"`) {
+		t.Fatal("review lost gold")
 	}
 }
 func TestPublicManifestRejectsUnknownFieldsAndPrivateSymlink(t *testing.T) {

@@ -5,25 +5,25 @@
   <title>LCT · Как запустить</title><link rel="stylesheet" href="style.css">
 </head>
 <body>
-<header><div><div class="eyebrow">LCT / VISION EVAL</div><h1>Как проверить решение</h1><p>Инструкция для любого агента или участника.</p></div><nav><a href="./">Галерея и матрица</a></nav></header>
-<main>
+<header><div class="brand"><a href="/">LCT / VISION EVAL</a><span class="header-tag">Инструкция</span></div><nav aria-label="Разделы"><a href="/">Корзины</a><a href="/data/">Изображения</a><a href="/data/report.html">Пилот 100</a><a href="/data/next.html">Следующий опыт</a><a aria-current="page" href="/guide.html">Инструкция</a></nav></header>
+<main><section class="intro"><div><div class="eyebrow">ОНБОРДИНГ / ДАННЫЕ И ЗАПУСК</div><h1>Как проверить<br><em>решение.</em></h1></div><p>Читайте открытые данные без пароля. Токен нужен только для отправки прогона или частного разбора эталона.</p></section>
 <section class="panel"><h2>1. Выберите трек</h2>
 <p><strong>service</strong> получает полный кадр и возвращает одну карточку центрального вина: top-1 slug. Официальный контракт организаторов требует один slug. Действия <code>no_match</code> и <code>insufficient_information</code> — дополнительные продуктовые проверки этого стенда, не часть официального top-1 сценария.</p>
 <p><strong>retrieval</strong> получает проверенный кроп целевого вина. Верните упорядоченный список slug; стенд считает top-1, top-5, top-20 и MRR.</p>
 <p>Каждый кейс принадлежит одному треку. Метка «из каталожного референса» означает, что запрос может быть связан с референсом и его результат нельзя считать независимой проверкой.</p></section>
-<section class="panel"><h2>2. Получите данные и токен</h2>
-<p>Используйте общий пароль участника, согласованный с Максом. Для API он передаётся как Bearer-токен; значение не записывайте в код или отчёты. Токен разбора выдаётся отдельно. Сервис получает их из <code>/etc/lct-eval.env</code> через переменные окружения <code>LCT_EVAL_PARTICIPANT_TOKEN</code> и <code>LCT_EVAL_REVIEW_TOKEN</code>. Для авторизованных агентов участнический токен находится в <code>/srv/lct/eval-access/participant.env</code>; токен разбора — в <code>/srv/lct/eval-access/review.token</code>. Эти файлы не раздаются через сайт и не входят в архив. Не помещайте токен в URL или файл submission.</p>
-<pre>export LCT_EVAL_PARTICIPANT_TOKEN='&lt;ваш токен&gt;'
-BASE='https://cv.ops.dzap.pw'
-curl -H "Authorization: Bearer $LCT_EVAL_PARTICIPANT_TOKEN" "$BASE/api/baskets"
-curl -H "Authorization: Bearer $LCT_EVAL_PARTICIPANT_TOKEN" "$BASE/api/baskets/v1/download" -o lct-eval-v1.zip</pre>
+<section class="panel"><h2>2. Получите открытые данные</h2>
+<p>Чтение корзин, изображений, галереи, отчётов и пакета доступно без пароля. Для <code>POST /api/submissions</code> нужен токен участника в заголовке Bearer; значение не записывайте в код или отчёты. Для частного разбора эталона нужен отдельный токен. Сервис получает их из <code>/etc/lct-eval.env</code> через переменные окружения <code>LCT_EVAL_PARTICIPANT_TOKEN</code> и <code>LCT_EVAL_REVIEW_TOKEN</code>. Для авторизованных агентов участнический токен находится в <code>/srv/lct/eval-access/participant.env</code>; токен разбора — в <code>/srv/lct/eval-access/review.token</code>. Эти файлы не раздаются через сайт и не входят в архив. Не помещайте токен в URL или файл submission.</p>
+<pre>BASE='https://cv.ops.dzap.pw'
+curl "$BASE/api/baskets"
+curl "$BASE/api/baskets/v1/download" -o lct-eval-v1.zip
+# Только перед отправкой результата:
+export LCT_EVAL_PARTICIPANT_TOKEN='&lt;ваш токен&gt;'</pre>
 <p>Архив содержит публичный манифест, изображения и при наличии список допустимых slug. В нём нет правильных ответов. Хеш каждого изображения и suite_hash связывают прогон с точной версией. На сервере бинарник находится в <code>/srv/lct/maks/eval/current/lct-eval</code>, набор — в <code>/srv/lct/data/eval</code>, а процесс запускается unit <code>lct-eval.service</code>. Права на файлы доступа назначает оператор; если доступа к ним нет, запросите токен у него.</p>
-<h3>PowerShell</h3><pre>$token = Read-Host 'Participant password or token'
-$base = 'https://cv.ops.dzap.pw'
-$headers = @{ Authorization = "Bearer $token" }
-Invoke-RestMethod -Headers $headers "$base/api/baskets"
-Invoke-WebRequest -Headers $headers "$base/api/baskets/v1/download" -OutFile lct-eval-v1.zip
-$env:LCT_EVAL_PARTICIPANT_TOKEN = $token</pre></section>
+<h3>PowerShell</h3><pre>$base = 'https://cv.ops.dzap.pw'
+Invoke-RestMethod "$base/api/baskets"
+Invoke-WebRequest "$base/api/baskets/v1/download" -OutFile lct-eval-v1.zip
+# Только перед отправкой результата:
+$env:LCT_EVAL_PARTICIPANT_TOKEN = Read-Host 'Participant token'</pre></section>
 <section class="panel"><h2>3. Запустите решение</h2>
 <p>Решение принимает <code>POST /v1/eval/predict</code> с multipart-полем <code>image</code>. Официальный контракт принимает HTTP 200/201 и JSON <code>{"slug":"..."}</code> либо первый элемент массива <code>[{"slug":"..."}]</code>. Для диагностического retrieval можно вернуть <code>{"ranked_slugs":["...","..."]}</code>. Лимит подключения 5 секунд, весь запрос — 10 секунд.</p>
 <pre>lct-eval run -source api -base "$BASE" -track service \
@@ -54,10 +54,10 @@ curl -H "Authorization: Bearer $LCT_EVAL_PARTICIPANT_TOKEN" \
   "$BASE/api/submissions"</pre>
 <p>Для retrieval используйте <code>"track":"retrieval"</code>, корзины и кейсы этого трека и <code>"prediction":{"ranked_slugs":["first","second"]}</code>. Не подставляйте неизвестный ответ ради заполнения поля: используйте фактическую ошибку/таймаут или оставьте кейс не запущенным.</p></section>
 <section class="panel"><h2>5. Посмотрите результат</h2>
-<p>После submit откройте «Матрица прогонов». Столбец появится по <code>submission_id</code>. Повтор тех же данных вернёт прежний отчёт; другие данные с тем же ID дадут конфликт. Режим разбора требует отдельного токена и показывает эталон в деталях кейса.</p>
-<pre>curl -H "Authorization: Bearer $LCT_EVAL_PARTICIPANT_TOKEN" "$BASE/api/runs"
-curl -H "Authorization: Bearer $LCT_EVAL_PARTICIPANT_TOKEN" "$BASE/api/runs/my-service-002"</pre>
-<p>Это доверенный стенд для регрессии и разбора: участник видит результат каждого своего кейса. Разделение файлов защищает эталон от случайной выдачи во входном пакете, но не делает набор слепым после повторных прогонов. Токен в браузере хранится только в текущей сессии.</p></section>
+<p>После submit откройте «Матрица прогонов». Столбец появится по <code>submission_id</code>. Повтор тех же данных вернёт прежний отчёт; другие данные с тем же ID дадут конфликт. Публичный отчёт показывает оценку каждого кейса, но скрывает ответы модели и эталон. API с токеном участника возвращает собственные предсказания; режим разбора с отдельным токеном показывает эталон.</p>
+<pre>curl "$BASE/api/runs"
+curl "$BASE/api/runs/my-service-002"</pre>
+<p>Это доверенный стенд для регрессии и разбора: участник видит результат каждого своего кейса. Разделение файлов защищает эталон от случайной выдачи во входном пакете, но не делает набор слепым после повторных прогонов. Браузер не запрашивает и не хранит токен.</p></section>
 <section class="panel"><h2>6. Пилот изображений и готовые бейзлайны</h2>
 <p><a href="/data/">Галерея по винам</a> · <a href="/data/report.html">Отчёт эксперимента</a>. Здесь отдельно хранятся каталожный референс, настоящая сцена, генерация и обычные аугментации. Условия запроса и фактические наблюдения разделены. AI-кадры явно отмечены; accepted означает прохождение визуального отбора пилота, а не полную проверку мелкого текста.</p>
 <p>Файлы пилота: <code>/srv/lct/data/vision/manifest.jsonl</code>. Результаты распознавания: <code>/srv/lct/data/vision-baselines/20260924</code>. Для всех агентов инструкции: <code>tools/vision-pilot/README.md</code> и <code>tools/vision-baselines/README.md</code> в BrutForce. Замороженные корзины v1 не изменялись; синтетика пилота в них не добавляется.</p></section>

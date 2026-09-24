@@ -1,13 +1,12 @@
 const rootPath = new URL('../', document.currentScript.src).pathname;
 const $ = selector => document.querySelector(selector);
 const esc = value => String(value ?? '').replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
-let token = sessionStorage.getItem('lct_eval_token') || '';
 let slugPage = 1, imagePage = 1, selectedSlug = '', detailSequence = 0;
 const thumbURLs = new Map();
 let detailURLs = [];
 
 async function api(path) {
-  const response = await fetch(rootPath + path.replace(/^\//, ''), {headers:{Authorization:'Bearer ' + token}});
+  const response = await fetch(rootPath + path.replace(/^\//, ''));
   if (!response.ok) throw new Error(`${response.status} ${await response.text()}`);
   return response;
 }
@@ -175,26 +174,19 @@ async function showDetail(id) {
 
 async function load() {
   try {
-    await api('/api/auth');
     const facets = await (await api('/api/data/facets')).json();
     fillFacet('scenario', facets.scenarios || []);
     fillFacet('role', facets.roles || []);
     fillFacet('origin', facets.origins || []);
     fillFacet('model', facets.models || []);
     fillFacet('qc', facets.qc || []);
-    $('#login').hidden = true;
-    $('#workspace').hidden = false;
-    $('#logout').hidden = false;
     await loadSlugs();
   } catch (error) {
-    $('#login-error').textContent = error.message;
-    if (String(error.message).startsWith('401')) { sessionStorage.removeItem('lct_eval_token'); token = ''; }
+    showError(error);
   }
 }
 
-$('#login-form').onsubmit = event => { event.preventDefault(); token = $('#token').value.trim(); sessionStorage.setItem('lct_eval_token', token); load(); };
-$('#logout').onclick = () => { sessionStorage.removeItem('lct_eval_token'); location.reload(); };
 $('#apply').onclick = () => { closeSlug(); loadSlugs(1).catch(showError); };
 $('#search').onkeydown = event => { if (event.key === 'Enter') { event.preventDefault(); $('#apply').click(); } };
 $('#close-slug').onclick = closeSlug;
-if (token) load();
+load();
