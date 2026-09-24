@@ -85,3 +85,24 @@ python organizer-audit/benchmark_pipeline.py \
 The frozen v1 suite, gold, and baseline code were not changed. See
 `ERROR-REPORT.ru.md` in the data directory for measured counts, provenance,
 error categories, and limitations.
+
+## Later locally reviewed real-photo annotations
+
+`score_reviewed.py` scores a separate versioned annotation JSONL against frozen
+standalone or composition predictions. It validates image hashes and separates
+exact identification from ambiguous, insufficient and unresolved catalog cases.
+Missing/error predictions remain in the exact-label denominator. The public
+aggregate contains no case answers; the required `--private-out` trace does.
+Do not use provisional contact-sheet guesses as ground truth. `out_of_catalog`
+requires documented catalog inspection, not a failed literal name search.
+
+```sh
+python score_reviewed.py --labels "$REVIEWED_JSONL" --predictions "$FROZEN_JSONL" \
+  --variant all --out "$PUBLIC_AGGREGATE" --private-out "$PRIVATE_TRACE"
+python -m unittest discover -s tools/organizer-audit -p test_score_reviewed.py
+```
+
+Omit `--variant` for standalone outputs. Only their recorded wall duration is
+used for deadline-aware scoring; cached composition stage sums are not live
+HTTP latency. These are local agent-reviewed labels, not an organizer answer
+key. Publish annotation coverage and prior-seen split alongside accuracy.
