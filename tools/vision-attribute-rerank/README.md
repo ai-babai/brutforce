@@ -70,3 +70,16 @@ The scoring step verifies each saved prediction against the frozen suite or
 organizer query image SHA (standalone frozen records carry the suite hash),
 checks transport status (HTTP 200 or 201), and scores service and retrieval separately.
 The v3 public and private outputs pin this scorer file SHA-256 and suite/manifest versions.
+
+## RT-DETR + SO400M composition
+
+The adapt_rtso.py adapter accepts a saved RT+SO JSONL and the corresponding
+RT-DETR HTTP JSONL. For every case it verifies case ID, track, image SHA,
+complete bottle-selection record, and label crop box before copying the old
+OCR text into a new row. RT+SO predictions and rankings remain untouched.
+Run it once for eval.jsonl with rtdetr-r18/full-eval.jsonl, and once for
+organizer.jsonl with rtdetr-r18/full-organizer.jsonl. Immutable outputs and
+source hashes are recorded under the private local data directory
+/Users/skif/ml-data/brutforce/vision-retrieval-20260925/attribute-rerank/rtso-adapter-v1/.
+Pass those adapter outputs to rerank.py as frozen-rtso and organizer-rtso,
+then score the separate result with score.py.
