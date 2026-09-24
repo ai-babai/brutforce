@@ -1,0 +1,110 @@
+{
+  "scope": "Frozen v1 offline quality; label-context v2 widens crop around same detector boxes and recomputes label embeddings for catalog and queries; catalog, encoder, OCR, whole-bottle index and fixed fusion unchanged; no training; no v2 live HTTP benchmark; aggregate-only, no gold/predictions",
+  "variants": [
+    {
+      "variant": "label",
+      "v1_service_passed": 34,
+      "v2_service_passed": 51,
+      "v1_retrieval_top1": 17,
+      "v2_retrieval_top1": 32,
+      "v1_retrieval_top5": 24,
+      "v2_retrieval_top5": 39,
+      "v1_retrieval_top20": 27,
+      "v2_retrieval_top20": 51,
+      "v2_img15_passed": 2,
+      "v2_img16_passed": 0,
+      "source_sha256": {
+        "service": "5953a8a823f62c5fa03c36783ff1656a10ade6c32f679d62c248447e34b2e88d",
+        "retrieval": "a1d185a78682121a6c01dee25f0214b03892f2a87ac8c3ca2ea1af2cb8c5508e"
+      },
+      "corrected_run_ids": {
+        "service": "vr-v2-context-label-service-metadata-r1",
+        "retrieval": "vr-v2-context-label-retrieval-metadata-r1"
+      },
+      "superseded_run_ids": {
+        "service": "vr-v2-context-label-service",
+        "retrieval": "vr-v2-context-label-retrieval"
+      }
+    },
+    {
+      "variant": "whole_label",
+      "v1_service_passed": 30,
+      "v2_service_passed": 41,
+      "v1_retrieval_top1": 10,
+      "v2_retrieval_top1": 23,
+      "v1_retrieval_top5": 21,
+      "v2_retrieval_top5": 46,
+      "v1_retrieval_top20": 27,
+      "v2_retrieval_top20": 51,
+      "v2_img15_passed": 2,
+      "v2_img16_passed": 0,
+      "source_sha256": {
+        "service": "dd38ec1436f96431fb12d102e2c9c9e56584c3120cc222b103e955e39bc35a0a",
+        "retrieval": "50fb64732d35e3aecf38379207c157a86c89299cc34030e752ec827813f59fda"
+      },
+      "corrected_run_ids": {
+        "service": "vr-v2-context-whole_label-service-metadata-r1",
+        "retrieval": "vr-v2-context-whole_label-retrieval-metadata-r1"
+      },
+      "superseded_run_ids": {
+        "service": "vr-v2-context-whole_label-service",
+        "retrieval": "vr-v2-context-whole_label-retrieval"
+      }
+    },
+    {
+      "variant": "label_ocr",
+      "v1_service_passed": 46,
+      "v2_service_passed": 59,
+      "v1_retrieval_top1": 18,
+      "v2_retrieval_top1": 37,
+      "v1_retrieval_top5": 38,
+      "v2_retrieval_top5": 46,
+      "v1_retrieval_top20": 52,
+      "v2_retrieval_top20": 54,
+      "v2_img15_passed": 2,
+      "v2_img16_passed": 0,
+      "source_sha256": {
+        "service": "81fb6cf0a857900c10999c5a8a03538ff8235e4816bc6c79796275066413a8cc",
+        "retrieval": "08003765f8c3e41f9c8ce639e14dfc3f1e4095300fe0ac29d7ec2b81498a04b6"
+      },
+      "corrected_run_ids": {
+        "service": "vr-v2-context-label_ocr-service-metadata-r1",
+        "retrieval": "vr-v2-context-label_ocr-retrieval-metadata-r1"
+      },
+      "superseded_run_ids": {
+        "service": "vr-v2-context-label_ocr-service",
+        "retrieval": "vr-v2-context-label_ocr-retrieval"
+      }
+    },
+    {
+      "variant": "all",
+      "v1_service_passed": 50,
+      "v2_service_passed": 64,
+      "v1_retrieval_top1": 25,
+      "v2_retrieval_top1": 32,
+      "v1_retrieval_top5": 44,
+      "v2_retrieval_top5": 53,
+      "v1_retrieval_top20": 52,
+      "v2_retrieval_top20": 58,
+      "v2_img15_passed": 2,
+      "v2_img16_passed": 0,
+      "source_sha256": {
+        "service": "83cb29f19d1ab173f33b9523a01ae5e0ba3f3dfb66c89f1a7fde6a4d0eb7228f",
+        "retrieval": "0f2437d84ae20840aa1019966de253d5ad022ab77bca970a3219bbbbc22eab82"
+      },
+      "corrected_run_ids": {
+        "service": "vr-v2-context-all-service-metadata-r1",
+        "retrieval": "vr-v2-context-all-retrieval-metadata-r1"
+      },
+      "superseded_run_ids": {
+        "service": "vr-v2-context-all-service",
+        "retrieval": "vr-v2-context-all-retrieval"
+      }
+    }
+  ],
+  "label_index_sha256": "8f4db8aeb1d0dad35eeef327a2121739e61b1234d8e7bdeed9117cd8dfb99ef9",
+  "solution_version": "v2-label-context-offline",
+  "config_hash": "b3372b7556de7958",
+  "correction_manifest_sha256": "66ca74b10bc202c7df45784ffe75617f0f86a0db740acfd39eb7bf99c06412b5",
+  "history_note": "Initial v2 submissions carried v1 solution metadata and were superseded by append-only metadata-r1 submissions with unchanged predictions and scores; old runs remain in history."
+}

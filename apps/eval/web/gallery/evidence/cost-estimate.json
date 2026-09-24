@@ -1,0 +1,30 @@
+{
+  "version": "composition-cost-estimate-20260924",
+  "source_sha256": "0db548d3823fa6ec2d20fd1d303233d6d00e7782229f6334a9af70ca69ada2ad",
+  "checked_at_utc": "2026-09-24T20:23:15.289521+00:00",
+  "rental": {
+    "main_gpu": "NVIDIA RTX 4090",
+    "main_seconds": 4810,
+    "main_quoted_hourly_usd": 0.74,
+    "main_estimate_usd": 0.988722,
+    "cheap_gpu": "NVIDIA RTX 4000 Ada",
+    "cheap_seconds": 3996,
+    "cheap_quoted_hourly_usd": 0.28,
+    "cheap_estimate_usd": 0.3108,
+    "gpu_only_estimate_total_usd": 1.299522,
+    "billing_complete": false,
+    "disk_tax_rounding_included": false
+  },
+  "api_audit": {
+    "confirmed_usage_usd": 0.1384952604,
+    "uncertain_usage_reserve_usd": 0.053,
+    "conservative_total_usd": 0.1914952604
+  },
+  "combined_budgetary_estimate_usd_excluding_disk_tax": 1.4910172604,
+  "cleanup": {
+    "running_pods": 0,
+    "all_pods": 0,
+    "network_volumes": 0
+  },
+  "note": "Elapsed-time GPU rental estimate from quoted rates, not final invoice. CPU4 benchmark ran on rented Ada host, no separate CPU rental. API reserve is unbilled uncertainty, not a confirmed charge. Provider billing incomplete shortly after deletion; disk, tax, credits and rounding excluded."
+}

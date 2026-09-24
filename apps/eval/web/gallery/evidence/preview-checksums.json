@@ -1,0 +1,86 @@
+{
+  "version": "composition-preview-20260924",
+  "scope": "approved public originals and deterministic v1/v2 diagnostic crops; bytes stored outside Git and copied explicitly into release",
+  "files": [
+    {
+      "file": "example-026-bottle.jpg",
+      "sha256": "07eb6092f5f5cb92c5abf7a2835e5655dae93d94f1e0d8e07d8b3151f6a26f43",
+      "bytes": 840871
+    },
+    {
+      "file": "example-026-input.webp",
+      "sha256": "000083d2806f126027ec4de3072c56dd87a8904fc37d398fef15a82131eedbc1",
+      "bytes": 728190
+    },
+    {
+      "file": "example-026-label-v2.jpg",
+      "sha256": "389600ac2b3ef53dcb9418a4144c603195cc83f98c639b181f583730d44e0ad3",
+      "bytes": 544533
+    },
+    {
+      "file": "example-026-label.jpg",
+      "sha256": "db040eb0a457c82668726da83ccad4422e1b6556ef5dae4ccf85e400a66f3c0e",
+      "bytes": 70615
+    },
+    {
+      "file": "example-028-bottle.jpg",
+      "sha256": "8e8c21fff2b1e1549782c48c47fadc125ca2ba63bd79cd01ba43709e972b4bfe",
+      "bytes": 1506867
+    },
+    {
+      "file": "example-028-input.webp",
+      "sha256": "0d7d62c97ceb14530a645e161b691347a07142e0908debfa932a55101a75e1bf",
+      "bytes": 655784
+    },
+    {
+      "file": "example-028-label-v2.jpg",
+      "sha256": "f4d02b3ceb733f22687e8427da1349d46fea3cbc217348dd434cc78699fad642",
+      "bytes": 768860
+    },
+    {
+      "file": "example-028-label.jpg",
+      "sha256": "6cfb3c8cfe4a2dc2ab6c65528cd123fc63b6f189d1efdb86620c67c06fdc7e63",
+      "bytes": 73720
+    },
+    {
+      "file": "example-059-bottle.jpg",
+      "sha256": "d99ff7842ae54acdb34ff340f20dadf96ec8ba83deb26fd4d4754af81d83db93",
+      "bytes": 608793
+    },
+    {
+      "file": "example-059-input.webp",
+      "sha256": "2291e18f98e5a59ef5094402e4b8a6369b3f4e1bde3d2a1b09b35d432c945b60",
+      "bytes": 649960
+    },
+    {
+      "file": "example-059-label-v2.jpg",
+      "sha256": "d45dfa9ed62f61f7e398865fd83639cf1adebe76e307d0cf564e7f24c5c22d1d",
+      "bytes": 334799
+    },
+    {
+      "file": "example-059-label.jpg",
+      "sha256": "81e3800088a94fae75132fe86ee562f4aef3d1095a3daef0058ba3e1dd994489",
+      "bytes": 72924
+    },
+    {
+      "file": "example-087-bottle.jpg",
+      "sha256": "9a12e89881cb52eb574e33ec21d1a7f50b48e1cf02bee4e4a760dbfaae8ae352",
+      "bytes": 508098
+    },
+    {
+      "file": "example-087-input.webp",
+      "sha256": "5cdb62e839128ba177541534a2bc6c6861dcd064a4d34f979c9b07a52e09122a",
+      "bytes": 896432
+    },
+    {
+      "file": "example-087-label-v2.jpg",
+      "sha256": "84f909dfee433a8c6c0ce8b7b53a29008595bb0fffc7182ba0a6b4fd0e063050",
+      "bytes": 300385
+    },
+    {
+      "file": "example-087-label.jpg",
+      "sha256": "60704a134ce2ae0b87ea9153f9035cd49da2652340f12d4fc858d55b9385f958",
+      "bytes": 7478
+    }
+  ]
+}

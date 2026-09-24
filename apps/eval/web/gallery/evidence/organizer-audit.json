@@ -1,0 +1,242 @@
+{
+  "version": "organizer-public-audit-20260924",
+  "source_sha256": "70b1c5101fde7ac5903ec21b173d1fae7a501344eb1ab0b4f5220027b8e9e852",
+  "provenance": {
+    "organizer_source_url": "https://mostech-cloud.mos.ru/s/FxZekMZWXMjq9rN",
+    "label_provenance": "local agent visual/catalog matches; no organizer answer key",
+    "synthetic_qc_provenance": "prior agent visual reviews and DeepSeek QA; accepted does not certify all label text",
+    "organizer_archive_sha256": "5ffa77f7c8fdc82e1f9aa123ded91cdb2df435b7e3990ce074cba53b6be0e4c9",
+    "eval_archive_sha256": "dadcac05b8495697b2a84b2a9a123d5797cbf9687a7f7e5726548ea0eb663458",
+    "catalog_csv_sha256": "12a1b0b620db7a2264b094446861e83940a927708d65a1b7ccffda7ec3aeffee",
+    "query_rows": 103,
+    "unique_query_sha256": 100,
+    "eval_duplicates": {
+      "organizer-eval-001": "organizer-real-003",
+      "organizer-eval-002": "organizer-real-014",
+      "organizer-eval-003": "organizer-real-073"
+    },
+    "agent_labeled_rows": 10,
+    "agent_labeled_exact_overlap_frozen_v1": 10,
+    "real_photo_exact_overlap_frozen_v1": 12,
+    "catalog_identity_ambiguous_rows": 1,
+    "catalog_ref_verified": 2080,
+    "catalog_ref_missing": 23
+  },
+  "methods": {
+    "deepseek": {
+      "organizer_attempted_rows": 103,
+      "organizer_unique_images": 100,
+      "organizer_coverage": {
+        "unique_images": 100,
+        "completed_under_10s": 99,
+        "completed_under_3s": 55,
+        "model_timeouts": 1,
+        "late_successes_over_10s": 0,
+        "errors": 0,
+        "median_latency_ms": 2934
+      },
+      "organizer_local_exact_slug": {
+        "count": 10,
+        "top1": 8,
+        "top5": 10,
+        "top20": 10,
+        "deadline_timeouts": 0,
+        "model_timeouts": 0,
+        "errors": 0,
+        "median_latency_ms": 2688
+      },
+      "organizer_unambiguous_sensitivity": {
+        "count": 9,
+        "top1": 8,
+        "top5": 9,
+        "top20": 9,
+        "deadline_timeouts": 0,
+        "model_timeouts": 0,
+        "errors": 0,
+        "median_latency_ms": 2604
+      },
+      "organizer_effective_reuse": {
+        "local_exact_slug": {
+          "count": 10,
+          "top1": 8,
+          "top5": 10,
+          "top20": 10,
+          "deadline_timeouts": 0,
+          "model_timeouts": 0,
+          "errors": 0,
+          "median_latency_ms": 2506
+        },
+        "unambiguous_sensitivity": {
+          "count": 9,
+          "top1": 8,
+          "top5": 9,
+          "top20": 9,
+          "deadline_timeouts": 0,
+          "model_timeouts": 0,
+          "errors": 0,
+          "median_latency_ms": 2345
+        },
+        "coverage": {
+          "unique_images": 100,
+          "completed_under_10s": 99,
+          "completed_under_3s": 58,
+          "model_timeouts": 1,
+          "late_successes_over_10s": 0,
+          "errors": 0,
+          "median_latency_ms": 2847
+        },
+        "provenance_counts": {
+          "fresh_original_image": 88,
+          "frozen_v1_exact_sha_same_prompt_matcher": 12,
+          "duplicate_image_same_sha": 3
+        }
+      }
+    },
+    "qwen": {
+      "organizer_attempted_rows": 103,
+      "organizer_unique_images": 100,
+      "organizer_coverage": {
+        "unique_images": 100,
+        "completed_under_10s": 98,
+        "completed_under_3s": 79,
+        "model_timeouts": 0,
+        "late_successes_over_10s": 2,
+        "errors": 0,
+        "median_latency_ms": 2370
+      },
+      "organizer_local_exact_slug": {
+        "count": 10,
+        "top1": 8,
+        "top5": 10,
+        "top20": 10,
+        "deadline_timeouts": 0,
+        "model_timeouts": 0,
+        "errors": 0,
+        "median_latency_ms": 2340
+      },
+      "organizer_unambiguous_sensitivity": {
+        "count": 9,
+        "top1": 8,
+        "top5": 9,
+        "top20": 9,
+        "deadline_timeouts": 0,
+        "model_timeouts": 0,
+        "errors": 0,
+        "median_latency_ms": 2309
+      },
+      "organizer_effective_reuse": {
+        "local_exact_slug": {
+          "count": 10,
+          "top1": 7,
+          "top5": 10,
+          "top20": 10,
+          "deadline_timeouts": 0,
+          "model_timeouts": 0,
+          "errors": 0,
+          "median_latency_ms": 2760
+        },
+        "unambiguous_sensitivity": {
+          "count": 9,
+          "top1": 7,
+          "top5": 9,
+          "top20": 9,
+          "deadline_timeouts": 0,
+          "model_timeouts": 0,
+          "errors": 0,
+          "median_latency_ms": 2791
+        },
+        "coverage": {
+          "unique_images": 100,
+          "completed_under_10s": 98,
+          "completed_under_3s": 76,
+          "model_timeouts": 0,
+          "late_successes_over_10s": 2,
+          "errors": 0,
+          "median_latency_ms": 2448
+        },
+        "provenance_counts": {
+          "fresh_original_image": 88,
+          "frozen_v1_exact_sha_same_prompt_matcher": 12,
+          "duplicate_image_same_sha": 3
+        }
+      }
+    },
+    "paddle": {
+      "organizer_attempted_rows": 103,
+      "organizer_unique_images": 100,
+      "organizer_coverage": {
+        "unique_images": 100,
+        "completed_under_10s": 100,
+        "completed_under_3s": 86,
+        "model_timeouts": 0,
+        "late_successes_over_10s": 0,
+        "errors": 0,
+        "median_latency_ms": 2268
+      },
+      "organizer_local_exact_slug": {
+        "count": 10,
+        "top1": 5,
+        "top5": 9,
+        "top20": 10,
+        "deadline_timeouts": 0,
+        "model_timeouts": 0,
+        "errors": 0,
+        "median_latency_ms": 2169
+      },
+      "organizer_unambiguous_sensitivity": {
+        "count": 9,
+        "top1": 5,
+        "top5": 8,
+        "top20": 9,
+        "deadline_timeouts": 0,
+        "model_timeouts": 0,
+        "errors": 0,
+        "median_latency_ms": 2099
+      },
+      "organizer_effective_reuse": {
+        "local_exact_slug": {
+          "count": 10,
+          "top1": 5,
+          "top5": 9,
+          "top20": 10,
+          "deadline_timeouts": 0,
+          "model_timeouts": 0,
+          "errors": 0,
+          "median_latency_ms": 1881
+        },
+        "unambiguous_sensitivity": {
+          "count": 9,
+          "top1": 5,
+          "top5": 8,
+          "top20": 9,
+          "deadline_timeouts": 0,
+          "model_timeouts": 0,
+          "errors": 0,
+          "median_latency_ms": 1868
+        },
+        "coverage": {
+          "unique_images": 100,
+          "completed_under_10s": 100,
+          "completed_under_3s": 86,
+          "model_timeouts": 0,
+          "late_successes_over_10s": 0,
+          "errors": 0,
+          "median_latency_ms": 2259
+        },
+        "provenance_counts": {
+          "fresh_original_image": 88,
+          "frozen_v1_exact_sha_same_prompt_matcher": 12,
+          "duplicate_image_same_sha": 3
+        }
+      }
+    }
+  },
+  "api_audit_cost": {
+    "confirmed_usd": 0.1384952604,
+    "uncertain_usage_reserve_usd": 0.053,
+    "conservative_total_usd": 0.1914952604,
+    "gpu_rental_usd": 0,
+    "note": "PaddleOCR ran on existing Sigma CPU with two threads; existing CPU cost was not priced.",
+    "source_report_sha256": "5761dd913b1e2917c8a86ffdd3a8a977f949f82f504418dd5fc5782ec8f200d7"
+  }
+}

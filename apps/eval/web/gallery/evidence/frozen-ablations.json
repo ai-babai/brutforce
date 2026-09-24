@@ -1,0 +1,158 @@
+{
+  "scope": "Frozen v1: aggregate-only offline ablations from scored local reports; no individual predictions or gold; service denominator 141 graded (10 ungraded), retrieval 62 graded",
+  "variants": [
+    {
+      "variant": "whole",
+      "service": {
+        "passed": 48,
+        "graded": 141,
+        "ungraded": 10,
+        "img15_passed": 2,
+        "img16_passed": 0
+      },
+      "retrieval": {
+        "top1": 26,
+        "top5": 41,
+        "top20": 55,
+        "graded": 62
+      },
+      "source_sha256": {
+        "service": "8f12e9c0bc5bd206868e5b0d67a29be1269b8429d3f1f54c90f7a63dbd5c4843",
+        "retrieval": "ce9207deec50f9c4fb713c2b2bbf75b948e507909f4a8eeabcdbdf0c511cb689"
+      }
+    },
+    {
+      "variant": "label",
+      "service": {
+        "passed": 34,
+        "graded": 141,
+        "ungraded": 10,
+        "img15_passed": 2,
+        "img16_passed": 0
+      },
+      "retrieval": {
+        "top1": 17,
+        "top5": 24,
+        "top20": 27,
+        "graded": 62
+      },
+      "source_sha256": {
+        "service": "1215cd4c920f54e5dc9dd8c93f6033de3371f2c0b0268511d3941496c597989e",
+        "retrieval": "dcd20e64f5a924686562450d1426bd770e09e2d1d989b3ff25fa6c0fd7cea3e1"
+      }
+    },
+    {
+      "variant": "ocr",
+      "service": {
+        "passed": 47,
+        "graded": 141,
+        "ungraded": 10,
+        "img15_passed": 2,
+        "img16_passed": 9
+      },
+      "retrieval": {
+        "top1": 23,
+        "top5": 41,
+        "top20": 46,
+        "graded": 62
+      },
+      "source_sha256": {
+        "service": "8a210be833497eb070ed4170ebec72c2b8652ced441c861f71611b65bc2c36c9",
+        "retrieval": "34f9f000579ac17c0d0ec92c97955d825fee03e5a54c94ab7c35791669af82a2"
+      }
+    },
+    {
+      "variant": "whole_label",
+      "service": {
+        "passed": 30,
+        "graded": 141,
+        "ungraded": 10,
+        "img15_passed": 2,
+        "img16_passed": 0
+      },
+      "retrieval": {
+        "top1": 10,
+        "top5": 21,
+        "top20": 27,
+        "graded": 62
+      },
+      "source_sha256": {
+        "service": "06e91c02c7285e8568602561f7e66a3ec58f51ee2da9474994909b462fc816f7",
+        "retrieval": "582971099247c58f0050fcf3bbebe10575f152f0fc3b250778a128ae64b2d7a1"
+      }
+    },
+    {
+      "variant": "whole_ocr",
+      "service": {
+        "passed": 58,
+        "graded": 141,
+        "ungraded": 10,
+        "img15_passed": 2,
+        "img16_passed": 0
+      },
+      "retrieval": {
+        "top1": 27,
+        "top5": 48,
+        "top20": 50,
+        "graded": 62
+      },
+      "source_sha256": {
+        "service": "deb42a69c5ec8fd42ded24f4ba712bb44c27e19837eaf43ae11eab2dd96d4d85",
+        "retrieval": "2758e753a6099553a27328015e58b9ed774488b1929712b313555afd5161b0ac"
+      }
+    },
+    {
+      "variant": "label_ocr",
+      "service": {
+        "passed": 46,
+        "graded": 141,
+        "ungraded": 10,
+        "img15_passed": 2,
+        "img16_passed": 0
+      },
+      "retrieval": {
+        "top1": 18,
+        "top5": 38,
+        "top20": 52,
+        "graded": 62
+      },
+      "source_sha256": {
+        "service": "9a29c8ed48b40cb98e81e75e6b6dc964b7d71064a0dd80751b130cf23f88b6f1",
+        "retrieval": "3f183c10cc5e98b2c2f2ad1cae77dfacf77f9231c6011325415c2f70366ed0d4"
+      }
+    },
+    {
+      "variant": "all",
+      "service": {
+        "passed": 50,
+        "graded": 141,
+        "ungraded": 10,
+        "img15_passed": 2,
+        "img16_passed": 0
+      },
+      "retrieval": {
+        "top1": 25,
+        "top5": 44,
+        "top20": 52,
+        "graded": 62
+      },
+      "source_sha256": {
+        "service": "a0915b7b666b12539505e55e8cc605e3640a32c92d53300db5417652732db210",
+        "retrieval": "f670dbd14b5b758737ebda9b85c5037e4050af1573d76a3ad8062495e5581f1a"
+      }
+    }
+  ],
+  "origin_counts": {
+    "service": {
+      "real_graded": 32,
+      "augmentation_graded": 70,
+      "ai_graded": 39,
+      "real_ungraded": 10
+    },
+    "retrieval": {
+      "real_graded": 0,
+      "augmentation_graded": 50,
+      "ai_graded": 12
+    }
+  }
+}

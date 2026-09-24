@@ -1,0 +1,65 @@
+{
+  "scope": "Published public frozen-v1 run aggregates. V2 matcher runs are development on viewed scenes, not new validation. Service 141 graded+10 ungraded; retrieval 62 graded, no real images.",
+  "runs": [
+    {
+      "name": "DeepSeek OCR + matcher v1",
+      "service_run_id": "ds-v1-full-service",
+      "retrieval_run_id": "ds-v1-full-retrieval-r1",
+      "service_passed": 98,
+      "retrieval_top1": 39,
+      "retrieval_top5": 54,
+      "retrieval_top20": 58,
+      "service_payload_sha256": "bc9f7ceb9494d1a1e0db350c1cd2ee68af47df43e92d7ade04f82bb8cdbf3299",
+      "retrieval_payload_sha256": "f405019a53d1590c81013fc2036d7ca0304c68389919dd06b07767e781887a63",
+      "note": "ранее опубликованный v1"
+    },
+    {
+      "name": "Qwen OCR + matcher v1",
+      "service_run_id": "qwen-v1-full-service",
+      "retrieval_run_id": "qwen-v1-full-retrieval",
+      "service_passed": 101,
+      "retrieval_top1": 43,
+      "retrieval_top5": 57,
+      "retrieval_top20": 57,
+      "service_payload_sha256": "335adace25374036ae819e6950f921eceb4b5ce7968638d77d5721951d7ff7c5",
+      "retrieval_payload_sha256": "0b32e92c28ade867c09bf5979a715d5519bef910526382506aadfd4544fabaa3",
+      "note": "ранее опубликованный v1"
+    },
+    {
+      "name": "Paddle OCR + matcher v1",
+      "service_run_id": "paddle-v1-full-service",
+      "retrieval_run_id": "paddle-v1-full-retrieval",
+      "service_passed": 47,
+      "retrieval_top1": 23,
+      "retrieval_top5": 42,
+      "retrieval_top20": 48,
+      "service_payload_sha256": "b48c0d1f92f3bb3b6a0eb28f5bdc27859dbae709d67478903975f45f7e3dc238",
+      "retrieval_payload_sha256": "6c53b8dcdfac5ec44c1225ea582cc499d382098322ba7b3cbeb7d24c42345409",
+      "note": "ранее опубликованный v1"
+    },
+    {
+      "name": "DeepSeek matcher v2",
+      "service_run_id": "ds-matcher-v2-service",
+      "retrieval_run_id": "ds-matcher-v2-retrieval",
+      "service_passed": 108,
+      "retrieval_top1": 45,
+      "retrieval_top5": 56,
+      "retrieval_top20": 58,
+      "service_payload_sha256": "604be52ed0602062448ec263a8536a0eda7f8d7bd83b9f8366586c3c65e7c0a0",
+      "retrieval_payload_sha256": "625f9b9550186d0d0ce0bfb24eb366dc54dec051e3103b833a4667fafab96144",
+      "note": "разработка на тех же сценах"
+    },
+    {
+      "name": "Qwen matcher v2",
+      "service_run_id": "qwen-matcher-v2-service",
+      "retrieval_run_id": "qwen-matcher-v2-retrieval",
+      "service_passed": 111,
+      "retrieval_top1": 49,
+      "retrieval_top5": 57,
+      "retrieval_top20": 57,
+      "service_payload_sha256": "22afa848c4249cf422e5269583e90a2feb8afeb029437da5514dc7b15efe8e9b",
+      "retrieval_payload_sha256": "93b4054ef877c510e8800b3f76103f8f712628fc2f37fc5696ea0a14c7096395",
+      "note": "разработка на тех же сценах"
+    }
+  ]
+}

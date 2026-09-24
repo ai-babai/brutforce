@@ -1,0 +1,119 @@
+{
+  "scope": "development-only: 10 agent-reviewed labels, all already in frozen v1; not organizer ground truth; 90 unique images ungraded",
+  "query_rows": 103,
+  "unique_images": 100,
+  "methods": {
+    "whole": {
+      "strict": {
+        "count": 10,
+        "top1": 4,
+        "top5": 5,
+        "top20": 9,
+        "mrr20": 0.5031746031746032
+      },
+      "excluding_ambiguous_balaklava": {
+        "count": 9,
+        "top1": 4,
+        "top5": 4,
+        "top20": 8,
+        "mrr20": 0.5035273368606702
+      }
+    },
+    "label": {
+      "strict": {
+        "count": 10,
+        "top1": 4,
+        "top5": 5,
+        "top20": 5,
+        "mrr20": 0.45
+      },
+      "excluding_ambiguous_balaklava": {
+        "count": 9,
+        "top1": 4,
+        "top5": 4,
+        "top20": 4,
+        "mrr20": 0.4444444444444444
+      }
+    },
+    "ocr": {
+      "strict": {
+        "count": 10,
+        "top1": 3,
+        "top5": 6,
+        "top20": 7,
+        "mrr20": 0.44102564102564107
+      },
+      "excluding_ambiguous_balaklava": {
+        "count": 9,
+        "top1": 3,
+        "top5": 5,
+        "top20": 6,
+        "mrr20": 0.43447293447293445
+      }
+    },
+    "whole_label": {
+      "strict": {
+        "count": 10,
+        "top1": 2,
+        "top5": 5,
+        "top20": 5,
+        "mrr20": 0.3333333333333333
+      },
+      "excluding_ambiguous_balaklava": {
+        "count": 9,
+        "top1": 2,
+        "top5": 4,
+        "top20": 4,
+        "mrr20": 0.31481481481481477
+      }
+    },
+    "whole_ocr": {
+      "strict": {
+        "count": 10,
+        "top1": 5,
+        "top5": 7,
+        "top20": 7,
+        "mrr20": 0.6
+      },
+      "excluding_ambiguous_balaklava": {
+        "count": 9,
+        "top1": 5,
+        "top5": 6,
+        "top20": 6,
+        "mrr20": 0.6111111111111112
+      }
+    },
+    "label_ocr": {
+      "strict": {
+        "count": 10,
+        "top1": 4,
+        "top5": 7,
+        "top20": 8,
+        "mrr20": 0.5340909090909091
+      },
+      "excluding_ambiguous_balaklava": {
+        "count": 9,
+        "top1": 4,
+        "top5": 6,
+        "top20": 7,
+        "mrr20": 0.5378787878787878
+      }
+    },
+    "all": {
+      "strict": {
+        "count": 10,
+        "top1": 3,
+        "top5": 8,
+        "top20": 8,
+        "mrr20": 0.5333333333333333
+      },
+      "excluding_ambiguous_balaklava": {
+        "count": 9,
+        "top1": 3,
+        "top5": 7,
+        "top20": 7,
+        "mrr20": 0.537037037037037
+      }
+    }
+  }
+}

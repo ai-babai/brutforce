@@ -13,6 +13,13 @@ LCT_EVAL_PARTICIPANT_TOKEN='...' LCT_EVAL_REVIEW_TOKEN='...' ./lct-eval serve -d
 
 Keep the two tokens distinct and inject them through the service environment. Deployment uses `/etc/lct-eval.env` (root:lct 0640) for both service tokens, `/srv/lct/eval-access/participant.env` (lct:lct 0640) for authorized participant agents, and `/srv/lct/eval-access/review.token` (lct:lct 0640) for reviewers. None is in the web root or archive. Caddy routes `cv.ops.dzap.pw` to `127.0.0.1:8124`. The previous `/vision/` URL remains a compatibility alias. The browser uses relative paths. The site and read-only API are public; only submissions and review-only answer fields require bearer credentials. `GET /healthz` is public.
 
+Each deployed release under `/srv/lct/maks/eval/releases/` must contain the
+Linux `lct-eval` binary, the complete `web/` directory, and this `README.md`
+plus `AGENTS.md` at the release root. Server onboarding links point at
+`/srv/lct/maks/eval/current/AGENTS.md`; check both documents after switching
+the `current` symlink. Keep previous releases for rollback and restart only
+`lct-eval.service` when changing the binary or static pages.
+
 `-vision-data` (or `LCT_EVAL_VISION_DATA`) selects a separate, read-only image corpus. `/data/` is the per-slug training/pilot gallery. The service starts with an empty gallery if `manifest.jsonl` has not yet been assembled, and reloads the manifest when its modification time or size changes. Write updates to a temporary file in the same directory and rename it to `manifest.jsonl` so readers see complete snapshots. Keep the vision root outside the sealed evaluation root; the server rejects nested roots.
 
 ## Vision gallery manifest
@@ -56,6 +63,27 @@ sources have been added. Keep organizer real-photo metrics, frozen-basket
 ablations, and stage latency/hardware/cost separate. Do not publish private
 gold, individual submitted predictions, local source paths, or credentials in
 this static JSON.
+Optional `examples[]` in a section shows input, bottle crop, and label crop
+previews. Each example has `title`, `note`, and `images: [{label,url}]`; image
+URLs must be local `/data/evidence/crops/` files, and the browser loads them
+only when visible. Publish image bytes and captions only after confirming they
+contain no private answers or source paths.
+The files under `web/gallery/evidence/` are curated public summaries. Raw
+scored reports and HTTP benchmark logs can contain individual predictions;
+copy only aggregate counts, timing summaries, and source hashes into this
+directory. Check the published JSON for gold fields, credentials, and private
+filesystem paths before each release.
+
+User photos and derived preview crops are **not Git artifacts**. Keep the
+16 approved preview files in the experiment data directory's `report-previews/`
+(external to this repository); the local `web/gallery/evidence/crops` path may
+be an ignored symlink to that directory for development. During deployment,
+copy the approved files into the new release's real
+`web/gallery/evidence/crops/` directory, and verify every URL in
+`next-data.json` returns 200. Do not copy the local symlink into a release.
+The four original `example-*-input.webp` files must retain the SHA-256 values
+from the public organizer query manifest; the v1 and v2 crop JPEGs are copied
+from their recorded experiment output without modification.
 
 ## Data layout
 
