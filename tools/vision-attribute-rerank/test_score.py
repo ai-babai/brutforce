@@ -57,6 +57,24 @@ class ScoreTests(unittest.TestCase):
             self.assertEqual(metrics['baseline_top1'], 0)
             self.assertEqual(metrics['baseline_top20'], 0)
 
+    def test_http_201_valid_and_500_stale_prediction_invalid(self):
+        with tempfile.TemporaryDirectory() as folder:
+            input_path, output_path = Path(folder) / 'input.jsonl', Path(folder) / 'output.jsonl'
+            result = {'case_id': 'c1', 'track': 'service', 'before': ['right'],
+                      'after': ['right'], 'changed': False,
+                      'before_prediction_slug': 'right', 'after_prediction_slug': 'right'}
+            output_path.write_text(json.dumps(result) + '\n')
+            frozen = {'c1': {'verified': True, 'service': {
+                'expected_action': 'match', 'expected_slug': 'right'}}}
+            for http_status, expected_correct in ((201, 1), (500, 0)):
+                source = {'case_id': 'c1', 'track': 'service', 'http_status': http_status,
+                          'query_sha256': 'image-sha', 'result': {'slug': 'right'}}
+                input_path.write_text(json.dumps(source) + '\n')
+                metrics, _ = score.score_run('frozen-synthetic', input_path, output_path, frozen, {},
+                                             {'c1': 'image-sha'}, {}, 'suite-hash')
+                self.assertEqual(metrics['baseline_top1'], expected_correct)
+                self.assertEqual(metrics['baseline_top20'], expected_correct)
+
     def test_input_identity_mismatch_rejected(self):
         with tempfile.TemporaryDirectory() as folder:
             input_path, output_path = Path(folder) / 'input.jsonl', Path(folder) / 'output.jsonl'

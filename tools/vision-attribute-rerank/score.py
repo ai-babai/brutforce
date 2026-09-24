@@ -93,7 +93,7 @@ def score_run(name: str, input_path: Path, output_path: Path,
                 continue
             expected = {'expected_action': 'match', 'expected_slug': label['exact_slug']}
         count['graded'] += 1
-        transport_ok = source.get('status', 'ok') == 'ok' and source.get('http_status', 200) == 200
+        transport_ok = source.get('status', 'ok') == 'ok' and source.get('http_status', 200) in (200, 201)
         if source['track'] == 'service':
             payload = source.get('result') or source
             prediction = payload.get('prediction') or payload.get('predictions', {}).get('all') or payload
@@ -190,15 +190,22 @@ def main() -> None:
         else:
             public_rows.append({'name': run['name'], **summary})
         private_rows.append({'name': run['name'], 'cases': cases})
+    scorer_identity = {'scorer_version': '3',
+                       'scorer_code_sha256': sha(Path(__file__)),
+                       'rule_version': 'v1',
+                       'rules_sha256': manifest['rules_sha256'],
+                       'frozen_suite_version': suite['version'],
+                       'organizer_manifest_version': organizer_manifest['version']}
     args.private_out.parent.mkdir(parents=True, exist_ok=True)
-    args.private_out.write_text(json.dumps({'schema_version': 1, 'gold_blind_manifest_sha256': sha(manifest_path),
+    args.private_out.write_text(json.dumps({'schema_version': 1, **scorer_identity,
+        'gold_blind_manifest_sha256': sha(manifest_path),
         'frozen_gold_sha256': sha(args.frozen_gold), 'erratum_sha256': sha(args.frozen_erratum),
         'organizer_seal_sha256': sha(args.organizer_seal),
         'frozen_suite_sha256': sha(args.frozen_suite),
         'organizer_manifest_sha256': sha(args.organizer_manifest), 'runs': private_rows},
         ensure_ascii=False, indent=2) + '\n')
     args.public_out.parent.mkdir(parents=True, exist_ok=True)
-    args.public_out.write_text(json.dumps({'schema_version': 1,
+    args.public_out.write_text(json.dumps({'schema_version': 1, **scorer_identity,
         'kind': 'POST-HOC DEVELOPMENT: offline Top-20 attribute rerank, not independent validation or full HTTP timing',
         'gold_blind_manifest_sha256': sha(manifest_path),
         'frozen_gold_view': 'separate case-000137 lineage erratum overlay',

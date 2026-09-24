@@ -63,9 +63,10 @@ Only after the gold-blind manifest exists, run the separate scorer:
       --frozen-erratum "$BRUT_DATA_ROOT/vision-retrieval-20260925/annotation/frozen-v1-errata.json" \
       --organizer-manifest "$BRUT_DATA_ROOT/vision-retrieval-20260924/organizer-audit/queries-public.json" \
       --organizer-seal "$BRUT_DATA_ROOT/vision-retrieval-20260925/annotation/sealed-v1.jsonl" \
-      --private-out "$EXP_ROOT/private-score-v2.json" \
-      --public-out "$EXP_ROOT/public-summary-v2.json"
+      --private-out "$EXP_ROOT/private-score-v3.json" \
+      --public-out "$EXP_ROOT/public-summary-v3.json"
 
 The scoring step verifies each saved prediction against the frozen suite or
 organizer query image SHA (standalone frozen records carry the suite hash),
-checks transport status, and scores service and retrieval separately.
+checks transport status (HTTP 200 or 201), and scores service and retrieval separately.
+The v3 public and private outputs pin this scorer file SHA-256 and suite/manifest versions.
