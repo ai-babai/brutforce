@@ -1,4 +1,69 @@
 <!doctype html>
 <html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>LCT · Следующий эксперимент</title><link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="next.css"></head><body>
 <header><div class="brand"><a href="/">LCT / VISION EVAL</a><span class="header-tag">Следующий эксперимент</span></div><nav aria-label="Разделы"><a href="/">Корзины</a><a href="/data/">Изображения</a><a href="/data/report.html">Пилот 100</a><a aria-current="page" href="/data/next.html">Следующий опыт</a><a href="/guide.html">Инструкция</a></nav></header>
-<main><section class="intro"><div><div class="eyebrow">СОСТАВНОЙ ПОИСК / ЭКСПЕРИМЕНТ</div><h1>Как искать вино<br><em>на новом фото?</em></h1></div><p>Проверяем отдельные ветви распознавания и их сочетание на реальных фото организаторов и замороженных корзинах v1. Публикуем измерения по мере проверки.</p></section><p id="report-status" class="report-status" role="status">Загружаем результаты…</p><div id="report-sections"></div><section class="next-panel"><div class="eyebrow">КОНТЕКСТ</div><h2>Что уже опубликовано</h2><p><a href="/data/report.html">Пилот 100 AI-изображений</a> и <a href="/">матрица прежних прогонов</a> доступны отдельно. Их числа не смешиваются с новой проверкой.</p></section></main><footer>Только проверенные результаты. Закрытый эталон и ответы отдельных отправок не публикуются.</footer><script src="next.js"></script></body></html>
+<main>
+<section class="intro"><div><div class="eyebrow">СОСТАВНОЙ ПОИСК / ЭКСПЕРИМЕНТ</div><h1>Как искать вино<br><em>на новом фото?</em></h1></div><p>Проверяем отдельные ветви распознавания и их сочетание на реальных фото организаторов и замороженных корзинах v1. Публикуем измерения по мере проверки.</p></section>
+<section class="architecture" aria-labelledby="architecture-title">
+<div class="eyebrow">ПЕРЕД ЦИФРАМИ</div><h2 id="architecture-title">Как фото превращается в карточку вина</h2>
+<p class="architecture-lead">Оба подхода в конце выбирают <strong>slug</strong> — адрес конкретной карточки из каталога, а не сочиняют название вина.</p>
+<div class="architecture-grid">
+<article class="architecture-card"><h3>Прежние решения: прочитать текст</h3>
+<pre>входное изображение
+         |
+         v
+DeepSeek / Qwen: цель и поля
+       ИЛИ
+PaddleOCR: текст из центра
+         |
+         v
+распознанные слова
+         |
+         v
+matcher (обычный код)
+         |
+         v
+slug карточки каталога</pre>
+<p>DeepSeek и Qwen по инструкции выбирают нужную цель и читают производителя, название и видимый текст. Старый PaddleOCR для полного кадра берёт фиксированную центральную область: 60% ширины и 84% высоты; отдельного поиска бутылки у него нет.</p>
+<p><strong>Matcher</strong> — обычный код сравнения, не ещё одна нейросеть. Он сопоставляет прочитанное с производителем, названием и slug карточек каталога: 72% оценки даёт сходство трёхбуквенных фрагментов, 28% — совпадение значимых слов.</p></article>
+<article class="architecture-card"><h3>Новый опыт: три независимых списка</h3>
+<pre class="architecture-wide">service: фото -> OWLv2 --+
+retrieval: готовый кроп -+
+                        |
+                        v
+                 выбранная цель
+          +-------------+-------------+
+          |             |             |
+     SigLIP2: всё  SigLIP2:      PaddleOCR:
+        целиком   этикетка      текст -> каталог
+          |             |             |
+          +-------------+-------------+
+                        |
+                        v
+             слияние трёх рангов
+                        |
+                        v
+               slug из каталога</pre>
+<pre class="architecture-narrow">service: фото → OWLv2
+retrieval: готовый кроп
+          |
+          v
+   выбранная цель
+          |
+  +-------+-------+
+  |       |       |
+SigLIP2 SigLIP2  OCR
+цель    этикетка текст
+  |       |       |
+  +-------+-------+
+          |
+   слияние рангов
+          |
+   slug каталога</pre>
+<p>OWLv2 пытается выбрать цель на полном кадре. Один и тот же заранее обученный SigLIP2 сравнивает всю цель и фрагмент этикетки с заранее вычисленными векторами каталожных фото. PaddleOCR отдельно читает текст и ищет кандидатов во всём каталоге обычным сравнением слов. Три списка объединяются с фиксированными весами 25/35/40%; на ответах этих корзин модели не обучались.</p>
+<p>В <strong>v2</strong> расширили только фрагмент этикетки и заново вычислили его векторы для каталога и запросов. OWLv2, SigLIP2, OCR, остальной каталог и веса объединения остались прежними.</p></article>
+</div>
+<p class="architecture-foot"><strong>Два режима входа.</strong> Service получает полный кадр и ищет цель; retrieval получает уже подготовленный кроп и пропускает поиск цели на сцене. Поэтому «всё целиком» в retrieval означает весь <em>переданный кроп</em> (часто этикетку), а не обязательно всю бутылку; ветвь этикетки может сузить его ещё раз.</p>
+</section>
+<p id="report-status" class="report-status" role="status">Загружаем результаты…</p><div id="report-sections"></div>
+<section class="next-panel"><div class="eyebrow">КОНТЕКСТ</div><h2>Что уже опубликовано</h2><p><a href="/data/report.html">Пилот 100 AI-изображений</a> и <a href="/">матрица прежних прогонов</a> доступны отдельно. Их числа не смешиваются с новой проверкой.</p></section>
+</main><footer>Только проверенные результаты. Закрытый эталон и ответы отдельных отправок не публикуются.</footer><script src="next.js"></script></body></html>

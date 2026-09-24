@@ -1,0 +1,95 @@
+{
+  "version": "frozen-service-baskets-20260924",
+  "suite_hash": "10b0e4bcb93d4a55c8f82ad8427eda3c777b8acd9adcc8ccd7d35c17cf041957",
+  "scope": "aggregate passed service checks by public basket; basket membership overlaps, do not sum rows; v2 corrected metadata-r1 run",
+  "qwen_v1_run_id": "qwen-v1-full-service",
+  "qwen_v1_payload_sha256": "335adace25374036ae819e6950f921eceb4b5ce7968638d77d5721951d7ff7c5",
+  "composition_v2_run_id": "vr-v2-context-all-service-metadata-r1",
+  "composition_v2_payload_sha256": "66bc6c0fa28dd95ac7bd0c394f31eb0298fa2b92b4e6927c6195eaa57ee48c15",
+  "rows": [
+    {
+      "basket_id": "IMG-02",
+      "title": "Отдельная этикетка",
+      "graded": 11,
+      "qwen_v1_passed": 8,
+      "composition_v2_passed": 4
+    },
+    {
+      "basket_id": "IMG-03",
+      "title": "Обрезано краем кадра",
+      "graded": 12,
+      "qwen_v1_passed": 9,
+      "composition_v2_passed": 7
+    },
+    {
+      "basket_id": "IMG-04",
+      "title": "Боковой ракурс",
+      "graded": 10,
+      "qwen_v1_passed": 6,
+      "composition_v2_passed": 6
+    },
+    {
+      "basket_id": "IMG-05",
+      "title": "Поворот кадра",
+      "graded": 10,
+      "qwen_v1_passed": 5,
+      "composition_v2_passed": 2
+    },
+    {
+      "basket_id": "IMG-08",
+      "title": "Тёмная этикетка",
+      "graded": 11,
+      "qwen_v1_passed": 8,
+      "composition_v2_passed": 7
+    },
+    {
+      "basket_id": "IMG-10",
+      "title": "Смаз и малое разрешение",
+      "graded": 10,
+      "qwen_v1_passed": 7,
+      "composition_v2_passed": 8
+    },
+    {
+      "basket_id": "IMG-11",
+      "title": "Несколько вин",
+      "graded": 10,
+      "qwen_v1_passed": 6,
+      "composition_v2_passed": 6
+    },
+    {
+      "basket_id": "IMG-12",
+      "title": "Вино сбоку, не-вино в центре",
+      "graded": 10,
+      "qwen_v1_passed": 8,
+      "composition_v2_passed": 4
+    },
+    {
+      "basket_id": "IMG-14",
+      "title": "Похожие не-винные напитки",
+      "graded": 10,
+      "qwen_v1_passed": 10,
+      "composition_v2_passed": 6
+    },
+    {
+      "basket_id": "IMG-15",
+      "title": "Нет бутылки или этикетки",
+      "graded": 10,
+      "qwen_v1_passed": 6,
+      "composition_v2_passed": 2
+    },
+    {
+      "basket_id": "IMG-16",
+      "title": "Бутылка без признаков",
+      "graded": 10,
+      "qwen_v1_passed": 10,
+      "composition_v2_passed": 0
+    },
+    {
+      "basket_id": "IMG-19",
+      "title": "Вино вне каталога",
+      "graded": 2,
+      "qwen_v1_passed": 0,
+      "composition_v2_passed": 0
+    }
+  ]
+}
