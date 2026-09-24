@@ -121,6 +121,14 @@ Repeated scenes remain recorded separately, not an independent new wine per phot
 Catalog aliases and title/photo conflicts require explicit review; visual similarity
 to a reference alone is not proof of a unique organizer slug.
 
+The legacy grayscale ablation writer emits completed records without `status`.
+For these files only, comparison specs can set `completed_offline_version` to the
+exact recorded version. The adapter verifies the version and complete ranking /
+prediction dictionaries, preserves explicit errors and never adapts HTTP results.
+It records the adaptation in the aggregate; source prediction files remain intact.
+New writers must emit explicit status. Missing status in an unknown schema is not
+automatically evidence of a successful model run.
+
 ## Reference quarantine gate
 
 `reference_gate.py --catalog EXACT_INDEX_MANIFEST --index OLD_INDEX

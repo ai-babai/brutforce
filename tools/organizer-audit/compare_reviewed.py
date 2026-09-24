@@ -10,10 +10,30 @@ from pathlib import Path
 from score_reviewed import read_jsonl, score, normalized
 
 
+def adapt_completed_offline(rows, version):
+    """Legacy ablation writer emits a row only after completion, without status.
+
+    This opt-in adapter requires its exact recorded version and full output
+    structure. An explicit error is never promoted to success.
+    """
+    output=[]
+    for row in rows:
+        if (row.get('version') != version or 'result' in row or 'http_status' in row
+                or not isinstance(row.get('variants_top20'),dict)
+                or not isinstance(row.get('predictions'),dict)
+                or set(row['variants_top20']) != set(row['predictions'])
+                or not row['variants_top20']):
+            raise ValueError('offline adapter version or structure mismatch')
+        output.append({**row,'status':row.get('status','error' if row.get('error') else 'ok')})
+    return output
+
+
 def compare(labels, specs):
     results=[]
     for spec in specs:
         path=Path(spec['path']);predictions=read_jsonl(path)
+        if spec.get('completed_offline_version'):
+            predictions=adapt_completed_offline(predictions,spec['completed_offline_version'])
         by_id={r['case_id']:r for r in predictions}
         for variant in spec.get('variants',[None]):
             summary,traces=score(labels,predictions,variant)
@@ -29,6 +49,9 @@ def compare(labels, specs):
             }
             summary['name']=spec['name'];summary['family']=spec.get('family','unknown')
             summary['prediction_sha256']=hashlib.sha256(path.read_bytes()).hexdigest()
+            if spec.get('completed_offline_version'):
+                summary['normalization']={'completed_offline_version':spec['completed_offline_version'],
+                  'missing_status':'ok only for completed rows from this known offline writer; explicit errors retained'}
             summary['exact_product_groups']=len(groups)
             summary['product_macro_top1']=sum(sum(r['rank']==1 for r in rows)/len(rows) for rows in groups.values())/len(groups) if groups else None
             summary['rank_error_breakdown']=errors
