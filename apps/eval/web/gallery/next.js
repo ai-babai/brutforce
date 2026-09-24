@@ -25,7 +25,7 @@ function renderSection(section) {
   return `<section class="panel report-section" id="${esc(section.id)}"><div class="section-heading"><h2>${esc(section.title)}</h2><span class="badge ${section.status === 'ready' ? '' : 'pending'}">${status}</span></div><p>${esc(section.summary)}</p>${(section.tables || []).map(renderTable).join('')}${renderExamples(section.examples)}${(section.notes || []).length ? `<div class="method-notes"><h3>Как читать</h3><ul>${section.notes.map(note => `<li>${esc(note)}</li>`).join('')}</ul></div>` : ''}${sources ? `<p class="sources">Источники: ${sources}</p>` : ''}</section>`;
 }
 (async function loadReport(){try{
-  const response = await fetch('next-data.json', {cache:'no-store'});
+  const response = await fetch(document.body.dataset.reportSource || 'next-data.json', {cache:'no-store'});
   if (!response.ok) throw new Error(`HTTP ${response.status}`);
   const data = await response.json();
   if (data.schema_version !== 1 || !Array.isArray(data.sections)) throw new Error('неизвестная версия данных');

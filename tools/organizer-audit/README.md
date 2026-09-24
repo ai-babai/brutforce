@@ -116,8 +116,8 @@ This requires all unique photos, validates identities and catalog membership,
 rebuilds prior-seen groups from image hashes, and refuses to overwrite outputs.
 `compare_reviewed.py` can then compare frozen prediction files listed in a JSON
 array (`name`, `path`, optional `variants`). Its public aggregates include coverage,
-ranking errors, and an equal-weight average over reviewed scene groups. A group
-is a repeated product/scene identity, not an independent new wine per photograph.
+ranking errors, and an equal-weight average over confirmed catalog wine IDs.
+Repeated scenes remain recorded separately, not an independent new wine per photograph.
 Catalog aliases and title/photo conflicts require explicit review; visual similarity
 to a reference alone is not proof of a unique organizer slug.
 
