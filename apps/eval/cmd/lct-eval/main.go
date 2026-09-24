@@ -166,6 +166,9 @@ func serve(args []string) {
 	mux.HandleFunc("GET /api/data/images/{id}", a.dataImageInfo)
 	mux.HandleFunc("GET /api/data/images/{id}/image", a.dataImage)
 	mux.HandleFunc("GET /api/data/images/{id}/thumbnail", a.dataThumbnail)
+	mux.HandleFunc("GET /vision/", func(w http.ResponseWriter, r *http.Request) {
+		http.Redirect(w, r, "/data/", http.StatusPermanentRedirect)
+	})
 	mux.Handle("GET /data/", http.StripPrefix("/data/", http.FileServer(http.Dir(filepath.Join(*web, "gallery")))))
 	mux.Handle("/", http.FileServer(http.Dir(*web)))
 	srv := &http.Server{Addr: *addr, Handler: mux, ReadHeaderTimeout: 5 * time.Second, MaxHeaderBytes: 1 << 16}
@@ -403,6 +406,7 @@ func sanitize(rep eval.Report, review bool, g eval.Gold, track string) eval.Repo
 	if !review {
 		return rep
 	}
+	rep.Cases = append([]eval.CaseScore(nil), rep.Cases...)
 	gm := map[string]eval.GoldCase{}
 	for _, c := range g.Cases {
 		gm[c.ID] = c
@@ -433,6 +437,7 @@ func publicReport(rep eval.Report) eval.Report {
 		rep.Cases[i].Prediction = eval.Prediction{}
 		rep.Cases[i].ExpectedSlug = ""
 		rep.Cases[i].ExpectedAction = ""
+		rep.Cases[i].UngradedReason = ""
 	}
 	return rep
 }

@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "updated_at": null,
+  "sections": [
+    {
+      "id": "organizer",
+      "title": "1. Реальные фото организаторов",
+      "status": "pending",
+      "summary": "Сравнение решений и разбор ошибок появятся после проверки результатов и ручной разметки.",
+      "tables": [
+        {"id": "organizer-baselines", "title": "Все самостоятельные бейзлайны", "columns": [{"key":"solution","label":"Решение"},{"key":"evaluated","label":"Оценено"},{"key":"top1","label":"Top‑1"},{"key":"latency","label":"Время"}], "rows": []},
+        {"id": "organizer-errors", "title": "Ошибки по сценариям", "columns": [{"key":"scenario","label":"Сценарий"},{"key":"evaluated","label":"Оценено"},{"key":"errors","label":"Ошибки"},{"key":"note","label":"Наблюдение"}], "rows": []}
+      ],
+      "notes": ["Точность считается только на изображениях с проверенной ручной меткой; остальные фото показываются отдельно от знаменателя."],
+      "sources": []
+    },
+    {
+      "id": "frozen",
+      "title": "2. Замороженные корзины v1",
+      "status": "pending",
+      "summary": "Отдельно покажем исходные решения и абляции составного поиска на неизменном наборе.",
+      "tables": [
+        {"id":"frozen-ablations","title":"Абляции ветвей поиска","columns":[{"key":"variant","label":"Вариант"},{"key":"service","label":"Service"},{"key":"retrieval_top1","label":"Top‑1"},{"key":"retrieval_top5","label":"Top‑5"},{"key":"note","label":"Условие"}],"rows":[]}
+      ],
+      "notes": ["Производные кадры одной сцены не считаются независимыми примерами."],
+      "sources": []
+    },
+    {
+      "id": "pipeline",
+      "title": "3. Скорость, железо и стоимость",
+      "status": "pending",
+      "summary": "Покажем время каждого этапа и полный путь запроса вместе с оборудованием и расходами.",
+      "tables": [
+        {"id":"stage-latency","title":"Время этапов","columns":[{"key":"stage","label":"Этап"},{"key":"median_ms","label":"Медиана, мс"},{"key":"p95_ms","label":"P95, мс"},{"key":"n","label":"Запросов"}],"rows":[]},
+        {"id":"hardware","title":"Оборудование","columns":[{"key":"role","label":"Роль"},{"key":"hardware","label":"Оборудование"},{"key":"runtime","label":"Время"},{"key":"note","label":"Примечание"}],"rows":[]},
+        {"id":"cost","title":"Расходы","columns":[{"key":"item","label":"Статья"},{"key":"amount_usd","label":"USD"},{"key":"basis","label":"Основание"}],"rows":[]}
+      ],
+      "notes": ["Время отдельных ветвей нельзя выдавать за измеренное время полного HTTP-запроса; смоделированные комбинации отмечаются отдельно."],
+      "sources": []
+    },
+    {
+      "id": "decision",
+      "title": "4. Вывод и следующий шаг",
+      "status": "pending",
+      "summary": "Рекомендация появится только после сопоставления качества на реальных фото, замороженных корзинах и ограничений времени.",
+      "tables": [],
+      "notes": ["Синтетические изображения и совпадение с заданным target не подменяют точность на новых реальных фото."],
+      "sources": []
+    }
+  ]
+}

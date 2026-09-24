@@ -132,6 +132,10 @@ func TestPrivacyIdempotencyAndPersistence(t *testing.T) {
 	if !strings.Contains(w.Body.String(), "secret-slug") {
 		t.Fatal("review missing gold")
 	}
+	w = request(t, mux, "GET", "/api/runs", "participant-secret", nil)
+	if strings.Contains(w.Body.String(), "secret-slug") {
+		t.Fatal("review read mutated stored report for participant")
+	}
 	if strings.Contains(string(first), "secret-slug") {
 		t.Fatal("gold persisted in runs")
 	}
@@ -213,6 +217,11 @@ func TestPublicRunRedactsCorrectAnswer(t *testing.T) {
 	got := request(t, mux, "GET", "/api/runs/run-1", "review-secret", nil)
 	if !strings.Contains(got.Body.String(), `"expected_slug":"secret-slug"`) {
 		t.Fatal("review lost gold")
+	}
+	private := eval.Report{Cases: []eval.CaseScore{{UngradedReason: "private reviewer note", Prediction: eval.Prediction{Slug: "secret-slug"}}}}
+	public := publicReport(private)
+	if public.Cases[0].UngradedReason != "" || public.Cases[0].Prediction.Slug != "" || private.Cases[0].UngradedReason == "" {
+		t.Fatal("public projection leaked or mutated private report")
 	}
 }
 func TestPublicManifestRejectsUnknownFieldsAndPrivateSymlink(t *testing.T) {

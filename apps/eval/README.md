@@ -46,6 +46,17 @@ Public gallery API (no token required):
 
 `per_page` is limited to 100. Image bytes and metadata are public; the API does not put corpus files into the sealed suite archive.
 
+`/data/next.html` is the public report for the next composition experiment. It reads
+`web/gallery/next-data.json` on each load. The JSON has `schema_version: 1`,
+`updated_at`, and `sections[]` (`id`, `title`, `status`, `summary`, `tables`,
+`notes`, `sources`). A table has `id`, `title`, `columns: [{key,label}]`, and
+`rows: [object]`; cells come from matching row keys. Empty rows render as
+pending, so a section must only use `ready` after evidence-backed rows and
+sources have been added. Keep organizer real-photo metrics, frozen-basket
+ablations, and stage latency/hardware/cost separate. Do not publish private
+gold, individual submitted predictions, local source paths, or credentials in
+this static JSON.
+
 ## Data layout
 
 ```text
