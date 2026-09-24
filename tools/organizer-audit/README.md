@@ -102,7 +102,9 @@ python score_reviewed.py --labels "$REVIEWED_JSONL" --predictions "$FROZEN_JSONL
 python -m unittest discover -s tools/organizer-audit -p test_score_reviewed.py
 ```
 
-Omit `--variant` for standalone outputs. Only their recorded wall duration is
-used for deadline-aware scoring; cached composition stage sums are not live
-HTTP latency. These are local agent-reviewed labels, not an organizer answer
+Omit `--variant` for standalone outputs. Their recorded wall duration and full
+HTTP `elapsed_ms` support deadline-aware scoring. For live HTTP, only `--variant
+all` is the actual returned response; other branches are diagnostic rankings,
+with no returned-response accuracy or deadline score. Cached composition stage
+sums are not live HTTP latency. These are local agent-reviewed labels, not an organizer answer
 key. Publish annotation coverage and prior-seen split alongside accuracy.

@@ -40,7 +40,11 @@ def validate_labels(labels, allowed=None):
 
 
 def normalized(row, variant):
-    if variant is None:
+    if 'result' in row:
+        result=row['result']
+        ranking=result.get('variants_top20',{}).get(variant or 'all',[])
+        prediction=result if variant in (None,'all') else {}
+    elif variant is None:
         ranking=row.get('ranked',[])
         prediction=row.get('prediction') or {}
     else:
@@ -67,25 +71,26 @@ def score(labels, predictions, variant=None):
             if row.get('query_sha256',row.get('image_sha256'))!=label['sha256']:
                 raise ValueError('prediction and annotation SHA mismatch')
             ranks,pred=normalized(row,variant)
-            status=row.get('status','error')
+            status=('ok' if row.get('http_status')==200 else 'error') if 'result' in row else row.get('status','error')
         else:
             ranks,pred,status=[],{},'missing'
         expected=label.get('exact_slug')
         rank=(ranks.index(expected)+1) if status=='ok' and expected in ranks else None
         predicted=pred.get('slug') if status=='ok' else None
-        wall=row.get('total_latency_ms') if row and variant is None else None
+        wall=(row.get('elapsed_ms') if 'result' in row and variant in (None,'all') else row.get('total_latency_ms') if variant is None else None) if row else None
         traces.append({'image_id':label['image_id'],'sha256':label['sha256'],
           'annotation_status':label['status'],'prior_seen_group':label.get('review',{}).get('prior_seen_group','unknown'),
           'scene_group':label.get('scene_group'), 'status':status,
           'expected_slug':expected,'predicted_slug':predicted,
-          'rank':rank,'exact_response':bool(expected and predicted==expected),
+          'rank':rank,'response_evaluated':not (row and 'result' in row and variant not in (None,'all')),'exact_response':bool(expected and predicted==expected),
           'measured_wall_ms':wall,
           'exact_response_under_10s':bool(expected and predicted==expected and wall is not None and wall<=10000)})
     def aggregate(subset):
         exact=[x for x in subset if x['annotation_status']=='exact']
         return {'images':len(subset),'annotation_status_counts':dict(collections.Counter(x['annotation_status'] for x in subset)),
                 'exact_denominator':len(exact),
-                'exact_response':sum(x['exact_response'] for x in exact),
+                'response_evaluated_exact':sum(x['response_evaluated'] for x in exact),
+                'exact_response':sum(x['exact_response'] for x in exact) if any(x['response_evaluated'] for x in exact) else None,
                 **{f'top{k}':sum(x['rank'] is not None and x['rank']<=k for x in exact) for k in (1,5,20)},
                 'mrr20':sum(1/x['rank'] if x['rank'] else 0 for x in exact)/len(exact) if exact else None,
                 'prediction_status_counts_exact':dict(collections.Counter(x['status'] for x in exact)),
@@ -95,7 +100,7 @@ def score(labels, predictions, variant=None):
             'variant':variant or 'standalone',
             'all':aggregate(traces),
             'by_prior_seen':{name:aggregate([x for x in traces if x['prior_seen_group']==name]) for name in sorted({x['prior_seen_group'] for x in traces})},
-            'timing_note':'Only total_latency_ms from standalone is a measured wall duration; cached composition timings are not scored as deadlines.'}
+            'timing_note':'Standalone total_latency_ms and live HTTP elapsed_ms measure wall time; HTTP deadline score applies only to the actual all-branch response. Cached stage sums are not live timing.'}
     return public,traces
 
 

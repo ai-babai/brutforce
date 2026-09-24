@@ -26,4 +26,12 @@ class ScoringTests(unittest.TestCase):
         result,_=score([self.label()],[row],'all')
         self.assertEqual(result['all']['top1'],1);self.assertIsNone(result['all']['exact_response_under_10s'])
 
+    def test_live_http_deadline_applies_only_actual_full_response(self):
+        row={'case_id':'x','query_sha256':'x'*64,'http_status':200,'elapsed_ms':12000,'result':{'slug':'wine','variants_top20':{'all':[{'slug':'wine'}],'label':[{'slug':'wine'}]}}}
+        result,_=score([self.label()],[row],'all')
+        self.assertEqual(result['all']['exact_response'],1);self.assertEqual(result['all']['exact_response_under_10s'],0)
+        result,_=score([self.label()],[row],'label')
+        self.assertEqual(result['all']['top1'],1);self.assertIsNone(result['all']['exact_response_under_10s'])
+        self.assertIsNone(result['all']['exact_response']);self.assertEqual(result['all']['response_evaluated_exact'],0)
+
 if __name__=='__main__':unittest.main()
