@@ -39,3 +39,5 @@
 - Общий план, статусы и причины изменений: [PLAN](docs/project/PLAN.md).
 
 - Пакет данных и адаптеров Романа, ограничения и приёмка: [разбор](docs/project/ROMAN-HANDOFF-2026-09-25.md).
+
+- Ночные CPU/GPU-контроли, LightGlue и решения Романа: [вход](tools/night-experiments/README.md), [результаты и ограничения](docs/project/NIGHT-EXPERIMENT-RESULTS-2026-09-25.md), [отчёт](https://cv.ops.dzap.pw/data/night.html).
