@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-09-25T00:13:14.087057+00:00",
+  "updated_at": "2026-09-25T00:13:33.958486+00:00",
   "sections": [
     {
       "id": "conclusion",
@@ -2345,6 +2345,20 @@
         "Первая ссылка Qwen — холст редактирования; исходный порядок и номера изображений механически переставлены: сцена <image1>, бутылка <image2>. Оба промпта и SHA-256 сохранены в пакете опыта.",
         "Qwen Research License допускает исследовательскую проверку; для коммерческого использования весов требуется отдельное разрешение. Результаты не добавлены в обучение или замороженный тестовый набор.",
         "Цена Qwen-Image-2.1 через API не подтверждена; цену Qwen Image 2.0 сюда переносить нельзя."
+      ],
+      "sources": [
+        {
+          "label": "Official Qwen weights and pipeline",
+          "url": "https://huggingface.co/Qwen/Qwen-Image-2.1"
+        },
+        {
+          "label": "Qwen Research License",
+          "url": "https://huggingface.co/Qwen/Qwen-Image-2.1/blob/main/LICENSE"
+        },
+        {
+          "label": "Gemini API pricing",
+          "url": "https://ai.google.dev/gemini-api/docs/pricing"
+        }
       ]
     },
     {
