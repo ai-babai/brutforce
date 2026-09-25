@@ -5,7 +5,7 @@ function renderTable(table) {
   const columns = table.columns || [];
   return `<div class="result-table"><h3>${esc(table.title)}</h3><div class="matrix-wrap"><table class="${columns.length <= 2 ? 'compact-table' : 'wide-table'}"><thead><tr>${columns.map(col => `<th>${esc(col.label)}</th>`).join('')}</tr></thead><tbody>${table.rows.map(row => `<tr>${columns.map(col => `<td>${esc(row[col.key])}</td>`).join('')}</tr>`).join('')}</tbody></table></div>${table.note ? `<p class="table-note">${esc(table.note)}</p>` : ''}</div>`;
 }
-function renderExamples(examples) {
+function renderExamples(examples, title = 'Как выбран фрагмент кадра', description = 'Исходное фото, выбранная бутылка и этикетка показаны без ответа или эталона.') {
   if (!Array.isArray(examples) || !examples.length) return '';
   const safeImage = item => {
     const url = item.url || '';
@@ -13,7 +13,7 @@ function renderExamples(examples) {
       ? `<a href="${esc(url)}" target="_blank" rel="noopener noreferrer" aria-label="Открыть ${esc(item.label)} в полном размере"><img src="${esc(url)}" alt="${esc(item.label)}" loading="lazy" decoding="async"></a>`
       : '<div class="example-missing">Кроп не опубликован</div>';
   };
-  return `<div class="examples"><h3>Как выбран фрагмент кадра</h3><p>Исходное фото, выбранная бутылка и этикетка показаны без ответа или эталона.</p>${examples.map(example => `<article class="example"><h4>${esc(example.title)}</h4><p>${esc(example.note)}</p><div class="example-images">${(example.images || []).map(item => `<figure>${safeImage(item)}<figcaption>${esc(item.label)}</figcaption></figure>`).join('')}</div></article>`).join('')}</div>`;
+  return `<div class="examples"><h3>${esc(title)}</h3><p>${esc(description)}</p>${examples.map(example => `<article class="example"><h4>${esc(example.title)}</h4><p>${esc(example.note)}</p><div class="example-images">${(example.images || []).map(item => `<figure>${safeImage(item)}<figcaption>${esc(item.label)}</figcaption></figure>`).join('')}</div></article>`).join('')}</div>`;
 }
 function renderSection(section) {
   const status = section.status === 'ready' ? 'Опубликовано' : section.status === 'partial' ? 'Часть данных' : 'Ожидается';
@@ -22,7 +22,7 @@ function renderSection(section) {
     catch { return false; }
   };
   const sources = (section.sources || []).filter(safeSource).map(source => `<a href="${esc(source.url)}" rel="noopener noreferrer" target="_blank">${esc(source.label || source.url)} ↗</a>`).join(' · ');
-  return `<section class="panel report-section" id="${esc(section.id)}"><div class="section-heading"><h2>${esc(section.title)}</h2><span class="badge ${section.status === 'ready' ? '' : 'pending'}">${status}</span></div><p>${esc(section.summary)}</p>${(section.tables || []).map(renderTable).join('')}${renderExamples(section.examples)}${(section.notes || []).length ? `<div class="method-notes"><h3>Как читать</h3><ul>${section.notes.map(note => `<li>${esc(note)}</li>`).join('')}</ul></div>` : ''}${sources ? `<p class="sources">Источники: ${sources}</p>` : ''}</section>`;
+  return `<section class="panel report-section" id="${esc(section.id)}"><div class="section-heading"><h2>${esc(section.title)}</h2><span class="badge ${section.status === 'ready' ? '' : 'pending'}">${status}</span></div><p>${esc(section.summary)}</p>${(section.tables || []).map(renderTable).join('')}${renderExamples(section.examples, section.examples_title, section.examples_description)}${(section.notes || []).length ? `<div class="method-notes"><h3>Как читать</h3><ul>${section.notes.map(note => `<li>${esc(note)}</li>`).join('')}</ul></div>` : ''}${sources ? `<p class="sources">Источники: ${sources}</p>` : ''}</section>`;
 }
 (async function loadReport(){try{
   const response = await fetch(document.body.dataset.reportSource || 'next-data.json', {cache:'no-store'});
