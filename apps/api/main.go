@@ -209,7 +209,7 @@ func searchHandlerWithFeedback(store *photoStore, feedback *feedbackStore, catal
 			writeError(w, http.StatusServiceUnavailable, "catalog_unavailable", "catalog is temporarily unavailable")
 			return
 		}
-		if !info.Demo && services.search == nil {
+		if !info.Demo && services.search == nil && services.vision == nil {
 			writeError(w, http.StatusServiceUnavailable, "recognition_unavailable", "reference recognition is unavailable for the imported catalog")
 			return
 		}
@@ -226,6 +226,18 @@ func searchHandlerWithFeedback(store *photoStore, feedback *feedbackStore, catal
 				writeError(w, http.StatusNotFound, "photo_not_found", "photo receipt was not found")
 				return
 			}
+		}
+		if services.vision != nil && request.PhotoID != nil {
+			response, status, code, message := configuredVisionSearch(r, store, catalog, *request.PhotoID, services.vision)
+			if status != 0 {
+				writeError(w, status, code, message)
+				return
+			}
+			if !attachFeedbackSession(w, r, store, feedback, request, &response) {
+				return
+			}
+			writeJSON(w, http.StatusOK, response)
+			return
 		}
 		if services.search != nil {
 			if request.Query == nil && request.PhotoID == nil {
