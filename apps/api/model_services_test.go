@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"errors"
@@ -166,7 +167,8 @@ func TestSVC005VisionSearchMapsProviderSlugsToImportedCatalog(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	receipt, err := store.save([]byte("private-photo"), "image/png", image.Config{Width: 1, Height: 1})
+	photo := smallPNG(t)
+	receipt, err := store.save(photo, "image/png", image.Config{Width: 2, Height: 3})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -179,23 +181,31 @@ func TestSVC005VisionSearchMapsProviderSlugsToImportedCatalog(t *testing.T) {
 		if r.URL.Path != "/v1/eval/predict" || r.URL.Query().Get("track") != "service" {
 			t.Fatalf("unexpected upstream request %s", r.URL.String())
 		}
-		data, _ := io.ReadAll(r.Body)
-		if string(data) != "private-photo" {
+		if err := r.ParseMultipartForm(11 << 20); err != nil {
+			t.Fatal(err)
+		}
+		file, _, err := r.FormFile("image")
+		if err != nil {
+			t.Fatal(err)
+		}
+		defer file.Close()
+		data, _ := io.ReadAll(file)
+		if !bytes.Equal(data, photo) {
 			t.Fatal("photo bytes not forwarded")
 		}
 		w.Header().Set("Content-Type", "application/json")
-		_ = json.NewEncoder(w).Encode(visionResponse{
-			CatalogVersion: "provider-v1", ModelVersion: "vision-v1",
-			RankedSlugs: []string{"unknown", "wine-two", "wine-one"}, Slug: "wine-two",
+		_ = json.NewEncoder(w).Encode(visionResult{
+			CatalogVersion: "provider-v1", IndexVersion: "index-v1", ModelVersion: "vision-v1",
+			RankedSlugs: []string{"wine-two", "wine-one"}, Slug: "wine-two",
 		})
 	}))
 	defer upstream.Close()
 	h := newHandlerWithCatalogAndServices("", nil, catalog, modelServices{vision: &visionClient{
-		baseURL: upstream.URL, catalogVersion: "real-v1", providerCatalogVersion: "provider-v1", client: noRedirectHTTPClient(),
+		baseURL: upstream.URL, catalogVersion: "provider-v1", indexVersion: "index-v1", client: noRedirectHTTPClient(), validSlugs: map[string]struct{}{"wine-two": {}, "wine-one": {}},
 	}})
 	rec := request(t, h, http.MethodPost, "/v1/search", `{"photoId":"`+receipt.ID+`"}`)
 	response := decodeResponse(t, rec)
-	if rec.Code != http.StatusOK || response.CatalogVersion != "real-v1" || response.ModelVersion != "vision-v1" || response.SelectedID != "internal-2" || len(response.Candidates) != 2 || response.Candidates[0].ID != "internal-2" {
+	if rec.Code != http.StatusOK || response.Demo || response.CatalogVersion != "real-v1" || response.ModelVersion != "vision-v1" || response.SelectedID != "" || len(response.Candidates) != 2 || response.Candidates[0].ID != "internal-2" {
 		t.Fatalf("response=%d %+v body=%s", rec.Code, response, rec.Body.String())
 	}
 }

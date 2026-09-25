@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-09-25T20:54:00.803Z",
+  "generatedAt": "2026-09-25T20:56:51.211Z",
   "runs": [
     {
       "path": "runs/20260919T000000Z-baseline.json",
@@ -435,10 +435,10 @@
       "status": "partial"
     },
     {
-      "path": "runs/20260925T205353Z-fast-9ad5d247.json",
-      "id": "20260925T205353Z-fast-9ad5d247",
+      "path": "runs/20260925T205643Z-fast-1dce01fb.json",
+      "id": "20260925T205643Z-fast-1dce01fb",
       "label": "Быстрые проверки API и состояний UI",
-      "createdAt": "2026-09-25T20:53:53.527Z",
+      "createdAt": "2026-09-25T20:56:43.988Z",
       "revision": "working-tree",
       "status": "partial"
     }

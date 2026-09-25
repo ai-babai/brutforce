@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"errors"
@@ -156,6 +157,55 @@ func TestSVC005ConfiguredSearchWorksWithImportedCatalog(t *testing.T) {
 	rec := request(t, h, http.MethodPost, "/v1/search", `{"query":"real"}`)
 	response := decodeResponse(t, rec)
 	if rec.Code != http.StatusOK || response.CatalogVersion != "real-v1" || response.ModelVersion != "real-search-v1" || response.SelectedID != "real-wine" {
+		t.Fatalf("response=%d %+v body=%s", rec.Code, response, rec.Body.String())
+	}
+}
+
+func TestSVC005VisionSearchMapsProviderSlugsToImportedCatalog(t *testing.T) {
+	dir := t.TempDir()
+	store, err := openPhotoStore(dir, 20<<20, defaultMaxPhotoPixels)
+	if err != nil {
+		t.Fatal(err)
+	}
+	photo := smallPNG(t)
+	receipt, err := store.save(photo, "image/png", image.Config{Width: 2, Height: 3})
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Setenv("UPLOAD_DIR", dir)
+	catalog := displayCatalog{version: "real-v1", items: []wine{
+		{ID: "internal-1", Slug: "wine-one", Name: "Wine one"},
+		{ID: "internal-2", Slug: "wine-two", Name: "Wine two"},
+	}}
+	upstream := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path != "/v1/eval/predict" || r.URL.Query().Get("track") != "service" {
+			t.Fatalf("unexpected upstream request %s", r.URL.String())
+		}
+		if err := r.ParseMultipartForm(11 << 20); err != nil {
+			t.Fatal(err)
+		}
+		file, _, err := r.FormFile("image")
+		if err != nil {
+			t.Fatal(err)
+		}
+		defer file.Close()
+		data, _ := io.ReadAll(file)
+		if !bytes.Equal(data, photo) {
+			t.Fatal("photo bytes not forwarded")
+		}
+		w.Header().Set("Content-Type", "application/json")
+		_ = json.NewEncoder(w).Encode(visionResult{
+			CatalogVersion: "provider-v1", IndexVersion: "index-v1", ModelVersion: "vision-v1",
+			RankedSlugs: []string{"wine-two", "wine-one"}, Slug: "wine-two",
+		})
+	}))
+	defer upstream.Close()
+	h := newHandlerWithCatalogAndServices("", nil, catalog, modelServices{vision: &visionClient{
+		baseURL: upstream.URL, catalogVersion: "provider-v1", indexVersion: "index-v1", client: noRedirectHTTPClient(), validSlugs: map[string]struct{}{"wine-two": {}, "wine-one": {}},
+	}})
+	rec := request(t, h, http.MethodPost, "/v1/search", `{"photoId":"`+receipt.ID+`"}`)
+	response := decodeResponse(t, rec)
+	if rec.Code != http.StatusOK || response.Demo || response.CatalogVersion != "real-v1" || response.ModelVersion != "vision-v1" || response.SelectedID != "" || len(response.Candidates) != 2 || response.Candidates[0].ID != "internal-2" {
 		t.Fatalf("response=%d %+v body=%s", rec.Code, response, rec.Body.String())
 	}
 }
