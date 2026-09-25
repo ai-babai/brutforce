@@ -1,4 +1,4 @@
-import type { CatalogResponse, Candidate, PhotoReceipt, RecommendationResponse, Scenario, SearchResponse } from './types';
+import type { CatalogResponse, Candidate, FeedbackDecision, FeedbackReceipt, PhotoReceipt, RecommendationResponse, Scenario, SearchResponse } from './types';
 
 export class InvalidPhotoError extends Error {
   constructor() { super('Не удалось прочитать изображение. Выберите другое фото.'); this.name = 'InvalidPhotoError'; }
@@ -54,6 +54,26 @@ export async function getRecommendations(wineId: string, signal?: AbortSignal): 
   return data;
 }
 
+export async function savePhotoFeedback(input: {
+  feedbackToken: string;
+  idempotencyKey: string;
+  decision: FeedbackDecision;
+  displayedWineId?: string;
+  correctWineId?: string;
+  comment?: string;
+}, signal?: AbortSignal): Promise<FeedbackReceipt> {
+  const response = await fetch('/v1/feedback', {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify(input),
+    signal,
+  });
+  if (!response.ok) throw new Error(response.status === 409 ? 'Эта разметка конфликтует с уже сохранённой.' : 'Не удалось сохранить разметку. Попробуйте ещё раз.');
+  const data: unknown = await response.json();
+  if (!isFeedbackReceipt(data)) throw new Error('Сервис вернул некорректную квитанцию разметки.');
+  return data;
+}
+
 function isPhotoReceipt(value:unknown):value is PhotoReceipt{
   if(!value||typeof value!=='object')return false; const v=value as Record<string,unknown>;
   return typeof v.id==='string'&&/^[a-f0-9]{32}$/.test(v.id)&&typeof v.createdAt==='string'&&typeof v.mime==='string'&&['bytes','width','height'].every(k=>typeof v[k]==='number'&&Number.isInteger(v[k])&&(v[k] as number)>0);
@@ -69,8 +89,18 @@ function isSearchResponse(value: unknown): value is SearchResponse {
     return isCandidate(item);
   });
   if (!validCandidates) return false;
+  if (!['catalogVersion', 'modelVersion', 'feedbackToken'].every(key => data[key] === undefined || typeof data[key] === 'string')) return false;
+  if (data.feedbackToken !== undefined && !/^[a-f0-9]{32}$/.test(data.feedbackToken as string)) return false;
   if (data.selectedId === undefined) return true;
   return typeof data.selectedId === 'string' && data.candidates.some(candidate => candidate.id === data.selectedId);
+}
+
+function isFeedbackReceipt(value: unknown): value is FeedbackReceipt {
+  if (!value || typeof value !== 'object') return false;
+  const item = value as Record<string, unknown>;
+  return typeof item.feedbackId === 'string' && /^[a-f0-9]{32}$/.test(item.feedbackId)
+    && typeof item.createdAt === 'string' && item.reviewStatus === 'pending_review'
+    && typeof item.duplicate === 'boolean';
 }
 
 function isRecommendationResponse(value: unknown): value is RecommendationResponse {

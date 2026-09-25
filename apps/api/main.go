@@ -43,6 +43,7 @@ type searchResponse struct {
 	CatalogVersion string    `json:"catalogVersion,omitempty"`
 	NextCursor     string    `json:"nextCursor,omitempty"`
 	ModelVersion   string    `json:"modelVersion,omitempty"`
+	FeedbackToken  string    `json:"feedbackToken,omitempty"`
 	Error          *apiError `json:"error,omitempty"`
 }
 
@@ -102,6 +103,7 @@ func newHandlerWithCatalog(webRoot string, recognizer Recognizer, catalog catalo
 
 func newHandlerWithCatalogAndServices(webRoot string, recognizer Recognizer, catalog catalogReader, services modelServices) http.Handler {
 	store := configuredPhotoStore()
+	feedback := configuredFeedbackStore()
 	mux := http.NewServeMux()
 	mux.HandleFunc("/api/docs", docsHandler)
 	mux.HandleFunc("/api/docs/", docsHandler)
@@ -111,7 +113,8 @@ func newHandlerWithCatalogAndServices(webRoot string, recognizer Recognizer, cat
 	mux.HandleFunc("/v2/catalog", catalogHandler(catalog))
 	mux.HandleFunc("/v2/catalog/", catalogItemHandler(catalog))
 	mux.HandleFunc("/v1/photos", uploadHandler(store))
-	mux.HandleFunc("/v1/search", correlateServiceRequest(searchHandler(store, catalog, services)))
+	mux.HandleFunc("/v1/search", correlateServiceRequest(searchHandlerWithFeedback(store, feedback, catalog, services)))
+	mux.HandleFunc("/v1/feedback", correlateServiceRequest(feedbackHandler(feedback, store, catalog)))
 	mux.HandleFunc("/v1/recommendations", correlateServiceRequest(recommendationsHandler(catalog, services)))
 	mux.HandleFunc("/v1/eval/predict", newEvalPredictHandler(recognizer, configuredEvalConcurrency()))
 	mux.HandleFunc("/v1/", apiNotFoundHandler)
@@ -187,6 +190,10 @@ func healthHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func searchHandler(store *photoStore, catalog catalogReader, services modelServices) http.HandlerFunc {
+	return searchHandlerWithFeedback(store, nil, catalog, services)
+}
+
+func searchHandlerWithFeedback(store *photoStore, feedback *feedbackStore, catalog catalogReader, services modelServices) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodPost {
 			writeError(w, http.StatusMethodNotAllowed, "method_not_allowed", "use POST")
@@ -230,6 +237,9 @@ func searchHandler(store *photoStore, catalog catalogReader, services modelServi
 				writeError(w, status, code, message)
 				return
 			}
+			if !attachFeedbackSession(w, r, store, feedback, request, &response) {
+				return
+			}
 			writeJSON(w, http.StatusOK, response)
 			return
 		}
@@ -245,9 +255,12 @@ func searchHandler(store *photoStore, catalog catalogReader, services modelServi
 				writeError(w, http.StatusServiceUnavailable, "catalog_unavailable", "catalog is temporarily unavailable")
 				return
 			}
-			response := searchResponse{Demo: true, Candidates: candidates}
+			response := searchResponse{Demo: true, Candidates: candidates, CatalogVersion: info.Version}
 			if len(candidates) > 0 {
 				response.SelectedID = candidates[0].ID
+			}
+			if !attachFeedbackSession(w, r, store, feedback, request, &response) {
+				return
 			}
 			writeJSON(w, http.StatusOK, response)
 		case "uncertain":
@@ -256,9 +269,17 @@ func searchHandler(store *photoStore, catalog catalogReader, services modelServi
 				writeError(w, http.StatusServiceUnavailable, "catalog_unavailable", "catalog is temporarily unavailable")
 				return
 			}
-			writeJSON(w, http.StatusOK, searchResponse{Demo: true, Candidates: candidates})
+			response := searchResponse{Demo: true, Candidates: candidates, CatalogVersion: info.Version}
+			if !attachFeedbackSession(w, r, store, feedback, request, &response) {
+				return
+			}
+			writeJSON(w, http.StatusOK, response)
 		case "none":
-			writeJSON(w, http.StatusOK, searchResponse{Demo: true, Candidates: []wine{}})
+			response := searchResponse{Demo: true, Candidates: []wine{}, CatalogVersion: info.Version}
+			if !attachFeedbackSession(w, r, store, feedback, request, &response) {
+				return
+			}
+			writeJSON(w, http.StatusOK, response)
 		case "error":
 			writeError(w, http.StatusServiceUnavailable, "demo_search_unavailable", "synthetic demo search failure")
 		default:
@@ -278,6 +299,19 @@ func demoSearchPage(ctx context.Context, catalog catalogReader, query *string, l
 		candidates = candidates[:limit]
 	}
 	return candidates, nil
+}
+
+func attachFeedbackSession(w http.ResponseWriter, r *http.Request, photos *photoStore, feedback *feedbackStore, request searchRequest, response *searchResponse) bool {
+	if request.PhotoID == nil || feedback == nil {
+		return true
+	}
+	token, err := feedback.createSession(photos, *request.PhotoID, r.Header.Get("X-Request-ID"), *response)
+	if err != nil {
+		writeError(w, http.StatusServiceUnavailable, "feedback_unavailable", "cannot prepare photo feedback")
+		return false
+	}
+	response.FeedbackToken = token
+	return true
 }
 
 type recommendationsRequest struct {

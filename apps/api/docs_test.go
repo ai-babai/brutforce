@@ -68,12 +68,13 @@ func TestAPI018OpenAPIMatchesImplementedDemoContract(t *testing.T) {
 	}
 	wantMethods := map[string]string{
 		"/v1/health":          http.MethodGet,
-		"/v2/catalog/{slug}": http.MethodGet,
+		"/v2/catalog/{slug}":  http.MethodGet,
 		"/v2/catalog":         http.MethodGet,
 		"/v1/photos":          http.MethodPost,
 		"/v1/search":          http.MethodPost,
 		"/v1/eval/predict":    http.MethodPost,
 		"/v1/recommendations": http.MethodPost,
+		"/v1/feedback":        http.MethodPost,
 	}
 	if len(spec.Paths) != len(wantMethods) {
 		t.Fatalf("documented paths=%d want=%d", len(spec.Paths), len(wantMethods))
@@ -84,7 +85,7 @@ func TestAPI018OpenAPIMatchesImplementedDemoContract(t *testing.T) {
 			t.Fatalf("OpenAPI operation %s %s is missing or invalid: %v", method, path, err)
 		}
 	}
-	for _, name := range []string{"Health", "SearchRequest", "SearchResponse", "PhotoReceipt", "APIError", "EvalPrediction", "EvalError"} {
+	for _, name := range []string{"Health", "SearchRequest", "SearchResponse", "PhotoReceipt", "FeedbackRequest", "FeedbackReceipt", "APIError", "EvalPrediction", "EvalError"} {
 		if spec.Components.Schemas[name] == nil {
 			t.Fatalf("OpenAPI component %s is missing", name)
 		}

@@ -67,8 +67,8 @@ REVISION, manifest.json и evidence. Секреты, пользовательс�
 
 | Среда | Адрес | Current | База | Фото | API / заглушка |
 |---|---|---|---|---|---|
-| TEST | https://test.ops.dzap.pw | /srv/lct/stage/current | lct_shared | /srv/lct/data/stage/photos | 8103 / 8113 |
-| PROD | https://app.dzap.pw | /srv/lct/prod/current | lct_prod | /srv/lct/data/prod/photos | 8104 / 8114 |
+| TEST | https://test.ops.dzap.pw | /srv/lct/stage/current | lct_shared | photos `/srv/lct/data/stage/photos`; feedback `/srv/lct/data/stage/feedback` | 8103 / 8113 |
+| PROD | https://app.dzap.pw | /srv/lct/prod/current | lct_prod | photos `/srv/lct/data/prod/photos`; feedback `/srv/lct/data/prod/feedback` | 8104 / 8114 |
 
 Все порты loopback. TEST публичный, без HTTP-пароля (решение Макса 2026-09-22).
 Ops и OpenCode сохраняют авторизацию; не переносить её обратно на TEST.

@@ -47,6 +47,9 @@ type catalogResolver interface {
 type catalogDetailResolver interface {
 	ResolveDetail(context.Context, string) (wine, string, catalogInfo, error)
 }
+type catalogIDResolver interface {
+	ResolveIDDetail(context.Context, string) (wine, catalogInfo, error)
+}
 type catalogVersionRegistry interface {
 	HasCatalogVersion(context.Context, string) (bool, error)
 }
@@ -79,6 +82,14 @@ func (embeddedCatalogStore) Resolve(_ context.Context, slug string) (wine, strin
 		}
 	}
 	return wine{}, "", errCatalogNotFound
+}
+func (embeddedCatalogStore) ResolveIDDetail(_ context.Context, id string) (wine, catalogInfo, error) {
+	for _, item := range demoWines {
+		if item.ID == id {
+			return item, catalogInfo{Version: defaultCatalogVersion, Demo: true}, nil
+		}
+	}
+	return wine{}, catalogInfo{Version: defaultCatalogVersion, Demo: true}, errCatalogNotFound
 }
 
 type postgresCatalogStore struct{ pool *pgxpool.Pool }
@@ -282,6 +293,36 @@ func (s postgresCatalogStore) ResolveDetail(ctx context.Context, slug string) (w
 	return items[0], canonical, info, nil
 }
 
+func (s postgresCatalogStore) ResolveIDDetail(ctx context.Context, id string) (wine, catalogInfo, error) {
+	queryCtx, cancel := context.WithTimeout(ctx, catalogQueryTimeout)
+	defer cancel()
+	tx, err := s.pool.BeginTx(queryCtx, pgx.TxOptions{IsoLevel: pgx.RepeatableRead})
+	if err != nil {
+		return wine{}, catalogInfo{}, errCatalogUnavailable
+	}
+	defer tx.Rollback(queryCtx)
+	info, err := catalogInfoTx(queryCtx, tx)
+	if err != nil {
+		return wine{}, catalogInfo{}, err
+	}
+	rows, err := tx.Query(queryCtx, "SELECT id, slug, name, winery, year, image, description, metadata FROM catalog_items WHERE id=$1", id)
+	if err != nil {
+		return wine{}, catalogInfo{}, errCatalogUnavailable
+	}
+	defer rows.Close()
+	items, err := scanWines(rows, info.Version)
+	if err != nil {
+		return wine{}, catalogInfo{}, err
+	}
+	if len(items) != 1 {
+		return wine{}, info, errCatalogNotFound
+	}
+	if err := tx.Commit(queryCtx); err != nil {
+		return wine{}, catalogInfo{}, errCatalogUnavailable
+	}
+	return items[0], info, nil
+}
+
 func catalogInfoTx(ctx context.Context, tx pgx.Tx) (catalogInfo, error) {
 	var version string
 	err := tx.QueryRow(ctx, "SELECT version FROM catalog_state WHERE singleton = TRUE").Scan(&version)
@@ -364,6 +405,26 @@ func catalogLookup(ctx context.Context, store catalogReader, slug string) (wine,
 		}
 	}
 	return wine{}, "", info, errCatalogNotFound
+}
+
+func catalogLookupByID(ctx context.Context, store catalogReader, id string) (wine, catalogInfo, error) {
+	if resolver, ok := store.(catalogIDResolver); ok {
+		return resolver.ResolveIDDetail(ctx, id)
+	}
+	info, err := catalogInfoFor(ctx, store)
+	if err != nil {
+		return wine{}, catalogInfo{}, err
+	}
+	items, err := store.List(ctx)
+	if err != nil {
+		return wine{}, info, err
+	}
+	for _, item := range items {
+		if item.ID == id {
+			return item, info, nil
+		}
+	}
+	return wine{}, info, errCatalogNotFound
 }
 func filterWineList(catalog []wine, query *string) []wine {
 	if query == nil {

@@ -136,6 +136,11 @@ only versioned synthetic demo records. Neither has a public file route.
 `POST /v1/search` with an unknown valid-format `photoId` returns HTTP 404
 `photo_not_found`; a malformed ID returns HTTP 400 `invalid_photo_id`.
 
+При настроенном `FEEDBACK_DIR` photo-search возвращает `feedbackToken`. Интерфейс
+отправляет подтверждение или исправление в `POST /v1/feedback`; записи хранятся
+отдельно от фото в приватном append-only каталоге и имеют `trainingEligible=false`
+до независимой проверки. Контракт: `contracts/photo-feedback.md`.
+
 ## Runtime
 
 ```sh
