@@ -14,6 +14,7 @@ import (
 	"os"
 	"strings"
 	"time"
+	"unicode"
 	"unicode/utf8"
 
 	"brutforce-behavior-demo/apps/api/internal/referenceengine"
@@ -29,6 +30,7 @@ type modelResponse = referenceengine.Response
 
 type modelServices struct {
 	search          *modelClient
+	vision          *visionClient
 	recommendations *modelClient
 }
 
@@ -37,6 +39,22 @@ type modelClient struct {
 	catalogVersion string
 	client         *http.Client
 	configErr      error
+}
+
+type visionClient struct {
+	baseURL                string
+	catalogVersion         string
+	providerCatalogVersion string
+	client                 *http.Client
+	configErr              error
+}
+
+type visionResponse struct {
+	CatalogVersion string   `json:"catalog_version"`
+	ModelVersion   string   `json:"model_version"`
+	RankedSlugs    []string `json:"ranked_slugs"`
+	Slug           string   `json:"slug"`
+	Action         string   `json:"action"`
 }
 
 func configuredModelServices() modelServices {
@@ -53,7 +71,23 @@ func configuredModelServices() modelServices {
 		}
 		return &modelClient{baseURL: strings.TrimRight(raw, "/"), catalogVersion: version, client: noRedirectHTTPClient()}
 	}
-	return modelServices{search: newClient(os.Getenv("SEARCH_SERVICE_URL")), recommendations: newClient(os.Getenv("RECOMMENDATION_SERVICE_URL"))}
+	newVisionClient := func(raw string) *visionClient {
+		if raw == "" {
+			return nil
+		}
+		if parsed, err := url.ParseRequestURI(raw); err != nil || (parsed.Scheme != "http" && parsed.Scheme != "https") || parsed.Host == "" || parsed.User != nil || parsed.RawQuery != "" || parsed.Fragment != "" {
+			return &visionClient{configErr: errors.New("invalid vision service URL")}
+		}
+		return &visionClient{
+			baseURL: strings.TrimRight(raw, "/"), catalogVersion: version,
+			providerCatalogVersion: os.Getenv("VISION_CATALOG_VERSION"), client: noRedirectHTTPClient(),
+		}
+	}
+	return modelServices{
+		search:          newClient(os.Getenv("SEARCH_SERVICE_URL")),
+		vision:          newVisionClient(os.Getenv("VISION_SERVICE_URL")),
+		recommendations: newClient(os.Getenv("RECOMMENDATION_SERVICE_URL")),
+	}
 }
 
 func noRedirectHTTPClient() *http.Client {
@@ -150,6 +184,90 @@ func configuredSearch(r *http.Request, store *photoStore, catalog catalogReader,
 	return enrichModelResponse(ctx, catalog, result, client.catalogVersion, "", true, limit)
 }
 
+func configuredVisionSearch(r *http.Request, store *photoStore, catalog catalogReader, photoID string, client *visionClient) (searchResponse, int, string, string) {
+	if client.configErr != nil || client.providerCatalogVersion == "" {
+		return searchResponse{}, http.StatusServiceUnavailable, "search_unavailable", "vision service is misconfigured"
+	}
+	data, err := store.readOriginal(photoID)
+	if err != nil {
+		return searchResponse{}, http.StatusBadGateway, "search_upstream_invalid", "stored photo is unavailable for search"
+	}
+	ctx, cancel := context.WithTimeout(r.Context(), 18*time.Second)
+	defer cancel()
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, client.baseURL+"/v1/eval/predict?track=service", bytes.NewReader(data))
+	if err != nil {
+		return upstreamFailure("search", err)
+	}
+	req.Header.Set("Content-Type", "application/octet-stream")
+	req.Header.Set("Accept", "application/json")
+	if safeRequestID(r.Header.Get("X-Request-ID")) {
+		req.Header.Set("X-Request-ID", r.Header.Get("X-Request-ID"))
+	}
+	response, err := client.client.Do(req)
+	if err != nil {
+		return upstreamFailure("search", err)
+	}
+	defer response.Body.Close()
+	if response.StatusCode < 200 || response.StatusCode >= 300 {
+		return upstreamFailure("search", modelHTTPStatus(response.StatusCode))
+	}
+	media, _, parseErr := mime.ParseMediaType(response.Header.Get("Content-Type"))
+	if parseErr != nil || media != "application/json" {
+		return upstreamFailure("search", errModelResponse)
+	}
+	payload, err := io.ReadAll(io.LimitReader(response.Body, maxModelResponse+1))
+	if err != nil {
+		return upstreamFailure("search", err)
+	}
+	if len(payload) > maxModelResponse {
+		return upstreamFailure("search", errModelResponse)
+	}
+	var result visionResponse
+	if json.Unmarshal(payload, &result) != nil || result.CatalogVersion != client.providerCatalogVersion || result.ModelVersion == "" || len(result.ModelVersion) > 128 || len(result.RankedSlugs) > 100 {
+		return upstreamFailure("search", errModelResponse)
+	}
+	known, err := catalog.List(ctx)
+	if err != nil {
+		return searchResponse{}, http.StatusServiceUnavailable, "catalog_unavailable", "catalog is temporarily unavailable"
+	}
+	byIdentity := make(map[string]wine, len(known)*2)
+	for _, item := range known {
+		byIdentity[item.ID] = item
+		byIdentity[item.Slug] = item
+	}
+	answer := searchResponse{Demo: true, Candidates: make([]wine, 0, 5), CatalogVersion: client.catalogVersion, ModelVersion: result.ModelVersion}
+	seen := make(map[string]bool, 5)
+	for _, slug := range result.RankedSlugs {
+		if slug == "" || len(slug) > 512 || !utf8.ValidString(slug) || strings.IndexFunc(slug, unicode.IsControl) >= 0 {
+			return upstreamFailure("search", errModelResponse)
+		}
+		item, ok := byIdentity[slug]
+		if !ok || seen[item.ID] {
+			continue
+		}
+		seen[item.ID] = true
+		answer.Candidates = append(answer.Candidates, item)
+		if len(answer.Candidates) == 5 {
+			break
+		}
+	}
+	if result.Action != "" && result.Action != "no_match" && result.Action != "insufficient_information" {
+		return upstreamFailure("search", errModelResponse)
+	}
+	if result.Action != "" {
+		answer.Candidates = []wine{}
+		return answer, 0, "", ""
+	}
+	if result.Slug != "" {
+		item, ok := byIdentity[result.Slug]
+		if !ok || !seen[item.ID] {
+			return upstreamFailure("search", errModelResponse)
+		}
+		answer.SelectedID = item.ID
+	}
+	return answer, 0, "", ""
+}
+
 func configuredRecommendations(r *http.Request, catalog catalogReader, input recommendationsRequest, client *modelClient) (searchResponse, int, string, string) {
 	if client.configErr != nil {
 		return searchResponse{}, http.StatusServiceUnavailable, "recommendations_unavailable", "recommendation service is misconfigured"
@@ -239,7 +357,7 @@ func correlateServiceRequest(next http.HandlerFunc) http.HandlerFunc {
 				return
 			}
 		}
-		ctx, cancel := context.WithTimeout(r.Context(), 9*time.Second)
+		ctx, cancel := context.WithTimeout(r.Context(), 20*time.Second)
 		defer cancel()
 		r = r.Clone(ctx)
 		r.Header.Set("X-Request-ID", id)

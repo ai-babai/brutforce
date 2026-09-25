@@ -160,6 +160,46 @@ func TestSVC005ConfiguredSearchWorksWithImportedCatalog(t *testing.T) {
 	}
 }
 
+func TestSVC005VisionSearchMapsProviderSlugsToImportedCatalog(t *testing.T) {
+	dir := t.TempDir()
+	store, err := openPhotoStore(dir, 20<<20, defaultMaxPhotoPixels)
+	if err != nil {
+		t.Fatal(err)
+	}
+	receipt, err := store.save([]byte("private-photo"), "image/png", image.Config{Width: 1, Height: 1})
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Setenv("UPLOAD_DIR", dir)
+	catalog := displayCatalog{version: "real-v1", items: []wine{
+		{ID: "internal-1", Slug: "wine-one", Name: "Wine one"},
+		{ID: "internal-2", Slug: "wine-two", Name: "Wine two"},
+	}}
+	upstream := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path != "/v1/eval/predict" || r.URL.Query().Get("track") != "service" {
+			t.Fatalf("unexpected upstream request %s", r.URL.String())
+		}
+		data, _ := io.ReadAll(r.Body)
+		if string(data) != "private-photo" {
+			t.Fatal("photo bytes not forwarded")
+		}
+		w.Header().Set("Content-Type", "application/json")
+		_ = json.NewEncoder(w).Encode(visionResponse{
+			CatalogVersion: "provider-v1", ModelVersion: "vision-v1",
+			RankedSlugs: []string{"unknown", "wine-two", "wine-one"}, Slug: "wine-two",
+		})
+	}))
+	defer upstream.Close()
+	h := newHandlerWithCatalogAndServices("", nil, catalog, modelServices{vision: &visionClient{
+		baseURL: upstream.URL, catalogVersion: "real-v1", providerCatalogVersion: "provider-v1", client: noRedirectHTTPClient(),
+	}})
+	rec := request(t, h, http.MethodPost, "/v1/search", `{"photoId":"`+receipt.ID+`"}`)
+	response := decodeResponse(t, rec)
+	if rec.Code != http.StatusOK || response.CatalogVersion != "real-v1" || response.ModelVersion != "vision-v1" || response.SelectedID != "internal-2" || len(response.Candidates) != 2 || response.Candidates[0].ID != "internal-2" {
+		t.Fatalf("response=%d %+v body=%s", rec.Code, response, rec.Body.String())
+	}
+}
+
 func TestSVC006ConfiguredSearchRequiresInputAndFailsClosed(t *testing.T) {
 	h := newHandlerWithCatalogAndServices("", nil, embeddedCatalogStore{}, modelServices{search: &modelClient{configErr: errors.New("bad URL")}})
 	if got := request(t, h, http.MethodPost, "/v1/search", `{}`).Code; got != http.StatusBadRequest {
