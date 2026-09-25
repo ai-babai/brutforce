@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="ru">
+<head><base href="../">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#fefdfa">
+  <title>Своё Вино · мобильный сценарий v3</title>
+  <link rel="stylesheet" href="previous/styles.css">
+  <script src="previous/app.js" defer></script>
+</head>
+<body>
+  <main class="studio">
+    <aside class="studio-side">
+      <div class="studio-mark"><span class="studio-mark-icon">✳</span> BRUTFORCE / DESIGN STUDY</div>
+      <p class="studio-index">Мобильный сценарий · версия 3</p>
+      <h1>Узнать вино.<br><em>Понять, что дальше.</em></h1>
+      <p class="studio-lead">Самостоятельный кликабельный макет: от снимка этикетки до карточки, похожих бутылок и восстановления после ошибки.</p>
+      <div class="studio-note"><b>Граница макета</b><p>Все вина и результаты здесь демонстрационные. Камера, галерея, поиск и серверные ответы смоделированы локально.</p></div>
+      <div class="scenario-heading"><h2>Сценарии</h2><span>Выберите состояние</span></div>
+      <div class="scenario-list" id="scenario-list"></div>
+      <section class="state-rationale" aria-live="polite"><span>РЕШЕНИЕ ДЛЯ ЭКРАНА</span><p id="state-rationale"></p></section>
+      <section class="change-map"><h2>Шесть правок в этом пути</h2><ol><li><b>Ошибка сервиса:</b> отдельный экран, повтор — первое действие, камера и галерея рядом.</li><li><b>Совпадений нет:</b> пёс у стойки, поиск по названию — первое действие.</li><li><b>Главная:</b> всегда новый вход, без прошлого снимка и блока продолжения.</li><li><b>Сканирование:</b> линия только на фото; сцена с псом остаётся спокойной.</li><li><b>Кандидаты:</b> компактное исходное фото, его просмотр и возврат к тому же списку.</li><li><b>Карточка:</b> название, винодельня и доступные поля без выдуманной уверенности.</li></ol></section>
+      <p class="report-doc-links"><a href="research.md">Исследование и источники ↗</a><a href="behavior-audit.md">Черновик сценариев ↗</a></p>
+      <section class="research-section" id="research">
+        <div class="research-head"><span>ИССЛЕДОВАНИЕ</span><h2>Паттерны, которые помогли</h2><p>Наблюдение в источнике и наше решение разделены: ссылки подтверждают паттерн, а не качество распознавания в этом макете.</p></div>
+        <div class="research-grid">
+          <article class="research-card"><a class="research-thumb" href="https://blog.google/products-and-platforms/products/search/thrifting-tips/" target="_blank" rel="noopener noreferrer"><img src="https://storage.googleapis.com/gweb-uniblog-publish-prod/images/Lens_Thrifting_Pixel10.width-1200.format-webp.webp" alt="Официальный пример Google Lens: миниатюра исходного снимка в поисковом интерфейсе" loading="lazy"><span>Открыть официальный пример ↗</span></a><h3>Снимок рядом с ответом</h3><p><b>Наблюдение:</b> Google Lens показывает маленькую миниатюру исходного изображения в поисковом контексте.</p><p><b>Адаптация:</b> в списке похожих вин фото занимает компактную левую ячейку и открывается для сверки.</p></article>
+          <article class="research-card"><a class="research-thumb" href="https://carbondesignsystem.com/patterns/empty-states-pattern/" target="_blank" rel="noopener noreferrer"><img src="https://carbondesignsystem.com/static/c2c8cea7b789d8c971baff596807801a/3cbba/13_Empty_state_system_error_website_image_1120.png" alt="Официальный пример Carbon: отдельное состояние системной ошибки" loading="lazy"><span>Открыть официальный пример ↗</span></a><h3>Ошибка — отдельный исход</h3><p><b>Наблюдение:</b> Carbon разделяет отсутствие результатов и системную ошибку.</p><p><b>Адаптация:</b> «не нашли» ведёт к поиску по названию, ошибка сервера — к повтору запроса.</p></article>
+        </div>
+        <div class="variant-study"><div><span>ИЛЛЮСТРАЦИЯ ОШИБКИ СЕРВЕРА</span><h3>Два спокойных образа</h3><p>Выбор меняет только иллюстрацию экрана «Ошибка сервера». Вариант A выбран по умолчанию.</p></div><div class="variant-options"><button data-action="server-variant:a" class="selected" aria-pressed="true"><img src="assets/server-error-a.png" alt="Пёс рядом с прибором на паузе"><span>A · пауза сервиса</span></button><button data-action="server-variant:b" aria-pressed="false"><img src="assets/server-error-b.png" alt="Пёс рядом с песочными часами"><span>B · ожидание</span></button></div></div>
+        <p class="research-links">Дополнительно: <a href="https://www.vivino.com/en/wine-news/how-the-vivino-label-scanner-works" target="_blank" rel="noopener noreferrer">Vivino — ручной путь после неудачного сканирования</a> · <a href="https://www.wine-searcher.com/find/achaval%2Bferrer%2Bquimera%2Bmendoza%2Bargentina/2019" target="_blank" rel="noopener noreferrer">Wine-Searcher — поля вина</a> · <a href="https://developer.apple.com/design/human-interface-guidelines/motion" target="_blank" rel="noopener noreferrer">Apple — движение</a> · <a href="https://developer.android.com/topic/libraries/architecture/paging/load-state" target="_blank" rel="noopener noreferrer">Android — повтор после ошибки</a>.</p>
+      </section>
+      <details class="studio-details"><summary>История изменений <span>↗</span></summary><div><p><b>v3 · 25 сентября 2026</b></p><p>Добавлены отдельные состояния ошибки сервера и отсутствия совпадений, чистая Главная, компактное сравнение кандидатов и сканирование только внутри фотографии. Уточнены поля карточки и возвраты между экранами.</p></div></details>
+    </aside>
+    <section class="phone-area" aria-label="Интерактивный макет телефона">
+      <div class="phone-controls"><span>ПРОТОТИП · <span id="state-name">Главная</span></span><div class="width-controls" aria-label="Ширина макета"><button data-width="320">320</button><button data-width="360">360</button><button data-width="390" class="selected" aria-pressed="true">390</button><button data-width="430">430</button></div></div>
+      <div class="phone-shell"><div class="phone" id="phone"><div id="app" aria-live="polite"></div></div></div>
+      <p class="phone-caption">Нажимайте кнопки внутри макета. Размеры для проверки: 320, 360, 390 и 430 px.</p>
+    </section>
+  </main>
+  <div id="dialog-root"></div>
+</body>
+</html>

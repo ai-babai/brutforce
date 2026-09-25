@@ -1,0 +1,284 @@
+/* Air 3.4 product skin. Load after v2.css; behavior and content stay in App.tsx. */
+:root {
+  --paper: #fefdfa;
+  --cream: #fbf6ec;
+  --soft: #f5ede4;
+  --wine: #8f3d42;
+  --wine-dark: #723135;
+  --ink: #2c2a28;
+  --muted: #746a65;
+  --line: #ece5de;
+}
+
+body { background: #f3f0e9; }
+.app-shell { background: var(--paper); }
+.app { background: var(--paper); }
+.app .page { padding: 24px 26px max(28px, env(safe-area-inset-bottom)); }
+.page h2 { font-weight: 500; line-height: 1.13; letter-spacing: -.025em; }
+.page > p { font-size: 14px; line-height: 1.55; }
+.primary, .secondary, .text-button { box-shadow: none; font-weight: 500; }
+.primary { min-height: 56px; border-radius: 13px; }
+.secondary { min-height: 52px; background: transparent; border-color: var(--line); }
+.text-button { min-height: 48px; font-weight: 400; }
+.primary svg, .secondary svg, .text-button svg { width: 25px; height: 25px; stroke-width: 1.35; }
+.top { min-height: 48px; margin: -4px -12px 23px; color: #685d56; }
+.top b { font-size: 13px; font-weight: 500; }
+.top button:first-child { color: #826e65; }
+.top svg { width: 25px; height: 25px; stroke-width: 1.3; }
+.bottom-nav {
+  position: relative;
+  gap: 0;
+  min-height: 74px;
+  padding: 8px 12px max(8px, env(safe-area-inset-bottom));
+  background: rgb(254 253 250 / 96%);
+  border-top: 1px solid #eee8e1;
+  box-shadow: none;
+  backdrop-filter: blur(16px);
+}
+.bottom-nav button { min-height: 48px; gap: 3px; color: var(--muted); font-size: 10px; font-weight: 400; }
+.bottom-nav svg { width: 26px; height: 26px; stroke-width: 1.3; }
+.bottom-nav button[aria-current="page"] { background: linear-gradient(180deg,#f7eee6b3,#f7eee659); color: #895c54; }
+
+/* The start scene and actions share one continuous warm field. */
+#UI-001.page { padding: 0 26px 28px; background: linear-gradient(180deg,#fbf6ec 0%,#fbf6ec 59%,#fefdfa 94%); }
+#UI-001 .welcome-intro { margin: 0 -26px; padding: 0 26px; background: transparent; }
+#UI-001 .brand.v2-brand { height: 95px; min-height: 95px; margin: 0; padding: 28px 2px 10px; }
+#UI-001 .v2-logo { width: 140px; height: 46px; }
+#UI-001 .hero { display: flex; flex-direction: column; height: auto; min-height: 505px; margin: 0 -26px; background: transparent; overflow: hidden; }
+#UI-001 .hero > div:first-child { width: 100%; max-width: none; padding: 26px 26px 0; }
+#UI-001 .hero h1 { max-width: 350px; margin: 0 auto; font-size: 39px; font-weight: 500; line-height: 1.14; letter-spacing: -.025em; }
+#UI-001 .hero p { max-width: 285px; margin: 19px auto 0; color: var(--muted); font-size: 14px; line-height: 1.65; }
+#UI-001 .hero > .mascot-scene { flex: 1 0 320px; width: 100%; height: 320px; margin: 25px 0 0; overflow: hidden; }
+#UI-001 .hero > .mascot-scene img { width: 100%; height: 335px; object-position: center bottom; }
+#UI-001 .actions { gap: 0; margin: 0; }
+#UI-001 .scan-button { min-height: 66px; grid-template-columns: 30px minmax(0,1fr) 30px; gap: 12px; padding: 12px 24px; border-radius: 14px; text-align: center; }
+#UI-001 .scan-button > svg:first-child, #UI-001 .scan-button > svg:last-child { width: 27px; height: 27px; padding: 0; border: 0; border-radius: 0; background: none; stroke-width: 1.3; }
+#UI-001 .scan-button b { font-size: 16px; font-weight: 500; }
+#UI-001 .scan-button small { display: none; }
+#UI-001 .split-actions { justify-content: center; gap: 24px; margin: 8px 0 0; }
+#UI-001 .split-actions button { flex: 0 1 auto; min-height: 50px; gap: 9px; padding: 0; color: #746258; font-size: 13px; font-weight: 400; }
+#UI-001 .split-actions button + button { border-left: 0; }
+#UI-001 .split-actions svg { width: 25px; height: 25px; stroke-width: 1.3; }
+#UI-001 .welcome-tip { margin: 18px 0 0; padding: 0; border: 0; background: transparent; color: var(--muted); font-size: 11px; }
+#UI-001 .welcome-tip strong { color: inherit; font-weight: 400; }
+
+/* Source photo and two direct capture actions on the search result. */
+#UI-006 h2 { max-width: 370px; margin: 1px 0 13px; font-size: 34px; }
+#UI-006 > p { margin-bottom: 21px; }
+.air-comparison { display: grid; grid-template-columns: minmax(0,1fr) auto; align-items: center; gap: 12px; min-height: 84px; padding: 0 0 19px; border-bottom: 1px solid var(--line); }
+.air-comparison .photo.compact { display: grid; grid-template-columns: 52px minmax(0,1fr); justify-content: start; gap: 12px; width: auto; min-width: 0; min-height: 66px; margin: 0; overflow: visible; border: 0; border-radius: 0; background: transparent; color: var(--muted); text-align: left; }
+.air-comparison .photo.compact img { width: 52px; height: 66px; border-radius: 7px; object-fit: cover; }
+.air-comparison .photo.compact span { position: static; align-self: center; padding: 0; background: none; color: var(--muted); font-size: 12px; }
+.air-comparison-actions { display: flex; align-items: center; gap: 4px; }
+.air-photo-action { display: grid; place-items: center; width: 54px; height: 54px; flex: 0 0 54px; padding: 0; border: 0; border-radius: 50%; background: none; color: #895c54; }
+.air-photo-action:hover, .air-photo-action:focus-visible { background: #f5eee6; }
+.air-photo-action svg { width: 30px; height: 30px; stroke-width: 1.25; }
+
+/* The ranked options read as one open list. */
+.candidate-list, .leader-list { gap: 0; }
+.candidate-list button, .candidate-list button:hover, .leader-list button.candidate-leader,
+.recommendation-list button { position: relative; min-width: 0; border: 0; border-bottom: 1px solid var(--line); border-radius: 0; box-shadow: none; background: transparent; }
+.candidate-list button:hover, .recommendation-list button:hover { background: #fbf6ec99; }
+.candidate-list button { grid-template-columns: 62px minmax(0,1fr) 20px; gap: 18px; min-height: 142px; padding: 21px 0; }
+.candidate-list .air-candidate-arrow { width: 18px; height: 18px; justify-self: center; color: #a28a7c; }
+.candidate-list img, .candidate-list .missing-image, .leader-list img, .leader-list .missing-image { width: 56px; height: 98px; min-height: 98px; margin: auto; border: 0; border-radius: 0; background: transparent; object-fit: contain; }
+.candidate-list span { gap: 5px; min-width: 0; }
+.candidate-list b { overflow-wrap: anywhere; color: var(--ink); font-size: 16px; font-weight: 500; line-height: 1.35; }
+.candidate-list small { overflow-wrap: anywhere; color: var(--muted); font-size: 12px; font-weight: 400; line-height: 1.4; }
+.leader-list button.candidate-leader { grid-template-columns: 78px minmax(0,1fr) 20px; min-height: 207px; padding: 23px 0 28px; background: linear-gradient(110deg,#fbf6ec80,transparent 75%); }
+.leader-list .candidate-leader img, .leader-list .candidate-leader .missing-image { width: 76px; height: 132px; min-height: 132px; }
+.leader-list .candidate-leader b { font-size: 20px; font-weight: 500; line-height: 1.3; }
+.leader-list em { width: fit-content; max-width: 100%; margin-bottom: 0; padding: 0; border-radius: 0; background: none; color: var(--wine); font-size: 10px; font-weight: 500; letter-spacing: .08em; text-transform: uppercase; }
+#UI-006 .candidate-list { margin-top: 0; }
+#UI-006 .candidate-list + .secondary { margin-top: 15px; }
+#UI-006 > .text-button { margin-top: 0; }
+
+/* Full product card: a bottle on the page, with every information section retained. */
+#UI-007.page { padding-top: max(15px,env(safe-area-inset-top)); }
+#UI-007 .top { margin-bottom: 14px; }
+#UI-007 .top .save-header-action { color: var(--wine); font-weight: 500; }
+#UI-007 .result-hero { display: flex; flex-direction: column; justify-content: center; gap: 0; min-height: 0; margin: 0 -26px; padding: 0 26px 24px; background: radial-gradient(ellipse at 50% 37%,#f6ecde99,transparent 65%); }
+#UI-007 .result-hero > img, #UI-007 .result-hero > .missing-image { display: block; width: 100%; height: 255px; min-height: 255px; margin: 0 auto; background: transparent; object-fit: contain; }
+#UI-007 .result-hero > div:last-child { width: 100%; gap: 5px; padding: 20px 0 0; text-align: center; }
+#UI-007 .result-hero small { color: var(--muted); font-size: 12px; font-weight: 400; }
+#UI-007 .result-hero h2 { margin: 5px 0 0; font-size: 34px; font-weight: 500; line-height: 1.15; }
+#UI-007 .result-hero p { color: var(--muted); font-size: 12px; }
+#UI-007 .demo-label { justify-content: center; font-size: 9px; }
+#UI-007 .correction { align-self: center; width: 100%; margin: 0 0 6px; color: #895c54; font-size: 12px; font-weight: 400; }
+#UI-007 .tabs { margin-top: 2px; border-bottom-color: var(--line); }
+#UI-007 .tabs button { min-height: 48px; color: var(--muted); font-size: 12px; font-weight: 400; }
+#UI-007 .tabs button[aria-selected="true"] { color: var(--wine); font-weight: 500; }
+#UI-007 dl { margin: 9px 0; }
+#UI-007 dl div { padding: 13px 0; border-color: var(--line); font-size: 12px; }
+#UI-007 dt { color: var(--muted); }
+#UI-007 .tab-copy { padding-top: 11px; }
+#UI-007 .recommendations { margin-top: 24px; padding-top: 20px; border-color: var(--line); }
+#UI-007 .recommendations h3 { font-weight: 500; }
+#UI-007 .recommendation-list button { min-height: 112px; padding: 10px 0; }
+#UI-007 .recommendation-list button.candidate-leader { min-height: 136px; }
+#UI-007 .recommendation-list img, #UI-007 .recommendation-list .missing-image { width: 56px; height: 98px; min-height: 98px; }
+#UI-007 .result-actions { padding-top: 24px; }
+
+/* Search entry, browse illustration, loading and saved states. */
+#UI-008 h2 { max-width: 360px; font-size: 36px; }
+#UI-008 form { margin: 26px 0 14px; gap: 8px; }
+#UI-008 form label { color: var(--muted); font-size: 12px; font-weight: 400; }
+#UI-008 .search-field { min-height: 60px; overflow: visible; border: 0; border-bottom: 1px solid #c8b8aa; border-radius: 0; background: transparent; box-shadow: none; }
+#UI-008 .search-field:focus-within { border-bottom-color: var(--wine); box-shadow: 0 1px 0 var(--wine); }
+#UI-008 .search-field input { height: 60px; padding-left: 0; color: var(--ink); font-size: 16px; }
+#UI-008 .search-field button { min-height: 44px; min-width: 44px; align-self: center; border-radius: 50%; background: transparent; color: var(--wine); }
+#UI-008 .search-field button svg { width: 25px; height: 25px; stroke-width: 1.3; }
+#UI-008 .search-field .clear-search { color: var(--muted); }
+#UI-008 .manual-empty { display: flex; flex-direction: column; min-height: 320px; }
+#UI-008 .manual-empty > p { padding: 18px 0; border-bottom: 1px solid var(--line); color: var(--muted); font-size: 13px; line-height: 1.5; }
+#UI-008 .air-search-mascot, #UI-008 .manual-empty .mascot-scene-browse { height: 220px; margin: 20px -10px 0; }
+#UI-008 .air-search-mascot .mascot-scene-browse { height: 100%; margin: 0; }
+#UI-008 .manual-empty .mascot-scene-browse img { width: 100%; height: 100%; max-height: none; object-fit: contain; }
+#UI-008 .manual-empty .secondary { min-height: 44px; margin-top: 12px; border: 0; background: transparent; color: var(--wine); font-size: 13px; font-weight: 400; }
+#UI-008 .manual-empty + .text-button, #UI-008 > .text-button { margin-top: 14px; }
+#UI-008 .candidate-list { margin-top: 8px; }
+#UI-008 .catalog-status { color: var(--muted); }
+#UI-008 .empty-catalog { border-bottom: 1px solid var(--line); }
+#UI-016 .saved-heading { padding: 0 0 18px; }
+#UI-016 .saved-heading h2 { font-size: 34px; }
+#UI-016 .saved-empty { min-height: 440px; }
+#UI-016 .mascot-scene-saved { width: 100%; height: 270px; margin: 0 auto 8px; }
+#UI-016 .mascot-scene-saved img { width: 100%; height: 100%; object-fit: contain; }
+
+/* A live video is still the viewfinder; only its surrounding chrome changes. */
+.app .camera-page { height: 100%; max-height: none; grid-template-rows: auto auto 1fr; align-content: start; padding: 12px 26px max(8px,env(safe-area-inset-bottom)); background: var(--paper); color: var(--ink); }
+.camera-header .top { margin: -4px -12px 18px; }
+.camera-header h2 { margin: 0 0 10px; font-family: var(--serif); font-size: 31px; font-weight: 400; line-height: 1.15; }
+.camera-header > p { max-width: 370px; margin: 0 0 15px; color: var(--muted); font-size: 14px; line-height: 1.55; }
+.camera-preview { grid-template-rows: auto auto; overflow: visible; }
+.camera-page .viewfinder { height: clamp(180px, calc(100dvh - 540px), 390px); min-height: 0; flex: none; }
+.camera-page .viewfinder { margin: 0; border-radius: 10px; background: radial-gradient(ellipse at 50% 35%,#c7b39d,#6f5a52); box-shadow: none; }
+.camera-frame { inset: 25px 40px 55px; border: 1px solid #fff; border-radius: 5px; }
+.camera-preview > .neighbor-hint { padding: 10px 0; color: var(--muted); font-size: 12px; }
+.camera-actions { display: flex; flex-direction: column; align-self: end; gap: 8px; padding: 12px 0 max(8px,env(safe-area-inset-bottom)); }
+.camera-actions .air-capture-action { width: 100%; min-height: 56px; flex: none; }
+.camera-actions .text-button { width: 100%; min-height: 48px; flex: none; }
+.camera-actions .shutter { border-color: var(--wine); }
+.camera-actions .shutter span { background: var(--wine); }
+.camera-actions .light-tip, .camera-actions .text-button { color: #895c54; font-size: 13px; font-weight: 400; }
+.camera-actions .text-button { border: 0; }
+
+/* A real capture action keeps its live camera handler. */
+.camera-actions .air-capture-action { border: 1px solid var(--wine); border-radius: 13px; background: var(--wine); color: #fff; font-size: 16px; font-weight: 500; }
+.camera-actions .air-capture-action svg { width: 25px; height: 25px; stroke-width: 1.3; }
+
+#UI-004 h2 { max-width: 380px; font-size: 33px; }
+#UI-004 .mascot-scene-walk { height: 230px; margin: 16px -18px 0; }
+#UI-004 .mascot-scene-walk img { height: 100%; max-height: none; object-fit: contain; }
+#UI-004 .air-waiting-discovery { display: grid; grid-template-columns: 130px minmax(0,1fr); align-items: center; gap: 18px; min-height: 170px; margin: 5px 0 14px; }
+#UI-004 .air-waiting-photo { position: relative; width: 130px; height: 150px; transform: rotate(-6deg); }
+#UI-004 .air-waiting-photo .photo { width: 130px; min-height: 150px; height: 150px; margin: 0; border: 3px solid #fffaf4; border-radius: 9px; box-shadow: 0 11px 24px #4f31251e; }
+#UI-004 .air-waiting-photo .photo img { width: 100%; height: 100%; object-fit: cover; }
+#UI-004 .air-waiting-photo .photo span { display: none; }
+#UI-004 .scan-line { position: absolute; z-index: 2; top: 60%; left: 12px; right: 12px; height: 2px; margin: 0; background: #fff; box-shadow: 0 0 0 1px #ffffff55; }
+#UI-004 .air-wine-note { min-width: 0; color: #6a554d; }
+#UI-004 .air-wine-note-header { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 7px; }
+#UI-004 .air-wine-note-header > span { color: var(--wine); font-size: 10px; font-weight: 500; letter-spacing: .13em; text-transform: uppercase; }
+#UI-004 .air-wine-note p { margin: 0; font-family: var(--serif); font-size: 20px; font-weight: 400; line-height: 1.27; }
+#UI-004 .status { color: var(--muted) !important; font-size: 13px; font-weight: 400; }
+.air-note-toggle { width: 44px; height: 44px; display: grid; place-items: center; padding: 0; border: 0; border-radius: 50%; background: transparent; color: #895c54; }
+.air-note-toggle svg { width: 18px; height: 18px; stroke-width: 1.3; }
+
+/* Recovery stays calm; direct camera and gallery exits remain easy to tap. */
+#UI-003 h2, #UI-003A h2, #UI-009 h2, #UI-010 h2, #UI-011 h2 { font-size: 34px; }
+#UI-009 > .top, #UI-010 > .top { order: 0; }
+#UI-009 > .mascot-scene-counter, #UI-010 > .mascot-scene-offline, #UI-010 > .mascot-scene-server { order: 1; }
+#UI-009 > h2, #UI-010 > h2 { order: 2; }
+#UI-009 > p, #UI-010 > p { order: 3; }
+#UI-010 > .photo { order: 4; }
+#UI-009 > .missing-actions, #UI-010 > .recovery-actions, #UI-010 > .primary { order: 5; }
+#UI-010 > .secondary, #UI-010 > .air-recovery-secondary { order: 6; }
+#UI-009 .mascot-scene-counter, #UI-010 .mascot-scene-offline, #UI-010 .mascot-scene-server { height: 245px; min-height: 245px; margin: 30px -10px 22px; }
+#UI-009 .mascot-scene-counter img, #UI-010 .mascot-scene-offline img, #UI-010 .mascot-scene-server img { width: 100%; height: 100%; max-height: none; object-fit: contain; }
+#UI-009 .missing-actions, #UI-010 .recovery-actions { display: grid; gap: 8px; width: 100%; margin-top: auto; }
+#UI-009 .missing-actions .primary, #UI-010 .primary { min-height: 56px; border-radius: 13px; }
+#UI-010 > .primary { margin-top: auto; }
+#UI-009 .missing-actions .secondary, #UI-010 .secondary { min-height: 48px; border: 0; background: transparent; font-size: 14px; font-weight: 400; }
+#UI-009 .missing-actions .air-recovery-secondary, #UI-010 .air-recovery-secondary { display: flex; gap: 20px; justify-content: center; width: 100%; }
+#UI-009 .missing-actions .air-recovery-secondary > *, #UI-010 .air-recovery-secondary > * { flex: 1; }
+#UI-010 .state-icon { display: none; }
+#UI-010 .photo.compact { max-height: 95px; min-height: 95px; }
+#UI-010 .photo.compact img { height: 95px; }
+#UI-003 .state-icon, #UI-011 .state-icon { background: transparent; }
+#UI-003 .state-icon svg, #UI-011 .state-icon svg { width: 34px; height: 34px; stroke-width: 1.2; }
+.photo-dialog .dialog-close { width: 44px; height: 44px; background: #fff; }
+.photo-dialog .dialog-close svg { width: 24px; height: 24px; stroke-width: 1.3; }
+
+@media (max-width: 390px) {
+  .app .page { padding-left: 20px; padding-right: 20px; }
+  #UI-001.page { padding-left: 20px; padding-right: 20px; }
+  #UI-001 .welcome-intro { margin-left: -20px; margin-right: -20px; padding-left: 20px; padding-right: 20px; }
+  #UI-001 .hero { margin-left: -20px; margin-right: -20px; }
+  #UI-001 .hero > div:first-child { padding-left: 20px; padding-right: 20px; }
+  #UI-001 .hero h1 { font-size: 35px; }
+  #UI-001 .scan-button { grid-template-columns: 28px minmax(0,1fr) 28px; padding-left: 17px; padding-right: 17px; }
+  #UI-001 .split-actions button { font-size: 12px; }
+  #UI-006 h2 { font-size: 32px; }
+  .candidate-list button { gap: 12px; }
+  .leader-list button.candidate-leader { grid-template-columns: 70px minmax(0,1fr) 18px; }
+  .leader-list .candidate-leader img, .leader-list .candidate-leader .missing-image { width: 70px; height: 122px; min-height: 122px; }
+  .leader-list .candidate-leader b { font-size: 18px; }
+  .air-photo-action { width: 48px; height: 52px; flex-basis: 48px; }
+  .air-comparison-actions { gap: 0; }
+  #UI-007 .result-hero { margin-left: -20px; margin-right: -20px; padding-left: 20px; padding-right: 20px; }
+}
+
+@media (max-height: 850px) {
+  #UI-001 .brand.v2-brand { height: 82px; min-height: 82px; padding-top: 20px; }
+  #UI-001 .hero { min-height: 430px; }
+  #UI-001 .hero > div:first-child { padding-top: 15px; }
+  #UI-001 .hero > .mascot-scene { flex-basis: 267px; height: 267px; margin-top: 18px; }
+  #UI-001 .hero > .mascot-scene img { height: 285px; }
+  #UI-004 .mascot-scene-walk { height: 195px; }
+  .camera-frame { inset: 18px 28px 35px; }
+  #UI-009 .mascot-scene-counter, #UI-010 .mascot-scene-offline, #UI-010 .mascot-scene-server { height: 205px; min-height: 205px; margin-top: 18px; }
+}
+@media (max-height: 740px) {
+  #UI-001 .brand.v2-brand { height: 76px; min-height: 76px; padding-top: 17px; }
+  #UI-001 .hero { min-height: 365px; }
+  #UI-001 .hero > div:first-child { padding-top: 10px; }
+  #UI-001 .hero h1 { font-size: 33px; }
+  #UI-001 .hero p { margin-top: 12px; font-size: 13px; }
+  #UI-001 .hero > .mascot-scene { flex-basis: 219px; height: 219px; margin-top: 12px; }
+  #UI-001 .hero > .mascot-scene img { height: 233px; }
+  #UI-008 .air-search-mascot, #UI-008 .manual-empty .mascot-scene-browse { height: 145px; margin-top: 10px; }
+  #UI-004 .mascot-scene-walk { height: 160px; }
+  #UI-004 .air-waiting-discovery { min-height: 140px; grid-template-columns: 110px minmax(0,1fr); gap: 13px; }
+  #UI-004 .air-waiting-photo, #UI-004 .air-waiting-photo .photo { width: 110px; height: 130px; min-height: 130px; }
+  #UI-004 .air-wine-note p { font-size: 17px; }
+  .camera-frame { inset: 14px 20px 25px; }
+  #UI-009 .mascot-scene-counter, #UI-010 .mascot-scene-offline, #UI-010 .mascot-scene-server { height: 160px; min-height: 160px; margin-top: 8px; }
+}
+
+/* Keep the approved width inside the wide desktop handset. */
+@media (min-width: 1024px) {
+  .app-shell { background: radial-gradient(ellipse at 50% 20%,#fffdfa 0%,#eee7df 60%,#ddd3c9 100%); }
+  .app-shell > .app { width: 450px; border-color: #292724; box-shadow: 0 0 0 2px #c8beb4,0 24px 70px #392d282b; }
+  .app-shell > .app .page { padding-left: 26px; padding-right: 26px; }
+  .app-shell > .app #UI-001.page { padding-left: 26px; padding-right: 26px; padding-top: 0; }
+  .app-shell > .app #UI-001 .welcome-intro { margin-left: -26px; margin-right: -26px; padding-left: 26px; padding-right: 26px; }
+  .app-shell > .app #UI-001 .hero { margin-left: -26px; margin-right: -26px; }
+  .app-shell > .app #UI-007 .result-hero { margin-left: -26px; margin-right: -26px; }
+  .app-shell > .app .camera-page { height: 100%; max-height: none; grid-template-rows: auto auto 1fr; padding: 12px 26px 8px; }
+  .app-shell > .app .camera-actions { display: flex; flex-direction: column; gap: 8px; padding: 12px 0 8px; }
+}
+
+@media (max-height: 500px) and (orientation: landscape) {
+  .app .camera-page { grid-template-columns: minmax(150px,1fr) minmax(220px,2fr) 92px; grid-template-rows: minmax(0,1fr); gap: 8px; padding: 8px max(8px,env(safe-area-inset-right)) 8px max(8px,env(safe-area-inset-left)); }
+  .camera-header .top { margin: 0 0 4px; }
+  .camera-header h2 { font-size: 22px; }
+  .camera-header > p { margin: 4px 0; font-size: 11px; }
+  .camera-preview { grid-template-rows: minmax(0,1fr) auto; overflow: hidden; }
+  .camera-page .viewfinder { height: 100%; }
+  .camera-actions { justify-content: center; padding: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scan-line { animation: none; }
+  .primary:active, .scan-button:active { transform: none; }
+}

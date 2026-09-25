@@ -153,16 +153,16 @@
     {
       "id": "UI-004",
       "area": "web",
-      "title": "Cancelling photo search returns home with explicit retained-photo actions",
-      "source": "apps/web/README.md; Wine UX Atlas",
-      "spec": "docs/product/behavior-spec.md#demo-005"
+      "title": "Отмена фото-поиска возвращает на чистую Главную без фото и продолжения",
+      "source": "design/wine-ux-v3/air/behavior-v3.feature",
+      "spec": "docs/product/behavior-spec.md#air-34--активный-фото-путь-и-восстановление"
     },
     {
       "id": "UI-005",
       "area": "web",
-      "title": "Late cancelled response is ignored until explicit resume",
-      "source": "apps/web/README.md; Wine UX Atlas",
-      "spec": "docs/product/behavior-spec.md#demo-005"
+      "title": "Поздний ответ отменённого фото-поиска не восстанавливает путь",
+      "source": "design/wine-ux-v3/air/behavior-v3.feature",
+      "spec": "docs/product/behavior-spec.md#air-34--активный-фото-путь-и-восстановление"
     },
     {
       "id": "UI-016",
@@ -216,7 +216,7 @@
     {
       "id": "UI-007",
       "area": "web",
-      "title": "Exact result opens synthetic wine details",
+      "title": "Единственный кандидат открывает карточку после явного выбора",
       "source": "apps/web/README.md; Wine UX Atlas",
       "spec": "docs/product/behavior-spec.md#demo-003"
     },
@@ -468,7 +468,7 @@
     {
       "id": "UI-022",
       "area": "ui",
-      "title": "Главная возвращает на старт без камеры; съёмка запускается явной кнопкой",
+      "title": "Главная очищает фото-путь без запуска камеры и сохраняет Сохранённое",
       "source": "apps/web/src/navigation.test.tsx",
       "spec": "docs/product/behavior-spec.md"
     },
@@ -496,7 +496,7 @@
     {
       "id": "DESIGN-020",
       "area": "design",
-      "title": "Поле поиска имеет цельную рамку и отступ до результатов",
+      "title": "Поле поиска и результаты читаемы в действующем Air-оформлении",
       "source": "apps/web/src/design.test.tsx",
       "spec": "apps/web/design-specs.md"
     },
@@ -510,7 +510,7 @@
     {
       "id": "UI-025",
       "area": "ui",
-      "title": "Application uses v1 catalog, upload and search contracts",
+      "title": "Приложение использует каталог v2 и фото API v1",
       "source": "apps/web/src/api.test.ts",
       "spec": "contracts/api-versioning.md"
     },
@@ -531,7 +531,7 @@
     {
       "id": "UI-028",
       "area": "web",
-      "title": "Network and server failures remain distinct and retry a retained receipt",
+      "title": "Пустой ответ, сбой доставки и ошибка сервиса различаются; повтор использует receipt",
       "source": "apps/web/src/App.test.tsx",
       "spec": "docs/product/behavior-spec.md#утверждённые-переходы-v2--20092026"
     },
@@ -811,7 +811,7 @@
     {
       "id": "SR-005",
       "area": "ui",
-      "title": "Ноль и один кандидат без фиктивных альтернатив",
+      "title": "Ноль ведёт к пустому результату; один кандидат требует явного выбора",
       "source": "apps/web/src/App.test.tsx",
       "spec": "docs/product/behavior-spec.md#фото-выделенный-лидер-и-вертикальный-список--fe-035"
     },
@@ -825,7 +825,7 @@
     {
       "id": "SR-007",
       "area": "ui",
-      "title": "Полные названия и честные неизвестные поля/фото",
+      "title": "Полное имя и только известные поля; неизвестный год скрыт",
       "source": "apps/web/src/App.test.tsx",
       "spec": "docs/product/behavior-spec.md#фото-выделенный-лидер-и-вертикальный-список--fe-035"
     },
@@ -1024,6 +1024,174 @@
       "title": "Поисковые плитки сохраняют размеры фото и доступность",
       "source": "docs/product/card-polish-spec.md",
       "spec": "docs/product/card-polish-spec.md#сценарии"
+    },
+    {
+      "id": "AIR-001",
+      "area": "web",
+      "title": "Чистая главная после входа и отмены",
+      "source": "design/wine-ux-v3/air/behavior-v3.feature",
+      "spec": "docs/product/behavior-spec.md#air-34--активный-фото-путь-и-восстановление"
+    },
+    {
+      "id": "AIR-002",
+      "area": "web",
+      "title": "Снимок живёт только в активном фото-пути",
+      "source": "design/wine-ux-v3/air/behavior-v3.feature",
+      "spec": "docs/product/behavior-spec.md#air-34--активный-фото-путь-и-восстановление"
+    },
+    {
+      "id": "AIR-003",
+      "area": "web",
+      "title": "Отмена выбора нового фото сохраняет контекст",
+      "source": "design/wine-ux-v3/air/behavior-v3.feature",
+      "spec": "docs/product/behavior-spec.md#air-34--активный-фото-путь-и-восстановление"
+    },
+    {
+      "id": "AIR-004",
+      "area": "web",
+      "title": "Независимые способы заменить фото",
+      "source": "design/wine-ux-v3/air/behavior-v3.feature",
+      "spec": "docs/product/behavior-spec.md#air-34--активный-фото-путь-и-восстановление"
+    },
+    {
+      "id": "AIR-005",
+      "area": "web",
+      "title": "Новый снимок заменяет активный фото-путь",
+      "source": "design/wine-ux-v3/air/behavior-v3.feature",
+      "spec": "docs/product/behavior-spec.md#air-34--активный-фото-путь-и-восстановление"
+    },
+    {
+      "id": "AIR-006",
+      "area": "web",
+      "title": "Список кандидатов остаётся выбором пользователя",
+      "source": "design/wine-ux-v3/air/behavior-v3.feature",
+      "spec": "docs/product/behavior-spec.md#air-34--активный-фото-путь-и-восстановление"
+    },
+    {
+      "id": "AIR-007",
+      "area": "web",
+      "title": "Единственный и отсутствующий кандидат",
+      "source": "design/wine-ux-v3/air/behavior-v3.feature",
+      "spec": "docs/product/behavior-spec.md#air-34--активный-фото-путь-и-восстановление"
+    },
+    {
+      "id": "AIR-008",
+      "area": "web",
+      "title": "Выдача показывает только известные структурированные факты",
+      "source": "design/wine-ux-v3/air/behavior-v3.feature",
+      "spec": "docs/product/behavior-spec.md#air-34--активный-фото-путь-и-восстановление"
+    },
+    {
+      "id": "AIR-009",
+      "area": "web",
+      "title": "Выбор другого кандидата и возврат в выдачу",
+      "source": "design/wine-ux-v3/air/behavior-v3.feature",
+      "spec": "docs/product/behavior-spec.md#air-34--активный-фото-путь-и-восстановление"
+    },
+    {
+      "id": "AIR-010",
+      "area": "web",
+      "title": "Просмотр исходного фото сохраняет место входа",
+      "source": "design/wine-ux-v3/air/behavior-v3.feature",
+      "spec": "docs/product/behavior-spec.md#air-34--активный-фото-путь-и-восстановление"
+    },
+    {
+      "id": "AIR-011",
+      "area": "web",
+      "title": "Пустой ответ, ошибка сервиса и отсутствие сети различаются",
+      "source": "design/wine-ux-v3/air/behavior-v3.feature",
+      "spec": "docs/product/behavior-spec.md#air-34--активный-фото-путь-и-восстановление"
+    },
+    {
+      "id": "AIR-012",
+      "area": "web",
+      "title": "Повтор не загружает фото снова",
+      "source": "design/wine-ux-v3/air/behavior-v3.feature",
+      "spec": "docs/product/behavior-spec.md#air-34--активный-фото-путь-и-восстановление"
+    },
+    {
+      "id": "AIR-013",
+      "area": "web",
+      "title": "Ошибка до принятия фото",
+      "source": "design/wine-ux-v3/air/behavior-v3.feature",
+      "spec": "docs/product/behavior-spec.md#air-34--активный-фото-путь-и-восстановление"
+    },
+    {
+      "id": "AIR-014",
+      "area": "web",
+      "title": "Заметки во время ожидания не управляют поиском",
+      "source": "design/wine-ux-v3/air/behavior-v3.feature",
+      "spec": "docs/product/behavior-spec.md#air-34--активный-фото-путь-и-восстановление"
+    },
+    {
+      "id": "AIR-015",
+      "area": "web",
+      "title": "Ручной поиск остаётся живым поиском каталога",
+      "source": "design/wine-ux-v3/air/behavior-v3.feature",
+      "spec": "docs/product/behavior-spec.md#air-34--активный-фото-путь-и-восстановление"
+    },
+    {
+      "id": "AIR-016",
+      "area": "web",
+      "title": "Ручной поиск игнорирует устаревшие ответы и продолжает страницы",
+      "source": "design/wine-ux-v3/air/behavior-v3.feature",
+      "spec": "docs/product/behavior-spec.md#air-34--активный-фото-путь-и-восстановление"
+    },
+    {
+      "id": "AIR-017",
+      "area": "web",
+      "title": "Пустой ручной поиск и маскот погреба",
+      "source": "design/wine-ux-v3/air/behavior-v3.feature",
+      "spec": "docs/product/behavior-spec.md#air-34--активный-фото-путь-и-восстановление"
+    },
+    {
+      "id": "AIR-018",
+      "area": "web",
+      "title": "Возврат в ручной поиск восстанавливает контекст",
+      "source": "design/wine-ux-v3/air/behavior-v3.feature",
+      "spec": "docs/product/behavior-spec.md#air-34--активный-фото-путь-и-восстановление"
+    },
+    {
+      "id": "AIR-019",
+      "area": "web",
+      "title": "Сохранить и удалить без дублей",
+      "source": "design/wine-ux-v3/air/behavior-v3.feature",
+      "spec": "docs/product/behavior-spec.md#air-34--активный-фото-путь-и-восстановление"
+    },
+    {
+      "id": "AIR-020",
+      "area": "web",
+      "title": "Открытие сохранённого возвращает в свой список",
+      "source": "design/wine-ux-v3/air/behavior-v3.feature",
+      "spec": "docs/product/behavior-spec.md#air-34--активный-фото-путь-и-восстановление"
+    },
+    {
+      "id": "AIR-021",
+      "area": "web",
+      "title": "Доступность действий и адаптивная выдача",
+      "source": "design/wine-ux-v3/air/behavior-v3.feature",
+      "spec": "docs/product/behavior-spec.md#air-34--активный-фото-путь-и-восстановление"
+    },
+    {
+      "id": "AIR-022",
+      "area": "web",
+      "title": "Прямое открытие страницы без контекста безопасно",
+      "source": "design/wine-ux-v3/air/behavior-v3.feature",
+      "spec": "docs/product/behavior-spec.md#air-34--активный-фото-путь-и-восстановление"
+    },
+    {
+      "id": "AIR-023",
+      "area": "web",
+      "title": "Отказ от предложенных кандидатов не равен пустому ответу",
+      "source": "design/wine-ux-v3/air/behavior-v3.feature",
+      "spec": "docs/product/behavior-spec.md#air-34--активный-фото-путь-и-восстановление"
+    },
+    {
+      "id": "AIR-024",
+      "area": "web",
+      "title": "Камера Air: видоискатель, действия и нижняя навигация без перекрытия",
+      "source": "design/wine-ux-v3/air/behavior-v3.feature",
+      "spec": "docs/product/behavior-spec.md#air-34--активный-фото-путь-и-восстановление"
     }
   ]
 }

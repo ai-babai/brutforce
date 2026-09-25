@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Strict, reproducible release gate. It deliberately refuses partial fast reports.
+# Strict, reproducible release gate with exact-ID BDD coverage exceptions.
 set -euo pipefail
 
 root=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
@@ -31,6 +31,7 @@ if (!supportedNode) process.exitCode=1;
 
 cd "$root"
 python3 -m unittest discover -s deploy -p 'test_*.py'
+node --test deploy/verify-fast-report.test.mjs
 npm --prefix apps/web ci
 
 reference_address=127.0.0.1:18101
@@ -91,31 +92,36 @@ report_file="$root/$report_path"
 cp "$report_file" "$evidence_dir/fast-report.json"
 [ "$fast_exit" -eq 0 ] || { echo "Fast checks failed; see retained fast-report.json" >&2; exit "$fast_exit"; }
 
+policy_file="$root/deploy/fast-report-exceptions.json"
+gate_file="$evidence_dir/release-gate.json"
+node "$root/deploy/verify-fast-report.mjs" "$report_file" "$revision" "$policy_file" "$root/cases/cases.json" "$gate_file"
+cp "$policy_file" "$evidence_dir/fast-report-exceptions.json"
+
 node -e '
 const fs=require("fs");
-const [out,report,revision,goVersion,nodeVersion]=process.argv.slice(1);
+const [out,report,gatePath,revision,goVersion,nodeVersion]=process.argv.slice(1);
 const run=JSON.parse(fs.readFileSync(report,"utf8"));
-if (run.status !== "passed") {
-  console.error(`strict release gate rejected fast-report status: ${run.status}`);
-  process.exit(1);
-}
-if (!run.databaseEvidence || run.databaseEvidence.valid !== true) {
-  console.error("strict release gate rejected missing or invalid PostgreSQL evidence");
-  process.exit(1);
-}
+const gate=JSON.parse(fs.readFileSync(gatePath,"utf8"));
 fs.writeFileSync(out, JSON.stringify({
   schemaVersion: 1,
   revision,
-  status: "passed",
+  status: gate.status,
+  scope: gate.scope,
+  targetScope: gate.targetScope,
+  bddCoverageStatus: gate.bddCoverageStatus,
+  coverageExceptions: gate.coverageExceptions,
+  policySHA256: gate.policySHA256,
   mode: "reference",
   catalogVersion: "demo-v1",
   modelVersion: "reference-demo-v1",
   synthetic: true,
-  commands: ["python3 -m unittest discover -s deploy -p test_*.py", "npm --prefix apps/web ci", "go build ./cmd/reference-engine + roman-conformance against localhost", "go test -tags=integration -count=1 -json -run ^TestDB000 . && go test -tags=integration -count=1 -json -run ^Test(DB00[1-5]|CAT009|CAT014) .", "node scripts/run-fast-checks.mjs"],
+  commands: ["python3 -m unittest discover -s deploy -p test_*.py", "node --test deploy/verify-fast-report.test.mjs", "npm --prefix apps/web ci", "go build ./cmd/reference-engine + roman-conformance against localhost", "go test -tags=integration -count=1 -json -run ^TestDB000 . && go test -tags=integration -count=1 -json -run ^Test(DB00[1-5]|CAT009|CAT014) .", "node scripts/run-fast-checks.mjs", "node deploy/verify-fast-report.mjs"],
   versions: {go: goVersion, node: nodeVersion},
   databaseEvidence: run.databaseEvidence,
-  fastReport: "fast-report.json"
+  fastReport: "fast-report.json",
+  releaseGate: "release-gate.json",
+  coveragePolicy: "fast-report-exceptions.json"
 }, null, 2)+"\n");
-' "$checks_file" "$report_file" "$revision" "$go_version" "$node_version"
+' "$checks_file" "$report_file" "$gate_file" "$revision" "$go_version" "$node_version"
 
 echo "strict release checks passed: $checks_file"

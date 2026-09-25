@@ -1,0 +1,759 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "BrutForce application API",
+    "version": "2.0.0",
+    "description": "Catalog may contain validated source records; reference recognition remains synthetic. Contest adapter is independent."
+  },
+  "paths": {
+    "/v1/health": {
+      "get": {
+        "operationId": "getHealth",
+        "summary": "Read synthetic demo health",
+        "responses": {
+          "200": {
+            "description": "Demo server is available.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Health"
+                }
+              }
+            }
+          },
+          "405": {
+            "$ref": "#/components/responses/APIError"
+          }
+        }
+      }
+    },
+    "/v2/catalog": {
+      "get": {
+        "operationId": "getCatalog",
+        "summary": "Read a bounded page of the canonical catalog",
+        "description": "Reads PostgreSQL when configured. Database failure returns 503 catalog_unavailable; no silent fallback.",
+        "responses": {
+          "200": {
+            "description": "Canonical catalog page; aliases excluded.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CatalogPage"
+                }
+              }
+            }
+          },
+          "405": {
+            "$ref": "#/components/responses/APIError"
+          },
+          "503": {
+            "$ref": "#/components/responses/APIError"
+          },
+          "400": {
+            "$ref": "#/components/responses/APIError"
+          },
+          "409": {
+            "$ref": "#/components/responses/APIError"
+          }
+        },
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 60,
+              "default": 24
+            }
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "description": "All normalized words match name, winery or exact numeric tokens, in any order. Word prefixes and one typo for words of at least five letters are supported. Results rank exact before prefix before typo, then canonical ID. Blank query lists by ID; see contracts/catalog-display.md.",
+            "schema": {
+              "type": "string",
+              "maxLength": 256
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Opaque query/version-bound cursor; stale returns409."
+          }
+        ]
+      }
+    },
+    "/v1/photos": {
+      "post": {
+        "operationId": "uploadPhoto",
+        "summary": "Store one private demo photo and return a receipt",
+        "description": "Accepts one bounded JPEG/PNG/GIF in multipart field photo and returns a private receipt. Configured search forwards stored image bytes to the internal engine, never a public photo URL.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "photo"
+                ],
+                "properties": {
+                  "photo": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "JPEG, PNG, or GIF; maximum 10 MiB."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Private receipt created.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PhotoReceipt"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/APIError"
+          },
+          "403": {
+            "$ref": "#/components/responses/APIError"
+          },
+          "415": {
+            "$ref": "#/components/responses/APIError"
+          },
+          "429": {
+            "$ref": "#/components/responses/APIError"
+          },
+          "503": {
+            "$ref": "#/components/responses/APIError"
+          },
+          "405": {
+            "$ref": "#/components/responses/APIError"
+          }
+        }
+      }
+    },
+    "/v1/search": {
+      "post": {
+        "operationId": "searchDemoCatalog",
+        "summary": "Run a synthetic catalog search",
+        "description": "Existing query/photoId request. With SEARCH_SERVICE_URL configured, delegates to search engine and validates/enriches ordered IDs from the catalog. query takes priority when both supplied. scenario cannot force synthetic results in configured mode. No fallback on dependency failure.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SearchRequest"
+              },
+              "example": {
+                "scenario": "exact",
+                "query": "каберне"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Synthetic search result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SearchResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/APIError"
+          },
+          "403": {
+            "$ref": "#/components/responses/APIError"
+          },
+          "404": {
+            "$ref": "#/components/responses/APIError"
+          },
+          "415": {
+            "$ref": "#/components/responses/APIError"
+          },
+          "429": {
+            "$ref": "#/components/responses/APIError"
+          },
+          "503": {
+            "$ref": "#/components/responses/APIError"
+          },
+          "405": {
+            "$ref": "#/components/responses/APIError"
+          },
+          "502": {
+            "$ref": "#/components/responses/APIError"
+          },
+          "504": {
+            "$ref": "#/components/responses/APIError"
+          },
+          "408": {
+            "$ref": "#/components/responses/APIError"
+          }
+        }
+      }
+    },
+    "/v1/eval/predict": {
+      "post": {
+        "operationId": "predictContestSlug",
+        "summary": "Return one recognizer-selected contest slug",
+        "description": "Accepts exactly one JPEG, PNG, GIF, or WebP file in multipart field `image`, determines its format by decoding bytes, and never writes it to the demo upload store. The default executable has no recognizer and returns recognition_unavailable.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "image"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "image": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "Maximum 10 MiB; maximum 25,000,000 pixels; format is determined from content."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Exact nonempty slug returned by the configured recognizer.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EvalPrediction"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/EvalError"
+          },
+          "403": {
+            "$ref": "#/components/responses/EvalError"
+          },
+          "405": {
+            "$ref": "#/components/responses/EvalError"
+          },
+          "408": {
+            "$ref": "#/components/responses/EvalError"
+          },
+          "415": {
+            "$ref": "#/components/responses/EvalError"
+          },
+          "429": {
+            "$ref": "#/components/responses/EvalError"
+          },
+          "503": {
+            "$ref": "#/components/responses/EvalError"
+          },
+          "504": {
+            "$ref": "#/components/responses/EvalError"
+          }
+        }
+      }
+    },
+    "/v1/recommendations": {
+      "post": {
+        "operationId": "getRecommendations",
+        "summary": "Get alternatives to a catalog wine",
+        "description": "Independent recommendation service; returns full catalog cards, excluding the source. Unconfigured service returns503. No automatic fallback. Failure does not make the wine card unavailable.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecommendationRequest"
+              },
+              "example": {
+                "wineId": "demo-cabernet-sauvignon-2023",
+                "limit": 3
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Ordered full cards, possibly empty.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SearchResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/APIError"
+          },
+          "404": {
+            "$ref": "#/components/responses/APIError"
+          },
+          "405": {
+            "$ref": "#/components/responses/APIError"
+          },
+          "429": {
+            "$ref": "#/components/responses/APIError"
+          },
+          "502": {
+            "$ref": "#/components/responses/APIError"
+          },
+          "503": {
+            "$ref": "#/components/responses/APIError"
+          },
+          "504": {
+            "$ref": "#/components/responses/APIError"
+          },
+          "408": {
+            "$ref": "#/components/responses/APIError"
+          }
+        }
+      }
+    },
+    "/v2/catalog/{slug}": {
+      "get": {
+        "operationId": "getWine",
+        "summary": "Resolve a canonical slug or legacy alias",
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Canonical card",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "demo",
+                    "candidate",
+                    "canonicalId"
+                  ],
+                  "properties": {
+                    "demo": {
+                      "type": "boolean"
+                    },
+                    "candidate": {
+                      "$ref": "#/components/schemas/Wine"
+                    },
+                    "canonicalId": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/APIError"
+          },
+          "503": {
+            "$ref": "#/components/responses/APIError"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "responses": {
+      "APIError": {
+        "description": "Structured synthetic-demo API error.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/APIError"
+            }
+          }
+        }
+      },
+      "EvalError": {
+        "description": "Structured contest adapter error.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/EvalError"
+            }
+          }
+        }
+      }
+    },
+    "schemas": {
+      "Health": {
+        "type": "object",
+        "required": [
+          "ok",
+          "demo"
+        ],
+        "properties": {
+          "ok": {
+            "const": true
+          },
+          "demo": {
+            "const": true
+          }
+        }
+      },
+      "SearchRequest": {
+        "type": "object",
+        "properties": {
+          "scenario": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "enum": [
+              null,
+              "",
+              "exact",
+              "uncertain",
+              "none",
+              "error"
+            ],
+            "default": "exact"
+          },
+          "query": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 256
+          },
+          "photoId": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "pattern": "^[0-9a-f]{32}$"
+          }
+        },
+        "additionalProperties": false
+      },
+      "SearchResponse": {
+        "$ref": "/api/schema/demo-search.schema.json"
+      },
+      "PhotoReceipt": {
+        "type": "object",
+        "required": [
+          "id",
+          "createdAt",
+          "bytes",
+          "mime",
+          "width",
+          "height"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{32}$"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "bytes": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "mime": {
+            "type": "string",
+            "enum": [
+              "image/jpeg",
+              "image/png",
+              "image/gif"
+            ]
+          },
+          "width": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "height": {
+            "type": "integer",
+            "minimum": 1
+          }
+        }
+      },
+      "APIError": {
+        "type": "object",
+        "required": [
+          "demo",
+          "candidates",
+          "error"
+        ],
+        "properties": {
+          "demo": {
+            "const": true
+          },
+          "candidates": {
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "error": {
+            "type": "object",
+            "required": [
+              "code",
+              "message"
+            ],
+            "properties": {
+              "code": {
+                "type": "string"
+              },
+              "message": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "EvalPrediction": {
+        "type": "object",
+        "required": [
+          "slug"
+        ],
+        "properties": {
+          "slug": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "additionalProperties": false
+      },
+      "EvalError": {
+        "type": "object",
+        "required": [
+          "error"
+        ],
+        "properties": {
+          "error": {
+            "type": "object",
+            "required": [
+              "code",
+              "message"
+            ],
+            "properties": {
+              "code": {
+                "type": "string"
+              },
+              "message": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "RecommendationRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "wineId"
+        ],
+        "properties": {
+          "wineId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 10,
+            "default": 5
+          }
+        }
+      },
+      "Wine": {
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "winery",
+          "image",
+          "description"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "winery": {
+            "type": "string"
+          },
+          "year": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "image": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "sourceUrl": {
+            "type": "string"
+          },
+          "sourceSnapshotDate": {
+            "type": "string"
+          },
+          "categoryAndSweetness": {
+            "type": "string"
+          },
+          "color": {
+            "type": "string"
+          },
+          "sugar": {
+            "type": "string"
+          },
+          "region": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "grapes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "alcoholPercent": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 100
+          },
+          "alcoholMinPercent": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 100
+          },
+          "alcoholMaxPercent": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 100
+          },
+          "volumeL": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          "ratings": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "kind",
+                "source_text"
+              ],
+              "properties": {
+                "kind": {
+                  "type": "string"
+                },
+                "source_text": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "imageVariants": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "role",
+                "path",
+                "width",
+                "height",
+                "mimeType",
+                "sha256",
+                "bytes"
+              ],
+              "properties": {
+                "role": {
+                  "enum": [
+                    "thumbnail",
+                    "card",
+                    "original"
+                  ]
+                },
+                "path": {
+                  "type": "string"
+                },
+                "width": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "height": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "bytes": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "mimeType": {
+                  "const": "image/webp"
+                },
+                "sha256": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                }
+              }
+            }
+          }
+        }
+      },
+      "CatalogPage": {
+        "type": "object",
+        "required": [
+          "demo",
+          "candidates",
+          "catalogVersion"
+        ],
+        "properties": {
+          "demo": {
+            "type": "boolean"
+          },
+          "candidates": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Wine"
+            }
+          },
+          "catalogVersion": {
+            "type": "string"
+          },
+          "nextCursor": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}
