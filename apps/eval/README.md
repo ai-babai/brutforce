@@ -96,8 +96,10 @@ from their recorded experiment output without modification.
 ```text
 data/
   images/<neutral-id>.jpg
-  baskets/v1.json
-  private/gold-v1.json
+  baskets/v1.json                  # immutable historical suite
+  baskets/v2.json                  # corrected independent version
+  private/gold-v1.json             # immutable historical gold
+  private/gold-v2.json             # corrected private gold
   catalog/slugs.json                 # optional public allowed-candidates snapshot
   runs.jsonl                         # created on first submit
 ```
@@ -107,6 +109,54 @@ Public suite JSON: `version`, `suite_hash`, `gold_hash`, optional `catalog_path`
 Private gold JSON: `version`, `suite_hash`, `cases[]`. Each gold case has `case_id`, `verified`, optional `ungraded_reason`, and a track object. Service track: `{"expected_action":"match","expected_slug":"..."}` or `{"expected_action":"no_match"}` or `{"expected_action":"insufficient_information"}`. Retrieval track: `{"expected_slug":"..."}`. An unverified case needs `ungraded_reason`; omit its answer. Provenance and reviewer evidence are private. Empty/ungraded baskets remain in the UI and receive no fabricated pass.
 
 To build a suite, first write both JSON files with empty hashes. `seal -data DIR` fills `gold_hash` as SHA-256 of Go JSON encoding of gold with `suite_hash` empty; then fills `suite_hash` as SHA-256 of Go JSON encoding of public suite with `suite_hash` empty and `gold_hash` populated. It validates all image/catalog bytes. Do this only before the first run. Updating either file requires a new suite version.
+
+Use `seal -data DIR -version v2` for v2. Sealing an already sealed version fails.
+The server loads and verifies every `baskets/*.json` with its matching
+`private/gold-<version>.json` at startup; a missing or invalid version prevents
+startup. `/api/baskets` lists all versions, while case, catalog, and archive routes
+select the version in their URL. Historical reports retain their original suite
+version and scores.
+
+### Corrected v2 (25 September 2026)
+
+v2 preserves all 213 v1 cases, image bytes, basket assignments, and catalog
+snapshot. It changes 20 verified Balaklava Muscat targets (13 service, 7
+retrieval) to `balaklava-muskat-beloe-polusladkoe` under the reviewed frozen-v1
+erratum. Ten previously ungraded dense-shelf cases remain ungraded. This is a
+local diagnostic correction, not an organizer answer key. The separate
+organizer-real-086 out-of-catalog finding is not a frozen suite case and does
+not add a negative target to v2.
+
+The v2 public suite hash is
+`0691d98b19d92647a41fe4fccd92a36ab23255c02ed65c37830d38a15f379daa`;
+its private gold hash is
+`e8d045547d6180dd863e63b40bd57f7be80313ac00a8fcf8406d39c089473ce4`.
+Before the combined service release, copy the sealed files from
+`/srv/lct/data/eval-v2-stage/baskets/v2.json` and
+`/srv/lct/data/eval-v2-stage/private/gold-v2.json` to the corresponding
+directories under `/srv/lct/data/eval/`. Keep v1 and `runs.jsonl` unchanged.
+The staging `images/` and `catalog/` symlinks point at the existing public
+bytes; they are not part of the deployment.
+
+Public input export is separate from private scoring:
+
+```sh
+python3 scripts/suite_io.py export --version v2 --output /tmp/lct-eval-v2.zip
+# Run both model revisions against this same archive, giving each a unique ID.
+./lct-eval run -source archive -archive /tmp/lct-eval-v2.zip -suite-version v2 \
+  -track service -endpoint http://127.0.0.1:8080/v1/eval/predict -no-submit \
+  -output /private/original-v2-service.json \
+  -submission-id original-v2-service -solution original -solution-version 1
+# Run the changed revision with the same archive and its own ID/output.
+# Transfer only the prediction JSON to the trusted scoring environment.
+LCT_EVAL_PARTICIPANT_TOKEN=... python3 scripts/suite_io.py score --input /private/original-v2-service.json
+```
+
+The archive contains public inputs, never gold. `score` checks the suite
+version/hash before submitting predictions. `run -no-submit` needs no scoring
+token or server URL when using an archive. Without that flag, `run` also posts
+the predictions. The runner's `-suite-version v2` selects v2 from the API
+source. Keep private scoring credentials and answers off inference hosts.
 
 ## API
 

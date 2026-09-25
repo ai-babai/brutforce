@@ -1,12 +1,13 @@
 const basePath=new URL('.',document.currentScript.src).pathname;
 const $=s=>document.querySelector(s), esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-let suite=null, runs=[], imageURLs=new Map(), imagePromises=new Map();
+let suite=null, suites=[], runs=[], allRuns=[], imageURLs=new Map(), imagePromises=new Map();
 async function api(path,options={}){const r=await fetch(basePath+path.replace(/^\//,''),options);if(!r.ok)throw new Error(`${r.status} ${await r.text()}`);return r}
 function badge(c){return `<span class="badge ${esc(c.origin_kind)}">${esc(c.origin_kind)}</span>${c.reference_derived?'<span class="badge ref">из каталожного референса</span>':''}`}
 async function image(caseID,img){
-  if(imageURLs.has(caseID)){img.alt=caseID;img.src=imageURLs.get(caseID);return}
-  if(!imagePromises.has(caseID))imagePromises.set(caseID,(async()=>{let r=await api(`/api/baskets/${suite.version}/cases/${encodeURIComponent(caseID)}/image`);let u=URL.createObjectURL(await r.blob());imageURLs.set(caseID,u);return u})());
-  try{const url=await imagePromises.get(caseID);img.alt=caseID;img.src=url}catch(e){img.alt='Изображение недоступно';imagePromises.delete(caseID)}
+  const key=`${suite.version}:${suite.suite_hash}:${caseID}`,version=suite.version;
+  if(imageURLs.has(key)){img.alt=caseID;img.src=imageURLs.get(key);return}
+  if(!imagePromises.has(key))imagePromises.set(key,(async()=>{let r=await api(`/api/baskets/${version}/cases/${encodeURIComponent(caseID)}/image`);let u=URL.createObjectURL(await r.blob());imageURLs.set(key,u);return u})());
+  try{const url=await imagePromises.get(key);img.alt=caseID;img.src=url}catch(e){img.alt='Изображение недоступно';imagePromises.delete(key)}
 }
 const imageObserver='IntersectionObserver' in window?new IntersectionObserver(entries=>{for(const entry of entries){if(entry.isIntersecting){imageObserver.unobserve(entry.target);image(entry.target.dataset.img,entry.target)}}},{rootMargin:'500px'}):null;
 function groupCount(cases){return new Set(cases.map(c=>c.scene_group_id).filter(Boolean)).size}
@@ -89,5 +90,26 @@ function showRun(id){
   const r=runs.find(x=>x.run_id===id), ranking=r.submission.track==='retrieval';
   openDetail(`<h2>${esc(r.run_id)}</h2><p>${esc(r.submission.solution.name)} ${esc(r.submission.solution.version)} · ${esc(r.submission.track)} · ${esc(r.received_at)}</p><div class="summary"><div class="stat"><strong>${ratio(r.overall)}</strong>top-1 / оценено</div>${ranking?`<div class="stat"><strong>${r.overall.correct_top5}/${r.overall.graded}</strong>top-5</div><div class="stat"><strong>${r.overall.correct_top20}/${r.overall.graded}</strong>top-20</div><div class="stat"><strong>${r.overall.mrr.toFixed(3)}</strong>MRR</div>`:''}</div><h3>По происхождению</h3>${statTable(r.by_origin,r.submission.track)}<h3>Независимость от каталога</h3>${statTable(r.by_reference,r.submission.track)}<p>Пропущено: ${r.overall.missing}. Без оценки: ${r.overall.ungraded}. Независимых групп сцен: ${r.unique_scene_groups}.</p>`);
 }
-async function load(){try{suite=(await(await api('/api/baskets')).json())[0];runs=await(await api('/api/runs')).json();$('#suite').textContent=`Версия ${suite.version} · ${suite.suite_hash.slice(0,12)}…`;$('#role').textContent='публичный просмотр';statsHTML();renderGallery();renderMatrix()}catch(e){$('#notice').textContent=`Не удалось загрузить данные: ${e.message}`}}
+function selectSuite(version){
+  suite=suites.find(s=>s.version===version);
+  if(!suite)return;
+  runs=allRuns.filter(r=>r.submission?.suite_version===suite.version&&r.submission?.suite_hash===suite.suite_hash);
+  $('#suite-version').value=suite.version;
+  $('#suite').textContent=`SHA ${suite.suite_hash.slice(0,12)}…`;
+  $('#header-version').textContent=`Открытый стенд · ${suite.version}`;
+  $('#role').textContent='публичный просмотр';
+  if($('#detail').open)$('#detail').close();
+  statsHTML();renderGallery();renderMatrix();
+}
+async function load(){try{
+  suites=await(await api('/api/baskets')).json();
+  if(!suites.length)throw new Error('Нет доступных версий корзин');
+  allRuns=await(await api('/api/runs')).json();
+  suites.sort((a,b)=>b.version.localeCompare(a.version,undefined,{numeric:true}));
+  const picker=$('#suite-version');
+  picker.replaceChildren(...suites.map(s=>new Option(s.version,s.version)));
+  const requested=new URLSearchParams(location.search).get('suite');
+  selectSuite(suites.some(s=>s.version===requested)?requested:suites[0].version);
+  picker.onchange=()=>{selectSuite(picker.value);const url=new URL(location.href);url.searchParams.set('suite',picker.value);history.replaceState(null,'',url)};
+}catch(e){$('#notice').textContent=`Не удалось загрузить данные: ${e.message}`}}
 document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{document.querySelectorAll('[data-tab]').forEach(x=>x.classList.remove('active'));b.classList.add('active');$('#gallery').hidden=b.dataset.tab!=='gallery';$('#matrix').hidden=b.dataset.tab!=='matrix';if($('#detail').open)$('#detail').close()});$('#download').onclick=async()=>{try{let r=await api(`/api/baskets/${suite.version}/download`);let u=URL.createObjectURL(await r.blob());let a=document.createElement('a');a.href=u;a.download=`lct-eval-${suite.version}.zip`;a.click();setTimeout(()=>URL.revokeObjectURL(u),30000)}catch(e){alert(e.message)}};load();

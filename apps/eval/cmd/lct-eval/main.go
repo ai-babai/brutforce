@@ -16,6 +16,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"sort"
 	"strings"
 	"sync"
 	"time"
@@ -28,6 +29,8 @@ type app struct {
 	vision              *visionCatalog
 	suite               eval.Suite
 	gold                eval.Gold
+	suites              map[string]eval.Suite
+	golds               map[string]eval.Gold
 	participant, review string
 	mu                  sync.Mutex
 	runs                map[string]eval.Report
@@ -55,18 +58,25 @@ func fatal(s string) { fmt.Fprintln(os.Stderr, s); os.Exit(1) }
 func seal(args []string) {
 	fs := flag.NewFlagSet("seal", flag.ExitOnError)
 	root := fs.String("data", "", "suite data directory")
+	version := fs.String("version", "v1", "suite version to seal")
 	fs.Parse(args)
 	if *root == "" {
 		fatal("-data required")
 	}
-	sp := filepath.Join(*root, "baskets", "v1.json")
-	gp := filepath.Join(*root, "private", "gold-v1.json")
+	if !eval.ValidateID(*version) {
+		fatal("invalid suite version")
+	}
+	sp := filepath.Join(*root, "baskets", *version+".json")
+	gp := filepath.Join(*root, "private", "gold-"+*version+".json")
 	var s eval.Suite
 	var g eval.Gold
 	readJSONFile(sp, &s)
 	readJSONFile(gp, &g)
-	if s.Version == "" || g.Version != s.Version {
+	if s.Version != *version || g.Version != *version {
 		fatal("version mismatch")
+	}
+	if s.Hash != "" || s.GoldHash != "" || g.Hash != "" {
+		fatal("suite is already sealed; create a new version")
 	}
 	g.Hash = ""
 	s.Hash = ""
@@ -128,15 +138,13 @@ func serve(args []string) {
 	if participant == "" || review == "" || participant == review {
 		fatal("set distinct LCT_EVAL_PARTICIPANT_TOKEN and LCT_EVAL_REVIEW_TOKEN")
 	}
-	s, e := eval.LoadSuite(filepath.Join(*root, "baskets", "v1.json"))
+	suites, golds, e := loadVersions(*root)
 	if e != nil {
 		fatal(e.Error())
 	}
-	g, e := eval.LoadGold(filepath.Join(*root, "private", "gold-v1.json"), s)
-	if e != nil {
-		fatal(e.Error())
-	}
-	a := &app{root: *root, suite: s, gold: g, participant: participant, review: review, runs: map[string]eval.Report{}, runsPath: filepath.Join(*root, "runs.jsonl")}
+	s := suites["v1"]
+	g := golds["v1"]
+	a := &app{root: *root, suite: s, gold: g, suites: suites, golds: golds, participant: participant, review: review, runs: map[string]eval.Report{}, runsPath: filepath.Join(*root, "runs.jsonl")}
 	if *visionRoot != "" {
 		if sameOrNestedRoot(*root, *visionRoot) {
 			fatal("-vision-data must be separate from the sealed evaluation data")
@@ -172,8 +180,41 @@ func serve(args []string) {
 	mux.Handle("GET /data/", http.StripPrefix("/data/", http.FileServer(http.Dir(filepath.Join(*web, "gallery")))))
 	mux.Handle("/", http.FileServer(http.Dir(*web)))
 	srv := &http.Server{Addr: *addr, Handler: mux, ReadHeaderTimeout: 5 * time.Second, MaxHeaderBytes: 1 << 16}
-	log.Printf("lct-eval listening %s suite=%s cases=%d", *addr, s.Hash, len(s.Cases))
+	log.Printf("lct-eval listening %s suites=%d", *addr, len(suites))
 	log.Fatal(srv.ListenAndServe())
+}
+func loadVersions(root string) (map[string]eval.Suite, map[string]eval.Gold, error) {
+	paths, e := filepath.Glob(filepath.Join(root, "baskets", "*.json"))
+	if e != nil {
+		return nil, nil, e
+	}
+	if len(paths) == 0 {
+		return nil, nil, errors.New("no suite manifests")
+	}
+	suites := map[string]eval.Suite{}
+	golds := map[string]eval.Gold{}
+	for _, path := range paths {
+		version := strings.TrimSuffix(filepath.Base(path), ".json")
+		if !eval.ValidateID(version) {
+			return nil, nil, fmt.Errorf("invalid suite filename %s", path)
+		}
+		s, e := eval.LoadSuite(path)
+		if e != nil {
+			return nil, nil, e
+		}
+		if s.Version != version {
+			return nil, nil, fmt.Errorf("suite filename/version mismatch: %s", path)
+		}
+		g, e := eval.LoadGold(filepath.Join(root, "private", "gold-"+version+".json"), s)
+		if e != nil {
+			return nil, nil, e
+		}
+		suites[version], golds[version] = s, g
+	}
+	if _, ok := suites["v1"]; !ok {
+		return nil, nil, errors.New("v1 suite required for historical runs")
+	}
+	return suites, golds, nil
 }
 func (a *app) role(r *http.Request) string {
 	h := strings.TrimPrefix(r.Header.Get("Authorization"), "Bearer ")
@@ -209,28 +250,50 @@ func (a *app) authInfo(w http.ResponseWriter, r *http.Request) {
 	jsonOut(w, 200, map[string]string{"role": role})
 }
 func (a *app) baskets(w http.ResponseWriter, r *http.Request) {
-	jsonOut(w, 200, []eval.Suite{a.suite})
-}
-func (a *app) versionOK(w http.ResponseWriter, r *http.Request) bool {
-	if r.PathValue("version") != a.suite.Version {
-		http.NotFound(w, r)
-		return false
+	versions := make([]string, 0, len(a.suites))
+	for v := range a.suites {
+		versions = append(versions, v)
 	}
-	return true
+	if len(versions) == 0 {
+		jsonOut(w, 200, []eval.Suite{a.suite})
+		return
+	}
+	sort.Strings(versions)
+	out := make([]eval.Suite, 0, len(versions))
+	for _, v := range versions {
+		out = append(out, a.suites[v])
+	}
+	jsonOut(w, 200, out)
 }
-func (a *app) lookupCase(id string) *eval.Case {
-	for i := range a.suite.Cases {
-		if a.suite.Cases[i].ID == id {
-			return &a.suite.Cases[i]
+func (a *app) suiteFor(version string) (eval.Suite, eval.Gold, bool) {
+	if len(a.suites) == 0 {
+		return a.suite, a.gold, version == a.suite.Version
+	}
+	s, ok := a.suites[version]
+	return s, a.golds[version], ok
+}
+func (a *app) versionOK(w http.ResponseWriter, r *http.Request) (eval.Suite, bool) {
+	s, _, ok := a.suiteFor(r.PathValue("version"))
+	if !ok {
+		http.NotFound(w, r)
+		return eval.Suite{}, false
+	}
+	return s, true
+}
+func lookupCase(s eval.Suite, id string) *eval.Case {
+	for i := range s.Cases {
+		if s.Cases[i].ID == id {
+			return &s.Cases[i]
 		}
 	}
 	return nil
 }
 func (a *app) caseInfo(w http.ResponseWriter, r *http.Request) {
-	if !a.versionOK(w, r) {
+	s, ok := a.versionOK(w, r)
+	if !ok {
 		return
 	}
-	c := a.lookupCase(r.PathValue("id"))
+	c := lookupCase(s, r.PathValue("id"))
 	if c == nil {
 		http.NotFound(w, r)
 		return
@@ -238,10 +301,11 @@ func (a *app) caseInfo(w http.ResponseWriter, r *http.Request) {
 	jsonOut(w, 200, c)
 }
 func (a *app) image(w http.ResponseWriter, r *http.Request) {
-	if !a.versionOK(w, r) {
+	s, ok := a.versionOK(w, r)
+	if !ok {
 		return
 	}
-	c := a.lookupCase(r.PathValue("id"))
+	c := lookupCase(s, r.PathValue("id"))
 	if c == nil {
 		http.NotFound(w, r)
 		return
@@ -250,30 +314,32 @@ func (a *app) image(w http.ResponseWriter, r *http.Request) {
 	http.ServeFile(w, r, filepath.Join(a.root, filepath.FromSlash(c.ImagePath)))
 }
 func (a *app) catalog(w http.ResponseWriter, r *http.Request) {
-	if !a.versionOK(w, r) {
+	s, ok := a.versionOK(w, r)
+	if !ok {
 		return
 	}
-	if a.suite.CatalogPath == "" {
+	if s.CatalogPath == "" {
 		http.NotFound(w, r)
 		return
 	}
-	http.ServeFile(w, r, filepath.Join(a.root, filepath.FromSlash(a.suite.CatalogPath)))
+	http.ServeFile(w, r, filepath.Join(a.root, filepath.FromSlash(s.CatalogPath)))
 }
 func (a *app) download(w http.ResponseWriter, r *http.Request) {
-	if !a.versionOK(w, r) {
+	s, ok := a.versionOK(w, r)
+	if !ok {
 		return
 	}
 	w.Header().Set("Content-Type", "application/zip")
-	w.Header().Set("Content-Disposition", "attachment; filename=\"lct-eval-"+a.suite.Version+".zip\"")
+	w.Header().Set("Content-Disposition", "attachment; filename=\"lct-eval-"+s.Version+".zip\"")
 	w.Header().Set("Cache-Control", "no-store")
 	z := zip.NewWriter(w)
 	defer z.Close()
-	paths := []string{"baskets/" + a.suite.Version + ".json"}
-	if a.suite.CatalogPath != "" {
-		paths = append(paths, a.suite.CatalogPath)
+	paths := []string{"baskets/" + s.Version + ".json"}
+	if s.CatalogPath != "" {
+		paths = append(paths, s.CatalogPath)
 	}
 	seen := map[string]bool{}
-	for _, c := range a.suite.Cases {
+	for _, c := range s.Cases {
 		paths = append(paths, c.ImagePath)
 	}
 	for _, p := range paths {
@@ -354,7 +420,12 @@ func (a *app) submit(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "trailing JSON", 400)
 		return
 	}
-	report, e := eval.Score(a.suite, a.gold, sub)
+	s, g, ok := a.suiteFor(sub.SuiteVersion)
+	if !ok {
+		http.Error(w, "unknown suite version", 400)
+		return
+	}
+	report, e := eval.Score(s, g, sub)
 	if e != nil {
 		http.Error(w, e.Error(), 400)
 		return
@@ -372,7 +443,7 @@ func (a *app) submit(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "submission_id conflict", 409)
 			return
 		}
-		jsonOut(w, 200, sanitize(old, a.role(r) == "review", a.gold, sub.Track))
+		jsonOut(w, 200, sanitize(old, a.role(r) == "review", g, sub.Track))
 		return
 	}
 	report.ReceivedAt = time.Now().UTC().Format(time.RFC3339Nano)
@@ -400,7 +471,7 @@ func (a *app) submit(w http.ResponseWriter, r *http.Request) {
 	}
 	a.runs[sub.ID] = report
 	a.order = append(a.order, sub.ID)
-	jsonOut(w, 201, sanitize(report, a.role(r) == "review", a.gold, sub.Track))
+	jsonOut(w, 201, sanitize(report, a.role(r) == "review", g, sub.Track))
 }
 func sanitize(rep eval.Report, review bool, g eval.Gold, track string) eval.Report {
 	if !review {
@@ -448,7 +519,10 @@ func (a *app) listRuns(w http.ResponseWriter, r *http.Request) {
 	for _, id := range a.order {
 		rep := a.runs[id]
 		if role := a.role(r); role == "review" {
-			rep = sanitize(rep, true, a.gold, rep.Submission.Track)
+			_, g, ok := a.suiteFor(rep.Submission.SuiteVersion)
+			if ok {
+				rep = sanitize(rep, true, g, rep.Submission.Track)
+			}
 		} else if role == "" {
 			rep = publicReport(rep)
 		}
@@ -465,7 +539,10 @@ func (a *app) run(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if role := a.role(r); role == "review" {
-		rep = sanitize(rep, true, a.gold, rep.Submission.Track)
+		_, g, ok := a.suiteFor(rep.Submission.SuiteVersion)
+		if ok {
+			rep = sanitize(rep, true, g, rep.Submission.Track)
+		}
 	} else if role == "" {
 		rep = publicReport(rep)
 	}

@@ -15,23 +15,23 @@
 <p>Чтение корзин, изображений, галереи, отчётов и пакета доступно без пароля. Для <code>POST /api/submissions</code> нужен токен участника в заголовке Bearer; значение не записывайте в код или отчёты. Для частного разбора эталона нужен отдельный токен. Сервис получает их из <code>/etc/lct-eval.env</code> через переменные окружения <code>LCT_EVAL_PARTICIPANT_TOKEN</code> и <code>LCT_EVAL_REVIEW_TOKEN</code>. Для авторизованных агентов участнический токен находится в <code>/srv/lct/eval-access/participant.env</code>; токен разбора — в <code>/srv/lct/eval-access/review.token</code>. Эти файлы не раздаются через сайт и не входят в архив. Не помещайте токен в URL или файл submission.</p>
 <pre>BASE='https://cv.ops.dzap.pw'
 curl "$BASE/api/baskets"
-curl "$BASE/api/baskets/v1/download" -o lct-eval-v1.zip
+curl "$BASE/api/baskets/v2/download" -o lct-eval-v2.zip
 # Только перед отправкой результата:
 export LCT_EVAL_PARTICIPANT_TOKEN='&lt;ваш токен&gt;'</pre>
 <p>Архив содержит публичный манифест, изображения и при наличии список допустимых slug. В нём нет правильных ответов. Хеш каждого изображения и suite_hash связывают прогон с точной версией. На сервере бинарник находится в <code>/srv/lct/maks/eval/current/lct-eval</code>, набор — в <code>/srv/lct/data/eval</code>, а процесс запускается unit <code>lct-eval.service</code>. Права на файлы доступа назначает оператор; если доступа к ним нет, запросите токен у него.</p>
 <h3>PowerShell</h3><pre>$base = 'https://cv.ops.dzap.pw'
 Invoke-RestMethod "$base/api/baskets"
-Invoke-WebRequest "$base/api/baskets/v1/download" -OutFile lct-eval-v1.zip
+Invoke-WebRequest "$base/api/baskets/v2/download" -OutFile lct-eval-v2.zip
 # Только перед отправкой результата:
 $env:LCT_EVAL_PARTICIPANT_TOKEN = Read-Host 'Participant token'</pre></section>
 <section class="panel"><h2>3. Запустите решение</h2>
 <p>Решение принимает <code>POST /v1/eval/predict</code> с multipart-полем <code>image</code>. Официальный контракт принимает HTTP 200/201 и JSON <code>{"slug":"..."}</code> либо первый элемент массива <code>[{"slug":"..."}]</code>. Для диагностического retrieval можно вернуть <code>{"ranked_slugs":["...","..."]}</code>. Лимит подключения 5 секунд, весь запрос — 10 секунд.</p>
-<pre>lct-eval run -source api -base "$BASE" -track service \
+<pre>lct-eval run -suite-version v2 -source api -base "$BASE" -track service \
   -endpoint http://127.0.0.1:8080/v1/eval/predict \
   -submission-id my-service-001 -solution my-model -solution-version 0.1 \
   -commit abc123 -config-hash cfg1 -weights-version w1 -catalog-version c1
 
-lct-eval run -source archive -archive lct-eval-v1.zip -base "$BASE" \
+lct-eval run -suite-version v2 -source archive -archive lct-eval-v2.zip -base "$BASE" \
   -track retrieval -endpoint http://127.0.0.1:8080/v1/eval/predict \
   -submission-id my-retrieval-001 -solution my-model -solution-version 0.1</pre>
 <p>Для одной корзины добавьте <code>-baskets IMG-09</code>. Клиент проверяет SHA-256 входов, фиксирует ошибки и таймауты, отправляет фактические предсказания. Неполный submit допустим: пропущенные проверенные кейсы остаются в знаменателе.</p></section>
@@ -40,7 +40,7 @@ lct-eval run -source archive -archive lct-eval-v1.zip -base "$BASE" \
 <pre>cat &gt; submission.json &lt;&lt;'JSON'
 {
   "submission_id":"my-service-002",
-  "suite_version":"v1",
+  "suite_version":"v2",
   "suite_hash":"&lt;suite_hash из манифеста&gt;",
   "track":"service",
   "basket_ids":["IMG-09"],
@@ -68,5 +68,5 @@ curl "$BASE/api/runs/my-service-002"</pre>
 <p>Начните с <code>/srv/lct/AGENTS.md</code>, затем <code>/srv/lct/data/README.md</code>. Постоянные правила: <code>/srv/lct/guide/docs/agent-guide/DATA-RULES.md</code>. В репозитории к ним ведут <code>AGENTS.md</code> и <code>MAP.md</code>.</p>
 <p>Различайте исправность файла, фото для карточки, визуальный эталон ML и правильный ответ теста. Спорный эталон не возвращается в индекс через резервный архив. Исправления версионируются с причиной и SHA; старые прогоны не переписываются. Неоднозначные ответы видны в покрытии, но не подменяются догадками.</p>
 <p>100 реальных фотографий организаторов проверены отдельным набором меток: 54 однозначных ответа, 3 неоднозначных, 43 без разрешённой связи с каталогом. Это локальная проверка, не официальный ключ. Закрытые метки никогда не передаются решению или на inference-сервер. В публичные отчёты попадают только разрешённые агрегаты.</p>
-<p><strong>Erratum frozen v1:</strong> 25 сентября исправлены ответы для 13 service и 7 retrieval случаев одного вина. Старый API и матрица сохраняют исторические оценки; для новых выводов нужен <a href="/data/detectors.html#gold-erratum">отдельный исправленный пересчёт</a>. Reviewer-инструмент <code>tools/organizer-audit/correct_frozen_report.py</code> применяет закрытый <code>/srv/lct/data/vision-retrieval/20260925/annotation/frozen-v1-errata.json</code> только после получения предсказаний. Он проверяет SHA исходных файлов и не меняет историю. Не обучайте и не настраивайте решение по ошибочному старому ответу.</p></section><section class="panel"><h2>9. Требования организаторов</h2><p><a href="/requirements.html">Вводные и источники</a>: ТЗ, ответы Telegram, HTTP-контракт и открытые вопросы. Конкурсный ответ, рекомендации приложения и диагностические метрики разделены. Архив исходников расположен вне публичного сайта.</p></section></main><footer>Исходный контракт и протокол работы — README.md и AGENTS.md в репозитории сервиса.</footer>
+<p><strong>Erratum frozen v1:</strong> 25 сентября исправлены ответы для 13 service и 7 retrieval случаев одного вина. API и матрица сохраняют исторические оценки v1. Для новых прогонов выбирайте <strong>v2</strong> (те же 213 изображений, исправленный эталон). Переключатель версии не смешивает прогоны с разными suite_hash. Для старых предсказаний доступен <a href="/data/detectors.html#gold-erratum">отдельный исправленный пересчёт</a>. Reviewer-инструмент <code>tools/organizer-audit/correct_frozen_report.py</code> применяет закрытый <code>/srv/lct/data/vision-retrieval/20260925/annotation/frozen-v1-errata.json</code> только после получения предсказаний. Он проверяет SHA исходных файлов и не меняет историю. Не обучайте и не настраивайте решение по ошибочному старому ответу.</p></section><section class="panel"><h2>9. Требования организаторов</h2><p><a href="/requirements.html">Вводные и источники</a>: ТЗ, ответы Telegram, HTTP-контракт и открытые вопросы. Конкурсный ответ, рекомендации приложения и диагностические метрики разделены. Архив исходников расположен вне публичного сайта.</p></section></main><footer>Исходный контракт и протокол работы — README.md и AGENTS.md в репозитории сервиса.</footer>
 </body></html>

@@ -29,3 +29,8 @@ Runtime copies: `/srv/lct/data/vision/README.md` and `/srv/lct/data/vision-basel
 
 Organizer requirements: `../../docs/project/REQUIREMENTS.md`, hosted `/requirements.html`.
 Public mirror `web/gallery/requirements-data.json` must match `docs/project/requirements.json`.
+
+New runs use `-suite-version v2`; keep v1 for historical replay. UI selects v2 by default.
+Never compare or combine runs across suite_version/suite_hash without an explicit rescore.
+For an untrusted inference host, use `run -no-submit -output FILE`: no gold or scoring token there.
+Submit the resulting predictions from the trusted host with `scripts/suite_io.py score`.

@@ -45,3 +45,5 @@ PostgreSQL продукта, SQL-миграции, disposable DB, единая �
 ## Вводные соревнования
 
 [Требования и источники](REQUIREMENTS.md) · [реестр](requirements.json) · [Ops](https://cv.ops.dzap.pw/requirements.html).
+
+[Живой план, статусы и история решений](PLAN.md).

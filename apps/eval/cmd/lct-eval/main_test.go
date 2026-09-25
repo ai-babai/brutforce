@@ -69,6 +69,53 @@ func request(t *testing.T, h http.Handler, method, path, token string, body []by
 func testSubmission(s eval.Suite) eval.Submission {
 	return eval.Submission{ID: "run-1", SuiteVersion: s.Version, SuiteHash: s.Hash, Track: "service", BasketIDs: []string{"IMG-01"}, Solution: eval.Solution{Name: "model", Version: "1"}, Results: []eval.Result{{CaseID: "IMG-01-001", Status: "ok", Prediction: eval.Prediction{Slug: "wrong"}}}}
 }
+func TestSecondSuiteUsesItsOwnGoldAndKeepsV1(t *testing.T) {
+	a, mux := testApp(t)
+	v1Bytes, _ := os.ReadFile(filepath.Join(a.root, "baskets", "v1.json"))
+	s2 := a.suite
+	var g2 eval.Gold
+	copyGold, _ := json.Marshal(a.gold)
+	json.Unmarshal(copyGold, &g2)
+	s2.Version, s2.Hash, s2.GoldHash = "v2", "", ""
+	g2.Version, g2.Hash = "v2", ""
+	g2.Cases[0].Service.ExpectedSlug = "corrected-slug"
+	s2.GoldHash, _ = eval.ComputeGoldHash(g2)
+	s2.Hash, _ = eval.ComputeHash(s2)
+	g2.Hash = s2.Hash
+	b, _ := json.Marshal(s2)
+	os.WriteFile(filepath.Join(a.root, "baskets", "v2.json"), b, 0600)
+	b, _ = json.Marshal(g2)
+	os.WriteFile(filepath.Join(a.root, "private", "gold-v2.json"), b, 0600)
+	var e error
+	a.suites, a.golds, e = loadVersions(a.root)
+	if e != nil {
+		t.Fatal(e)
+	}
+	w := request(t, mux, "GET", "/api/baskets", "", nil)
+	if w.Code != 200 || !strings.Contains(w.Body.String(), `"version":"v2"`) {
+		t.Fatalf("versions: %d %s", w.Code, w.Body.String())
+	}
+	w = request(t, mux, "GET", "/api/baskets/v2/download", "", nil)
+	if w.Code != 200 || bytes.Contains(w.Body.Bytes(), []byte("corrected-slug")) {
+		t.Fatalf("v2 public archive: %d", w.Code)
+	}
+	sub := testSubmission(s2)
+	sub.ID = "run-v2"
+	sub.Results[0].Prediction.Slug = "corrected-slug"
+	b, _ = json.Marshal(sub)
+	w = request(t, mux, "POST", "/api/submissions", "participant-secret", b)
+	if w.Code != 201 || !strings.Contains(w.Body.String(), `"correct_top1":1`) {
+		t.Fatalf("v2 score: %d %s", w.Code, w.Body.String())
+	}
+	w = request(t, mux, "GET", "/api/runs/run-v2", "review-secret", nil)
+	if !strings.Contains(w.Body.String(), "corrected-slug") {
+		t.Fatal("review did not use v2 gold")
+	}
+	still, _ := os.ReadFile(filepath.Join(a.root, "baskets", "v1.json"))
+	if !bytes.Equal(v1Bytes, still) {
+		t.Fatal("v1 suite changed")
+	}
+}
 func TestPrivacyIdempotencyAndPersistence(t *testing.T) {
 	a, mux := testApp(t)
 	w := request(t, mux, "GET", "/api/baskets", "", nil)

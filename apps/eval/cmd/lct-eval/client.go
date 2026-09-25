@@ -25,6 +25,7 @@ import (
 func runClient(args []string) {
 	fs := flag.NewFlagSet("run", flag.ExitOnError)
 	mode := fs.String("source", "api", "api or archive")
+	suiteVersion := fs.String("suite-version", "v1", "suite version for API source")
 	base := fs.String("base", "", "evaluation URL, e.g. https://host/vision")
 	archive := fs.String("archive", "", "downloaded suite ZIP for archive mode")
 	token := fs.String("token", "", "participant token, defaults to LCT_EVAL_PARTICIPANT_TOKEN")
@@ -40,14 +41,18 @@ func runClient(args []string) {
 	catalogVersion := fs.String("catalog-version", "", "catalog version")
 	by := fs.String("by", "agent", "display name")
 	output := fs.String("output", "", "optional submission JSON path")
+	noSubmit := fs.Bool("no-submit", false, "write predictions without posting to the scoring server (requires -output)")
 	fs.Parse(args)
-	if *base == "" || *id == "" || *solution == "" || *solVersion == "" {
-		fatal("-base -submission-id -solution -solution-version required")
+	if *id == "" || *solution == "" || *solVersion == "" || (*base == "" && (*mode == "api" || !*noSubmit)) {
+		fatal("-submission-id -solution -solution-version required; -base required for API source or submission")
+	}
+	if *noSubmit && *output == "" {
+		fatal("-no-submit requires -output")
 	}
 	if *token == "" {
 		*token = os.Getenv("LCT_EVAL_PARTICIPANT_TOKEN")
 	}
-	if *token == "" {
+	if *token == "" && !*noSubmit {
 		fatal("token required")
 	}
 	baseURL := strings.TrimRight(*base, "/")
@@ -61,10 +66,15 @@ func runClient(args []string) {
 		if e != nil {
 			fatal(e.Error())
 		}
-		if len(suites) != 1 {
-			fatal("expected one suite")
+		for _, candidate := range suites {
+			if candidate.Version == *suiteVersion {
+				suite = candidate
+				break
+			}
 		}
-		suite = suites[0]
+		if suite.Version == "" {
+			fatal("suite version not found")
+		}
 	} else if *mode == "archive" {
 		if *archive == "" {
 			fatal("-archive required")
@@ -72,6 +82,9 @@ func runClient(args []string) {
 		suite, files, e = readArchive(*archive)
 		if e != nil {
 			fatal(e.Error())
+		}
+		if suite.Version != *suiteVersion {
+			fatal("archive suite version does not match -suite-version")
 		}
 	} else {
 		fatal("source must be api or archive")
@@ -115,6 +128,10 @@ func runClient(args []string) {
 		if e = os.WriteFile(*output, append(payload, '\n'), 0600); e != nil {
 			fatal(e.Error())
 		}
+	}
+	if *noSubmit {
+		fmt.Println("predictions written to", *output)
+		return
 	}
 	req, e := http.NewRequest("POST", baseURL+"/api/submissions", bytes.NewReader(payload))
 	if e != nil {

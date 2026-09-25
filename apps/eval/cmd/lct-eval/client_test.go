@@ -1,9 +1,12 @@
 package main
 
 import (
+	"encoding/json"
 	"io"
 	"net/http"
 	"net/http/httptest"
+	"os"
+	"path/filepath"
 	"testing"
 	"time"
 
@@ -71,5 +74,36 @@ func TestRunnerPersistsSolutionMetadata(t *testing.T) {
 	a.mu.Unlock()
 	if got.Commit == nil || *got.Commit != "abc123" || got.ConfigHash == nil || *got.ConfigHash != "cfg456" || got.WeightsVersion == nil || *got.WeightsVersion != "weights7" || got.CatalogVersion == nil || *got.CatalogVersion != "catalog9" {
 		t.Fatalf("metadata missing: %+v", got)
+	}
+}
+func TestRunnerCanWriteArchivePredictionsWithoutScoringToken(t *testing.T) {
+	a, mux := testApp(t)
+	archive := request(t, mux, "GET", "/api/baskets/v1/download", "", nil)
+	if archive.Code != 200 {
+		t.Fatal(archive.Code)
+	}
+	path := filepath.Join(t.TempDir(), "suite.zip")
+	if e := os.WriteFile(path, archive.Body.Bytes(), 0600); e != nil {
+		t.Fatal(e)
+	}
+	output := filepath.Join(t.TempDir(), "predictions.json")
+	predictServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte(`{"slug":"secret-slug"}`))
+	}))
+	defer predictServer.Close()
+	runClient([]string{"-source", "archive", "-archive", path, "-suite-version", "v1", "-no-submit", "-output", output, "-endpoint", predictServer.URL, "-track", "service", "-submission-id", "offline-1", "-solution", "model", "-solution-version", "2"})
+	data, e := os.ReadFile(output)
+	if e != nil {
+		t.Fatal(e)
+	}
+	var sub eval.Submission
+	if e = json.Unmarshal(data, &sub); e != nil {
+		t.Fatal(e)
+	}
+	if sub.SuiteHash != a.suite.Hash || sub.Results[0].Prediction.Slug != "secret-slug" {
+		t.Fatalf("wrong offline predictions: %+v", sub)
+	}
+	if len(a.runs) != 0 {
+		t.Fatal("offline run submitted unexpectedly")
 	}
 }
