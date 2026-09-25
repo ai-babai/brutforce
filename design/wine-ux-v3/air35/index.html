@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="theme-color" content="#fefdfa">
+<title>Своё Вино · Air · вариант 3.5</title>
+<link rel="stylesheet" href="../styles.css"><link rel="stylesheet" href="styles.css">
+<script src="../air/icons.js" defer></script><script src="app.js" defer></script>
+</head>
+<body>
+<main class="studio">
+<aside class="studio-side">
+<p class="studio-index">Своё Вино / вариант 3.5 / Air</p>
+<h1>Больше кадра.<br><em>Единый ритм.</em></h1>
+<p class="studio-lead">Камера от края до края, цельный фон первого кандидата, движущийся индикатор навигации и единая типографика основных кнопок.</p>
+<p class="report-doc-links"><a href="review.html">Сравнить до и после ↗</a><a href="../air/?screen=results">Предыдущий Air 3.4 ↗</a></p>
+<div class="scenario-heading"><h2>Все экраны</h2><span>Кликабельный макет</span></div>
+<div class="scenario-list" id="scenario-list"></div>
+<section class="state-rationale" aria-live="polite"><span>ЛОГИКА ЭКРАНА</span><p id="state-rationale"></p></section>
+<section class="change-map"><h2>Что примеряем</h2><ol><li><b>Выдача:</b> бутылки и текст на общей поверхности; лидер крупнее, между строками лёгкие линии.</li><li><b>Главная:</b> цельная кремовая сцена, одна заметная кнопка, вторичные действия без подложек.</li><li><b>Иконки:</b> единое семейство Phosphor Light. Тонкий рисунок, большая область нажатия.</li><li><b>Камера и карточка:</b> убраны декоративные плашки и тени. Приоритет у снимка и вина.</li><li><b>Движение:</b> навигация плавно переходит между пунктами. Заметки о вине можно поставить на паузу.</li></ol></section>
+<p class="studio-lead air-disclaimer">Дизайн согласован для реализации. Здесь вина вымышлены; камера, галерея и поиск — симуляции. Продуктовая реализация ведётся отдельно, без выкладки на TEST и PROD.</p>
+<p class="report-doc-links"><a href="../air/research.md">Исследование и источники ↗</a></p>
+<details class="studio-details"><summary>Changelog <span>↗</span></summary><div><p><b>25.09.2026 · Air / 3.5</b></p><p>По отзывам с Maks: полноэкранный видоискатель с крупными действиями, лидер на всю ширину экрана, постоянный индикатор нижней навигации, все основные кнопки 16 px / 600. Air 3.4 сохранён отдельно.</p><p><a href="README.md">Проверка публикации ↗</a> · <a href="behavior-v35.md">Поведенческие требования ↗</a></p></div></details>
+</aside>
+<section class="phone-area" aria-label="Интерактивный макет телефона">
+<div class="phone-controls"><span>AIR · <span id="state-name">Главная</span></span><div class="width-controls" aria-label="Ширина макета"><button data-width="360">360</button><button data-width="402">402</button><button data-width="430" class="selected" aria-pressed="true">430</button><button data-width="440">440</button></div></div>
+<div class="phone-shell"><div class="phone" id="phone"><div id="app" aria-live="polite"></div></div></div>
+<p class="phone-caption">Размер по умолчанию 430 × 932 CSS px. Все переходы можно попробовать.</p>
+</section>
+</main><div id="dialog-root"></div>
+</body></html>
