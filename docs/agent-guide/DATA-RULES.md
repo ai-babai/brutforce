@@ -127,3 +127,5 @@ DeepSeek-assisted gold не полностью независим от DeepSeek-
 [Разбор и карта пакета](../project/ROMAN-HANDOFF-2026-09-25.md): данные, QA, адаптеры и crosswalk.
 Пакет принят как research source. Не заменять им organizer2103, frozen gold или независимый holdout.
 715 — многократно использованный development-набор; test680 сохраняется для отдельной приёмки.
+
+[Фото Романа: просмотр84 изображений, пригодность и экшен-лист](../project/ROMAN-PHOTO-SCREEN-2026-09-25.md).
