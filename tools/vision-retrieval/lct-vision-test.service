@@ -1,0 +1,26 @@
+[Unit]
+Description=LCT isolated CPU whole-encoder vision TEST service
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=lct
+Group=lct
+WorkingDirectory=/srv/lct/maks/vision-service/current
+Environment=HF_HOME=/srv/lct/data/vision-service/model-cache
+Environment=HF_HUB_DISABLE_TELEMETRY=1
+Environment=HF_HUB_OFFLINE=1
+Environment=TOKENIZERS_PARALLELISM=false
+Environment=OMP_NUM_THREADS=4
+Environment=MKL_NUM_THREADS=4
+Environment=MALLOC_ARENA_MAX=2
+Environment=PYTHONUNBUFFERED=1
+ExecStart=/srv/lct/maks/vision-service/venv/bin/python /srv/lct/maks/vision-service/current/cpu_serving.py --catalog /srv/lct/data/vision-retrieval/20260925/detectors/catalog-audit/catalog-bundle.json --index-dir /srv/lct/data/vision-retrieval/20260925/detectors/so400m-gatev2/index --host 127.0.0.1 --port 8125 --threads 4
+Restart=on-failure
+RestartSec=5
+MemoryMax=7G
+NoNewPrivileges=true
+
+[Install]
+WantedBy=multi-user.target

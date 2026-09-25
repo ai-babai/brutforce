@@ -106,3 +106,90 @@ On the paired 20-reference-gated index, newly encoded Base224 and SO400M/384 OWL
 `detector_encoder_server.py` then verifies the RT-DETR+SO400M composition through actual loopback HTTP. It retains Base224 solely for the wine/nonwine gate and uses SO400M solely for whole/label retrieval. On 24 fixed organizer originals, all predictions matched the offline composition; among 21 warm requests that ran OCR and embeddings, p95 was 4.79 s (max 5.44 s). The full 103 organizer files and 213 frozen cases returned HTTP 200, with live all-branch predictions equal to the offline composition on 103/103 organizer files. The historical frozen all-branch score was 102/141 service and 50/62 retrieval Top-1, equal to the separately named offline composition; apply the versioned gold erratum before using these totals in a final report.
 
 The separately versioned `whole_encoder_server.py` (maintained by the organizer audit team) serves the RT-DETR+SO400M **whole** branch directly and skips routine label detection, label embedding and OCR. Its `all` field is explicitly an alias of `whole`, not the three-branch fusion. On the same CPU host with four OpenMP threads, 24/24 requests succeeded; 23 warm requests had p50/p95/max 3.94/4.44/4.51 s. The 24 live predictions and image hashes matched the saved offline whole branch exactly. Its 22.27 s cold load and 4.67 s first request are separate. This small sample supports a fast CPU candidate, not a worst-case guarantee or a substitute for the full 100-image review.
+
+## Sigma CPU TEST serving (25 September 2026)
+
+`cpu_serving.py` wraps the measured `whole_encoder_server.Pipeline` for the
+Go API contract. It serves RT-DETR bottle selection, the Base224 wine gate,
+SO400M whole-target retrieval, and the existing standalone-label rescue when
+no bottle is detected. It does **not** run routine label embedding, OCR, or
+three-branch fusion. Its `model_version` is
+`rtdetr-so400m-whole-only-v1`, distinct from the full GPU composition.
+
+The isolated service is `lct-vision-test.service` on Sigma, bound only to
+`127.0.0.1:8125`. `lct-vision-test.service` in this directory is its source
+unit. The active code snapshot is
+`/srv/lct/maks/vision-service/current` (currently
+`releases/cpu-whole-20260925-3`), the Python 3.12 environment is
+`/srv/lct/maks/vision-service/venv`, and the pinned model cache is
+`/srv/lct/data/vision-service/model-cache`. The catalog and index are the
+existing frozen files under
+`/srv/lct/data/vision-retrieval/20260925/detectors/`:
+`catalog-audit/catalog-bundle.json` and `so400m-gatev2/index/`.
+The environment registry and exact installed package lock are
+`/srv/infra/environments/inventory/lct-vision-service.json` and
+`/srv/infra/environments/locks/lct-vision-service.txt`. A source copy of the
+lock is `requirements-cpu-lock.txt` (SHA-256
+`ef662dcf6e28fce79b1b10be91c0fbd3928a5a6635507bc05f19b8b1d82d216f`).
+
+For a new isolated installation, install `torch==2.8.0+cpu` and
+`torchvision==0.23.0+cpu` from the PyTorch CPU wheel index, then the packages
+in the lock. Keep `HF_HOME` on the dedicated cache and verify all four pinned
+model revisions from `model.py`, `detector_variants.py`, and
+`so400m_ablation.py` load before enabling the unit. The unit sets four CPU
+threads, a 7 GiB memory cap, offline Hugging Face access after the first
+download, and a loopback bind. It must not be reused as evidence for the full
+three-branch quality results.
+
+Check `systemctl status lct-vision-test` and
+`curl -fsS http://127.0.0.1:8125/healthz`. Then POST multipart `image` to
+`/v1/eval/predict?track=service`. Every successful response includes ordered
+`ranked_slugs` (at most 20), `catalog_version`, `index_version`, and
+`model_version`; a match has `slug` equal to the first rank, while deliberate
+abstention has an empty ranking and `action`. Use this local origin as
+`VISION_SERVICE_URL` for the isolated Go TEST deployment. Health stays
+available during inference; an overlapping prediction returns HTTP 503
+immediately, without another model execution or a prediction queue. Restart only
+`lct-vision-test.service` after a source/config change; rollback by pointing
+`current` to the previous snapshot and restarting this unit. Keep its model
+cache and index intact.
+
+### Measured isolated CPU profile
+
+On 25 September, the pinned whole-only service ran all 213 corrected v2
+inputs and all 103 organizer requests on Sigma. The v2 runner used a 10 s
+client deadline per image and waited for the single inference slot to become
+idle between requests. This pacing isolates each result; it is not a
+throughput or concurrent-load measurement. It never retried a timed-out case.
+The v2 HTTP run returned 208/213 successes and five real timeouts
+(`case-000011`, `case-000012`, `case-000117`, `case-000130`, and
+`case-000143`), with no 503 responses. Among successes, nearest-rank latency was
+p50/p95/max 3.666/6.470/7.499 s. The private v2 scorer recorded 106/141
+graded service cases correct (10 ungraded retained) and 56/62 retrieval
+Top-1; retrieval Top-5 and Top-20 were 62/62. Both submissions contain every
+case in their track, including the five service timeouts. Their IDs are
+`cpu-whole-v2-service-20260925-1700` and
+`cpu-whole-v2-retrieval-20260925-1700`.
+
+All 103 organizer requests returned HTTP 200, with nearest-rank latency p50/p95/max
+6.126/6.790/7.534 s. Under the corrected private diagnostic labels, 100
+unique images comprise 54 exact, 42 catalog-unresolved, 3 ambiguous, and
+1 reviewed out-of-catalog. Exact Top-1 was 39/54 and Top-5/Top-20 50/54;
+the out-of-catalog image was not rejected (0/1), making strict correctness
+39/55 gradeable unique images. The unresolved and ambiguous images are
+excluded from strict accuracy. The service stayed active with zero restarts
+and a 2.88 GB systemd memory peak under its 7 GB cap. Its cached restart
+loaded the models in 12.65 s. These results describe the whole-only CPU
+model, not the full three-branch GPU composition or a concurrency guarantee.
+
+The gold-blind request rows, exact submissions, private scorer reports, and
+their SHA-256 manifest are in the restricted local directory
+`/Users/skif/ml-data/brutforce/integration-20260925-1700/cpu/` and on Sigma
+at `/srv/lct/data/vision-service/benchmarks/20260925-cpu-whole-v2/`.
+
+## Итерация интеграции 25 сентября
+
+[Полные сравнения A/B/C](integration-experiment-20260925.md) и [живой план](../../docs/project/PLAN.md).
+Публичная сводка: https://cv.ops.dzap.pw/data/integration.html.
+B — кандидат полной GPU-композиции, исправляющий два известных ошибочных отказа;
+постоянный TEST использует отдельный CPU whole-only профиль. Не смешивайте их метрики.
