@@ -60,3 +60,8 @@
  .capture-immersive .capture-screen>.btn.text{bottom:20px}
  .capture-immersive .fixture-note,.capture-immersive .flex-spacer{display:none}
 }
+
+/* A distinct name prevents the legacy horizontal pulse from winning the cascade. */
+.progress-screen .scan-photo .scan-line{top:6%;bottom:auto;left:7%;right:7%;height:2px;padding:0;margin:0;transform:none;opacity:1;pointer-events:none;animation:air-photo-sweep 2.8s ease-in-out infinite alternate}
+@keyframes air-photo-sweep{from{top:6%}to{top:calc(94% - 2px)}}
+@media(prefers-reduced-motion:reduce){.progress-screen .scan-photo .scan-line{animation:none!important;display:none}}
