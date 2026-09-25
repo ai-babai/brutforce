@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>LCT · Требования и источники</title>
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/requirements.css">
+  <script src="/requirements.js" defer></script>
+</head>
+<body>
+<header>
+  <div class="brand"><a href="/">LCT / VISION EVAL</a><span class="header-tag">Требования и источники</span></div>
+  <nav aria-label="Разделы"><a href="/">Корзины</a><a href="/data/detectors.html">Детекторы</a><a href="/guide.html">Инструкция</a><a aria-current="page" href="/requirements.html">Требования</a></nav>
+</header>
+<main>
+  <section class="intro">
+    <div><div class="eyebrow">ПЕРВОИСТОЧНИКИ / ГРАНИЦЫ / РЕШЕНИЯ</div><h1>Что требуется.<br><em>Что ещё не ясно.</em></h1></div>
+    <p>Короткая карта требований к решению. У каждого пункта есть статус, область применения и ссылка на источник.</p>
+  </section>
+  <section class="requirements-lead panel" aria-label="О реестре">
+    <p id="requirements-summary">Загружаем реестр требований…</p>
+    <p class="requirements-meta" id="requirements-updated"></p>
+    <div class="requirements-key" aria-label="Значение статусов"><span class="badge requirement-status status-official">Официально</span><span>Подтверждено письменным материалом или ответом.</span><span class="badge requirement-status status-oral">Устно</span><span>Пояснение в записи, без нормативной стенограммы.</span><span class="badge requirement-status status-internal">Наш вывод</span><span>Решение команды по текущим данным.</span><span class="badge requirement-status status-unresolved">Не выяснено</span><span>Нужен ответ или проверка.</span><span class="badge requirement-status status-discrepancy">Расхождение</span><span>Источники дают разные указания.</span></div>
+  </section>
+  <nav class="requirements-nav" aria-label="Содержание страницы"><a href="#requirements-heading">Требования</a><a href="#boundaries-heading">Границы</a><a href="#sources-heading">Источники</a><a href="#questions-heading">Открытые вопросы</a></nav>
+  <section aria-labelledby="requirements-heading" class="requirements-section">
+    <div class="requirements-section-heading"><div><div class="eyebrow">РЕЕСТР</div><h2 id="requirements-heading">Требования</h2></div><span id="requirements-count" class="requirements-count" aria-live="polite"></span></div>
+    <div class="filters requirements-filters" role="search" aria-label="Найти требования">
+      <label>Поиск<input id="requirements-search" type="search" placeholder="ID, название, содержание" autocomplete="off" disabled></label>
+      <label>Статус<select id="requirements-status" disabled><option value="">Все статусы</option></select></label>
+      <label>Область<select id="requirements-scope" disabled><option value="">Все области</option></select></label>
+    </div>
+    <p id="requirements-state" class="requirements-state" role="status">Загружаем требования…</p>
+    <div id="requirements-list" class="requirements-list"></div>
+  </section>
+  <section class="panel requirements-section" aria-labelledby="boundaries-heading"><div class="eyebrow">ОБЛАСТЬ ПРИМЕНЕНИЯ</div><h2 id="boundaries-heading">Границы проверки</h2><div id="requirements-boundaries" class="requirements-prose"><p class="muted">Загружаем…</p></div></section>
+  <section class="panel requirements-section" aria-labelledby="sources-heading"><div class="eyebrow">ПРОИСХОЖДЕНИЕ ДАННЫХ</div><h2 id="sources-heading">Источники</h2><p class="requirements-section-intro">Здесь указано, какие материалы подтверждают пункты реестра и где проходит граница публичного доступа.</p><div id="requirements-sources" class="requirements-prose"><p class="muted">Загружаем…</p></div></section>
+  <section class="panel requirements-section" aria-labelledby="questions-heading"><div class="eyebrow">ОТКРЫТЫЕ ВОПРОСЫ</div><h2 id="questions-heading">Что нужно уточнить</h2><div id="requirements-questions" class="requirements-prose"><p class="muted">Загружаем…</p></div></section>
+  <section class="next-panel"><h2>Как это проверяется</h2><p><a href="/guide.html">Инструкция стенда</a> описывает отправку прогона. <a href="/data/detectors.html">Отчёт по детекторам</a> показывает измерения и ограничения на реальных фото.</p></section>
+</main>
+<footer>Статус «Вывод» обозначает интерпретацию, а не цитату организаторов. Открытые вопросы не следует считать согласованными требованиями.</footer>
+</body>
+</html>

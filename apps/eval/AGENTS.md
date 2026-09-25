@@ -26,3 +26,6 @@ Read `../../tools/vision-baselines/README.md` before reproducing baseline runs.
 Pilot data lives in `/srv/lct/data/vision`, separate from frozen evaluation data.
 Requested conditions are not observed labels; keep AI origin, QC and lineage visible.
 Runtime copies: `/srv/lct/data/vision/README.md` and `/srv/lct/data/vision-baselines/20260924/README.md`.
+
+Organizer requirements: `../../docs/project/REQUIREMENTS.md`, hosted `/requirements.html`.
+Public mirror `web/gallery/requirements-data.json` must match `docs/project/requirements.json`.

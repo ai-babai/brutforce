@@ -33,3 +33,5 @@
 - Detector comparison, reference audit and real-photo review: https://cv.ops.dzap.pw/data/detectors.html.
 
 - Проверка простых правил после OCR без обучения: [attribute rerank](tools/vision-attribute-rerank/README.md).
+
+- Требования организаторов, источники Telegram и расхождения: [REQUIREMENTS](docs/project/REQUIREMENTS.md).

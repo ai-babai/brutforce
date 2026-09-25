@@ -79,3 +79,8 @@ Run only this boundary's fast suite with:
 cd apps/api
 go test -count=1 -run '^TestEVAL' ./...
 ```
+
+## Сверка требований 25 сентября
+
+[Вводные и live-аудит](../docs/project/REQUIREMENTS.md): ответы о `null` и винтажах ещё не определены.
+Продуктовые рекомендации не подменяют конкурсный slug. Настройка search service не подключает Recognizer.

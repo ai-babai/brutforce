@@ -65,3 +65,8 @@ Python: `/srv/infra/environments/MAP.md`; БД: `/srv/infra/lct-db/DATABASE.md`.
 
 Общий для всех агентов онбординг: [EVAL.md](docs/agent-guide/EVAL.md).
 Страница примеров и результатов: https://cv.ops.dzap.pw/ .
+
+## Вводные организаторов
+
+[Требования и источники](docs/project/REQUIREMENTS.md) · https://cv.ops.dzap.pw/requirements.html.
+Перед изменением поиска различай конкурсный slug, продуктовые аналоги и диагностические корзины.
