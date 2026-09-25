@@ -47,3 +47,5 @@ PostgreSQL продукта, SQL-миграции, disposable DB, единая �
 [Требования и источники](REQUIREMENTS.md) · [реестр](requirements.json) · [Ops](https://cv.ops.dzap.pw/requirements.html).
 
 [Живой план, статусы и история решений](PLAN.md).
+
+[Пакет Романа: данные, модели, проверка и предложения](ROMAN-HANDOFF-2026-09-25.md).

@@ -37,3 +37,5 @@
 - Требования организаторов, источники Telegram и расхождения: [REQUIREMENTS](docs/project/REQUIREMENTS.md).
 
 - Общий план, статусы и причины изменений: [PLAN](docs/project/PLAN.md).
+
+- Пакет данных и адаптеров Романа, ограничения и приёмка: [разбор](docs/project/ROMAN-HANDOFF-2026-09-25.md).
