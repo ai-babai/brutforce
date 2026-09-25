@@ -19,7 +19,10 @@ import (
 	"brutforce-behavior-demo/apps/api/internal/catalogmodel"
 )
 
-const maxRequestBody = 64 << 10
+const (
+	maxRequestBody     = 64 << 10
+	serverWriteTimeout = 30 * time.Second
+)
 
 // wine is kept as an alias while the older search and recommendation handlers
 // are migrated. catalogmodel.Wine owns the JSON projection.
@@ -37,14 +40,17 @@ type apiError struct {
 }
 
 type searchResponse struct {
-	Demo           bool      `json:"demo"`
-	Candidates     []wine    `json:"candidates"`
-	SelectedID     string    `json:"selectedId,omitempty"`
-	CatalogVersion string    `json:"catalogVersion,omitempty"`
-	NextCursor     string    `json:"nextCursor,omitempty"`
-	ModelVersion   string    `json:"modelVersion,omitempty"`
-	FeedbackToken  string    `json:"feedbackToken,omitempty"`
-	Error          *apiError `json:"error,omitempty"`
+	Demo                      bool      `json:"demo"`
+	Candidates                []wine    `json:"candidates"`
+	SelectedID                string    `json:"selectedId,omitempty"`
+	Action                    string    `json:"action,omitempty"`
+	RecognizedSlug            string    `json:"recognizedSlug,omitempty"`
+	CatalogVersion            string    `json:"catalogVersion,omitempty"`
+	RecognitionCatalogVersion string    `json:"recognitionCatalogVersion,omitempty"`
+	NextCursor                string    `json:"nextCursor,omitempty"`
+	ModelVersion              string    `json:"modelVersion,omitempty"`
+	FeedbackToken             string    `json:"feedbackToken,omitempty"`
+	Error                     *apiError `json:"error,omitempty"`
 }
 
 //go:embed catalog.json
@@ -74,15 +80,21 @@ func main() {
 	if address == "" {
 		address = "127.0.0.1:8097"
 	}
+	services := configuredModelServices()
+	if services.vision != nil && services.vision.configErr != nil {
+		log.Fatal("vision service configuration is invalid")
+	}
 	log.Printf("demo API listening on %s", address)
 	server := &http.Server{
 		Addr:              address,
-		Handler:           newHandlerWithCatalogAndServices(os.Getenv("WEB_ROOT"), nil, catalog, configuredModelServices()),
+		Handler:           newHandlerWithCatalogAndServices(os.Getenv("WEB_ROOT"), nil, catalog, services),
 		ReadHeaderTimeout: 5 * time.Second,
-		ReadTimeout:       10 * time.Second,
-		WriteTimeout:      10 * time.Second,
-		IdleTimeout:       60 * time.Second,
-		MaxHeaderBytes:    16 << 10,
+		// Allow bounded uploads and app recognition over slower links. The
+		// 30-second write ceiling leaves margin around vision's 18-second cap.
+		ReadTimeout:    20 * time.Second,
+		WriteTimeout:   serverWriteTimeout,
+		IdleTimeout:    60 * time.Second,
+		MaxHeaderBytes: 16 << 10,
 	}
 	if err := server.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 		log.Fatal(err)
@@ -102,6 +114,9 @@ func newHandlerWithCatalog(webRoot string, recognizer Recognizer, catalog catalo
 }
 
 func newHandlerWithCatalogAndServices(webRoot string, recognizer Recognizer, catalog catalogReader, services modelServices) http.Handler {
+	if recognizer == nil && services.vision != nil {
+		recognizer = &visionRecognizer{client: services.vision}
+	}
 	store := configuredPhotoStore()
 	feedback := configuredFeedbackStore()
 	mux := http.NewServeMux()
@@ -113,9 +128,9 @@ func newHandlerWithCatalogAndServices(webRoot string, recognizer Recognizer, cat
 	mux.HandleFunc("/v2/catalog", catalogHandler(catalog))
 	mux.HandleFunc("/v2/catalog/", catalogItemHandler(catalog))
 	mux.HandleFunc("/v1/photos", uploadHandler(store))
-	mux.HandleFunc("/v1/search", correlateServiceRequest(searchHandlerWithFeedback(store, feedback, catalog, services)))
-	mux.HandleFunc("/v1/feedback", correlateServiceRequest(feedbackHandler(feedback, store, catalog)))
-	mux.HandleFunc("/v1/recommendations", correlateServiceRequest(recommendationsHandler(catalog, services)))
+	mux.HandleFunc("/v1/search", correlateSearchRequest(searchHandlerWithFeedback(store, feedback, catalog, services)))
+	mux.HandleFunc("/v1/feedback", correlateServiceRequest(feedbackHandler(feedback, store, catalog), recommendationRequestDeadline))
+	mux.HandleFunc("/v1/recommendations", correlateRecommendationRequest(recommendationsHandler(catalog, services)))
 	mux.HandleFunc("/v1/eval/predict", newEvalPredictHandler(recognizer, configuredEvalConcurrency()))
 	mux.HandleFunc("/v1/", apiNotFoundHandler)
 	mux.HandleFunc("/api/", apiNotFoundHandler)
@@ -209,9 +224,39 @@ func searchHandlerWithFeedback(store *photoStore, feedback *feedbackStore, catal
 			writeError(w, http.StatusServiceUnavailable, "catalog_unavailable", "catalog is temporarily unavailable")
 			return
 		}
-		if !info.Demo && services.search == nil && services.vision == nil {
-			writeError(w, http.StatusServiceUnavailable, "recognition_unavailable", "reference recognition is unavailable for the imported catalog")
-			return
+		if !info.Demo {
+			if request.PhotoID != nil && services.vision != nil {
+				response, status, code, message := configuredVisionSearch(r, store, catalog, *request.PhotoID, services.vision)
+				if status != 0 {
+					writeError(w, status, code, message)
+					return
+				}
+				if !attachFeedbackSession(w, r, store, feedback, request, &response) {
+					return
+				}
+				writeJSON(w, http.StatusOK, response)
+				return
+			}
+			if request.Query != nil && services.search == nil {
+				candidates, err := catalog.Search(r.Context(), request.Query)
+				if err != nil {
+					writeError(w, http.StatusServiceUnavailable, "catalog_unavailable", "catalog is temporarily unavailable")
+					return
+				}
+				if len(candidates) > 5 {
+					candidates = candidates[:5]
+				}
+				writeJSON(w, http.StatusOK, searchResponse{Demo: false, Candidates: candidates, CatalogVersion: info.Version})
+				return
+			}
+			if request.PhotoID != nil && services.search == nil {
+				writeError(w, http.StatusServiceUnavailable, "recognition_unavailable", "image recognition is not configured")
+				return
+			}
+			if request.Query == nil && request.PhotoID == nil {
+				writeError(w, http.StatusBadRequest, "invalid_request", "query or photoId is required")
+				return
+			}
 		}
 		if request.PhotoID != nil {
 			if !validPhotoID(*request.PhotoID) {
@@ -226,18 +271,6 @@ func searchHandlerWithFeedback(store *photoStore, feedback *feedbackStore, catal
 				writeError(w, http.StatusNotFound, "photo_not_found", "photo receipt was not found")
 				return
 			}
-		}
-		if services.vision != nil && request.PhotoID != nil {
-			response, status, code, message := configuredVisionSearch(r, store, catalog, *request.PhotoID, services.vision)
-			if status != 0 {
-				writeError(w, status, code, message)
-				return
-			}
-			if !attachFeedbackSession(w, r, store, feedback, request, &response) {
-				return
-			}
-			writeJSON(w, http.StatusOK, response)
-			return
 		}
 		if services.search != nil {
 			if request.Query == nil && request.PhotoID == nil {

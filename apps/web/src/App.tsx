@@ -44,7 +44,7 @@ type CandidateOrigin = "scan" | "manual" | "correction";
 type ResultOrigin = CandidateOrigin | "catalog" | "saved";
 type SearchOrigin = "normal" | "correction";
 type ErrorKind = "network" | "server";
-type MissingReason = "empty" | "rejected";
+type MissingReason = "no_match" | "outside_display" | "rejected";
 type RecommendationStatus = "idle" | "loading" | "ready" | "empty" | "error";
 const savedKey = "wine-demo-saved-v1";
 
@@ -90,7 +90,7 @@ export function App({
   const [resultFromCorrection, setResultFromCorrection] = useState(false);
   const [searchOrigin, setSearchOrigin] = useState<SearchOrigin>("normal");
   const [errorKind, setErrorKind] = useState<ErrorKind>("server");
-  const [missingReason, setMissingReason] = useState<MissingReason>("empty");
+  const [missingReason, setMissingReason] = useState<MissingReason>("no_match");
   const [notePaused, setNotePaused] = useState(false);
   const [noteIndex, setNoteIndex] = useState(0);
   const [reducedMotion, setReducedMotion] = useState(false);
@@ -302,7 +302,7 @@ export function App({
     setCandidateHasPhoto(false);
     setResultHasPhoto(false);
     setResultFromCorrection(false);
-    setMissingReason("empty");
+    setMissingReason("no_match");
     setSection("search");
     setPhotoFile(file);
     setReceipt(undefined);
@@ -385,7 +385,9 @@ export function App({
       const list = data.candidates;
       setCandidates(list);
       if (!list.length) {
-        setMissingReason("empty");
+        setMissingReason(
+          data.action === "outside_display_catalog" ? "outside_display" : "no_match",
+        );
         setScreen("missing");
         return;
       }
@@ -432,7 +434,7 @@ export function App({
     setCandidateHasPhoto(false);
     setResultHasPhoto(false);
     setResultFromCorrection(false);
-    setMissingReason("empty");
+    setMissingReason("no_match");
     lastRequest.current = { scenario, hasPhoto: false };
   };
   const cancel = () => {
@@ -861,7 +863,7 @@ export function App({
 
   return (
     <main className="app-shell">
-      <section className="app" data-testid="app">
+      <section className={`app${screen === "camera" ? " camera-open" : ""}`} data-testid="app">
         <div className="app-content" ref={contentRef}>
           {screen === "welcome" && (
             <Page id="UI-001">
@@ -898,7 +900,6 @@ export function App({
                   </button>
                 </div>
               </div>
-              <Tip />
               <InstallApp />
               <ProductFooter />
             </Page>
@@ -1368,8 +1369,16 @@ export function App({
                   else back();
                 }}
               />
-              <h2>{missingReason === "rejected" ? "Ни одно вино не подошло" : "Ничего не найдено"}</h2>
-              <p>{missingReason === "rejected" ? "Попробуйте поиск по названию или другой снимок." : "Подходящего совпадения не нашлось."}</p>
+              <h2>{missingReason === "rejected"
+                ? "Ни одно вино не подошло"
+                : missingReason === "outside_display"
+                  ? "Карточка пока недоступна"
+                  : "Ничего не найдено"}</h2>
+              <p>{missingReason === "rejected"
+                ? "Попробуйте поиск по названию или другой снимок."
+                : missingReason === "outside_display"
+                  ? "Вино распознано, но его карточки пока нет в нашем каталоге."
+                  : "Сервис не нашёл подходящего совпадения."}</p>
               {photo && lastRequest.current.hasPhoto && (
                 <Photo photo={photo} compact onExpand={() => setExpandedPhoto(true)} />
               )}
@@ -1583,13 +1592,6 @@ function Top({
     </header>
   );
 }
-function Tip() {
-  return (
-    <div className="tip welcome-tip">
-      <strong>Этикетка целиком, нужная бутылка по центру.</strong>
-    </div>
-  );
-}
 function DemoDisclosure() {
   return (
     <aside className="demo-disclosure" role="note" aria-label="Reference-режим">
@@ -1715,7 +1717,8 @@ function BottomNav({
   onSaved: () => void;
 }) {
   return (
-    <nav className="bottom-nav" aria-label="Основная навигация">
+    <nav className="bottom-nav" aria-label="Основная навигация" data-section={section}>
+      <span className="nav-slider" aria-hidden="true" />
       <button
         aria-current={section === "scanner" ? "page" : undefined}
         onClick={onHome}

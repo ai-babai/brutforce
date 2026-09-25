@@ -1,7 +1,4 @@
 {
-  "schemaVersion": 1,
-  "title": "BrutForce runnable demo — behavior cases",
-  "caveat": "Demo behavior, design/security and isolated contest HTTP contract; not a recognition-quality benchmark.",
   "cases": [
     {
       "id": "API-001",
@@ -949,6 +946,13 @@
       "spec": "docs/product/reviews/be-045-bdd-audit.md"
     },
     {
+      "id": "REPORT-005",
+      "area": "report",
+      "title": "Большая история и список сценариев загружаются порциями без потери итогов",
+      "source": "apps/web/src/report.test.ts",
+      "spec": "reports/README.md"
+    },
+    {
       "id": "CAT-015",
       "area": "ui",
       "title": "Поиск с первого символа остаётся под редактируемым полем",
@@ -1189,9 +1193,44 @@
     {
       "id": "AIR-024",
       "area": "web",
-      "title": "Камера Air: видоискатель, действия и нижняя навигация без перекрытия",
+      "title": "Живой видоискатель занимает доступную сцену камеры",
       "source": "design/wine-ux-v3/air/behavior-v3.feature",
-      "spec": "docs/product/behavior-spec.md#air-34--активный-фото-путь-и-восстановление"
+      "spec": "docs/product/behavior-spec.md#air-35--камера-фото-поиск-и-единая-визуальная-система"
+    },
+    {
+      "id": "AIR-025",
+      "area": "web",
+      "title": "Выбор фото запускает поиск по принятому изображению",
+      "source": "design/wine-ux-v3/air/behavior-v3.feature",
+      "spec": "docs/product/behavior-spec.md#air-35--камера-фото-поиск-и-единая-визуальная-система"
+    },
+    {
+      "id": "AIR-026",
+      "area": "web",
+      "title": "Лидер фото-выдачи выделен полосой на ширину приложения",
+      "source": "design/wine-ux-v3/air/behavior-v3.feature",
+      "spec": "docs/product/behavior-spec.md#air-35--камера-фото-поиск-и-единая-визуальная-система"
+    },
+    {
+      "id": "AIR-027",
+      "area": "web",
+      "title": "Подложка нижней навигации следует выбранной вкладке",
+      "source": "design/wine-ux-v3/air/behavior-v3.feature",
+      "spec": "docs/product/behavior-spec.md#air-35--камера-фото-поиск-и-единая-визуальная-система"
+    },
+    {
+      "id": "AIR-028",
+      "area": "web",
+      "title": "Основные винные кнопки имеют единый наборный стиль",
+      "source": "design/wine-ux-v3/air/behavior-v3.feature",
+      "spec": "docs/product/behavior-spec.md#air-35--камера-фото-поиск-и-единая-визуальная-система"
+    },
+    {
+      "id": "AIR-029",
+      "area": "web",
+      "title": "Главная объединяет сцену и действия",
+      "source": "design/wine-ux-v3/air/behavior-v3.feature",
+      "spec": "docs/product/behavior-spec.md#air-35--камера-фото-поиск-и-единая-визуальная-система"
     }
   ]
 }

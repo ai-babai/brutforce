@@ -1,0 +1,62 @@
+@import url('../air/styles.css');
+
+:root{--primary-label-size:16px;--primary-label-weight:600;--screen-gutter:26px}
+#screen-stage{flex:1;display:flex;flex-direction:column;min-height:0}
+#screen-stage>.home-screen{flex:1}
+.home-hero{min-height:537px}
+.hero-dog{height:352px}
+.hero-dog .dog{height:365px;width:400px;transform:scale(1.16);transform-origin:bottom center}
+.btn.primary,.home-scan,.home-scan-copy b{font-family:Onest,Arial,sans-serif;font-size:var(--primary-label-size);font-weight:var(--primary-label-weight);line-height:1.25}
+.btn.primary{min-height:56px}
+.bottom-nav .nav-slider{transition:transform 320ms cubic-bezier(.22,.8,.3,1);will-change:transform;background:#f3e7dd}
+.bottom-nav button.active{background:transparent}
+
+.results-screen .candidate.leader{width:calc(100% + 2 * var(--screen-gutter));margin-inline:calc(-1 * var(--screen-gutter));padding-inline:var(--screen-gutter);background:linear-gradient(180deg,#f4e8dc,#fbf6ee);border-bottom:1px solid #e9ded2}
+.results-screen .candidate.leader:hover{background:linear-gradient(180deg,#efe0d1,#f9f0e6)}
+.candidate.leader .leader-label{font-weight:600;letter-spacing:.075em;color:var(--wine)}
+
+/* The viewfinder is the screen surface; text and large actions sit over it. */
+#app.camera-open{position:relative;background:#403128}
+.capture-immersive{position:relative;isolation:isolate;flex:1;display:flex;flex-direction:column;min-height:calc(100dvh - 74px);color:#fff}
+.capture-immersive .app-top{z-index:2;flex:none;background:linear-gradient(#1c1512b3,transparent);color:#fff;border:0}
+.capture-immersive .back{color:#fff;background:#1b151738;border-radius:50%}
+.capture-immersive .capture-screen{position:static;flex:1;padding:18px var(--screen-gutter) 14px;min-height:0;background:transparent}
+.capture-immersive .capture-screen h2{font-size:30px;font-weight:500;position:relative;z-index:1;color:#fff}
+.capture-immersive .capture-screen .subcopy{color:#fff;max-width:340px;font-size:14px;position:relative;z-index:1;text-shadow:0 1px 8px #0008}
+.capture-immersive .camera-frame{position:absolute;inset:0;z-index:-1;width:100%;height:100%;margin:0;border-radius:0;background:#6e594b;box-shadow:none}
+.capture-immersive .camera-photo{height:100%;width:100%;border-radius:0;grid-template-rows:minmax(0,1fr);grid-template-columns:minmax(0,1fr)}
+.capture-immersive .photo-bottle{width:100%;height:100%;min-height:0;min-width:0;padding:175px 60px 150px;transform:none}
+.capture-immersive .photo-bottle img{height:100%;max-height:none;width:100%;object-fit:contain;transform:rotate(-8deg)}
+.capture-immersive .camera-frame:after{content:'';position:absolute;inset:0;border:0;border-radius:0;pointer-events:none;background:linear-gradient(180deg,#17110cb3 0%,transparent 30%,transparent 60%,#1c1513d9 100%)}
+.capture-immersive .camera-corners{position:absolute;inset:205px 48px 205px;border:1px solid #ffffffbf;z-index:1;border-radius:6px}
+.capture-immersive .camera-caption{display:none}
+.capture-immersive .fixture-note{order:10;margin:8px 0 0;color:#e0d6cc;font-size:10px;line-height:1.4;position:relative;z-index:1}
+.capture-immersive .flex-spacer{min-height:60px}
+.capture-immersive .btn{z-index:1;position:relative}
+.capture-immersive .btn.text{color:#fff;background:#ffffff14;border:1px solid #ffffff38;border-radius:13px;margin-top:8px}
+.capture-immersive .btn.primary{box-shadow:0 0 0 1px #ffffff30!important}
+#app.camera-open .bottom-nav{background:#fefdfa}
+
+@container prototype (max-width:380px){.results-screen,.capture-immersive{--screen-gutter:20px}.capture-immersive .capture-screen h2{font-size:28px}}
+@media(min-width:901px){.capture-immersive{min-height:858px}}
+@media(max-height:850px){.home-hero{min-height:450px}.hero-dog{height:287px}.hero-dog .dog{height:305px;width:385px;transform:scale(1.07)}}
+@media(max-height:740px){.home-hero{min-height:365px}.hero-dog{height:219px}.hero-dog .dog{height:233px;width:340px;transform:none}}
+@media(max-height:740px){.capture-immersive .capture-screen{padding-top:8px}.capture-immersive .capture-screen h2{font-size:26px}.capture-immersive .subcopy{line-height:1.4}.capture-immersive .photo-bottle{padding:160px 70px 170px}.capture-immersive .camera-corners{inset:180px 48px 210px}.capture-immersive .fixture-note{display:none}}
+@media(prefers-reduced-motion:reduce){.bottom-nav .nav-slider{transition:none}}
+@media(max-height:500px) and (orientation:landscape){
+ .phone:has(.camera-open){width:100%;max-width:none;height:100dvh;min-height:100dvh}
+ #app.camera-open{height:100dvh;min-height:100dvh}
+ .phone-area:has(.camera-open){padding:0}
+ .phone-area:has(.camera-open) .phone-controls,.phone-area:has(.camera-open) .phone-caption{display:none}
+ .camera-open .capture-immersive{height:calc(100dvh - 74px);min-height:0}
+ .capture-immersive .app-top{height:48px;min-height:48px}
+ .capture-immersive .capture-screen{padding-top:4px;display:block}
+ .capture-immersive .capture-screen h2{font-size:24px;max-width:380px}
+ .capture-immersive .capture-screen .subcopy{font-size:12px;max-width:300px}
+ .capture-immersive .photo-bottle{padding:80px 230px 15px 130px}
+ .capture-immersive .camera-corners{inset:130px 240px 20px 130px}
+ .capture-immersive .capture-screen>.btn{position:absolute;right:20px;width:190px;margin:0;min-height:52px}
+ .capture-immersive .capture-screen>.btn.primary{bottom:82px}
+ .capture-immersive .capture-screen>.btn.text{bottom:20px}
+ .capture-immersive .fixture-note,.capture-immersive .flex-spacer{display:none}
+}

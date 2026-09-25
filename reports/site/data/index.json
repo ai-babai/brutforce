@@ -1,60 +1,446 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-09-25T19:36:15.195Z",
+  "generatedAt": "2026-09-25T20:44:58.996Z",
   "runs": [
-    "runs/20260919T000000Z-baseline.json",
-    "runs/20260919T084019Z-fast.json",
-    "runs/20260919T084059Z-fast.json",
-    "runs/20260919T084411Z-fast-502d2b3a.json",
-    "runs/20260919T084617Z-fast-8968922f.json",
-    "runs/20260919T084719Z-fast-79670002.json",
-    "runs/20260919T084728Z-fast-6c9e1a11.json",
-    "runs/20260919T084800Z-fast-0aa2d271.json",
-    "runs/20260919T084840Z-fast-686fbd92.json",
-    "runs/20260919T085016Z-fast-bc9a375e.json",
-    "runs/20260919T090933Z-fast-0b5dffe4.json",
-    "runs/20260919T091442Z-fast-67945dfc.json",
-    "runs/20260919T091815Z-fast-73011808.json",
-    "runs/20260919T091828Z-fast-e08b4341.json",
-    "runs/20260919T100239Z-fast-9438dbc7.json",
-    "runs/20260919T100440Z-fast-7ea198cc.json",
-    "runs/20260919T100636Z-fast-95757b87.json",
-    "runs/20260919T102120Z-fast-c925e311.json",
-    "runs/20260919T103542Z-fast-5d2999f1.json",
-    "runs/20260919T103648Z-fast-68864736.json",
-    "runs/20260919T104000Z-fast-8ce35da5.json",
-    "runs/20260919T104936Z-fast-537a34c8.json",
-    "runs/20260919T105054Z-fast-b34b65cc.json",
-    "runs/20260919T110113Z-fast-2bfb3de0.json",
-    "runs/20260919T111739Z-fast-21d3bcd7.json",
-    "runs/20260919T114151Z-fast-bbe6107b.json",
-    "runs/20260919T134833Z-fast-50c5fe9c.json",
-    "runs/20260919T140203Z-fast-1ac6e437.json",
-    "runs/20260919T140607Z-fast-444ae400.json",
-    "runs/20260919T142731Z-fast-e9d5c247.json",
-    "runs/20260919T164059Z-fast-a8f6a2e3.json",
-    "runs/20260919T164809Z-fast-c0bf0bcd.json",
-    "runs/20260919T170415Z-fast-fd0dad6c.json",
-    "runs/20260919T170750Z-fast-64c30e86.json",
-    "runs/20260919T171358Z-fast-6b9a660c.json",
-    "runs/20260920T103057Z-fast-f097c921.json",
-    "runs/20260920T103419Z-fast-5e50839c.json",
-    "runs/20260920T111206Z-fast-d31319c4.json",
-    "runs/20260920T151149Z-fast-1395fa23.json",
-    "runs/20260920T191725Z-fast-516bdce5.json",
-    "runs/20260920T192237Z-fast-59707347.json",
-    "runs/20260920T210402Z-fast-7f36ed5d.json",
-    "runs/20260920T215427Z-fast-8d1f7660.json",
-    "runs/20260920T215833Z-fast-07666102.json",
-    "runs/20260920T230546Z-fast-99f1132f.json",
-    "runs/20260920T233705Z-fast-9ffe291c.json",
-    "runs/20260920T233740Z-fast-54f39237.json",
-    "runs/20260920T235033Z-fast-5db76d9b.json",
-    "runs/20260920T235059Z-fast-113e9c67.json",
-    "runs/20260922T155900Z-fast-9133b539.json",
-    "runs/20260922T160003Z-fast-cb7a5c80.json",
-    "runs/20260922T211436Z-fast-6fd2b5b7.json",
-    "runs/20260925T192049Z-fast-ed13fbcf.json",
-    "runs/20260925T193607Z-fast-0a85f545.json"
+    {
+      "path": "runs/20260919T000000Z-baseline.json",
+      "id": "20260919T000000Z-baseline",
+      "label": "Плановый снимок: до появления проверок",
+      "createdAt": "2026-09-19T08:38:10.550Z",
+      "revision": "pre-implementation",
+      "status": "not_run"
+    },
+    {
+      "path": "runs/20260919T084019Z-fast.json",
+      "id": "20260919T084019Z-fast",
+      "label": "Fast API + UI state checks",
+      "createdAt": "2026-09-19T08:40:19.520Z",
+      "revision": "working-tree",
+      "status": "partial"
+    },
+    {
+      "path": "runs/20260919T084059Z-fast.json",
+      "id": "20260919T084059Z-fast",
+      "label": "Fast API + UI state checks",
+      "createdAt": "2026-09-19T08:40:59.178Z",
+      "revision": "working-tree",
+      "status": "failed"
+    },
+    {
+      "path": "runs/20260919T084411Z-fast-502d2b3a.json",
+      "id": "20260919T084411Z-fast-502d2b3a",
+      "label": "После исправления фото и отмены",
+      "createdAt": "2026-09-19T08:44:11.105Z",
+      "revision": "working-tree",
+      "status": "failed"
+    },
+    {
+      "path": "runs/20260919T084617Z-fast-8968922f.json",
+      "id": "20260919T084617Z-fast-8968922f",
+      "label": "Финальный снимок: чистые быстрые проверки",
+      "createdAt": "2026-09-19T08:46:17.361Z",
+      "revision": "working-tree",
+      "status": "failed"
+    },
+    {
+      "path": "runs/20260919T084719Z-fast-79670002.json",
+      "id": "20260919T084719Z-fast-79670002",
+      "label": "Финальный снимок: 11 UI и 9 API проверок",
+      "createdAt": "2026-09-19T08:47:19.223Z",
+      "revision": "working-tree",
+      "status": "partial"
+    },
+    {
+      "path": "runs/20260919T084728Z-fast-6c9e1a11.json",
+      "id": "20260919T084728Z-fast-6c9e1a11",
+      "label": "v1 · приложение без технических панелей",
+      "createdAt": "2026-09-19T08:47:28.014Z",
+      "revision": "working-tree",
+      "status": "partial"
+    },
+    {
+      "path": "runs/20260919T084800Z-fast-0aa2d271.json",
+      "id": "20260919T084800Z-fast-0aa2d271",
+      "label": "v1 · приложение без технических панелей",
+      "createdAt": "2026-09-19T08:48:00.547Z",
+      "revision": "working-tree",
+      "status": "passed"
+    },
+    {
+      "path": "runs/20260919T084840Z-fast-686fbd92.json",
+      "id": "20260919T084840Z-fast-686fbd92",
+      "label": "v1 · готово к показу",
+      "createdAt": "2026-09-19T08:48:40.762Z",
+      "revision": "working-tree",
+      "status": "passed"
+    },
+    {
+      "path": "runs/20260919T085016Z-fast-bc9a375e.json",
+      "id": "20260919T085016Z-fast-bc9a375e",
+      "label": "v1.1 · чистый пользовательский путь",
+      "createdAt": "2026-09-19T08:50:16.528Z",
+      "revision": "working-tree",
+      "status": "passed"
+    },
+    {
+      "path": "runs/20260919T090933Z-fast-0b5dffe4.json",
+      "id": "20260919T090933Z-fast-0b5dffe4",
+      "label": "Тайминги: API и UI",
+      "createdAt": "2026-09-19T09:09:33.217Z",
+      "revision": "working-tree",
+      "status": "failed"
+    },
+    {
+      "path": "runs/20260919T091442Z-fast-67945dfc.json",
+      "id": "20260919T091442Z-fast-67945dfc",
+      "label": "v2 camera + design + timings",
+      "createdAt": "2026-09-19T09:14:42.468Z",
+      "revision": "working-tree",
+      "status": "passed"
+    },
+    {
+      "path": "runs/20260919T091815Z-fast-73011808.json",
+      "id": "20260919T091815Z-fast-73011808",
+      "label": "v2 · фото, пути Atlas и дизайн",
+      "createdAt": "2026-09-19T09:18:15.462Z",
+      "revision": "working-tree",
+      "status": "passed"
+    },
+    {
+      "path": "runs/20260919T091828Z-fast-e08b4341.json",
+      "id": "20260919T091828Z-fast-e08b4341",
+      "label": "v2 · фото, пути Atlas и дизайн",
+      "createdAt": "2026-09-19T09:18:28.352Z",
+      "revision": "working-tree",
+      "status": "passed"
+    },
+    {
+      "path": "runs/20260919T100239Z-fast-9438dbc7.json",
+      "id": "20260919T100239Z-fast-9438dbc7",
+      "label": "v3 · PWA и доступный затвор",
+      "createdAt": "2026-09-19T10:02:39.734Z",
+      "revision": "working-tree",
+      "status": "passed"
+    },
+    {
+      "path": "runs/20260919T100440Z-fast-7ea198cc.json",
+      "id": "20260919T100440Z-fast-7ea198cc",
+      "label": "v3 · PWA, короткий экран и затвор",
+      "createdAt": "2026-09-19T10:04:40.485Z",
+      "revision": "working-tree",
+      "status": "passed"
+    },
+    {
+      "path": "runs/20260919T100636Z-fast-95757b87.json",
+      "id": "20260919T100636Z-fast-95757b87",
+      "label": "v3 · PWA и корректная выдача manifest",
+      "createdAt": "2026-09-19T10:06:36.623Z",
+      "revision": "working-tree",
+      "status": "passed"
+    },
+    {
+      "path": "runs/20260919T102120Z-fast-c925e311.json",
+      "id": "20260919T102120Z-fast-c925e311",
+      "label": "v3.2 · подсказка вне рамки камеры",
+      "createdAt": "2026-09-19T10:21:20.592Z",
+      "revision": "working-tree",
+      "status": "passed"
+    },
+    {
+      "path": "runs/20260919T103542Z-fast-5d2999f1.json",
+      "id": "20260919T103542Z-fast-5d2999f1",
+      "label": "v3.3 · иконки и подсказка как в макете",
+      "createdAt": "2026-09-19T10:35:42.597Z",
+      "revision": "working-tree",
+      "status": "passed"
+    },
+    {
+      "path": "runs/20260919T103648Z-fast-68864736.json",
+      "id": "20260919T103648Z-fast-68864736",
+      "label": "v3.3 · точный перенос двух элементов Atlas",
+      "createdAt": "2026-09-19T10:36:48.444Z",
+      "revision": "working-tree",
+      "status": "passed"
+    },
+    {
+      "path": "runs/20260919T104000Z-fast-8ce35da5.json",
+      "id": "20260919T104000Z-fast-8ce35da5",
+      "label": "v3.4 · рамка телефона на широком экране",
+      "createdAt": "2026-09-19T10:40:00.602Z",
+      "revision": "working-tree",
+      "status": "passed"
+    },
+    {
+      "path": "runs/20260919T104936Z-fast-537a34c8.json",
+      "id": "20260919T104936Z-fast-537a34c8",
+      "label": "v4 · каталог, поиск и сохранённое",
+      "createdAt": "2026-09-19T10:49:36.478Z",
+      "revision": "working-tree",
+      "status": "passed"
+    },
+    {
+      "path": "runs/20260919T105054Z-fast-b34b65cc.json",
+      "id": "20260919T105054Z-fast-b34b65cc",
+      "label": "v4 · каталог, поиск и сохранённое",
+      "createdAt": "2026-09-19T10:50:54.560Z",
+      "revision": "working-tree",
+      "status": "passed"
+    },
+    {
+      "path": "runs/20260919T110113Z-fast-2bfb3de0.json",
+      "id": "20260919T110113Z-fast-2bfb3de0",
+      "label": "v5 · серверная валидация и Security",
+      "createdAt": "2026-09-19T11:01:13.340Z",
+      "revision": "working-tree",
+      "status": "passed"
+    },
+    {
+      "path": "runs/20260919T111739Z-fast-21d3bcd7.json",
+      "id": "20260919T111739Z-fast-21d3bcd7",
+      "label": "v5.1 scanner navigation",
+      "createdAt": "2026-09-19T11:17:39.509Z",
+      "revision": "working-tree",
+      "status": "passed"
+    },
+    {
+      "path": "runs/20260919T114151Z-fast-bbe6107b.json",
+      "id": "20260919T114151Z-fast-bbe6107b",
+      "label": "v5.2 save and search design",
+      "createdAt": "2026-09-19T11:41:51.379Z",
+      "revision": "working-tree",
+      "status": "passed"
+    },
+    {
+      "path": "runs/20260919T134833Z-fast-50c5fe9c.json",
+      "id": "20260919T134833Z-fast-50c5fe9c",
+      "label": "v5.3 Atlas bottle angle",
+      "createdAt": "2026-09-19T13:48:33.507Z",
+      "revision": "working-tree",
+      "status": "passed"
+    },
+    {
+      "path": "runs/20260919T140203Z-fast-1ac6e437.json",
+      "id": "20260919T140203Z-fast-1ac6e437",
+      "label": "v5.4 Atlas welcome composition",
+      "createdAt": "2026-09-19T14:02:03.891Z",
+      "revision": "working-tree",
+      "status": "passed"
+    },
+    {
+      "path": "runs/20260919T140607Z-fast-444ae400.json",
+      "id": "20260919T140607Z-fast-444ae400",
+      "label": "v5.5 Lower welcome bottle",
+      "createdAt": "2026-09-19T14:06:07.935Z",
+      "revision": "working-tree",
+      "status": "passed"
+    },
+    {
+      "path": "runs/20260919T142731Z-fast-e9d5c247.json",
+      "id": "20260919T142731Z-fast-e9d5c247",
+      "label": "v5.6 Bottle and button right alignment",
+      "createdAt": "2026-09-19T14:27:31.997Z",
+      "revision": "working-tree",
+      "status": "passed"
+    },
+    {
+      "path": "runs/20260919T164059Z-fast-a8f6a2e3.json",
+      "id": "20260919T164059Z-fast-a8f6a2e3",
+      "label": "v5.7 Interactive API docs and contract version",
+      "createdAt": "2026-09-19T16:40:59.876Z",
+      "revision": "working-tree",
+      "status": "passed"
+    },
+    {
+      "path": "runs/20260919T164809Z-fast-c0bf0bcd.json",
+      "id": "20260919T164809Z-fast-c0bf0bcd",
+      "label": "v5.8 Migrate application API to v1",
+      "createdAt": "2026-09-19T16:48:09.467Z",
+      "revision": "working-tree",
+      "status": "passed"
+    },
+    {
+      "path": "runs/20260919T170415Z-fast-fd0dad6c.json",
+      "id": "20260919T170415Z-fast-fd0dad6c",
+      "label": "v5.9 Contest HTTP contract and latest-run report",
+      "createdAt": "2026-09-19T17:04:15.900Z",
+      "revision": "working-tree",
+      "status": "passed"
+    },
+    {
+      "path": "runs/20260919T170750Z-fast-64c30e86.json",
+      "id": "20260919T170750Z-fast-64c30e86",
+      "label": "v5.9 Contest adapter and latest-run summary",
+      "createdAt": "2026-09-19T17:07:50.647Z",
+      "revision": "working-tree",
+      "status": "passed"
+    },
+    {
+      "path": "runs/20260919T171358Z-fast-6b9a660c.json",
+      "id": "20260919T171358Z-fast-6b9a660c",
+      "label": "v5.10 Sticky report section headings",
+      "createdAt": "2026-09-19T17:13:58.535Z",
+      "revision": "working-tree",
+      "status": "passed"
+    },
+    {
+      "path": "runs/20260920T103057Z-fast-f097c921.json",
+      "id": "20260920T103057Z-fast-f097c921",
+      "label": "Дизайн v2: сохранение контекста и новые экраны",
+      "createdAt": "2026-09-20T10:30:57.330Z",
+      "revision": "working-tree",
+      "status": "passed"
+    },
+    {
+      "path": "runs/20260920T103419Z-fast-5e50839c.json",
+      "id": "20260920T103419Z-fast-5e50839c",
+      "label": "Дизайн v2: финальная проверка миграции",
+      "createdAt": "2026-09-20T10:34:19.418Z",
+      "revision": "142b175",
+      "status": "passed"
+    },
+    {
+      "path": "runs/20260920T111206Z-fast-d31319c4.json",
+      "id": "20260920T111206Z-fast-d31319c4",
+      "label": "Цельный верх главного экрана",
+      "createdAt": "2026-09-20T11:12:06.823Z",
+      "revision": "0b4c00d",
+      "status": "passed"
+    },
+    {
+      "path": "runs/20260920T151149Z-fast-1395fa23.json",
+      "id": "20260920T151149Z-fast-1395fa23",
+      "label": "Нет совпадений: понятные действия и сохранение запроса",
+      "createdAt": "2026-09-20T15:11:49.427Z",
+      "revision": "74d7518",
+      "status": "passed"
+    },
+    {
+      "path": "runs/20260920T191725Z-fast-516bdce5.json",
+      "id": "20260920T191725Z-fast-516bdce5",
+      "label": "Главная: цельная шапка, прозрачный маскот и навигация",
+      "createdAt": "2026-09-20T19:17:25.937Z",
+      "revision": "4208edc",
+      "status": "passed"
+    },
+    {
+      "path": "runs/20260920T192237Z-fast-59707347.json",
+      "id": "20260920T192237Z-fast-59707347",
+      "label": "Прозрачные сцены маскота: поиск, ожидание и ошибки",
+      "createdAt": "2026-09-20T19:22:37.796Z",
+      "revision": "df07655",
+      "status": "passed"
+    },
+    {
+      "path": "runs/20260920T210402Z-fast-7f36ed5d.json",
+      "id": "20260920T210402Z-fast-7f36ed5d",
+      "label": "FE-027: Г — текст на всю ширину",
+      "createdAt": "2026-09-20T21:04:02.121Z",
+      "revision": "ebbd8cf",
+      "status": "passed"
+    },
+    {
+      "path": "runs/20260920T215427Z-fast-8d1f7660.json",
+      "id": "20260920T215427Z-fast-8d1f7660",
+      "label": "PostgreSQL: первый реальный прогон — ошибка размещения seed",
+      "createdAt": "2026-09-20T21:54:27.632Z",
+      "revision": "0a56a7aaf908412df7534aff7fc724a9c4420ceb",
+      "status": "failed"
+    },
+    {
+      "path": "runs/20260920T215833Z-fast-07666102.json",
+      "id": "20260920T215833Z-fast-07666102",
+      "label": "PostgreSQL: каталог, миграции и реальные быстрые проверки",
+      "createdAt": "2026-09-20T21:58:33.501Z",
+      "revision": "262f737616ec195cf8172bf97180ab4c812053a7",
+      "status": "passed"
+    },
+    {
+      "path": "runs/20260920T230546Z-fast-99f1132f.json",
+      "id": "20260920T230546Z-fast-99f1132f",
+      "label": "Контракт Романа: поиск и рекомендации через сервисы",
+      "createdAt": "2026-09-20T23:05:46.900Z",
+      "revision": "8d2f38a998ff77ec8751885a0933edb41f3ad7a0",
+      "status": "passed"
+    },
+    {
+      "path": "runs/20260920T233705Z-fast-9ffe291c.json",
+      "id": "20260920T233705Z-fast-9ffe291c",
+      "label": "Фото: лидер, явный выбор и возврат в список",
+      "createdAt": "2026-09-20T23:37:05.835Z",
+      "revision": "a1ae372ae3741d2cf6613829bb0e396bc86abc79",
+      "status": "failed"
+    },
+    {
+      "path": "runs/20260920T233740Z-fast-54f39237.json",
+      "id": "20260920T233740Z-fast-54f39237",
+      "label": "Фото: проверенная выдача с лидером и возвратом",
+      "createdAt": "2026-09-20T23:37:40.682Z",
+      "revision": "34aae76215a35a4f2fb72f585939543f861e832e",
+      "status": "passed"
+    },
+    {
+      "path": "runs/20260920T235033Z-fast-5db76d9b.json",
+      "id": "20260920T235033Z-fast-5db76d9b",
+      "label": "Лидер в фото, текстовом поиске и похожих винах",
+      "createdAt": "2026-09-20T23:50:33.399Z",
+      "revision": "282224518a6031b1df05619114e8f87067381408",
+      "status": "failed"
+    },
+    {
+      "path": "runs/20260920T235059Z-fast-113e9c67.json",
+      "id": "20260920T235059Z-fast-113e9c67",
+      "label": "Лидер во всех выдачах: подтверждённый прогон с PostgreSQL",
+      "createdAt": "2026-09-20T23:50:59.953Z",
+      "revision": "282224518a6031b1df05619114e8f87067381408",
+      "status": "passed"
+    },
+    {
+      "path": "runs/20260922T155900Z-fast-9133b539.json",
+      "id": "20260922T155900Z-fast-9133b539",
+      "label": "BE-045 · каталог: пагинация, импорт и аудит BDD",
+      "createdAt": "2026-09-22T15:59:00.212Z",
+      "revision": "3d3be2014b8a66243e0463ab22594c7b59955c29",
+      "status": "partial"
+    },
+    {
+      "path": "runs/20260922T160003Z-fast-cb7a5c80.json",
+      "id": "20260922T160003Z-fast-cb7a5c80",
+      "label": "BE-045 · итог после аудита Astra",
+      "createdAt": "2026-09-22T16:00:03.984Z",
+      "revision": "83dc356596303ad996cc6e93acd4fe5060f206d5",
+      "status": "passed"
+    },
+    {
+      "path": "runs/20260922T211436Z-fast-6fd2b5b7.json",
+      "id": "20260922T211436Z-fast-6fd2b5b7",
+      "label": "Android IME live search regression",
+      "createdAt": "2026-09-22T21:14:36.325Z",
+      "revision": "working-tree",
+      "status": "passed"
+    },
+    {
+      "path": "runs/20260925T192049Z-fast-ed13fbcf.json",
+      "id": "20260925T192049Z-fast-ed13fbcf",
+      "label": "Быстрые проверки API и состояний UI",
+      "createdAt": "2026-09-25T19:20:49.190Z",
+      "revision": "working-tree",
+      "status": "partial"
+    },
+    {
+      "path": "runs/20260925T193607Z-fast-0a85f545.json",
+      "id": "20260925T193607Z-fast-0a85f545",
+      "label": "Быстрые проверки API и состояний UI",
+      "createdAt": "2026-09-25T19:36:07.777Z",
+      "revision": "working-tree",
+      "status": "partial"
+    },
+    {
+      "path": "runs/20260925T204451Z-fast-076f66de.json",
+      "id": "20260925T204451Z-fast-076f66de",
+      "label": "Быстрые проверки API и состояний UI",
+      "createdAt": "2026-09-25T20:44:51.750Z",
+      "revision": "working-tree",
+      "status": "partial"
+    }
   ]
 }

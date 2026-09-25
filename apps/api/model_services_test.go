@@ -238,3 +238,31 @@ func TestSVC009CanceledContextReachesUpstreamTransport(t *testing.T) {
 		t.Fatalf("seen=%t err=%v", seen, err)
 	}
 }
+
+func TestSVC010RouteCorrelationBudgets(t *testing.T) {
+	tests := []struct {
+		name     string
+		wrap     func(http.HandlerFunc) http.HandlerFunc
+		expected time.Duration
+	}{
+		{name: "search", wrap: correlateSearchRequest, expected: 25 * time.Second},
+		{name: "recommendations", wrap: correlateRecommendationRequest, expected: 9 * time.Second},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			var remaining time.Duration
+			handler := test.wrap(func(w http.ResponseWriter, r *http.Request) {
+				deadline, ok := r.Context().Deadline()
+				if !ok {
+					t.Fatal("route context has no deadline")
+				}
+				remaining = time.Until(deadline)
+				w.WriteHeader(http.StatusNoContent)
+			})
+			handler(httptest.NewRecorder(), httptest.NewRequest(http.MethodPost, "/v1/"+test.name, nil))
+			if remaining < test.expected-time.Second || remaining > test.expected {
+				t.Fatalf("deadline remaining=%v, want close to %v", remaining, test.expected)
+			}
+		})
+	}
+}

@@ -1,9 +1,10 @@
-# Demo search API
+# Search and contest API
 
-Minimal Go prototype for the Wine UX Atlas. It provides
-predictable synthetic outcomes for frontend integration; it does not recognize
-images. A separately validated importer can load a real display catalog. It can retain a private uploaded image for
-the demo flow, but a stored receipt only gates the synthetic response.
+Go API for the Wine UX Atlas. Without a configured vision service, the local
+demo uses predictable synthetic outcomes. With `VISION_SERVICE_URL` and an
+imported display catalog, a private photo receipt feeds real ranked search and
+the contest endpoint returns the top organizer-verified slug. The display
+catalog is loaded by a separately validated importer.
 
 ## Synthetic catalog: PostgreSQL and standalone mode
 
@@ -30,7 +31,7 @@ This README defines endpoint behavior and error handling for the prototype.
 Interactive local documentation is available at `GET /api/docs`; it serves the
 OpenAPI 3.1 document at `GET /api/openapi.json` and its canonical search schema
 at `GET /api/schema/demo-search.schema.json`. API versioning and the boundary
-with the future contest endpoint are described in
+with the contest endpoint are described in
 [`contracts/api-versioning.md`](../../contracts/api-versioning.md).
 
 ## Contest adapter
@@ -42,8 +43,10 @@ the filename, and returns only `{ "slug": "..." }` when an injected
 recognizer returns a nonempty exact slug. It never uses `UPLOAD_DIR`, the
 synthetic catalog, or the demo search result.
 
-The executable intentionally wires no recognizer, so a valid decoded image
-returns JSON HTTP 503 `recognition_unavailable`; it never fabricates a slug.
+Without `VISION_SERVICE_URL`, a valid decoded image returns JSON HTTP 503
+`recognition_unavailable`. With the vision service configured, the same
+ranked result powers the contest slug and real-catalog photo search; see
+[`contracts/vision-serving.md`](../../contracts/vision-serving.md).
 `EVAL_MAX_CONCURRENT` controls this route's independent concurrency cap
 (default 4). Run its contract checks with
 `go test -count=1 -run '^TestEVAL' ./...`. They prove the HTTP boundary and
@@ -61,8 +64,10 @@ string. In the local catalog fallback it uses the lightweight token search
 specified in [catalog-display.md](../../contracts/catalog-display.md): normalized
 names/producer/year, word prefixes and one bounded typo; numeric tokens are exact.
 It is only meaningful for the default/exact flow. `photoId`
-is optional; when supplied, it must be an existing private upload receipt. It
-does not enable image recognition.
+is optional; when supplied, it must be an existing private upload receipt.
+With a real display catalog and configured vision service, that receipt sends
+the stored original to ranked image recognition. The synthetic local mode
+keeps the receipt-gated demo behavior.
 
 Successful responses have this shape:
 
@@ -99,7 +104,8 @@ this demo contract.
 
 `POST /v1/photos` accepts `multipart/form-data` with exactly one required
 `photo` file field. Its content, not the client filename or declared MIME type,
-is checked with `image.DecodeConfig`; accepted formats are JPEG, PNG, and GIF.
+is checked with `image.DecodeConfig`; accepted formats are JPEG, PNG, GIF,
+and WebP, regardless of filename or declared MIME type.
 The photo content limit is 10 MiB and the default pixel limit is 25,000,000.
 
 On success it returns HTTP 201:
@@ -134,7 +140,9 @@ the former contains private user photos and receipts, while the latter contains
 only versioned synthetic demo records. Neither has a public file route.
 
 `POST /v1/search` with an unknown valid-format `photoId` returns HTTP 404
-`photo_not_found`; a malformed ID returns HTTP 400 `invalid_photo_id`.
+`photo_not_found`; a malformed ID returns HTTP 400 `invalid_photo_id`. A
+receipt that exists but cannot be read or verified returns HTTP 503
+`storage_unavailable`, rather than being reported as absent.
 
 При настроенном `FEEDBACK_DIR` photo-search возвращает `feedbackToken`. Интерфейс
 отправляет подтверждение или исправление в `POST /v1/feedback`; записи хранятся
@@ -148,8 +156,12 @@ go run .
 ```
 
 It listens on `127.0.0.1:8097`. Set `ADDRESS` to choose another listen address.
-The server applies a 5-second header timeout, 10-second read/write timeouts,
-and a 60-second idle timeout. Set `WEB_ROOT` to a frontend directory to serve
+The server applies a 5-second header timeout, a 20-second read timeout, a
+30-second write timeout, and a 60-second idle timeout. App photo recognition
+has an 18-second upstream ceiling within that server margin. Contest prediction
+keeps its separate 9-second handler deadline. The complete `/v1/search` route
+has a 25-second processing budget for receipt, vision, catalog mapping, and JSON;
+`/v1/recommendations` retains its 9-second route budget. Set `WEB_ROOT` to a frontend directory to serve
 its static files and fall back to `index.html` for non-API routes. API routes
 continue to return JSON errors. Set `UPLOAD_DIR` to an absolute private path
 outside `WEB_ROOT` to enable uploads; configure service write permissions for
@@ -242,6 +254,11 @@ go run ./cmd/catalog-import -package /path/to/package -version catalog-display-2
 
 Миграция допускает SQL NULL года и защищает импортированный каталог от demo-seed.
 Файлы версионируются и остаются вне БД; не удалять старые assets при rollback.
-Reference-движок несовместим с реальными IDs: фото/рекомендации возвращают
-явную ошибку до подключения подходящего сервиса. Поиск по названию работает
-через каталог независимо от модели; качество распознавания не заявляется.
+Reference-движок несовместим с реальными IDs. Фото-поиск реального каталога
+доступен только через `VISION_SERVICE_URL`; `VISION_CATALOG_VERSION` и
+`VISION_INDEX_VERSION` закрепляют версии ответа распознавателя.
+`VISION_SLUGS_FILE` и `VISION_SLUGS_SHA256` закрепляют точный список slug
+конкурсного каталога вне Git. Ранжированные slug сопоставляются с ID
+существующих карточек витрины, если карточка доступна. Без vision-сервиса фото
+возвращает явную ошибку. Поиск по названию работает через локальный каталог.
+Рекомендации остаются отдельным сервисом и не подменяются кандидатами поиска.

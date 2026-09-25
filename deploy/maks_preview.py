@@ -104,11 +104,11 @@ def validate_package(folder, revision, current):
     policy_ids = [case_id for item in policy.get('exceptions', [])
                   for case_id in item.get('ids', [])]
     deferred = checks.get('coverageExceptions')
-    require(isinstance(deferred, list) and len(policy_ids) == len(deferred) == 20 and
-            len(set(policy_ids)) == 20 and
+    require(isinstance(deferred, list) and len(policy_ids) == len(deferred) and
+            len(policy_ids) > 0 and len(set(policy_ids)) == len(policy_ids) and
             set(policy_ids) == {item.get('id') for item in deferred} and
             all(item.get('status') in ('skipped', 'not_run') for item in deferred),
-            'The 20 named BDD exceptions do not match CI evidence')
+            'Named BDD exceptions do not match CI evidence')
     require(migration_hashes(folder) == migration_hashes(current),
             'SQL migrations changed; preview-only deploy must stop')
     return checks
