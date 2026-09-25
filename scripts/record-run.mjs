@@ -3,6 +3,7 @@
 import { createHash } from 'node:crypto';
 import { mkdir, readFile, writeFile, access } from 'node:fs/promises';
 import { resolve, basename } from 'node:path';
+import { runIndexEntry } from './report-results.mjs';
 
 const root=resolve(import.meta.dirname,'..');
 const input=process.argv[2];
@@ -14,7 +15,7 @@ const target=resolve(dir,basename(run.id)+'.json');
 try { await access(target); throw new Error(`Immutable run already exists: ${target}`); } catch (e) { if(e.code!=='ENOENT') throw e; }
 await writeFile(target,JSON.stringify({...run,schemaVersion:1},null,2)+'\n');
 const indexPath=resolve(root,'reports/site/data/index.json'); const index=JSON.parse(await readFile(indexPath,'utf8'));
-index.generatedAt=new Date().toISOString(); index.runs.push(`runs/${basename(run.id)}.json`);
+index.generatedAt=new Date().toISOString(); index.runs.push(runIndexEntry(`runs/${basename(run.id)}.json`,run));
 await writeFile(indexPath,JSON.stringify(index,null,2)+'\n');
 const hash=createHash('sha256').update(await readFile(target)).digest('hex');
 const manifest={schemaVersion:1,runId:run.id,recordedAt:new Date().toISOString(),files:[{path:`data/runs/${basename(run.id)}.json`,sha256:hash}]};
