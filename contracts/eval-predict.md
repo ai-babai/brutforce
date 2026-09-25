@@ -63,9 +63,12 @@ type Recognizer interface {
 }
 ```
 
-It receives a fully decoded bounded image, returns one exact slug, and must
-respect the supplied context. No model path, catalog, or engine configuration
-is assumed by this contract because none is present in this repository.
+Injected recognizers receive a fully decoded bounded image and must respect
+the supplied context. The configured HTTP adapter additionally implements
+`EncodedRecognizer`, so it forwards the validated original bytes to the
+serving process without encoding the decoded image again. The model and index
+run in that separate process; the Go adapter pins their response versions and
+the organizer slug allowlist.
 
 ## Behavior checks
 

@@ -1,9 +1,10 @@
-# Demo search API
+# Search and contest API
 
-Minimal Go prototype for the Wine UX Atlas. It provides
-predictable synthetic outcomes for frontend integration; it does not recognize
-images. A separately validated importer can load a real display catalog. It can retain a private uploaded image for
-the demo flow, but a stored receipt only gates the synthetic response.
+Go API for the Wine UX Atlas. Without a configured vision service, the local
+demo uses predictable synthetic outcomes. With `VISION_SERVICE_URL` and an
+imported display catalog, a private photo receipt feeds real ranked search and
+the contest endpoint returns the top organizer-verified slug. The display
+catalog is loaded by a separately validated importer.
 
 ## Synthetic catalog: PostgreSQL and standalone mode
 
@@ -30,7 +31,7 @@ This README defines endpoint behavior and error handling for the prototype.
 Interactive local documentation is available at `GET /api/docs`; it serves the
 OpenAPI 3.1 document at `GET /api/openapi.json` and its canonical search schema
 at `GET /api/schema/demo-search.schema.json`. API versioning and the boundary
-with the future contest endpoint are described in
+with the contest endpoint are described in
 [`contracts/api-versioning.md`](../../contracts/api-versioning.md).
 
 ## Contest adapter
@@ -63,8 +64,10 @@ string. In the local catalog fallback it uses the lightweight token search
 specified in [catalog-display.md](../../contracts/catalog-display.md): normalized
 names/producer/year, word prefixes and one bounded typo; numeric tokens are exact.
 It is only meaningful for the default/exact flow. `photoId`
-is optional; when supplied, it must be an existing private upload receipt. It
-does not enable image recognition.
+is optional; when supplied, it must be an existing private upload receipt.
+With a real display catalog and configured vision service, that receipt sends
+the stored original to ranked image recognition. The synthetic local mode
+keeps the receipt-gated demo behavior.
 
 Successful responses have this shape:
 
