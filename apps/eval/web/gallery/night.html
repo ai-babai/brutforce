@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>LCT · CPU, геометрия и Qwen · 25–26 сентября</title><link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="next.css"></head>
+<body data-report-source="night-data.json">
+<header><div class="brand"><a href="/">LCT / VISION EVAL</a><span class="header-tag">25–26 сентября · Эксперименты</span></div><nav aria-label="Разделы"><a href="/">Корзины</a><a href="integration.html">Предыдущие результаты</a><a href="/requirements.html">Требования</a><a href="/guide.html">Инструкция</a></nav></header>
+<main><section class="intro"><div><div class="eyebrow">ГОТОВЫЕ МЕТОДЫ · БЕЗ НОВОГО ОБУЧЕНИЯ</div><h1>Что помогает<br><em>найти вино.</em></h1></div><p>CPU на Sigma, детали этикетки, мультимодальное сравнение и адаптер Романа. Все результаты — на закреплённых данных; скорость отдельных этапов отделена от времени полного запроса.</p></section>
+<nav id="report-nav" class="report-nav" aria-label="Разделы отчёта"></nav>
+<p id="report-status" class="report-status" role="status">Загружаем результаты…</p><div id="report-sections"></div>
+<section class="panel architecture-panel"><h2 id="architecture-title">Как устроены решения</h2><div class="architecture-grid">
+<article class="architecture-card"><h3>B · исходный GPU-поиск</h3><pre>полное фото
+  → RT-DETR: бутылки
+  → SigLIP Base: центральное вино
+  → OWLv2: область этикетки
+  ├─ SO400M: целая цель → кандидаты
+  ├─ SO400M: этикетка   → кандидаты
+  └─ PaddleOCR → текстовый поиск
+  → объединение рангов → Top20</pre><p>Для retrieval-корзин на входе уже проверенный кроп. Каталог обработан заранее. B — контроль для дополнительных этапов на GPU, а не новый результат этой ночи.</p></article>
+<article class="architecture-card"><h3>CPU · сокращённый поиск</h3><pre>фото → RT-DETR → центральное вино
+  ├─ бутылка есть → кроп цели
+  └─ бутылки нет → поиск этикетки
+       ↓
+  SO400M или Base224 → один вектор
+       ↓
+  сравнение с каталогом → Top20
+
+отдельно: OCR и сочетание ветвей</pre><p>Каждый вариант измеряется отдельно. Изменение размера OWLv2 может изменить найденную область; это проверка качества и скорости, а не гарантированно эквивалентная оптимизация.</p></article>
+<article class="architecture-card"><h3>DISK + LightGlue · совпадение деталей</h3><pre>B: выбранная этикетка + Top20
+  → DISK: характерные точки
+  → LightGlue: пары точек
+  → геометрическая проверка
+  → новый порядок кандидатов
+
+контроли:
+геометрия / смесь / осторожный каскад</pre><p>Например, совпали буквы, эмблема и рисунок в согласованном расположении. Много совпадений ещё не доказывает точный товар: у разных вин могут повторяться оформление и каталожная фотография.</p></article>
+<article class="architecture-card"><h3>Qwen VL Reranker 2B · сравнение пары</h3><pre>B: выбранная этикетка + Top20
+  → для каждого кандидата:
+    фото запроса + фото эталона
+    + название и поля каталога
+  → Qwen: оценка соответствия
+  → новый порядок кандидатов</pre><p>Это проверка готового списка. Она не вернёт товар, которого нет в Top20, и не исправит неверно выбранную бутылку. Число модели не трактуется как откалиброванная вероятность точного совпадения.</p></article>
+<article class="architecture-card"><h3>Roman-5 / Roman-20 · выбор кандидата</h3><pre>полное фото + кандидаты B
+  ├─ первые 5 → Qwen3.5-4B → выбор
+  └─ группы из Top20
+       → промежуточные выборы
+       → финальные 5 → выбор
+
+контроль: base / base + адаптер Ромы</pre><p>Адаптер был обучен Романом раньше. В этой итерации обучения нет. Проверяем его с нашим пулом кандидатов; это не полное воспроизведение исходного поиска Романа.</p></article>
+<article class="architecture-card"><h3>Qwen OCR · чтение надписей</h3><pre>B: выбранная область этикетки
+  → Qwen3-VL-2B-Instruct
+  → дословно видимые строки
+  → поиск по тексту всего каталога
+  → отдельный OCR Top20
+       + визуальные списки B
+  → объединение рангов</pre><p>Читающая модель не получает список кандидатов или правильный ответ. Текстовая ветвь может добавить в выдачу вино, пропущенное визуальным поиском. Это отдельный опыт от Qwen Reranker.</p></article>
+</div></section>
+<section class="next-panel"><h2>Воспроизведение и дальнейшие шаги</h2><p><a href="https://github.com/ai-babai/brutforce/blob/codex/eval-baskets-20260923/docs/project/EXPERIMENT-PLAN-2026-09-25-NIGHT.md">Согласованный план и критерии</a> · <a href="https://github.com/ai-babai/brutforce/blob/codex/eval-baskets-20260923/docs/project/PLAN.md">Живой план</a> · <a href="/guide.html">Онбординг агентов</a></p><p>Корзины v2 неизменны. Новые прогоны добавлены в историю. Итеративный подбор на этих же фото — исследование, не независимый закрытый тест. TEST и PROD во время экспериментов не заменяем.</p></section>
+</main><footer>Исходные данные, закрытые ответы и веса хранятся отдельно от публичного отчёта.</footer><script src="next.js"></script></body></html>

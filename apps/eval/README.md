@@ -91,6 +91,15 @@ The four original `example-*-input.webp` files must retain the SHA-256 values
 from the public organizer query manifest; the v1 and v2 crop JPEGs are copied
 from their recorded experiment output without modification.
 
+## Nightly CPU/GPU report
+
+The September25–26 report is `/data/night.html` with `night-data.json`, generated
+by `tools/night-experiments/build_report.py`. Its source, protocol and artifact
+map start at `tools/night-experiments/README.md`. Preserve the distinction between
+cached inference stages, uncapped HTTP diagnostics and strict 10-second client
+captures. Only publish complete verified aggregate rows; private per-case
+answers remain outside the static directory.
+
 ## Data layout
 
 ```text

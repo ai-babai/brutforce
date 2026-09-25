@@ -34,3 +34,6 @@ New runs use `-suite-version v2`; keep v1 for historical replay. UI selects v2 b
 Never compare or combine runs across suite_version/suite_hash without an explicit rescore.
 For an untrusted inference host, use `run -no-submit -output FILE`: no gold or scoring token there.
 Submit the resulting predictions from the trusted host with `scripts/suite_io.py score`.
+
+Nightly CPU/GPU experiments: `../../tools/night-experiments/README.md`, report `/data/night.html`.
+Read each run's timing scope: cached-stage latency is not full endpoint latency.
