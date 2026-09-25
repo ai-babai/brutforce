@@ -101,7 +101,8 @@ this demo contract.
 
 `POST /v1/photos` accepts `multipart/form-data` with exactly one required
 `photo` file field. Its content, not the client filename or declared MIME type,
-is checked with `image.DecodeConfig`; accepted formats are JPEG, PNG, and GIF.
+is checked with `image.DecodeConfig`; accepted formats are JPEG, PNG, GIF,
+and WebP, regardless of filename or declared MIME type.
 The photo content limit is 10 MiB and the default pixel limit is 25,000,000.
 
 On success it returns HTTP 201:

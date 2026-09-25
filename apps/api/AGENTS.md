@@ -18,11 +18,11 @@ with it.
   contest prediction and real photo search; see `../../contracts/vision-serving.md`.
   Authentication and analytics remain outside this boundary.
 - Keep dependencies in the Go standard library except the approved
-  `golang.org/x/image/webp` decoder used only by the contest adapter and the
+  `golang.org/x/image/webp` decoder used by the contest and private upload boundaries and the
   authorized PostgreSQL catalog dependencies `github.com/jackc/pgx/v5` and
   `github.com/pressly/goose/v3`. It lets
   `POST /v1/eval/predict` identify actual WebP bytes regardless of filename;
-  the demo upload allowlist remains JPEG/PNG/GIF.
+  the private upload allowlist is JPEG/PNG/GIF/WebP, checked by decoded bytes.
 - `go test -count=1 ./...` is the required fast verification command.
 
 - Preserve [Security Specs](../../docs/product/security-spec.md). Never call DecodeAll or process stored originals without resource bounds. A
