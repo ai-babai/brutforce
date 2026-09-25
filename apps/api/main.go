@@ -85,10 +85,12 @@ func main() {
 		Addr:              address,
 		Handler:           newHandlerWithCatalogAndServices(os.Getenv("WEB_ROOT"), nil, catalog, services),
 		ReadHeaderTimeout: 5 * time.Second,
-		ReadTimeout:       10 * time.Second,
-		WriteTimeout:      10 * time.Second,
-		IdleTimeout:       60 * time.Second,
-		MaxHeaderBytes:    16 << 10,
+		// Allow bounded uploads over slower client links. Recognition and search
+		// keep their separate nine-second handler budgets after input arrives.
+		ReadTimeout:    20 * time.Second,
+		WriteTimeout:   20 * time.Second,
+		IdleTimeout:    60 * time.Second,
+		MaxHeaderBytes: 16 << 10,
 	}
 	if err := server.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 		log.Fatal(err)
