@@ -56,7 +56,7 @@ function renderMatrix(){
     const cases=cs.map(c=>`<tr class="case-row"><th class="case-col" scope="row"><a href="#" data-case-link="${esc(c.case_id)}">${esc(c.case_id)}</a> ${badge(c)}</th>${runs.map(r=>matrixCell(r.cases.find(x=>x.case_id===c.case_id))).join('')}</tr>`).join('');
     return basket+cases;
   }).join('');
-  $('#matrix').innerHTML=`<p class="matrix-hint">${runs.length} прогонов · S = service, R = retrieval · ✓ верно, × неверно, н/о без оценки, н/з не запущен, ош ошибка, тайм таймаут. «ист.» — исходная v2-отправка с ошибочной версией в метаданных; r1 — исправленная запись. Прокрутите таблицу вправо; откройте заголовок для полных деталей.</p><div class="matrix-wrap"><table class="run-grid" style="width:${205+60*runs.length}px"><thead>${head}</thead><tbody>${rows}</tbody></table></div>`;
+  $('#matrix').innerHTML=`<p class="matrix-hint">${runs.length} прогонов · S = service, R = retrieval · ✓ верно, × неверно, н/о без оценки, н/з не запущен, ош ошибка, тайм таймаут. «ист.» — исходная отправка label-context-v2 с ошибочной версией решения в метаданных; r1 — исправленная запись. Прокрутите таблицу вправо; откройте заголовок для полных деталей.</p><div class="matrix-wrap"><table class="run-grid" style="width:${205+60*runs.length}px"><thead>${head}</thead><tbody>${rows}</tbody></table></div>`;
   document.querySelectorAll('[data-case-link]').forEach(el=>el.onclick=e=>{e.preventDefault();showCase(el.dataset.caseLink)});
   document.querySelectorAll('[data-run]').forEach(el=>el.onclick=()=>showRun(el.dataset.run));
 }

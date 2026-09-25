@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>LCT · Интеграция поиска · 25 сентября</title><link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="next.css"></head>
+<body data-report-source="integration-data.json">
+<header><div class="brand"><a href="/">LCT / VISION EVAL</a><span class="header-tag">25 сентября · Результаты</span></div><nav aria-label="Разделы"><a href="/">Корзины</a><a href="/data/next.html">Первый опыт</a><a href="/data/detectors.html">Детекторы</a><a href="/guide.html">Инструкция</a></nav></header>
+<main><section class="intro"><div><div class="eyebrow">ОТ ЭКСПЕРИМЕНТА К РАБОТАЮЩЕМУ ENDPOINT</div><h1>Один поиск.<br><em>Два ответа.</em></h1></div><p>Точные версии корзин, реальный каталог и проверка оригинальным скриптом организаторов. Модели не обучаем.</p></section>
+<nav id="report-nav" class="report-nav" aria-label="Разделы отчёта"></nav>
+<section class="panel architecture-panel"><h2 id="architecture-title">Что именно сравниваем</h2><div class="architecture-grid">
+<article class="architecture-card"><h3>GPU · исходная композиция</h3><pre>фото → RT-DETR: бутылки
+          ↓
+SigLIP Base: центральное вино
+          ↓
+цель целиком + OWLv2: этикетка
+          ↓
+SO400M: два вектора + PaddleOCR
+          ↓
+поиск → объединение рангов → список</pre><p>Визуальные признаки цели и этикетки плюс самостоятельный поиск по тексту. Каталожные векторы подготовлены заранее. RRF объединяет места кандидата в трёх списках поиска. Это исходная точка сравнения.</p></article>
+<article class="architecture-card"><h3>GPU · варианты A и B</h3><pre>исходная композиция
+          ↓
+бутылки найдены,
+но проверка «вино?» их отвергла
+          ↓
+ограниченная проверка этикетки/OCR
+          ↓
+дальнейший поиск при наличии данных</pre><p>A требует этикетку и достаточно сильное совпадение OCR с каталогом. B проверяет небольшой отрыв от класса «вино», этикетку и винные термины в OCR; явные признаки пива и крепкого алкоголя запрещают восстановление. Это отдельные варианты с заранее закреплёнными правилами.</p></article>
+<article class="architecture-card"><h3>GPU · вариант C, отклонён</h3><pre>RT-DETR: найденные рамки
+          ↓
+слабая общая рамка содержит
+две отдельные уверенные бутылки?
+          ↓ да
+удалить только общую рамку
+          ↓
+исходная проверка и поиск</pre><p>Проверка не использует названия или правильные ответы. Но качество на реальных фото снизилось: 42 → 40 из 54. Этот вариант сохранён для анализа ошибок и не включён в рабочий профиль.</p></article>
+<article class="architecture-card"><h3>CPU · постоянный TEST</h3><pre>фото → RT-DETR: бутылки
+          ↓
+SigLIP Base: центральное вино
+          ↓
+SO400M: один вектор цели
+          ↓
+поиск по целым эталонам → список
+
+нет бутылки → OWLv2: этикетка</pre><p>Отдельный упрощённый профиль без регулярного OCR и двух визуальных ветвей. Его качество и скорость измеряем отдельно; результаты полной GPU-композиции к нему не относятся.</p></article>
+<article class="architecture-card"><h3>Два адаптера общего результата</h3><pre>одна фотография
+       ↓
+общий backend и один каталог
+       ↓
+упорядоченные slug
+       ├─ /v1/eval/predict
+       │     → один slug
+       └─ /v1/search
+             → карточки кандидатов
+
+рекомендации аналогов — отдельно</pre><p>Сам факт первого места не доказывает точную идентичность. Официальный скрипт использует один ответ; приложение получает список без выдуманной уверенности.</p></article>
+</div></section>
+<p id="report-status" class="report-status" role="status">Загружаем результаты…</p><div id="report-sections"></div>
+<section class="next-panel"><h2>План и воспроизводимость</h2><p><a href="https://github.com/ai-babai/brutforce/blob/codex/eval-baskets-20260923/docs/project/PLAN.md">Живой план в приватном репозитории</a>: актуальные задачи, бэклог, снятые подходы и причины. Серверная копия: <code>/srv/lct/guide/docs/project/PLAN.md</code>.</p><p><a href="/guide.html">Онбординг для любого агента</a> · <a href="/?suite=v2">Корзины v2</a> · <a href="/?suite=v1">История v1</a> · <a href="/requirements.html">Требования и источники</a></p></section></main><footer>Разработка без обучения. Диагностические корзины не являются независимым закрытым тестом организаторов.</footer><script src="next.js"></script></body></html>
