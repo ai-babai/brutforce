@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "targetScope": "maks-demo-only",
+  "exceptions": [
+    {
+      "ids": [
+        "DESIGN-001", "DESIGN-002", "DESIGN-004", "DESIGN-006", "DESIGN-008",
+        "DESIGN-009", "DESIGN-010", "DESIGN-011", "DESIGN-013", "DESIGN-014",
+        "DESIGN-015", "DESIGN-016", "DESIGN-018", "DESIGN-020", "DESIGN-022",
+        "DESIGN-023", "DESIGN-025", "DESIGN-026"
+      ],
+      "reason": "Historical v2 CSS assertions cannot prove the active Air 3.4 styling and are superseded; their old green result would be misleading.",
+      "evidence": "docs/product/reviews/air-v34-implementation-qa.md records independent local browser review of the Air screens and viewport geometry. The old v2 cases remain visible as skipped until replaced or retired."
+    },
+    {
+      "ids": ["AIR-021"],
+      "reason": "Keyboard focus and accessible touch behavior across narrow screens and enlarged text require a real-device or browser accessibility review; jsdom would not establish them.",
+      "evidence": "docs/product/reviews/air-v34-implementation-qa.md records independent browser review of responsive screens. Keyboard and enlarged-text verification remain open for human review."
+    },
+    {
+      "ids": ["AIR-024"],
+      "reason": "Camera viewport height and non-overlap with the browser chrome require browser geometry measurements rather than a simulated DOM assertion.",
+      "evidence": "docs/product/reviews/air-v34-implementation-qa.md records local measurements at 320×640, 360×740, 390×850, 430×932, and 1440×900, including shutter visibility and no horizontal overflow."
+    }
+  ]
+}

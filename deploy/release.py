@@ -88,6 +88,9 @@ def install(sha, checksum, run_id):
             require(digest(unpack/p)==f['sha256'], 'Package file checksum mismatch')
         checks=read(unpack/'evidence'/'checks.json')
         require(checks['status']=='passed' and checks['revision']==sha, 'Required CI checks did not pass')
+        require(checks.get('bddCoverageStatus', 'passed') == 'passed' and
+                checks.get('targetScope', 'all-environments') == 'all-environments',
+                'Partial BDD coverage is valid only for Maks demo, not TEST/PROD')
         unpack.rename(target)
     # The embedded demo remains a valid rollback candidate. Real catalog data is
     # registered separately and can bind to this same immutable app package.

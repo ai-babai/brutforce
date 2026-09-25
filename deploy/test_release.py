@@ -103,6 +103,12 @@ class ReleaseSafetyTests(unittest.TestCase):
         with self.assertRaisesRegex(RuntimeError, "Required CI checks did not pass"):
             self.install_bytes(data)
 
+    def test_rejects_demo_only_package_from_test_prod_controller(self):
+        data = self.archive(self.valid_files({"status": "passed", "revision": SHA,
+                                              "bddCoverageStatus": "partial", "targetScope": "maks-demo-only"}))
+        with self.assertRaisesRegex(RuntimeError, "Partial BDD coverage"):
+            self.install_bytes(data)
+
     def test_production_requires_explicit_approval_after_other_gates(self):
         target = release.ROOT / "packages" / SHA
         manifest = self.installed_target(target)
