@@ -1,0 +1,121 @@
+/* Air is an exploratory layer. The original v3.3 remains unchanged. */
+:root{--ink:#2c2a28;--muted:#746a65;--line:#ece5de}
+body{background:#f3f0e9}
+.studio-index{margin-top:18px}.studio-lead{font-weight:400}.air-disclaimer{font-size:13px;margin-top:25px}
+.state-rationale{background:transparent;border:0;border-top:1px solid #dcd4cb;border-radius:0;padding:20px 0 0}
+.phone{background:var(--paper)}
+.icon{stroke:none;fill:currentColor}
+.app-top{font-weight:500;border-bottom-color:transparent;height:68px;min-height:68px;color:#685d56}
+.back{width:44px;height:44px;color:#826e65}.back .icon{width:24px;height:24px}
+.screen-content{padding:25px 26px 24px}
+.screen-content h2{font-weight:500;line-height:1.16}
+.subcopy{line-height:1.55}
+.eyebrow{font-weight:500;font-size:10px;letter-spacing:.12em}
+.btn{font-weight:500;min-height:56px;border-radius:13px;box-shadow:none!important;gap:12px}
+.btn.primary{box-shadow:none}.btn.secondary{background:transparent;border-color:var(--line)}
+.btn-icon,.btn.text .btn-icon,.btn.secondary .btn-icon{background:none;border-radius:0;width:28px;height:28px}
+.btn-icon .icon{width:25px;height:25px}
+.btn.text{font-size:14px;font-weight:400;min-height:48px}
+.dual-actions{gap:20px}.dual-actions .btn{border:0;border-radius:8px;min-height:56px;font-size:14px;font-weight:400;gap:9px}
+.empty-screen>.dual-actions{margin-top:14px}
+.bottom-nav{height:74px;min-height:74px;padding:8px 12px;background:rgba(254,253,250,.96);border-top:1px solid #eee8e1;backdrop-filter:blur(16px)}
+.bottom-nav button{font-size:10px;font-weight:400;gap:3px;color:#746a65;min-height:48px}
+.bottom-nav button .icon{width:26px;height:26px;margin:0}
+.bottom-nav .nav-slider{left:12px;width:calc((100% - 24px)/3);top:8px;bottom:8px;border-radius:12px;background:linear-gradient(180deg,#f7eee6b3,#f7eee659)}
+.home-screen{background:linear-gradient(180deg,#fbf6ec 0%,#fbf6ec 58%,#fefdfa 92%)}
+.brand,.home-hero,.home-actions{background:transparent}
+.brand{height:95px;padding:28px 28px 10px}.brand-logo{width:140px;max-height:46px}
+.home-hero{padding:28px 26px 0;min-height:505px;overflow:hidden}
+.home-hero h2{font-size:39px;line-height:1.14;font-weight:500}
+.home-hero p{font-size:14px;line-height:1.65;margin-top:19px;max-width:285px}
+.hero-dog{height:320px;margin-top:25px}
+.hero-dog .dog{height:330px;width:370px;max-width:110%}
+.home-actions{margin-top:0;padding:0 26px 26px}
+.home-scan{grid-template-columns:30px minmax(0,1fr) 30px;min-height:66px;padding:14px 24px;border-radius:14px;box-shadow:none;text-align:center}
+.home-scan-copy b{font-size:16px;font-weight:500}.home-scan-target .icon{width:28px;height:28px}
+.home-scan-icon{width:30px;height:30px;background:none;border-radius:0}.home-scan-icon .icon{width:26px;height:26px}
+.home-secondary{margin-top:8px;gap:24px;justify-content:center}.home-secondary .btn{font-size:13px;gap:9px;padding:0;min-height:50px;color:#746258}
+.home-secondary .btn-icon{width:27px}.home-secondary .icon{width:25px;height:25px}
+/* One list, with hierarchy expressed by scale and a quiet edge-to-edge wash. */
+.results-screen{padding:23px 26px 26px}
+.results-screen h2{max-width:360px;font-size:34px;margin-bottom:13px}
+.results-screen .subcopy{font-size:14px;margin-bottom:21px}
+.comparison-row{padding:0 0 19px;border:0;border-bottom:1px solid var(--line);border-radius:0;background:transparent;grid-template-columns:minmax(0,1fr) auto;gap:14px;margin-bottom:0}
+.origin-thumb{border-radius:8px;gap:12px}.origin-thumb .photo-visual{height:66px;width:52px;border-radius:7px}
+.origin-thumb>span{font-weight:400;font-size:12px;max-width:75px}
+.comparison-actions{gap:4px;flex-direction:row}
+.photo-action{background:none;box-shadow:none;border:0;border-radius:50%;width:54px;height:54px;color:#895c54}
+.photo-action .icon{width:30px;height:30px}.photo-action:hover{background:#f5eee6}.photo-action:active{background:#f1e6dc}
+.candidate-list,.results-screen .candidate-list{gap:0}
+.candidate,.candidate.leader{border:0;border-bottom:1px solid var(--line);border-radius:0;box-shadow:none;grid-template-columns:62px minmax(0,1fr) 20px;gap:18px;padding:21px 0;background:transparent;min-height:142px;transition:background .18s}
+.candidate:hover,.candidate.leader:hover{background:#fbf6ec99;box-shadow:none;border-color:var(--line)}
+.candidate img{width:56px;height:98px;margin:auto}
+.candidate.leader{grid-template-columns:78px minmax(0,1fr) 20px;padding:23px 0 28px;background:linear-gradient(110deg,#fbf6ec80,transparent 75%);min-height:207px}
+.candidate.leader img{width:76px;height:132px}
+.candidate.leader .leader-label{font-size:10px;font-weight:500;letter-spacing:.08em;padding:0;margin-bottom:0}
+.candidate-info{gap:5px}.candidate-info small,.candidate.leader .candidate-info small{font-size:12px;font-weight:400;color:var(--muted)}
+.candidate-info strong{font-size:16px;font-weight:500;line-height:1.35}
+.candidate.leader .candidate-info strong{font-size:20px;font-weight:500;line-height:1.3}
+.candidate-year{font-size:12px;font-weight:400}.candidate-meta{margin-top:3px;gap:4px 10px}.candidate-meta em{font-size:12px;color:#746a65}
+.candidate-arrow{color:#a28a7c}.candidate-arrow .icon{width:22px;height:22px}
+.inline-link{min-height:64px;font-weight:400;font-size:13px;align-items:center;padding:21px 0}
+/* Camera uses its own viewfinder, without an extra decorative card. */
+.capture-screen{padding-top:12px}.capture-screen>.eyebrow{display:none}
+.capture-screen h2{font-size:31px}.capture-screen .subcopy{margin-bottom:15px}
+.camera-frame{height:390px;border-radius:10px;box-shadow:none;margin:10px 0 12px}
+.camera-frame:after{border-width:1px;border-radius:5px;inset:25px 40px 55px}
+.camera-caption{font-weight:400}.fixture-note{font-size:10px;line-height:1.5;margin:1px 0 14px}
+/* The bottle is on the page, not on a separate tile. */
+.detail-screen{padding-top:15px}.detail-screen>.eyebrow{display:none}
+.detail-hero{padding-top:0}.bottle-pedestal{background:radial-gradient(ellipse at 50% 75%,#f6ecde99,transparent 65%);height:285px;border-radius:0}
+.bottle-pedestal img{height:255px;filter:none}
+.detail-lead{padding-top:24px}.detail-lead small{font-weight:400;color:var(--muted)}.detail-lead h2{font-size:34px;margin-top:10px}
+.detail-facts{padding:20px 0;margin-top:28px;gap:12px}.detail-facts span{font-size:11px;color:var(--muted)}.detail-facts strong{font-size:13px;font-weight:400;line-height:1.45}
+.detail-disclaimer{font-size:10px;line-height:1.6}
+.empty-screen{padding-top:24px}.empty-screen .state-dog{height:265px;margin:20px -10px 25px}.empty-screen .counter{height:245px}
+.empty-screen h2{font-size:34px}.empty-screen .subcopy{font-size:14px;max-width:350px}
+.search-screen>.eyebrow{display:none}.search-screen h2{font-size:36px;margin-bottom:16px}
+.search-screen label{font-size:12px;font-weight:400;color:var(--muted)}
+.search-input{border:0;border-bottom:1px solid #c8b8aa;border-radius:0;background:transparent;height:60px;padding-left:0;grid-template-columns:35px minmax(0,1fr) 44px}
+.search-input>.icon,.search-input>span>.icon{width:25px;height:25px}
+.search-input button{background:transparent;color:var(--wine);height:44px;border-radius:50%}.search-input button:hover{background:#f6ece4}.search-input button .icon{width:25px;height:25px}
+.search-hint{background:transparent;border-radius:0;border-bottom:1px solid var(--line);padding:22px 0;font-weight:400;margin-top:8px;font-size:13px}
+.saved-screen>.eyebrow{display:none}.saved-empty img{height:270px}.saved-empty p{line-height:1.6}.saved-list{margin-top:10px}
+.progress-screen{padding:24px 26px 18px}.progress-composition{margin-left:-18px;margin-right:-18px}.progress-screen h2{font-size:33px}
+.note-pause{color:#895c54}.note-pause .icon{width:17px;height:17px}
+.dialog-close{background:none;width:44px;height:44px}.dialog-close .icon{width:24px;height:24px}
+.fixture-option{border:0;border-bottom:1px solid var(--line);border-radius:0;padding:15px 0;background:transparent}
+@container prototype (max-width:380px){
+ .screen-content{padding-left:20px;padding-right:20px}.results-screen h2{font-size:32px}
+ .candidate,.candidate.leader{gap:12px}.candidate.leader{grid-template-columns:70px minmax(0,1fr) 18px}.candidate.leader img{width:70px;height:122px}
+ .candidate.leader .candidate-info strong{font-size:18px}.photo-action{width:48px;height:52px}.comparison-actions{gap:0}
+ .home-hero h2{font-size:35px}.home-hero{padding-left:20px;padding-right:20px}.home-actions{padding-left:20px;padding-right:20px}.home-scan{grid-template-columns:28px minmax(0,1fr) 28px}
+ .home-secondary .btn{font-size:12px}.home-secondary .btn-icon{width:24px}
+}
+@media(max-height:850px){
+ .home-hero{min-height:430px;padding-top:15px}.hero-dog{height:267px;margin-top:18px}.hero-dog .dog{height:285px}
+ .brand{height:82px}.home-actions{padding-bottom:20px}.home-secondary{margin-top:8px}
+ .camera-frame{height:300px}.empty-screen .state-dog{height:205px;margin-top:10px;margin-bottom:18px}
+ .empty-screen .counter{height:190px}.bottle-pedestal{height:230px}.bottle-pedestal img{height:210px}
+}
+@media(max-height:740px){
+ .home-hero{min-height:365px;padding-top:10px}.home-hero h2{font-size:33px}.home-hero p{margin-top:12px;font-size:13px}.hero-dog{height:219px;margin-top:12px}.hero-dog .dog{height:233px}
+ .home-actions{padding-bottom:18px}.home-secondary{margin-top:6px}.brand{height:76px;padding-top:22px}
+ .empty-screen .state-dog{height:160px;margin-top:8px;margin-bottom:15px}.empty-screen h2{font-size:30px}
+ .camera-frame{height:245px}.capture-screen h2{font-size:28px}.capture-screen .subcopy{font-size:13px}
+}
+/* Composition pass: shared heading line and coherent groups, 25 Sep. */
+.capture-screen,.results-screen,.search-screen,.saved-screen{padding-top:24px}
+.capture-screen h2,.search-screen h2,.saved-screen h2{margin-top:0}
+.empty-screen .state-dog,.empty-screen .state-dog.counter{height:245px;margin-top:40px;margin-bottom:25px}
+.empty-screen>.dual-actions{margin-top:8px}.empty-screen>.dual-actions .btn{min-height:48px}
+.search-screen .flex-spacer{flex:0;min-height:24px}
+.waiting-discovery{margin-top:-12px}
+@media(max-height:850px){
+ .empty-screen .state-dog,.empty-screen .state-dog.counter{height:205px;margin-top:18px;margin-bottom:18px}
+ .waiting-discovery{margin-top:-10px}
+}
+@media(max-height:740px){
+ .empty-screen .state-dog,.empty-screen .state-dog.counter{height:160px;margin-top:8px;margin-bottom:15px}
+ .capture-screen{padding-top:12px}
+}
