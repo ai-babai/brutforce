@@ -37,13 +37,16 @@ type apiError struct {
 }
 
 type searchResponse struct {
-	Demo           bool      `json:"demo"`
-	Candidates     []wine    `json:"candidates"`
-	SelectedID     string    `json:"selectedId,omitempty"`
-	CatalogVersion string    `json:"catalogVersion,omitempty"`
-	NextCursor     string    `json:"nextCursor,omitempty"`
-	ModelVersion   string    `json:"modelVersion,omitempty"`
-	Error          *apiError `json:"error,omitempty"`
+	Demo                      bool      `json:"demo"`
+	Candidates                []wine    `json:"candidates"`
+	SelectedID                string    `json:"selectedId,omitempty"`
+	Action                    string    `json:"action,omitempty"`
+	RecognizedSlug            string    `json:"recognizedSlug,omitempty"`
+	CatalogVersion            string    `json:"catalogVersion,omitempty"`
+	RecognitionCatalogVersion string    `json:"recognitionCatalogVersion,omitempty"`
+	NextCursor                string    `json:"nextCursor,omitempty"`
+	ModelVersion              string    `json:"modelVersion,omitempty"`
+	Error                     *apiError `json:"error,omitempty"`
 }
 
 //go:embed catalog.json
@@ -73,15 +76,21 @@ func main() {
 	if address == "" {
 		address = "127.0.0.1:8097"
 	}
+	services := configuredModelServices()
+	if services.vision != nil && services.vision.configErr != nil {
+		log.Fatal("vision service configuration is invalid")
+	}
 	log.Printf("demo API listening on %s", address)
 	server := &http.Server{
 		Addr:              address,
-		Handler:           newHandlerWithCatalogAndServices(os.Getenv("WEB_ROOT"), nil, catalog, configuredModelServices()),
+		Handler:           newHandlerWithCatalogAndServices(os.Getenv("WEB_ROOT"), nil, catalog, services),
 		ReadHeaderTimeout: 5 * time.Second,
-		ReadTimeout:       10 * time.Second,
-		WriteTimeout:      10 * time.Second,
-		IdleTimeout:       60 * time.Second,
-		MaxHeaderBytes:    16 << 10,
+		// Allow bounded uploads over slower client links. Recognition and search
+		// keep their separate nine-second handler budgets after input arrives.
+		ReadTimeout:    20 * time.Second,
+		WriteTimeout:   20 * time.Second,
+		IdleTimeout:    60 * time.Second,
+		MaxHeaderBytes: 16 << 10,
 	}
 	if err := server.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 		log.Fatal(err)
@@ -101,6 +110,9 @@ func newHandlerWithCatalog(webRoot string, recognizer Recognizer, catalog catalo
 }
 
 func newHandlerWithCatalogAndServices(webRoot string, recognizer Recognizer, catalog catalogReader, services modelServices) http.Handler {
+	if recognizer == nil && services.vision != nil {
+		recognizer = &visionRecognizer{client: services.vision}
+	}
 	store := configuredPhotoStore()
 	mux := http.NewServeMux()
 	mux.HandleFunc("/api/docs", docsHandler)
@@ -203,7 +215,32 @@ func searchHandler(store *photoStore, catalog catalogReader, services modelServi
 			return
 		}
 		if !info.Demo {
-			writeError(w, http.StatusServiceUnavailable, "recognition_unavailable", "reference recognition is unavailable for the imported catalog")
+			if request.PhotoID != nil {
+				if services.vision == nil {
+					writeError(w, http.StatusServiceUnavailable, "recognition_unavailable", "image recognition is not configured")
+					return
+				}
+				response, status, code, message := configuredVisionSearch(r, store, catalog, *request.PhotoID, services.vision)
+				if status != 0 {
+					writeError(w, status, code, message)
+					return
+				}
+				writeJSON(w, http.StatusOK, response)
+				return
+			}
+			if request.Query != nil {
+				candidates, err := catalog.Search(r.Context(), request.Query)
+				if err != nil {
+					writeError(w, http.StatusServiceUnavailable, "catalog_unavailable", "catalog is temporarily unavailable")
+					return
+				}
+				if len(candidates) > 5 {
+					candidates = candidates[:5]
+				}
+				writeJSON(w, http.StatusOK, searchResponse{Demo: false, Candidates: candidates, CatalogVersion: info.Version})
+				return
+			}
+			writeError(w, http.StatusBadRequest, "invalid_request", "query or photoId is required")
 			return
 		}
 		if request.PhotoID != nil {

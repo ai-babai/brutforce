@@ -30,6 +30,7 @@ type modelResponse = referenceengine.Response
 type modelServices struct {
 	search          *modelClient
 	recommendations *modelClient
+	vision          *visionClient
 }
 
 type modelClient struct {
@@ -53,7 +54,7 @@ func configuredModelServices() modelServices {
 		}
 		return &modelClient{baseURL: strings.TrimRight(raw, "/"), catalogVersion: version, client: noRedirectHTTPClient()}
 	}
-	return modelServices{search: newClient(os.Getenv("SEARCH_SERVICE_URL")), recommendations: newClient(os.Getenv("RECOMMENDATION_SERVICE_URL"))}
+	return modelServices{search: newClient(os.Getenv("SEARCH_SERVICE_URL")), recommendations: newClient(os.Getenv("RECOMMENDATION_SERVICE_URL")), vision: configuredVisionClient()}
 }
 
 func noRedirectHTTPClient() *http.Client {
@@ -221,7 +222,7 @@ func upstreamFailure(kind string, err error) (searchResponse, int, string, strin
 	if errors.Is(err, context.Canceled) {
 		return searchResponse{}, 408, kind + "_canceled", "request was canceled"
 	}
-	if errors.Is(err, errModelResponse) || (errors.As(err, &status) && status != 503 && status != 429) {
+	if errors.Is(err, errModelResponse) || errors.Is(err, errVisionInvalid) || (errors.As(err, &status) && status != 503 && status != 429) {
 		return searchResponse{}, 502, kind + "_upstream_invalid", kind + " service returned an invalid response"
 	}
 	return searchResponse{}, 503, kind + "_unavailable", kind + " service is unavailable"

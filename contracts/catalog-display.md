@@ -3,7 +3,9 @@
 Package v2: #44, private server public/SCHEMA.md. Full dataset/images stay out of Git.
 App projection: apps/api/internal/catalogmodel/wine.go (API JSON tags authoritative).
 Unknown year/volume omitted, SQL year NULL. Internal Go zero is never serialized.
-SourceURL distinguishes real catalog from synthetic fixtures; recognition remains reference/demo.
+SourceURL distinguishes real catalog from synthetic fixtures. When the vision
+service is configured, photo recognition is real and maps ranked organizer
+slugs to existing display cards as described in [vision-serving.md](vision-serving.md).
 Image paths become `/media/catalog/<400|800|original>/<sha256>.webp`; immutable registered root.
 No path supplied by clients is used as arbitrary filesystem access.
 

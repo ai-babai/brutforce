@@ -64,6 +64,20 @@ it('validates recommendation responses and sends the bounded card request', asyn
   await expect(getRecommendations(candidate.id)).rejects.toThrow(/некорректные рекомендации/i);
 });
 
+it('accepts ranked real-catalog search candidates without a synthetic disclosure', async () => {
+  const real = { demo: false, candidates: [candidate], catalogVersion: 'svoe-20260922-v2', modelVersion: 'rtdetr-so400m-whole-only-v1' };
+  vi.stubGlobal('fetch', vi.fn().mockResolvedValue(response(real)));
+  await expect(searchWine('exact', undefined, undefined, receipt.id)).resolves.toEqual(real);
+  vi.stubGlobal('fetch', vi.fn().mockResolvedValue(response({ ...real, demo: 'false' })));
+  await expect(searchWine('exact', undefined, undefined, receipt.id)).rejects.toThrow(/некорректный ответ/i);
+});
+
+it('preserves an explicit result when the organizer wine has no display card', async () => {
+  const outside = { demo: false, candidates: [], action: 'outside_display_catalog', recognizedSlug: 'organizer-only', catalogVersion: 'svoe-v2', recognitionCatalogVersion: 'organizer-catalog-v1', modelVersion: 'whole-only' };
+  vi.stubGlobal('fetch', vi.fn().mockResolvedValue(response(outside)));
+  await expect(searchWine('exact', undefined, undefined, receipt.id)).resolves.toEqual(outside);
+});
+
 it('rejects catalog records with a non-HTTP source URL', async () => {
   vi.stubGlobal('fetch', vi.fn().mockResolvedValue(response({
     demo: false,

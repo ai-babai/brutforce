@@ -45,11 +45,16 @@ func TestSEC001RejectsDisguisedNonImages(t *testing.T) {
 	})
 }
 
-func TestSEC009DemoUploadKeepsItsJPEGPNGIFAllowlistAfterWebPRegistration(t *testing.T) {
+func TestSEC009TruncatedWebPIsRejectedAfterHeaderDecode(t *testing.T) {
+	data := tinyWebP(t)
+	data = data[:len(data)/2]
+	if _, _, err := image.DecodeConfig(bytes.NewReader(data)); err != nil {
+		t.Fatalf("fixture must pass header decode: %v", err)
+	}
 	store := securityPhotoStore(t)
-	recorder := uploadRequest(t, uploadHandler(store), tinyWebP(t))
+	recorder := uploadRequestNamed(t, uploadHandler(store), data, "misleading.jpg")
 	if recorder.Code != http.StatusBadRequest {
-		t.Fatalf("WebP accepted by demo upload: status=%d body=%s", recorder.Code, recorder.Body.String())
+		t.Fatalf("truncated WebP accepted: status=%d body=%s", recorder.Code, recorder.Body.String())
 	}
 	assertNoStoredFiles(t, store)
 }

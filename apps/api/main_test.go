@@ -242,10 +242,14 @@ func TestSPAHandlerServesFilesAndFallsBackToIndex(t *testing.T) {
 }
 
 func uploadRequest(t *testing.T, handler http.Handler, data []byte) *httptest.ResponseRecorder {
+	return uploadRequestNamed(t, handler, data, "ignored-by-server.png")
+}
+
+func uploadRequestNamed(t *testing.T, handler http.Handler, data []byte, filename string) *httptest.ResponseRecorder {
 	t.Helper()
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
-	part, err := writer.CreateFormFile("photo", "ignored-by-server.png")
+	part, err := writer.CreateFormFile("photo", filename)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -260,6 +264,28 @@ func uploadRequest(t *testing.T, handler http.Handler, data []byte) *httptest.Re
 	req.Header.Set("Content-Type", writer.FormDataContentType())
 	handler.ServeHTTP(recorder, req)
 	return recorder
+}
+
+func TestAPI010WebPContentAcceptedWithJPEGFilename(t *testing.T) {
+	dir := t.TempDir()
+	t.Setenv("UPLOAD_DIR", dir)
+	h := newHandler("")
+	data := tinyWebP(t)
+	recorder := uploadRequestNamed(t, h, data, "misleading.jpg")
+	if recorder.Code != http.StatusCreated {
+		t.Fatalf("status=%d body=%s", recorder.Code, recorder.Body.String())
+	}
+	var receipt photoReceipt
+	if err := json.Unmarshal(recorder.Body.Bytes(), &receipt); err != nil {
+		t.Fatal(err)
+	}
+	if receipt.MIME != "image/webp" || receipt.Width != 75 || receipt.Height != 100 || receipt.Bytes != int64(len(data)) {
+		t.Fatalf("receipt=%+v", receipt)
+	}
+	stored, err := os.ReadFile(filepath.Join(dir, receipt.ID+".bin"))
+	if err != nil || !bytes.Equal(stored, data) {
+		t.Fatalf("original bytes changed: %v", err)
+	}
 }
 
 func pngBytes(t *testing.T) []byte {

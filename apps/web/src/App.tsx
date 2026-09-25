@@ -16,7 +16,7 @@ import {
   searchWine,
   uploadPhoto,
 } from "./api";
-import type { Candidate, PhotoReceipt, Scenario } from "./types";
+import type { Candidate, PhotoReceipt, Scenario, SearchAction } from "./types";
 import { AtlasScan } from "./AtlasIcons";
 import { InstallApp } from "./InstallApp";
 import { MascotScene, V2Logo } from "./V2Visual";
@@ -90,6 +90,7 @@ export function App({
   }>({ status: "idle", candidates: [] });
   const [recommendationAttempt, setRecommendationAttempt] = useState(0);
   const [demoMode, setDemoMode] = useState(false);
+  const [missingAction, setMissingAction] = useState<SearchAction | "">("");
   const abort = useRef<AbortController | undefined>(undefined);
   const catalogAbort = useRef<AbortController | undefined>(undefined);
   const catalogTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
@@ -229,7 +230,7 @@ export function App({
     };
   }, [screen, permissionDenied]);
   const validPhoto = (file: File) =>
-    ["image/jpeg", "image/png", "image/gif"].includes(file.type) &&
+    ["image/jpeg", "image/png", "image/gif", "image/webp"].includes(file.type) &&
     file.size <= 10 * 1024 * 1024;
   const pickPhoto = (file?: File) => {
     if (!file) return;
@@ -308,6 +309,7 @@ export function App({
       if (controller.signal.aborted || abort.current !== controller) return;
       clearWaitTimer(controller);
       setDemoMode(data.demo);
+      setMissingAction(data.action ?? "");
       const list = data.candidates;
       setCandidates(list);
       if (!list.length) {
@@ -878,12 +880,12 @@ export function App({
               <h2>
                 {screen === "waiting"
                   ? "Нужно чуть больше времени"
-                  : "Готовим варианты из демо-каталога"}
+                  : "Готовим результаты поиска"}
               </h2>
               <p>
                 {screen === "waiting"
                   ? "Поиск продолжается. Запрос можно отменить."
-                  : "Демо не распознаёт изображение: показываем заданные варианты."}
+                  : "Сверяем запрос с каталогом. Поиск можно отменить."}
               </p>
               {photo && lastRequest.current.hasPhoto && (
                 <Photo photo={photo} onExpand={() => setExpandedPhoto(true)} />
@@ -1198,8 +1200,10 @@ export function App({
                   setScreen("search");
                 }}
               />
-              <h2>Вино не найдено</h2>
-              <p>Подходящего совпадения не нашлось.</p>
+              <h2>{missingAction === "outside_display_catalog" ? "Карточка пока недоступна" : "Вино не найдено"}</h2>
+              <p>{missingAction === "outside_display_catalog"
+                ? "Найден кандидат, но его карточки нет в этой версии витрины."
+                : "Подходящего совпадения не нашлось."}</p>
               <MascotScene scene="counter" />
               {lastRequest.current.hasPhoto ? (
                 <div className="missing-actions">
@@ -1269,7 +1273,7 @@ export function App({
                 <ImageSquare />
               </StateIcon>
               <h2>Нужно изображение</h2>
-              <p>Выберите JPEG, PNG или GIF размером не более 10 МБ.</p>
+              <p>Выберите JPEG, PNG, GIF или WebP размером не более 10 МБ.</p>
               <button
                 className="primary"
                 onClick={() => galleryRef.current?.click()}

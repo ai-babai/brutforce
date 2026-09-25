@@ -57,13 +57,15 @@ function isPhotoReceipt(value:unknown):value is PhotoReceipt{
 function isSearchResponse(value: unknown): value is SearchResponse {
   if (!value || typeof value !== 'object') return false;
   const data = value as Record<string, unknown>;
-  if (data.demo !== true || !Array.isArray(data.candidates)) return false;
+  if (typeof data.demo !== 'boolean' || !Array.isArray(data.candidates)) return false;
   const validCandidates = data.candidates.every(candidate => {
     if (!candidate || typeof candidate !== 'object') return false;
     const item = candidate as Record<string, unknown>;
     return isCandidate(item);
   });
   if (!validCandidates) return false;
+  if (['catalogVersion', 'recognitionCatalogVersion', 'modelVersion', 'recognizedSlug'].some(key => data[key] !== undefined && typeof data[key] !== 'string')) return false;
+  if (data.action !== undefined && !['no_match', 'insufficient_information', 'outside_display_catalog', 'partial_display_catalog'].includes(data.action as string)) return false;
   if (data.selectedId === undefined) return true;
   return typeof data.selectedId === 'string' && data.candidates.some(candidate => candidate.id === data.selectedId);
 }
