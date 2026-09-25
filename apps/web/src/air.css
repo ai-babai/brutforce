@@ -233,7 +233,7 @@ body { background: #f3f0e9; }
 #UI-004 .air-wine-note { min-width: 0; color: #6a554d; }
 #UI-004 .air-wine-note-header { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 7px; }
 #UI-004 .air-wine-note-header > span { color: var(--wine); font-size: 10px; font-weight: 500; letter-spacing: .13em; text-transform: uppercase; }
-#UI-004 .air-wine-note p { min-height: 132px; margin: 0; font-family: var(--serif); font-size: 20px; font-weight: 400; line-height: 1.27; animation: air-wine-note-appear 350ms ease-out both; }
+#UI-004 .air-wine-note p { min-height: 153px; margin: 0; font-family: var(--serif); font-size: 20px; font-weight: 400; line-height: 1.27; animation: air-wine-note-appear 350ms ease-out both; }
 @keyframes air-wine-note-appear { from { opacity: 0; } to { opacity: 1; } }
 #UI-004 .status { color: var(--muted) !important; font-size: 13px; font-weight: 400; }
 .air-note-toggle { width: 44px; height: 44px; display: grid; place-items: center; padding: 0; border: 0; border-radius: 50%; background: transparent; color: #895c54; }
@@ -281,6 +281,9 @@ body { background: #f3f0e9; }
   .air-photo-action { width: 48px; height: 52px; flex-basis: 48px; }
   .air-comparison-actions { gap: 0; }
   #UI-007 .result-hero { margin-left: -20px; margin-right: -20px; padding-left: 20px; padding-right: 20px; }
+  #UI-004 .air-waiting-discovery { grid-template-columns: 110px minmax(0,1fr); gap: 13px; }
+  #UI-004 .air-waiting-photo, #UI-004 .air-waiting-photo .photo { width: 110px; height: 130px; min-height: 130px; }
+  #UI-004 .air-wine-note p { min-height: 138px; font-size: 18px; }
 }
 
 @media (max-height: 850px) {

@@ -34,7 +34,7 @@ function shuffledNotes(previous,random=Math.random){
  return order;
 }
 let noteOrder=[],noteCursor=0,noteIndex=-1,notesPaused=false,noteInterval=null,noteSwapTimer=null;
-function resetNotes(){stopNotes();noteOrder=shuffledNotes(noteIndex);noteCursor=0;noteIndex=noteOrder[0];notesPaused=false}
+function resetNotes(){stopNotes();noteOrder=shuffledNotes(noteIndex);noteCursor=0;noteIndex=noteOrder[0]}
 function nextNote(){if(++noteCursor===noteOrder.length){noteOrder=shuffledNotes(noteIndex);noteCursor=0}noteIndex=noteOrder[noteCursor]}
 const reducedMotion=window.matchMedia('(prefers-reduced-motion: reduce)');
 function stopNotes(){clearInterval(noteInterval);clearTimeout(noteSwapTimer);noteInterval=null;noteSwapTimer=null;document.querySelector('.wine-note-copy')?.classList.remove('is-changing')}

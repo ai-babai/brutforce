@@ -85,4 +85,22 @@ describe("waiting screen", () => {
     await act(async () => { finishSearch({ demo: false, candidates: [] }); });
     expect(screen.getByText("Ничего не найдено")).toBeVisible();
   });
+
+  it("wires full shuffled cycles and a new search without an immediate repeat", async () => {
+    render(<App />);
+    await upload();
+    const seen = [currentFact()];
+    for (let index = 1; index < wineNotes.length; index += 1) {
+      await tick(8000);
+      seen.push(currentFact());
+    }
+    expect(new Set(seen).size).toBe(wineNotes.length);
+    expect(new Set(seen)).toEqual(new Set(wineNotes));
+    await tick(8000);
+    const firstNextCycle = currentFact();
+    expect(firstNextCycle).not.toBe(seen.at(-1));
+    fireEvent.click(screen.getByRole("button", { name: "Отменить поиск" }));
+    await upload();
+    expect(currentFact()).not.toBe(firstNextCycle);
+  });
 });
