@@ -71,6 +71,10 @@ def main():
         assert checks[path] == expected, path
     checks['anonymous_submission'] = request('/api/submissions', b'{}')[0]
     assert checks['anonymous_submission'] == 401
+    if args.before:
+        for path in ('/data/night.html', '/data/night-data.json'):
+            checks[path] = request(path)[0]
+            assert checks[path] == 200, path
     state = {'at': datetime.now(timezone.utc).isoformat(), 'release': str(current),
              'binary_sha256': sha((current / 'lct-eval').read_bytes()),
              'sealed_sha256': sealed, 'history_bytes': len(history),

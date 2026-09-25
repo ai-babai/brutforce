@@ -9,7 +9,7 @@ import json
 from datetime import datetime, timezone
 from pathlib import Path
 
-EXCLUDED = {'venv', '.venv', '__pycache__', '.scorer', '.git'}
+EXCLUDED = {'venv', '.venv', 'prep-venv', '__pycache__', '.scorer', '.git'}
 
 
 def digest(path):

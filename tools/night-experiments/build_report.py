@@ -1,11 +1,18 @@
 # -*- coding: utf-8 -*-
 """Build public aggregate report; never publish case answers or raw private files."""
-import argparse,datetime,json
+import argparse,datetime,json,re
 from pathlib import Path
 
 def load(p):return json.loads(p.read_text())
 def table(title,columns,rows,note=''):
     return {'title':title,'columns':[{'key':k,'label':v} for k,v in columns],'rows':rows,'note':note}
+def readable(value):
+    if isinstance(value,str):
+        value=re.sub(r'([А-Яа-яЁё])(\d)',r'\1 \2',value)
+        return re.sub(r'(\d)([А-Яа-яЁё])',r'\1 \2',value)
+    if isinstance(value,list):return [readable(item) for item in value]
+    if isinstance(value,dict):return {key:readable(item) for key,item in value.items()}
+    return value
 def quality(root,name,service,retrieval,organizer):
     s=load(root/service);r=load(root/retrieval);o=load(root/organizer)['unique_image_level']
     return {'name':name,'service':f"{s['top1_or_pass']}/{s['graded']}",'retrieval':f"{r['top1_or_pass']} / {r['top5']} / {r['top20']} из {r['graded']}",'real':f"{o['exact_top1']} / {o['exact_top5']} / {o['exact_top20']} из {o['exact_total']}"}
@@ -27,6 +34,30 @@ def main():
     cpu_section['notes'].extend(['C3 улучшил ровно один service-кейс и не изменил organizer-ответы: прирост на одном SKU / одной группе сцены. Frozen p95 5,10 с; OCR вызван только на пяти запросах без найденной бутылки.','OCR на каждом запросе ухудшил качество и добавил по шесть тайм-аутов в frozen и organizer. Это не рекомендуемый CPU-профиль.','C3 organizer-тайминги пересеклись с архивным копированием на общий сервер. Не приписываем эту разницу только модели.'])
     cpu_section['tables'].append(table('FP32 ONNX: те же ответы на всех316 запросах',[('set','Набор'),('p50','p50'),('p95','p95'),('max','Максимум'),('timeouts','Timeout')],[{'set':'Frozen213','p50':'2,71 с','p95':'4,85 с','max':'5,23 с','timeouts':'0'},{'set':'Organizer103','p50':'4,28 с','p95':'4,96 с','max':'6,43 с','timeouts':'0'}]))
     cpu_section['notes'].extend(['ORT6: все316 полных рангов/action точно совпали с PyTorch SO640. Frozen запросов дольше3с стало94 вместо104; p95 почти не изменился. Это измеренное ускорение без изменения ответов, но цель3с на всех входах ещё не выполнена.','Неизменённый organizer script через SSH-туннель:12/12 результатов совпали, максимум5,53с. Два одновременных клиента: один200 за4,76с, второй503 busy за57мс; затем обычный запрос200 за3,26с. Сервис допускает один активный inference, а не произвольную нагрузку.'])
+    if (root/'cpu/scores/ortdual-service.json').exists():
+        ds=load(root/'cpu/scores/ortdual-service.json')
+        dr=load(root/'cpu/scores/ortdual-retrieval.json')
+        cpu_section['tables'].append(table('Два CPU-кропа: полный отрицательный контроль',
+            [('name','Вариант'),('service','Service'),('retrieval','Retrieval Top1/5/20'),
+             ('deadline','Ответы до 10 с')],[
+                {'name':'ORT6 whole + label, без OCR',
+                 'service':f"{ds['top1_or_pass']}/{ds['graded']}",
+                 'retrieval':f"{dr['top1_or_pass']}/{dr['top5']}/{dr['top20']} из {dr['graded']}",
+                 'deadline':'203/213'}]))
+        cpu_section['notes'].extend([
+            'Второй вид добавил OWLv2 для этикетки и ещё один SO400M inference. Полный frozen: 9 сетевых тайм-аутов и один поздний HTTP200 за 10,006 с; все десять считаются ошибками. У своевременных ответов p50 6,80 с, p95 9,32 с.',
+            'Относительно ORT6 whole-only в service нет исправлений и 12 регрессий по 7 винам/группам сцен. Retrieval: 2 исправления и 4 регрессии. Organizer для этого варианта не запускали: одновременно ухудшились frozen-качество и время.',
+            'Отдельные whole-only и label-only строки из dual HTTP показывают извлечённые ветви того же полного запроса. Их время включает обе ветви и не является измерением самостоятельного ускоренного сервиса.',
+            'Первый INT8-экспорт превысил лимит RAM 6 GiB; повтор на временном сервере с достаточной памятью завершён. Результат отдельного CPU-прогона указан ниже.'])
+    if (root/'cpu/scores/int8-service.json').exists():
+        si=load(root/'cpu/scores/int8-service.json');ri=load(root/'cpu/scores/int8-retrieval.json')
+        cpu_section['tables'].append(table('INT8 запроса + прежний FP32 индекс: отклонено',
+            [('service','Service'),('retrieval','Retrieval Top1/5/20'),('timely','Вовремя'),('p50','p50'),('p95','p95')],
+            [{'service':f"{si['top1_or_pass']}/{si['graded']}",'retrieval':f"{ri['top1_or_pass']}/{ri['top5']}/{ri['top20']} из {ri['graded']}",'timely':'213/213','p50':'2,03 с','p95':'3,93 с'}]))
+        cpu_section['notes'].extend([
+            'Динамический INT8 ускорил запрос, но дал 45 новых service-ошибок и 21 новую retrieval Top1-ошибку, без исправлений. Organizer не запускали после полного отрицательного frozen-контроля.',
+            'Это смешанная точность: квантованный обработчик запроса и неизменный FP32-каталожный индекс. Результат не обобщаем на все способы INT8 или согласованное переиндексирование каталога.',
+            'Начальные INT8-тайминги пересеклись с переносом артефактов на общий сервер. Качество и отсутствие timeout измерены, небольшую разницу скорости не объясняем только квантованием.'])
     visual=[]
     for mode,name in [('whole','Только целая выбранная цель'),('label','Только найденная этикетка'),('whole-label','Оба вида, без текстового поиска')]:
         visual.append(quality(root,name,f'visual-branches/{mode}/service-score.json',f'visual-branches/{mode}/retrieval-score.json',f'visual-branches/{mode}/organizer-score.json'))
@@ -70,6 +101,28 @@ def main():
         strict_row=quality(root,'Qwen20 RTX3090: curl max-time10','qwen-http/private-score-strict-10s-service.json','qwen-http/private-score-strict-10s-retrieval.json','qwen-http/private-score-organizer-strict-10s.json')
         http_section['tables'].append(table('Настоящий строгий Qwen HTTP: 307/316 своевременных ответов',cols,[strict_row]))
         http_section['notes'].extend(['Строгий Qwen-прогон:5 timeout на frozen service,0 retrieval,4 organizer. Все307 своевременных предсказаний совпали с uncapped. Успешные organizer: p50 6,42с / p95 9,16с / max9,95с.','В предыдущем uncapped organizer22 ответа были дольше10с, а в свежем strict только4. Это разные наблюдения: причина вариативности не установлена. Ускорение не приписываем ещё не применённой настройке потоков или только смене HTTP-клиента.'])
+    if (root/'qwen-http/private-score-organizer-omp1-strict-10s.json').exists():
+        http_section=next(section for section in sections if section['id']=='http')
+        http_section['tables'].append(table('Qwen: отдельная конфигурация потоков, отрицательный итог',cols,[
+            quality(root,'Qwen20: OMP1 + offline flags, strict10',
+                'qwen-http/private-score-omp1-strict-10s-service.json',
+                'qwen-http/private-score-omp1-strict-10s-retrieval.json',
+                'qwen-http/private-score-organizer-omp1-strict-10s.json')]))
+        http_section['notes'].extend([
+            'В конфигурации OMP1 было 27 тайм-аутов: 5 frozen и 22 organizer. В исходном strict — 9. На 289 запросах, завершившихся в обоих прогонах, все ответы и полные ранги совпали.',
+            'Вместе с OMP1 были включены HF_HUB_OFFLINE и TRANSFORMERS_OFFLINE. Это сравнение конфигураций, не изолированное доказательство влияния числа потоков. Причина сильной вариативности задержек пока не установлена; для проверки metadata восстановлен исходный запуск B.'])
+    if (root/'qwen-http/private-score-organizer-website-strict-10s.json').exists():
+        http_section=next(section for section in sections if section['id']=='http')
+        http_section['tables'].append(table('Qwen + публичные поля витрины: отрицательный контроль',cols,[
+            quality(root,'Qwen20 website, строгий HTTP',
+                'qwen-http/private-score-website-strict-10s-service.json',
+                'qwen-http/private-score-website-strict-10s-retrieval.json',
+                'qwen-http/private-score-organizer-website-strict-10s.json')]))
+        http_section['notes'].extend([
+            'Website-профиль: 277/316 своевременных ответов, 39 timeout (5 frozen service и 34 organizer). На 39 уникальных exact-фото, вовремя обработанных обоими профилями, исходный Qwen дал 35 верных ответов, website — 33: 0 исправлений и 2 регрессии.',
+            'Добавлены только публичные категория/сладость для 2029 карточек с прямым slug и согласованными названием/производителем. 69 отсутствующих и 5 конфликтных карточек оставлены пустыми; filename не добавляли.',
+            'Все общие 277 успешных запросов сохранили полный порядок кандидатов B. Сильная вариативность времени между запусками не позволяет приписать все дополнительные timeout самим полям. Качественного выигрыша нет и на общем своевременном exact-срезе.',
+            'У трёх повторных SHA в organizer разошлись исходы по timeout. Основная unique-оценка использует первое появление SHA в исходном порядке, не выбирает лучший повтор. Все 103 файловых запроса также сохранены.'])
     if (root/'roman/live-http-v1-final/score-roman20-organizer.json').exists():
         http_section=next(section for section in sections if section['id']=='http')
         rr=[]
@@ -91,6 +144,39 @@ def main():
     next(section for section in sections if section['id']=='http')['notes'].append('RTX3090 и RTX4090 здесь запускают разные дополнительные модели и стоят на разных CPU-хостах. Большая часть хвоста — OCR на CPU; разницу времени нельзя приписывать только классу GPU.')
     sections.append({'id':'limits','title':'Что ещё не решено','status':'ready','summary':'Увеличение Top1 не закрывает сценарий отсутствующего товара и ошибочно выбранной бутылки. Эти ограничения сохраняются у сильных моделей.','tables':[table('Оставшиеся ограничения и следующая проверка',[('problem','Проблема'),('next','Что проверять дальше')],[{'problem':'Точного товара нет в каталоге','next':'Отдельные подтверждённые отрицательные фото и проверка отказа; не подменять их неразмеченными кадрами.'},{'problem':'Выбрано соседнее вино или составная рамка','next':'Целевая область и привязка OCR к этой области. Reranker не вернёт товар, потерянный до Top20.'},{'problem':'Похожие варианты одной линейки','next':'Читаемые надписи, точные поля и качество эталонов. Не угадывать невидимый год или сладость.'},{'problem':'Мало независимых реальных проверок','next':'Отдельные реальные снимки вне текущей разработки, с подтверждёнными ответами и группировкой по сцене.'}])],'notes':['На единственном подтверждённом organizer OOD исходный B, Qwen20, Roman20 и CPU SO640 пока не дают правильного отказа: 0/1. Это конкретный провал, но одного случая мало для оценки частоты ошибок или выбора порога.','42 unresolved означает, что мы не подтвердили правильную карточку. Это не доказательство отсутствия товара. Они не превращаются в отрицательный класс.','Порог нейросетевой похожести и отрыв Top1 от Top2 сами по себе не являются вероятностью правильного SKU. Новую политику отказа нужно оценивать отдельно от ранжирования.']})
     next(section for section in sections if section['id']=='limits')['notes'].append('В прежней разметке5 из54 exact имеют отмеченные конфликты reference-фото/упаковки. Их не исключаем: на остальных49 B40/49, Qwen20 иRoman20 по46/49; на конфликтном срезе все4/5. Основной знаменатель54 сохранён.')
+    if (root/'roman/live-deadline6-final/score-roman20-organizer.json').exists():
+        http_section=next(section for section in sections if section['id']=='http')
+        http_section['tables'].append(table('Ограниченный каскад: 315/316 ответов до 10 секунд',cols,[
+            quality(root,'Roman20: пропустить дополнительную модель, если B уже занял 6 с',
+                'roman/live-deadline6-final/score-roman20-service.json',
+                'roman/live-deadline6-final/score-roman20-retrieval.json',
+                'roman/live-deadline6-final/score-roman20-organizer.json')]))
+        http_section['notes'].extend([
+            'Deadline6 возвращает свежий ответ B, если базовый поиск уже занял 6 секунд. Это произошло в 27 своевременных запросах. Кеша ответов нет; все 103 organizer-запроса уложились в лимит.',
+            'На 316 запросах p50 5,94 с, p95 8,46 с. Единственный timeout: сам B занял 13,03 с. Ограничение дополнительного этапа не может исправить перерасход времени базовым поиском.',
+            'Порог 6 секунд выбран по текущим development-замерам. Это полезная рабочая политика, но не независимое доказательство SLA и не гарантия под нагрузкой.'])
+        overview=next(section for section in sections if section['id']=='overview')
+        overview['tables'].insert(0,table('Практический выбор: свежие полные HTTP-запросы',cols,[
+            quality(root,'CPU FP32 ONNX, один визуальный вид',
+                'cpu/scores/ort6-service.json','cpu/scores/ort6-retrieval.json',
+                'cpu/scores/ort6-organizer.json'),
+            quality(root,'GPU Roman20 с ограничением времени дополнительного этапа',
+                'roman/live-deadline6-final/score-roman20-service.json',
+                'roman/live-deadline6-final/score-roman20-retrieval.json',
+                'roman/live-deadline6-final/score-roman20-organizer.json')],
+            'CPU: 316/316 ответов до 10 секунд; GPU-каскад: 315/316. CPU быстрее и дешевле в эксплуатации, GPU точнее на текущих real-фото. Ни один результат не доказывает цель 3 секунды или устойчивый отказ на неизвестном вине.'))
+    if (root/'roman/live-roman5-final/score-roman5-organizer.json').exists():
+        http_section=next(section for section in sections if section['id']=='http')
+        http_section['tables'].append(table('Самостоятельный Roman5: один выбор, без турнира Top20',cols,[
+            quality(root,'Roman5 RTX4090, свежий строгий HTTP',
+                'roman/live-roman5-final/score-roman5-service.json',
+                'roman/live-roman5-final/score-roman5-retrieval.json',
+                'roman/live-roman5-final/score-roman5-organizer.json')]))
+        http_section['notes'].append('Roman5 как отдельный endpoint: 314/316 вовремя, 2 frozen timeout и все 103 organizer вовремя; p50 3,93 с, p95 7,04 с. На всех 314 общих успешных запросах полный порядок B и Roman5 совпал с сохранёнными результатами. Это настоящий более короткий путь, в отличие от строк Roman5, извлечённых из общего Roman20 HTTP.')
+    sections[0]['status']='ready'
+    sections[0]['summary']='CPU FP32 ONNX — практичный вариант без постоянной аренды GPU. Roman20 с ограничением времени дополнительного этапа точнее на текущих реальных фото. Ночное сравнение завершено; ошибки отказа и недостаточности информации остаются открытыми.'
+    next(section for section in sections if section['id']=='cpu')['status']='ready'
+    next(section for section in sections if section['id']=='http')['status']='ready'
     slices=load(root/'common/quality-slices.json')
     slice_rows=[]
     for name,tracks in slices.items():
@@ -101,6 +187,11 @@ def main():
         slice_rows.append(row)
     sections.append({'id':'origins','title':'Где именно улучшилось качество','status':'ready','summary':'Прирост на frozen-корзинах в основном приходится на аугментации. Настоящие фото организаторов нужны как отдельная проверка, иначе вывод о пользе новой модели был бы слишком оптимистичным.','tables':[table('Service, происхождение изображения',[('name','Решение'),('real','Реальные'),('augmentation','Аугментации'),('ai','AI')],slice_rows)],'notes':['В retrieval v2 нет независимых реальных фото: 50 аугментаций и 12 AI. Поэтому 61/62 не означает такую же точность на фотографиях пользователей.','32 graded real service-кейса включают сценарии отказа и выбора цели, а не только поиск конкретного вина. Их процент нельзя напрямую сравнивать с 54 exact organizer.','213 frozen-запросов содержат 212 SHA, 103 organizer-запроса — 100 SHA. Между наборами есть 12 совпадающих SHA. Всего300 уникальных изображений, а не316 независимых наблюдений. Среди54 exact organizer —37 разных SKU и42 группы сцен.','Повторные кадры одного вина и аугментации одной сцены не становятся независимыми измерениями. Парные улучшения дополнительно считаем по SKU и группам сцены.']})
     sections.append({'id':'method','title':'Как читать результаты и воспроизводить','status':'partial','summary':'Код и протоколы идут в репозиторий. Фото, веса, приватные ответы и подробные raw-результаты хранятся отдельно.','tables':[],'notes':['На inference GPU нет закрытой разметки. Метрики считаются после записи предсказаний на доверенном хосте. Все входы проверены по SHA.','Не складываем старое время B и новый этап, выдавая сумму за замер endpoint. Для выбранного каскада нужен свежий полный HTTP-прогон.','Новые результаты добавляются к истории, frozen v2 не меняется. TEST и PROD сохраняют прежнюю версию.','Временные GPU: RTX4090 $0,74/ч, L4 $0,49/ч, RTX3090 $0,50/ч плюс хранилище. По завершении экспорта поды удаляются; подтверждение будет сохранено отдельно.']})
+    method=next(section for section in sections if section['id']=='method')
+    method['status']='ready'
+    method['notes'][-1]='Все пять временных pod этой итерации удалены после экспорта. Независимый список провайдера: 0 pod и 0 сетевых дисков. Собственные CPU-стенды остановлены; постоянные TEST и PROD не заменены.'
+    method['notes'].append('GPU по времени аренды и тарифам: около $5,51 без хранения. На момент закрытия провайдер отразил $4,19, но биллинг запаздывает; это не окончательный счёт. Тарифы: RTX4090 $0,74/ч, RTX3090 $0,50/ч, L4 $0,49/ч.')
+    next(section for section in sections if section['id']=='http')['notes'].append('Неизменённый скрипт организаторов на шести кадрах через SSH-туннель, Qwen website: пять slug и один timeout 10,004 с. Поздний HTTP 200 на сервере не отменяет клиентский timeout. Это проверка контракта на sample, а не SLA публичного ingress.')
     action_path=root/'common/service-action-scores.json'
     if action_path.exists():
         action_rows=[]
@@ -130,6 +221,6 @@ def main():
              ('broken','SKU с регрессией')],group_rows))
         origin['notes'].append('В среднем по SKU каждое из 37 вин имеет одинаковый вес: сначала доля верных кадров вина, затем среднее по винам. Это дополнительная диагностика, не новая официальная метрика. Исправления и регрессии сравниваются с B; одно вино может попасть в обе группы. Strict включает реальные тайм-ауты, остальные строки — качество сохранённых предсказаний.')
     data={'schema_version':1,'updated_at':datetime.datetime.now(datetime.timezone.utc).isoformat(),'sections':sections}
-    a.out.write_text(json.dumps(data,ensure_ascii=False,indent=2)+'\n')
+    a.out.write_text(json.dumps(readable(data),ensure_ascii=False,indent=2)+'\n')
 
 if __name__=='__main__':main()
