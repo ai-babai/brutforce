@@ -49,6 +49,12 @@ func TestSEC007RequestBudgetsAndWriteBoundary(t *testing.T) {
 	if invoke("/v1/search", "application/json", "gzip", "").Code != 415 {
 		t.Fatal("compressed body accepted")
 	}
+	if invoke("/v1/feedback", "text/plain", "", "").Code != 415 {
+		t.Fatal("non JSON feedback accepted")
+	}
+	if invoke("/v1/feedback", "application/json", "", "https://evil.example").Code != 403 {
+		t.Fatal("cross-origin feedback accepted")
+	}
 	if invoke("/v1/photos", "multipart/form-data", "", "https://evil.example").Code != 403 {
 		t.Fatal("cross-origin write accepted")
 	}

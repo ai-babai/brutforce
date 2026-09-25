@@ -49,7 +49,10 @@ remain unavailable without a documented mapping. If its top slug has no display 
 versions; the UI explains that the card is unavailable. Missing later slots
 are omitted and marked `partial_display_catalog`, without promoting a lower
 rank to an exact match. The response has no `selectedId`: rank is not calibrated
-confidence. Real-catalog text search uses the local catalog search. The
+confidence. Real-catalog text search uses a configured search service when
+present, and the local catalog otherwise. If vision is absent, a configured
+search service can continue to handle photo search through its existing
+contract. The
 recommendation service remains a separate wine-ID operation and never feeds
 contest prediction or recognition candidates.
 

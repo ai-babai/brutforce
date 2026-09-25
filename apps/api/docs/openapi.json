@@ -146,9 +146,9 @@
     },
     "/v1/search": {
       "post": {
-        "operationId": "searchDemoCatalog",
-        "summary": "Run a synthetic catalog search",
-        "description": "Existing query/photoId request. With SEARCH_SERVICE_URL configured, delegates to search engine and validates/enriches ordered IDs from the catalog. query takes priority when both supplied. scenario cannot force synthetic results in configured mode. No fallback on dependency failure.",
+        "operationId": "searchAppCatalog",
+        "summary": "Search by title or private photo receipt",
+        "description": "For an imported catalog, photoId uses the private vision adapter when configured; an existing SEARCH_SERVICE_URL is the compatibility fallback. Text query uses the configured search service when present, otherwise local catalog search. Synthetic scenarios apply only to the demo catalog. No fallback on a configured dependency failure.",
         "requestBody": {
           "required": true,
           "content": {
@@ -165,7 +165,7 @@
         },
         "responses": {
           "200": {
-            "description": "Synthetic search result.",
+            "description": "Ranked candidates or a distinct photo-search action; feedbackToken is present when private feedback is configured.",
             "content": {
               "application/json": {
                 "schema": {

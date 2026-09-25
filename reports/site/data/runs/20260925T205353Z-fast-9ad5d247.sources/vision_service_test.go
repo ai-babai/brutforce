@@ -86,6 +86,7 @@ func TestVISION001ContestAndAppUseSameRealRanking(t *testing.T) {
 		t.Fatal(err)
 	}
 	t.Cleanup(func() { _ = os.Unsetenv("UPLOAD_DIR") })
+	t.Setenv("FEEDBACK_DIR", t.TempDir())
 	h := newHandlerWithCatalogAndServices("", nil, catalog, modelServices{vision: client})
 	eval := evalImageRequest(t, h, "image", "label.png", photo, nil)
 	if eval.Code != 200 || !strings.Contains(eval.Body.String(), `"slug":"`+first+`"`) {
@@ -99,7 +100,7 @@ func TestVISION001ContestAndAppUseSameRealRanking(t *testing.T) {
 	if err := json.Unmarshal(search.Body.Bytes(), &result); err != nil {
 		t.Fatal(err)
 	}
-	if result.Demo || result.CatalogVersion != "catalog-display-v2" || result.SelectedID != "" || len(result.Candidates) != 2 || result.Candidates[0].ID != "database-id-a" || result.Candidates[1].ID != "database-id-b" || requests != 2 {
+	if result.Demo || result.CatalogVersion != "catalog-display-v2" || result.SelectedID != "" || len(result.Candidates) != 2 || result.Candidates[0].ID != "database-id-a" || result.Candidates[1].ID != "database-id-b" || len(result.FeedbackToken) != 32 || requests != 2 {
 		t.Fatalf("result=%+v requests=%d", result, requests)
 	}
 }

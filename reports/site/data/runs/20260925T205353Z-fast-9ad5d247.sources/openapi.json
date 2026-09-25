@@ -146,9 +146,9 @@
     },
     "/v1/search": {
       "post": {
-        "operationId": "searchDemoCatalog",
-        "summary": "Run a synthetic catalog search",
-        "description": "Existing query/photoId request. With SEARCH_SERVICE_URL configured, delegates to search engine and validates/enriches ordered IDs from the catalog. query takes priority when both supplied. scenario cannot force synthetic results in configured mode. No fallback on dependency failure.",
+        "operationId": "searchAppCatalog",
+        "summary": "Search by title or private photo receipt",
+        "description": "For an imported catalog, photoId uses the private vision adapter when configured; an existing SEARCH_SERVICE_URL is the compatibility fallback. Text query uses the configured search service when present, otherwise local catalog search. Synthetic scenarios apply only to the demo catalog. No fallback on a configured dependency failure.",
         "requestBody": {
           "required": true,
           "content": {
@@ -165,7 +165,7 @@
         },
         "responses": {
           "200": {
-            "description": "Synthetic search result.",
+            "description": "Ranked candidates or a distinct photo-search action; feedbackToken is present when private feedback is configured.",
             "content": {
               "application/json": {
                 "schema": {
@@ -268,6 +268,38 @@
           "504": {
             "$ref": "#/components/responses/EvalError"
           }
+        }
+      }
+    },
+    "/v1/feedback": {
+      "post": {
+        "operationId": "savePhotoFeedback",
+        "summary": "Save a private confirmation or correction for one photo search",
+        "description": "Append-only private annotation. It remains pending_review and is not training-eligible until separately audited.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/FeedbackRequest" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "New feedback record saved.",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/FeedbackReceipt" } } }
+          },
+          "200": {
+            "description": "Idempotent replay returned the existing receipt.",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/FeedbackReceipt" } } }
+          },
+          "400": { "$ref": "#/components/responses/APIError" },
+          "403": { "$ref": "#/components/responses/APIError" },
+          "404": { "$ref": "#/components/responses/APIError" },
+          "409": { "$ref": "#/components/responses/APIError" },
+          "415": { "$ref": "#/components/responses/APIError" },
+          "429": { "$ref": "#/components/responses/APIError" },
+          "503": { "$ref": "#/components/responses/APIError" }
         }
       }
     },
@@ -455,6 +487,29 @@
       },
       "SearchResponse": {
         "$ref": "/api/schema/demo-search.schema.json"
+      },
+      "FeedbackRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["feedbackToken", "idempotencyKey", "decision"],
+        "properties": {
+          "feedbackToken": { "type": "string", "pattern": "^[0-9a-f]{32}$" },
+          "idempotencyKey": { "type": "string", "pattern": "^[0-9a-f]{32}$" },
+          "decision": { "enum": ["confirm", "correct"] },
+          "displayedWineId": { "type": "string", "minLength": 1, "description": "Required for confirm and for correct when the model returned candidates; omitted only when correcting a no-match result." },
+          "correctWineId": { "type": "string", "minLength": 1 },
+          "comment": { "type": "string", "maxLength": 2000 }
+        }
+      },
+      "FeedbackReceipt": {
+        "type": "object",
+        "required": ["feedbackId", "createdAt", "reviewStatus", "duplicate"],
+        "properties": {
+          "feedbackId": { "type": "string", "pattern": "^[0-9a-f]{32}$" },
+          "createdAt": { "type": "string", "format": "date-time" },
+          "reviewStatus": { "const": "pending_review" },
+          "duplicate": { "type": "boolean" }
+        }
       },
       "PhotoReceipt": {
         "type": "object",

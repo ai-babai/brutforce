@@ -18,7 +18,7 @@ func TestAPI017DocsAreLocalAndDeliberateAPIRoutes(t *testing.T) {
 		{"/api/docs/swagger-ui.css", "text/css", ".swagger-ui"},
 		{"/api/docs/swagger-ui-bundle.js", "application/javascript", "SwaggerUIBundle"},
 		{"/api/openapi.json", "application/json", "\"openapi\": \"3.1.0\""},
-		{"/api/schema/demo-search.schema.json", "application/schema+json", "Demo search success response"},
+		{"/api/schema/demo-search.schema.json", "application/schema+json", "App search success response"},
 	} {
 		response := request(t, handler, http.MethodGet, item.path, "")
 		if response.Code != http.StatusOK || !strings.HasPrefix(response.Header().Get("Content-Type"), item.contentType) || !bytes.Contains(response.Body.Bytes(), []byte(item.contains)) {

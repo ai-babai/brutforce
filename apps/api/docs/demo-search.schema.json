@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "Demo search success response — not the contest API",
+  "title": "App search success response — not the contest API",
   "type": "object",
   "required": [
     "demo",
@@ -14,6 +14,14 @@
     "selectedId": {
       "type": "string",
       "description": "Выбор сервиса среди candidates; несколько результатов фото UI показывает списком для явного выбора пользователем (FE-035)."
+    },
+    "action": {
+      "enum": ["no_match", "insufficient_information", "outside_display_catalog", "partial_display_catalog"],
+      "description": "Явное состояние реального фото-поиска; отсутствие кандидатов само по себе не означает сбой сервиса."
+    },
+    "recognizedSlug": {
+      "type": "string",
+      "description": "Точный organizer slug первого результата, даже если карточка витрины недоступна."
     },
     "candidates": {
       "type": "array",
@@ -163,6 +171,10 @@
       "type": "string",
       "minLength": 1,
       "maxLength": 128
+    },
+    "recognitionCatalogVersion": {
+      "type": "string",
+      "description": "Версия конкурсного каталога распознавателя; может отличаться от каталога витрины."
     },
     "modelVersion": {
       "type": "string",

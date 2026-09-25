@@ -63,3 +63,13 @@
 .leader-list em{justify-self:start}
 @media(max-width:390px){#UI-007 .result-hero{margin-left:-18px;margin-right:-18px}}
 @media(min-width:1024px){#UI-007.page{padding-top:calc(14px + var(--safe-area-top,env(safe-area-inset-top,0px)))}}
+
+/* UI-007 photo feedback: private annotation controls for uploaded photos. */
+.photo-feedback{margin:16px 0;padding:16px;background:#f7eef3;border:1px solid #dfc9d4;border-radius:18px;display:grid;gap:12px}
+.photo-feedback h3,.photo-feedback p{margin:0}.photo-feedback>p{font-size:12px;line-height:1.5;color:var(--muted)}
+.photo-feedback label{font-size:12px;font-weight:600}.photo-feedback textarea{width:100%;min-height:84px;resize:vertical;border:1px solid #cbbbc4;border-radius:12px;padding:12px;background:#fff;color:inherit;font:inherit}
+.feedback-actions,.feedback-correction{display:grid;gap:8px}.feedback-correction{gap:10px;padding-top:4px;border-top:1px solid var(--line)}
+.feedback-catalog{max-height:260px;overflow:auto;display:grid;gap:7px}.feedback-catalog>button{display:grid;grid-template-columns:48px 1fr;gap:9px;align-items:center;text-align:left;border:1px solid var(--line);border-radius:12px;background:#fff;padding:7px}
+.feedback-catalog img{width:48px;height:62px;object-fit:contain}.feedback-catalog span,.feedback-target span,.feedback-success span{display:grid;gap:3px}.feedback-catalog small,.feedback-target small,.feedback-success small{font-size:10px;color:var(--muted)}
+.feedback-target{display:flex;justify-content:space-between;align-items:center;background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px}.feedback-target .text-button{width:auto;min-height:40px}
+.feedback-success{display:flex;gap:10px;align-items:center;color:#30663d;background:#edf8ef;border:1px solid #bcd9c2;border-radius:12px;padding:12px}.feedback-success svg{font-size:22px}.feedback-error{color:#9a243d!important;font-weight:600}

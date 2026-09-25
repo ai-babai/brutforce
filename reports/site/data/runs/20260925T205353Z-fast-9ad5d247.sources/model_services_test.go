@@ -137,6 +137,29 @@ func TestSVC005PhotoSearchForwardsPrivateBytes(t *testing.T) {
 	}
 }
 
+func TestSVC005ConfiguredSearchWorksWithImportedCatalog(t *testing.T) {
+	catalog := displayCatalog{version: "real-v1", items: []wine{{ID: "real-wine", Slug: "real-wine", Name: "Real wine"}}}
+	upstream := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		if r.URL.Path != "/v1/search/text" {
+			t.Fatalf("unexpected upstream path %s", r.URL.Path)
+		}
+		_ = json.NewEncoder(w).Encode(modelResponse{
+			CatalogVersion: "real-v1", ModelVersion: "real-search-v1", Demo: false,
+			Candidates: []modelCandidate{{ID: "real-wine", Score: 1}}, SelectedID: "real-wine",
+		})
+	}))
+	defer upstream.Close()
+	h := newHandlerWithCatalogAndServices("", nil, catalog, modelServices{search: &modelClient{
+		baseURL: upstream.URL, catalogVersion: "real-v1", client: noRedirectHTTPClient(),
+	}})
+	rec := request(t, h, http.MethodPost, "/v1/search", `{"query":"real"}`)
+	response := decodeResponse(t, rec)
+	if rec.Code != http.StatusOK || response.CatalogVersion != "real-v1" || response.ModelVersion != "real-search-v1" || response.SelectedID != "real-wine" {
+		t.Fatalf("response=%d %+v body=%s", rec.Code, response, rec.Body.String())
+	}
+}
+
 func TestSVC006ConfiguredSearchRequiresInputAndFailsClosed(t *testing.T) {
 	h := newHandlerWithCatalogAndServices("", nil, embeddedCatalogStore{}, modelServices{search: &modelClient{configErr: errors.New("bad URL")}})
 	if got := request(t, h, http.MethodPost, "/v1/search", `{}`).Code; got != http.StatusBadRequest {

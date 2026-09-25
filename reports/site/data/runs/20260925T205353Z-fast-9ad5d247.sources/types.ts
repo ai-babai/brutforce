@@ -37,7 +37,10 @@ export type SearchResponse = {
   catalogVersion?: string;
   recognitionCatalogVersion?: string;
   modelVersion?: string;
+  feedbackToken?: string;
 };
 export type CatalogResponse = { demo: boolean; candidates: Candidate[]; nextCursor?: string; catalogVersion: string };
 export type RecommendationResponse = { demo: boolean; candidates: Candidate[]; catalogVersion?: string; modelVersion?: string };
 export type PhotoReceipt = { id: string; createdAt: string; bytes: number; mime: string; width: number; height: number };
+export type FeedbackDecision = 'confirm' | 'correct';
+export type FeedbackReceipt = { feedbackId: string; createdAt: string; reviewStatus: 'pending_review'; duplicate: boolean };

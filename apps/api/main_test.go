@@ -83,7 +83,7 @@ func decodeResponse(t *testing.T, recorder *httptest.ResponseRecorder) searchRes
 func TestAPI001ExactSelectsCabernet(t *testing.T) {
 	recorder := request(t, newHandler(""), http.MethodPost, "/v1/search", `{"scenario":"exact"}`)
 	response := decodeResponse(t, recorder)
-	if recorder.Code != http.StatusOK || !response.Demo || len(response.Candidates) != len(demoWines) || response.SelectedID != demoWines[0].ID {
+	if recorder.Code != http.StatusOK || !response.Demo || len(response.Candidates) != 5 || response.SelectedID != demoWines[0].ID {
 		t.Fatalf("exact: status=%d response=%+v", recorder.Code, response)
 	}
 }
