@@ -30,6 +30,12 @@ type Recognizer interface {
 	Recognize(context.Context, image.Image) (string, error)
 }
 
+// EncodedRecognizer receives the validated original bytes, avoiding a second
+// image encode before forwarding to a remote inference process.
+type EncodedRecognizer interface {
+	RecognizeEncoded(context.Context, []byte) (string, error)
+}
+
 type evalErrorResponse struct {
 	Error apiError `json:"error"`
 }
@@ -60,7 +66,7 @@ func newEvalPredictHandler(recognizer Recognizer, maxConcurrent int) http.Handle
 			return
 		}
 
-		img, err := decodeEvalImage(w, r)
+		img, encoded, err := decodeEvalImage(w, r)
 		if err != nil {
 			writeEvalError(w, http.StatusBadRequest, "invalid_image", err.Error())
 			return
@@ -73,10 +79,25 @@ func newEvalPredictHandler(recognizer Recognizer, maxConcurrent int) http.Handle
 			writeEvalError(w, http.StatusServiceUnavailable, "recognition_unavailable", "recognition is not configured")
 			return
 		}
-		slug, err := recognizer.Recognize(ctx, img)
+		var slug string
+		if raw, ok := recognizer.(EncodedRecognizer); ok {
+			slug, err = raw.RecognizeEncoded(ctx, encoded)
+		} else {
+			slug, err = recognizer.Recognize(ctx, img)
+		}
 		if err != nil {
 			if ctx.Err() != nil {
 				writeEvalContextError(w, ctx.Err())
+			} else if errors.Is(err, context.DeadlineExceeded) {
+				writeEvalContextError(w, err)
+			} else if errors.Is(err, context.Canceled) {
+				writeEvalContextError(w, err)
+			} else if errors.Is(err, errVisionNoMatch) {
+				writeJSON(w, http.StatusOK, map[string]string{"action": "no_match"})
+			} else if errors.Is(err, errVisionInsufficient) {
+				writeJSON(w, http.StatusOK, map[string]string{"action": "insufficient_information"})
+			} else if errors.Is(err, errVisionInvalid) || errors.Is(err, errCatalogNotFound) {
+				writeEvalError(w, http.StatusBadGateway, "recognition_invalid_result", "recognition returned an invalid catalog result")
 			} else {
 				writeEvalError(w, http.StatusServiceUnavailable, "recognition_failed", "recognition failed")
 			}
@@ -116,11 +137,11 @@ func configuredEvalConcurrency() int {
 	return value
 }
 
-func decodeEvalImage(w http.ResponseWriter, r *http.Request) (image.Image, error) {
+func decodeEvalImage(w http.ResponseWriter, r *http.Request) (image.Image, []byte, error) {
 	r.Body = http.MaxBytesReader(w, r.Body, maxEvalMultipartBytes)
 	reader, err := r.MultipartReader()
 	if err != nil {
-		return nil, errors.New("multipart form is invalid")
+		return nil, nil, errors.New("multipart form is invalid")
 	}
 	var data []byte
 	imageParts := 0
@@ -130,32 +151,32 @@ func decodeEvalImage(w http.ResponseWriter, r *http.Request) (image.Image, error
 			break
 		}
 		if err != nil {
-			return nil, errors.New("multipart form is invalid or too large")
+			return nil, nil, errors.New("multipart form is invalid or too large")
 		}
 		if part.FormName() != "image" || part.FileName() == "" {
-			return nil, errors.New("multipart form must contain exactly one image file field")
+			return nil, nil, errors.New("multipart form must contain exactly one image file field")
 		}
 		imageParts++
 		if imageParts > 1 {
-			return nil, errors.New("multipart field image must be supplied once")
+			return nil, nil, errors.New("multipart field image must be supplied once")
 		}
 		data, err = io.ReadAll(io.LimitReader(part, maxEvalImageBytes+1))
 		if err != nil || len(data) > maxEvalImageBytes {
-			return nil, errors.New("image must be no larger than 10 MiB")
+			return nil, nil, errors.New("image must be no larger than 10 MiB")
 		}
 	}
 	if data == nil {
-		return nil, errors.New("multipart field image is required")
+		return nil, nil, errors.New("multipart field image is required")
 	}
 	config, format, err := image.DecodeConfig(bytes.NewReader(data))
 	if err != nil || config.Width <= 0 || config.Height <= 0 || config.Width > maxEvalImageDimension || config.Height > maxEvalImageDimension || int64(config.Width) > maxEvalImagePixels/int64(config.Height) {
-		return nil, errors.New("image must be a decodable JPEG, PNG, GIF, or WebP image within the allowed pixel limit")
+		return nil, nil, errors.New("image must be a decodable JPEG, PNG, GIF, or WebP image within the allowed pixel limit")
 	}
 	decoded, decodedFormat, err := image.Decode(bytes.NewReader(data))
 	if err != nil || decodedFormat != format || decoded.Bounds().Dx() != config.Width || decoded.Bounds().Dy() != config.Height {
-		return nil, errors.New("image must be fully decodable")
+		return nil, nil, errors.New("image must be fully decodable")
 	}
-	return decoded, nil
+	return decoded, data, nil
 }
 
 func writeEvalError(w http.ResponseWriter, status int, code, message string) {

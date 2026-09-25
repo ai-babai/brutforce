@@ -101,6 +101,9 @@ func newHandlerWithCatalog(webRoot string, recognizer Recognizer, catalog catalo
 }
 
 func newHandlerWithCatalogAndServices(webRoot string, recognizer Recognizer, catalog catalogReader, services modelServices) http.Handler {
+	if recognizer == nil && services.vision != nil {
+		recognizer = &visionRecognizer{client: services.vision, catalog: catalog}
+	}
 	store := configuredPhotoStore()
 	mux := http.NewServeMux()
 	mux.HandleFunc("/api/docs", docsHandler)
@@ -203,7 +206,32 @@ func searchHandler(store *photoStore, catalog catalogReader, services modelServi
 			return
 		}
 		if !info.Demo {
-			writeError(w, http.StatusServiceUnavailable, "recognition_unavailable", "reference recognition is unavailable for the imported catalog")
+			if request.PhotoID != nil {
+				if services.vision == nil {
+					writeError(w, http.StatusServiceUnavailable, "recognition_unavailable", "image recognition is not configured")
+					return
+				}
+				response, status, code, message := configuredVisionSearch(r, store, catalog, *request.PhotoID, services.vision)
+				if status != 0 {
+					writeError(w, status, code, message)
+					return
+				}
+				writeJSON(w, http.StatusOK, response)
+				return
+			}
+			if request.Query != nil {
+				candidates, err := catalog.Search(r.Context(), request.Query)
+				if err != nil {
+					writeError(w, http.StatusServiceUnavailable, "catalog_unavailable", "catalog is temporarily unavailable")
+					return
+				}
+				if len(candidates) > 5 {
+					candidates = candidates[:5]
+				}
+				writeJSON(w, http.StatusOK, searchResponse{Demo: false, Candidates: candidates, CatalogVersion: info.Version})
+				return
+			}
+			writeError(w, http.StatusBadRequest, "invalid_request", "query or photoId is required")
 			return
 		}
 		if request.PhotoID != nil {

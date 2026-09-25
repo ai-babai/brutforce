@@ -1,7 +1,7 @@
 # Contest prediction endpoint
 
-**Status:** implemented HTTP boundary; no recognizer is configured in the
-default executable.
+**Status:** implemented HTTP boundary. The executable configures a real
+recognizer when `VISION_SERVICE_URL` is set; otherwise it returns 503.
 
 **Producer:** `apps/api` Go server. **Consumer:** the organizer's local
 `participant_test.sh`. This is separate from the synthetic demo search
@@ -28,15 +28,20 @@ requests are not rejected by the demo's low burst limit.
 ## Response
 
 On a successful recognizer result, the response is HTTP 200 with the exact
-nonempty slug returned by the recognizer:
+nonempty slug returned by the recognizer and verified against the active real catalog:
 
 ```json
 {"slug":"catalog-slug"}
 ```
 
-The boundary does not normalize, invent, or validate that slug against a
-catalog. A test stub proves only this HTTP hand-off; it is not evidence of
-recognition quality.
+The standalone boundary does not normalize or invent a slug. The configured
+vision adapter checks it against the active real catalog. A test stub proves
+only the HTTP hand-off; it is not evidence of recognition quality.
+
+A deliberate `no_match` or `insufficient_information` response is HTTP 200
+with `{"action":"..."}` and no slug. A technical failure returns an error
+status. The organizer script records both cases as null; retain response
+status and action in our own diagnostics to distinguish them.
 
 Errors are JSON objects with an `error.code` and `error.message`. Invalid
 multipart/image input is HTTP 400; a wrong method is 405; no configured
@@ -46,8 +51,10 @@ response as no prediction and continues.
 
 ## Wiring boundary
 
-The application creates the endpoint with a nil `Recognizer`, deliberately
-returning `recognition_unavailable`. A future engine must implement:
+The application creates the endpoint with a nil `Recognizer` unless
+`VISION_SERVICE_URL` is set. The configured adapter consumes the shared
+ranked serving contract in [vision-serving.md](vision-serving.md). An injected
+engine implements:
 
 ```go
 type Recognizer interface {

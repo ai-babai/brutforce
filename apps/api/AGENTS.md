@@ -13,9 +13,10 @@ with it.
   [`contracts/demo-catalog.md`](../../contracts/demo-catalog.md); do not commit
   real catalog exports, upload GET/list routes, secrets, or request-body
   logging.
-- The server is a prototype boundary only. Upload receipt persistence exists,
-  and imported display catalogs are readable. Recognition, OCR, authentication,
-  and analytics remain deliberate stubs.
+- The server is a prototype boundary with imported display catalogs. When
+  `VISION_SERVICE_URL` is configured, the shared ranked vision response feeds
+  contest prediction and real photo search; see `../../contracts/vision-serving.md`.
+  Authentication and analytics remain outside this boundary.
 - Keep dependencies in the Go standard library except the approved
   `golang.org/x/image/webp` decoder used only by the contest adapter and the
   authorized PostgreSQL catalog dependencies `github.com/jackc/pgx/v5` and

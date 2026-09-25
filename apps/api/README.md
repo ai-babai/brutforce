@@ -42,8 +42,10 @@ the filename, and returns only `{ "slug": "..." }` when an injected
 recognizer returns a nonempty exact slug. It never uses `UPLOAD_DIR`, the
 synthetic catalog, or the demo search result.
 
-The executable intentionally wires no recognizer, so a valid decoded image
-returns JSON HTTP 503 `recognition_unavailable`; it never fabricates a slug.
+Without `VISION_SERVICE_URL`, a valid decoded image returns JSON HTTP 503
+`recognition_unavailable`. With the vision service configured, the same
+ranked result powers the contest slug and real-catalog photo search; see
+[`contracts/vision-serving.md`](../../contracts/vision-serving.md).
 `EVAL_MAX_CONCURRENT` controls this route's independent concurrency cap
 (default 4). Run its contract checks with
 `go test -count=1 -run '^TestEVAL' ./...`. They prove the HTTP boundary and
@@ -237,6 +239,9 @@ go run ./cmd/catalog-import -package /path/to/package -version catalog-display-2
 
 Миграция допускает SQL NULL года и защищает импортированный каталог от demo-seed.
 Файлы версионируются и остаются вне БД; не удалять старые assets при rollback.
-Reference-движок несовместим с реальными IDs: фото/рекомендации возвращают
-явную ошибку до подключения подходящего сервиса. Поиск по названию работает
-через каталог независимо от модели; качество распознавания не заявляется.
+Reference-движок несовместим с реальными IDs. Фото-поиск реального каталога
+доступен только через `VISION_SERVICE_URL`; `VISION_CATALOG_VERSION` и
+`VISION_INDEX_VERSION` закрепляют версии ответа распознавателя. Ранжированные
+slug сопоставляются с существующими ID каталога. Без vision-сервиса фото
+возвращает явную ошибку. Поиск по названию работает через локальный каталог.
+Рекомендации остаются отдельным сервисом и не подменяются кандидатами поиска.
