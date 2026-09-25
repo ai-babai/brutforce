@@ -28,6 +28,15 @@ var (
 	errVisionInsufficient = errors.New("vision found insufficient evidence")
 )
 
+// These are the three official aliases in the pinned display package. Keep
+// their mapping version-specific; organizer slugs without an exact package
+// alias must never be mapped by title similarity.
+var displayAliases20260922 = map[string]string{
+	"aligote-avtorskoe": "aligote-avtorskoe-vino",
+	"kuban-vino-aristov-kaberne-sovinon-roze-rozovoe-suhoe-12": "kuban-vino-aristov-kaberne-sovinon-roze-2020-rozovoe-suhoe-12",
+	"villa-urkusta-kaberne-sovinon-klassik-krasnoe-suhoe-139":  "villa-urkusta-kaberne-sovinon-klassik-krasnoe-suhoe-12",
+}
+
 type visionClient struct {
 	baseURL, catalogVersion, indexVersion string
 	client                                *http.Client
@@ -231,19 +240,61 @@ func configuredVisionSearch(r *http.Request, store *photoStore, catalog catalogR
 		bySlug[item.Slug] = item
 	}
 	response.RecognizedSlug = result.Slug
-	if _, ok := bySlug[result.Slug]; !ok {
+	first, found, err := resolveVisionDisplayCard(r.Context(), catalog, info.Version, bySlug, result.Slug)
+	if err != nil {
+		return searchResponse{}, 503, "catalog_unavailable", "catalog is temporarily unavailable"
+	}
+	if !found {
 		response.Action = "outside_display_catalog"
 		return response, 0, "", ""
 	}
-	for _, slug := range result.RankedSlugs[:min(5, len(result.RankedSlugs))] {
-		item, ok := bySlug[slug]
-		if !ok {
+	response.Candidates = append(response.Candidates, first)
+	seenIDs := map[string]bool{first.ID: true}
+	for _, slug := range result.RankedSlugs[1:min(5, len(result.RankedSlugs))] {
+		item, found, err := resolveVisionDisplayCard(r.Context(), catalog, info.Version, bySlug, slug)
+		if err != nil {
+			return searchResponse{}, 503, "catalog_unavailable", "catalog is temporarily unavailable"
+		}
+		if !found {
 			response.Action = "partial_display_catalog"
 			continue
 		}
+		if seenIDs[item.ID] {
+			continue
+		}
 		response.Candidates = append(response.Candidates, item)
+		seenIDs[item.ID] = true
 	}
 	// Candidate rank is evidence for inspection, not calibrated confidence.
 	// Selection remains explicit in the product UI until its UX rule is settled.
 	return response, 0, "", ""
+}
+
+func resolveVisionDisplayCard(ctx context.Context, catalog catalogReader, version string, bySlug map[string]wine, slug string) (wine, bool, error) {
+	if item, ok := bySlug[slug]; ok {
+		return item, true, nil
+	}
+	if version != "svoe-20260922-v2" {
+		return wine{}, false, nil
+	}
+	expected, official := displayAliases20260922[slug]
+	if !official {
+		return wine{}, false, nil
+	}
+	resolver, ok := catalog.(catalogResolver)
+	if !ok {
+		return wine{}, false, nil
+	}
+	item, canonical, err := resolver.Resolve(ctx, slug)
+	if errors.Is(err, errCatalogNotFound) {
+		return wine{}, false, nil
+	}
+	if err != nil {
+		return wine{}, false, err
+	}
+	wanted, ok := bySlug[expected]
+	if !ok || canonical != expected || item.Slug != expected || item.ID != wanted.ID {
+		return wine{}, false, errCatalogUnavailable
+	}
+	return item, true, nil
 }

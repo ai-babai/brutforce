@@ -30,7 +30,11 @@ must receive an explicit endpoint because its default port may belong to
 another service on Sigma.
 
 For app photo search, the same ranking is mapped to up to five existing card
-IDs in order. If its top slug has no display card, the response is empty with
+IDs in order. In display version `svoe-20260922-v2`, three pinned official
+aliases may resolve to their canonical cards only when the catalog resolver
+confirms the exact mapping; the response keeps the original organizer slug in
+`recognizedSlug` and deduplicates canonical IDs. Other organizer-only slugs
+remain unavailable without a documented mapping. If its top slug has no display card, the response is empty with
 `action: outside_display_catalog`, `recognizedSlug`, and both catalog
 versions; the UI explains that the card is unavailable. Missing later slots
 are omitted and marked `partial_display_catalog`, without promoting a lower

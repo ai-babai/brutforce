@@ -177,3 +177,56 @@ func TestVISION003PinnedOrganizerAllowlist(t *testing.T) {
 		t.Fatal("mismatched version accepted")
 	}
 }
+
+type officialAliasVisionCatalog struct {
+	realVisionCatalog
+	aliases map[string]string
+}
+
+func (c officialAliasVisionCatalog) CatalogInfo(context.Context) (catalogInfo, error) {
+	return catalogInfo{Version: "svoe-20260922-v2", Demo: false}, nil
+}
+
+func (c officialAliasVisionCatalog) Resolve(ctx context.Context, slug string) (wine, string, error) {
+	if canonical, ok := c.aliases[slug]; ok {
+		item, _, err := c.realVisionCatalog.Resolve(ctx, canonical)
+		return item, canonical, err
+	}
+	return wine{}, "", errCatalogNotFound
+}
+
+func TestVISION004OnlyPinnedOfficialAliasMapsToCanonicalCard(t *testing.T) {
+	const alias = "aligote-avtorskoe"
+	const canonical = "aligote-avtorskoe-vino"
+	const unofficial = "some-other-organizer-slug"
+	catalog := officialAliasVisionCatalog{
+		realVisionCatalog: realVisionCatalog{items: []wine{{ID: "database-canonical-id", Slug: canonical, Name: "Алиготе"}}},
+		aliases:           map[string]string{alias: canonical, unofficial: canonical},
+	}
+	top := alias
+	upstream := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		_ = json.NewEncoder(w).Encode(visionResult{Slug: top, RankedSlugs: []string{top, canonical}, CatalogVersion: "organizer-catalog-20260919", IndexVersion: "index-v1", ModelVersion: "model-v1"})
+	}))
+	defer upstream.Close()
+	client := &visionClient{baseURL: upstream.URL, catalogVersion: "organizer-catalog-20260919", indexVersion: "index-v1", client: noRedirectHTTPClient(), validSlugs: map[string]struct{}{alias: {}, canonical: {}, unofficial: {}}}
+	store, err := openPhotoStore(t.TempDir(), 20<<20, defaultMaxPhotoPixels)
+	if err != nil {
+		t.Fatal(err)
+	}
+	photo := smallPNG(t)
+	receipt, err := store.save(photo, "image/png", image.Config{Width: 2, Height: 3})
+	if err != nil {
+		t.Fatal(err)
+	}
+	request := httptest.NewRequest(http.MethodPost, "/v1/search", nil)
+	result, status, _, _ := configuredVisionSearch(request, store, catalog, receipt.ID, client)
+	if status != 0 || result.Action != "" || result.RecognizedSlug != alias || len(result.Candidates) != 1 || result.Candidates[0].ID != "database-canonical-id" || result.Candidates[0].Slug != canonical || result.SelectedID != "" {
+		t.Fatalf("official alias: status=%d result=%+v", status, result)
+	}
+	top = unofficial
+	result, status, _, _ = configuredVisionSearch(request, store, catalog, receipt.ID, client)
+	if status != 0 || result.Action != "outside_display_catalog" || result.RecognizedSlug != unofficial || len(result.Candidates) != 0 {
+		t.Fatalf("unofficial alias: status=%d result=%+v", status, result)
+	}
+}
