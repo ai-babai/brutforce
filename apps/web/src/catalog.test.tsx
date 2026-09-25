@@ -50,6 +50,18 @@ describe("BE-045 catalog display", () => {
     expect(screen.getByAltText("Фото вина: Вино 4")).toHaveAttribute("loading", "lazy");
   });
 
+  it("CAT004 keeps tasting color prose out of compact search rows", async () => {
+    const candidate = { ...wine, color: "Лимонный цвет с зеленоватым оттенком", sugar: "сухое" };
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(response(page([candidate]))));
+    render(<App />);
+    const user = userEvent.setup();
+    await user.click(screen.getByRole("button", { name: /По названию/i }));
+    await user.click(screen.getByRole("button", { name: /Открыть каталог/i }));
+    const row = await screen.findByRole("button", { name: /Каберне/i });
+    expect(row).toHaveTextContent("сухое");
+    expect(row).not.toHaveTextContent("Лимонный цвет");
+  });
+
   it.each([
     {
       name: "unknown facts and invalid numeric values",

@@ -1,37 +1,219 @@
 {
   "schemaVersion": 2,
-  "id": "20260925T205643Z-fast-1dce01fb",
+  "id": "20260925T210029Z-fast-e7039501",
   "label": "Быстрые проверки API и состояний UI",
-  "createdAt": "2026-09-25T20:56:43.988Z",
+  "createdAt": "2026-09-25T21:00:29.052Z",
   "revision": "working-tree",
   "status": "partial",
   "timing": {
-    "wallMs": 7216,
+    "wallMs": 7681,
     "suites": [
       {
         "id": "api",
         "label": "Go API suite",
-        "processWallMs": 1033,
-        "reportedMs": 655,
-        "testMeasuredSumMs": 480
+        "processWallMs": 1520,
+        "reportedMs": 1147,
+        "testMeasuredSumMs": 460
       },
       {
         "id": "eval",
         "label": "Contest HTTP contract (injected recognizer, no quality claim)",
-        "processWallMs": 1012,
-        "reportedMs": 618,
+        "processWallMs": 1019,
+        "reportedMs": 622,
         "testMeasuredSumMs": 10
       },
       {
         "id": "ui",
         "label": "Vitest UI suite",
-        "processWallMs": 5147,
+        "processWallMs": 5118,
         "reportedMs": null,
-        "testMeasuredSumMs": 13180.388710999994
+        "testMeasuredSumMs": 13060.358831000005
       }
     ]
   },
   "tests": [
+    {
+      "name": "TestAcceptedProjectionRejectsMalformedVariantRatio",
+      "status": "passed",
+      "durationMs": 0,
+      "durationText": "<1 мс (разрешение Go)",
+      "suite": "api"
+    },
+    {
+      "name": "TestAcceptedProjectionRejectsVariantUpscale",
+      "status": "passed",
+      "durationMs": 0,
+      "durationText": "<1 мс (разрешение Go)",
+      "suite": "api"
+    },
+    {
+      "name": "TestAcceptedProjectionCannotRunWithoutAcceptedReport",
+      "status": "passed",
+      "durationMs": 0,
+      "durationText": "<1 мс (разрешение Go)",
+      "suite": "api"
+    },
+    {
+      "name": "TestAcceptedProjectionCanonicalizesEmptyOptionalSlices",
+      "status": "passed",
+      "durationMs": 0,
+      "durationText": "<1 мс (разрешение Go)",
+      "suite": "api"
+    },
+    {
+      "name": "TestCAT008LoadValidatesPackageAndKeepsTypedProjection",
+      "status": "passed",
+      "durationMs": 0,
+      "durationText": "<1 мс (разрешение Go)",
+      "suite": "api"
+    },
+    {
+      "name": "TestCAT008RejectsTraversalChecksumAndAliasConflicts/alias_collision",
+      "status": "passed",
+      "durationMs": 0,
+      "durationText": "<1 мс (разрешение Go)",
+      "suite": "api"
+    },
+    {
+      "name": "TestCAT008RejectsTraversalChecksumAndAliasConflicts/source_URL",
+      "status": "passed",
+      "durationMs": 0,
+      "durationText": "<1 мс (разрешение Go)",
+      "suite": "api"
+    },
+    {
+      "name": "TestCAT008RejectsTraversalChecksumAndAliasConflicts/traversal",
+      "status": "passed",
+      "durationMs": 0,
+      "durationText": "<1 мс (разрешение Go)",
+      "suite": "api"
+    },
+    {
+      "name": "TestCAT008RejectsTraversalChecksumAndAliasConflicts/checksum",
+      "status": "passed",
+      "durationMs": 0,
+      "durationText": "<1 мс (разрешение Go)",
+      "suite": "api"
+    },
+    {
+      "name": "TestCAT008RejectsTraversalChecksumAndAliasConflicts/alias_target",
+      "status": "passed",
+      "durationMs": 0,
+      "durationText": "<1 мс (разрешение Go)",
+      "suite": "api"
+    },
+    {
+      "name": "TestCAT008RejectsTraversalChecksumAndAliasConflicts",
+      "status": "passed",
+      "durationMs": 10,
+      "durationText": "10 мс",
+      "suite": "api"
+    },
+    {
+      "name": "TestCAT008RejectsSymlinkedAssets",
+      "status": "passed",
+      "durationMs": 0,
+      "durationText": "<1 мс (разрешение Go)",
+      "suite": "api"
+    },
+    {
+      "name": "TestCAT008RejectsNonNullImageWithoutPaths/missing_master_path",
+      "status": "passed",
+      "durationMs": 0,
+      "durationText": "<1 мс (разрешение Go)",
+      "suite": "api"
+    },
+    {
+      "name": "TestCAT008RejectsNonNullImageWithoutPaths/missing_variant_path",
+      "status": "passed",
+      "durationMs": 0,
+      "durationText": "<1 мс (разрешение Go)",
+      "suite": "api"
+    },
+    {
+      "name": "TestCAT008RejectsNonNullImageWithoutPaths/absent_image_field",
+      "status": "passed",
+      "durationMs": 0,
+      "durationText": "<1 мс (разрешение Go)",
+      "suite": "api"
+    },
+    {
+      "name": "TestCAT008RejectsNonNullImageWithoutPaths",
+      "status": "passed",
+      "durationMs": 0,
+      "durationText": "<1 мс (разрешение Go)",
+      "suite": "api"
+    },
+    {
+      "name": "TestCAT008ProjectsOnlyContractFields/provenance_and_geography",
+      "status": "passed",
+      "durationMs": 0,
+      "durationText": "<1 мс (разрешение Go)",
+      "suite": "api"
+    },
+    {
+      "name": "TestCAT008ProjectsOnlyContractFields/valid_ABV_and_volume",
+      "status": "passed",
+      "durationMs": 0,
+      "durationText": "<1 мс (разрешение Go)",
+      "suite": "api"
+    },
+    {
+      "name": "TestCAT008ProjectsOnlyContractFields/unmodelled_source_detail_dropped",
+      "status": "passed",
+      "durationMs": 0,
+      "durationText": "<1 мс (разрешение Go)",
+      "suite": "api"
+    },
+    {
+      "name": "TestCAT008ProjectsOnlyContractFields",
+      "status": "passed",
+      "durationMs": 0,
+      "durationText": "<1 мс (разрешение Go)",
+      "suite": "api"
+    },
+    {
+      "name": "TestMetadataExcludesCanonicalColumns",
+      "status": "passed",
+      "durationMs": 0,
+      "durationText": "<1 мс (разрешение Go)",
+      "suite": "api"
+    },
+    {
+      "name": "TestContentAddressedMediaKeyRequiresMatchingHexDigest",
+      "status": "passed",
+      "durationMs": 0,
+      "durationText": "<1 мс (разрешение Go)",
+      "suite": "api"
+    },
+    {
+      "name": "TestQualityReportDoesNotMarkUnexecutedCasesPassed",
+      "status": "passed",
+      "durationMs": 0,
+      "durationText": "<1 мс (разрешение Go)",
+      "suite": "api"
+    },
+    {
+      "name": "TestDQ011RejectsRemovalApprovalOutsideBaseline",
+      "status": "passed",
+      "durationMs": 0,
+      "durationText": "<1 мс (разрешение Go)",
+      "suite": "api"
+    },
+    {
+      "name": "TestSVC010ConformanceRunsAgainstSeparateReferenceServices",
+      "status": "passed",
+      "durationMs": 20,
+      "durationText": "20 мс",
+      "suite": "api"
+    },
+    {
+      "name": "TestCompareIDsDoesNotRequireSnapshotOut",
+      "status": "passed",
+      "durationMs": 110,
+      "durationText": "110 мс",
+      "suite": "api"
+    },
     {
       "name": "TestCAT001PaginationAndCAT002WholeCatalogQuery",
       "status": "passed",
@@ -77,8 +259,8 @@
     {
       "name": "TestCAT001LargeCatalogReturnsBoundedPages",
       "status": "passed",
-      "durationMs": 30,
-      "durationText": "30 мс",
+      "durationMs": 20,
+      "durationText": "20 мс",
       "suite": "api"
     },
     {
@@ -147,8 +329,8 @@
     {
       "name": "TestFeedbackConfirmIsAppendOnlyAndIdempotent",
       "status": "passed",
-      "durationMs": 30,
-      "durationText": "30 мс",
+      "durationMs": 40,
+      "durationText": "40 мс",
       "suite": "api"
     },
     {
@@ -168,8 +350,8 @@
     {
       "name": "TestFeedbackRecordsCorrectWineAfterModelNoMatch",
       "status": "passed",
-      "durationMs": 20,
-      "durationText": "20 мс",
+      "durationMs": 30,
+      "durationText": "30 мс",
       "suite": "api"
     },
     {
@@ -215,6 +397,48 @@
       "suite": "api"
     },
     {
+      "name": "TestSVC008MandatoryWireFieldsAndAdditiveCompatibility/missing_demo",
+      "status": "passed",
+      "durationMs": 0,
+      "durationText": "<1 мс (разрешение Go)",
+      "suite": "api"
+    },
+    {
+      "name": "TestSVC008MandatoryWireFieldsAndAdditiveCompatibility/null_demo",
+      "status": "passed",
+      "durationMs": 0,
+      "durationText": "<1 мс (разрешение Go)",
+      "suite": "api"
+    },
+    {
+      "name": "TestSVC008MandatoryWireFieldsAndAdditiveCompatibility/missing_score",
+      "status": "passed",
+      "durationMs": 0,
+      "durationText": "<1 мс (разрешение Go)",
+      "suite": "api"
+    },
+    {
+      "name": "TestSVC008MandatoryWireFieldsAndAdditiveCompatibility/null_score",
+      "status": "passed",
+      "durationMs": 0,
+      "durationText": "<1 мс (разрешение Go)",
+      "suite": "api"
+    },
+    {
+      "name": "TestSVC008MandatoryWireFieldsAndAdditiveCompatibility/null_candidates",
+      "status": "passed",
+      "durationMs": 0,
+      "durationText": "<1 мс (разрешение Go)",
+      "suite": "api"
+    },
+    {
+      "name": "TestSVC008MandatoryWireFieldsAndAdditiveCompatibility/trailing_document",
+      "status": "passed",
+      "durationMs": 0,
+      "durationText": "<1 мс (разрешение Go)",
+      "suite": "api"
+    },
+    {
       "name": "TestAPI005ManualQueryFiltersCaseInsensitively",
       "status": "passed",
       "durationMs": 0,
@@ -222,7 +446,28 @@
       "suite": "api"
     },
     {
+      "name": "TestSVC008MandatoryWireFieldsAndAdditiveCompatibility/blank_model",
+      "status": "passed",
+      "durationMs": 0,
+      "durationText": "<1 мс (разрешение Go)",
+      "suite": "api"
+    },
+    {
       "name": "TestAPI006InvalidInputIs400",
+      "status": "passed",
+      "durationMs": 0,
+      "durationText": "<1 мс (разрешение Go)",
+      "suite": "api"
+    },
+    {
+      "name": "TestSVC008MandatoryWireFieldsAndAdditiveCompatibility/oversize",
+      "status": "passed",
+      "durationMs": 0,
+      "durationText": "<1 мс (разрешение Go)",
+      "suite": "api"
+    },
+    {
+      "name": "TestSVC008MandatoryWireFieldsAndAdditiveCompatibility",
       "status": "passed",
       "durationMs": 0,
       "durationText": "<1 мс (разрешение Go)",
@@ -275,13 +520,6 @@
       "status": "passed",
       "durationMs": 10,
       "durationText": "10 мс",
-      "suite": "api"
-    },
-    {
-      "name": "TestSVC010ConformanceRunsAgainstSeparateReferenceServices",
-      "status": "passed",
-      "durationMs": 20,
-      "durationText": "20 мс",
       "suite": "api"
     },
     {
@@ -679,8 +917,8 @@
     {
       "name": "TestVISION001ContestAndAppUseSameRealRanking",
       "status": "passed",
-      "durationMs": 30,
-      "durationText": "30 мс",
+      "durationMs": 20,
+      "durationText": "20 мс",
       "suite": "api"
     },
     {
@@ -707,253 +945,15 @@
     {
       "name": "TestVISION005AppUsesLongCeilingAndParentDeadlineWins",
       "status": "passed",
-      "durationMs": 20,
-      "durationText": "20 мс",
+      "durationMs": 10,
+      "durationText": "10 мс",
       "suite": "api"
     },
     {
       "name": "TestVISION006UnknownReceiptAndCorruptStorageStayDistinct",
       "status": "passed",
-      "durationMs": 20,
-      "durationText": "20 мс",
-      "suite": "api"
-    },
-    {
-      "name": "TestAcceptedProjectionRejectsMalformedVariantRatio",
-      "status": "passed",
-      "durationMs": 0,
-      "durationText": "<1 мс (разрешение Go)",
-      "suite": "api"
-    },
-    {
-      "name": "TestAcceptedProjectionRejectsVariantUpscale",
-      "status": "passed",
-      "durationMs": 0,
-      "durationText": "<1 мс (разрешение Go)",
-      "suite": "api"
-    },
-    {
-      "name": "TestAcceptedProjectionCannotRunWithoutAcceptedReport",
-      "status": "passed",
-      "durationMs": 0,
-      "durationText": "<1 мс (разрешение Go)",
-      "suite": "api"
-    },
-    {
-      "name": "TestAcceptedProjectionCanonicalizesEmptyOptionalSlices",
-      "status": "passed",
-      "durationMs": 0,
-      "durationText": "<1 мс (разрешение Go)",
-      "suite": "api"
-    },
-    {
-      "name": "TestCAT008LoadValidatesPackageAndKeepsTypedProjection",
-      "status": "passed",
-      "durationMs": 0,
-      "durationText": "<1 мс (разрешение Go)",
-      "suite": "api"
-    },
-    {
-      "name": "TestCAT008RejectsTraversalChecksumAndAliasConflicts/alias_target",
-      "status": "passed",
-      "durationMs": 0,
-      "durationText": "<1 мс (разрешение Go)",
-      "suite": "api"
-    },
-    {
-      "name": "TestCAT008RejectsTraversalChecksumAndAliasConflicts/alias_collision",
-      "status": "passed",
-      "durationMs": 0,
-      "durationText": "<1 мс (разрешение Go)",
-      "suite": "api"
-    },
-    {
-      "name": "TestCAT008RejectsTraversalChecksumAndAliasConflicts/source_URL",
-      "status": "passed",
-      "durationMs": 0,
-      "durationText": "<1 мс (разрешение Go)",
-      "suite": "api"
-    },
-    {
-      "name": "TestCAT008RejectsTraversalChecksumAndAliasConflicts/traversal",
-      "status": "passed",
-      "durationMs": 0,
-      "durationText": "<1 мс (разрешение Go)",
-      "suite": "api"
-    },
-    {
-      "name": "TestCAT008RejectsTraversalChecksumAndAliasConflicts/checksum",
-      "status": "passed",
-      "durationMs": 0,
-      "durationText": "<1 мс (разрешение Go)",
-      "suite": "api"
-    },
-    {
-      "name": "TestCAT008RejectsTraversalChecksumAndAliasConflicts",
-      "status": "passed",
-      "durationMs": 0,
-      "durationText": "<1 мс (разрешение Go)",
-      "suite": "api"
-    },
-    {
-      "name": "TestCAT008RejectsSymlinkedAssets",
-      "status": "passed",
-      "durationMs": 0,
-      "durationText": "<1 мс (разрешение Go)",
-      "suite": "api"
-    },
-    {
-      "name": "TestCAT008RejectsNonNullImageWithoutPaths/missing_variant_path",
-      "status": "passed",
-      "durationMs": 0,
-      "durationText": "<1 мс (разрешение Go)",
-      "suite": "api"
-    },
-    {
-      "name": "TestCAT008RejectsNonNullImageWithoutPaths/absent_image_field",
-      "status": "passed",
-      "durationMs": 0,
-      "durationText": "<1 мс (разрешение Go)",
-      "suite": "api"
-    },
-    {
-      "name": "TestCAT008RejectsNonNullImageWithoutPaths/missing_master_path",
-      "status": "passed",
-      "durationMs": 0,
-      "durationText": "<1 мс (разрешение Go)",
-      "suite": "api"
-    },
-    {
-      "name": "TestCAT008RejectsNonNullImageWithoutPaths",
-      "status": "passed",
-      "durationMs": 0,
-      "durationText": "<1 мс (разрешение Go)",
-      "suite": "api"
-    },
-    {
-      "name": "TestCompareIDsDoesNotRequireSnapshotOut",
-      "status": "passed",
-      "durationMs": 120,
-      "durationText": "120 мс",
-      "suite": "api"
-    },
-    {
-      "name": "TestCAT008ProjectsOnlyContractFields/provenance_and_geography",
-      "status": "passed",
-      "durationMs": 0,
-      "durationText": "<1 мс (разрешение Go)",
-      "suite": "api"
-    },
-    {
-      "name": "TestCAT008ProjectsOnlyContractFields/valid_ABV_and_volume",
-      "status": "passed",
-      "durationMs": 0,
-      "durationText": "<1 мс (разрешение Go)",
-      "suite": "api"
-    },
-    {
-      "name": "TestCAT008ProjectsOnlyContractFields/unmodelled_source_detail_dropped",
-      "status": "passed",
-      "durationMs": 0,
-      "durationText": "<1 мс (разрешение Go)",
-      "suite": "api"
-    },
-    {
-      "name": "TestCAT008ProjectsOnlyContractFields",
-      "status": "passed",
-      "durationMs": 0,
-      "durationText": "<1 мс (разрешение Go)",
-      "suite": "api"
-    },
-    {
-      "name": "TestMetadataExcludesCanonicalColumns",
-      "status": "passed",
-      "durationMs": 0,
-      "durationText": "<1 мс (разрешение Go)",
-      "suite": "api"
-    },
-    {
-      "name": "TestContentAddressedMediaKeyRequiresMatchingHexDigest",
-      "status": "passed",
-      "durationMs": 0,
-      "durationText": "<1 мс (разрешение Go)",
-      "suite": "api"
-    },
-    {
-      "name": "TestQualityReportDoesNotMarkUnexecutedCasesPassed",
-      "status": "passed",
-      "durationMs": 0,
-      "durationText": "<1 мс (разрешение Go)",
-      "suite": "api"
-    },
-    {
-      "name": "TestDQ011RejectsRemovalApprovalOutsideBaseline",
-      "status": "passed",
-      "durationMs": 0,
-      "durationText": "<1 мс (разрешение Go)",
-      "suite": "api"
-    },
-    {
-      "name": "TestSVC008MandatoryWireFieldsAndAdditiveCompatibility/missing_demo",
-      "status": "passed",
-      "durationMs": 0,
-      "durationText": "<1 мс (разрешение Go)",
-      "suite": "api"
-    },
-    {
-      "name": "TestSVC008MandatoryWireFieldsAndAdditiveCompatibility/null_demo",
-      "status": "passed",
-      "durationMs": 0,
-      "durationText": "<1 мс (разрешение Go)",
-      "suite": "api"
-    },
-    {
-      "name": "TestSVC008MandatoryWireFieldsAndAdditiveCompatibility/missing_score",
-      "status": "passed",
-      "durationMs": 0,
-      "durationText": "<1 мс (разрешение Go)",
-      "suite": "api"
-    },
-    {
-      "name": "TestSVC008MandatoryWireFieldsAndAdditiveCompatibility/null_score",
-      "status": "passed",
-      "durationMs": 0,
-      "durationText": "<1 мс (разрешение Go)",
-      "suite": "api"
-    },
-    {
-      "name": "TestSVC008MandatoryWireFieldsAndAdditiveCompatibility/null_candidates",
-      "status": "passed",
-      "durationMs": 0,
-      "durationText": "<1 мс (разрешение Go)",
-      "suite": "api"
-    },
-    {
-      "name": "TestSVC008MandatoryWireFieldsAndAdditiveCompatibility/trailing_document",
-      "status": "passed",
-      "durationMs": 0,
-      "durationText": "<1 мс (разрешение Go)",
-      "suite": "api"
-    },
-    {
-      "name": "TestSVC008MandatoryWireFieldsAndAdditiveCompatibility/blank_model",
-      "status": "passed",
-      "durationMs": 0,
-      "durationText": "<1 мс (разрешение Go)",
-      "suite": "api"
-    },
-    {
-      "name": "TestSVC008MandatoryWireFieldsAndAdditiveCompatibility/oversize",
-      "status": "passed",
-      "durationMs": 0,
-      "durationText": "<1 мс (разрешение Go)",
-      "suite": "api"
-    },
-    {
-      "name": "TestSVC008MandatoryWireFieldsAndAdditiveCompatibility",
-      "status": "passed",
-      "durationMs": 0,
-      "durationText": "<1 мс (разрешение Go)",
+      "durationMs": 10,
+      "durationText": "10 мс",
       "suite": "api"
     },
     {
@@ -1092,1247 +1092,1254 @@
     {
       "name": "mobile behavior demo UI-001 to UI-002 starts live camera and separates camera from gallery",
       "status": "passed",
-      "durationMs": 202.85433299999977,
-      "durationText": "202.85 мс",
+      "durationMs": 184.73612500000036,
+      "durationText": "184.74 мс",
       "suite": "ui"
     },
     {
       "name": "mobile behavior demo stops a camera stream that resolves after leaving UI-002",
       "status": "passed",
-      "durationMs": 138.72699999999986,
-      "durationText": "138.73 мс",
+      "durationMs": 137.8230410000001,
+      "durationText": "137.82 мс",
       "suite": "ui"
     },
     {
       "name": "mobile behavior demo UI-002 shutter captures a JPEG frame, uploads it, and stops the stream",
       "status": "passed",
-      "durationMs": 77.20491600000014,
-      "durationText": "77.20 мс",
+      "durationMs": 78.75262500000008,
+      "durationText": "78.75 мс",
       "suite": "ui"
     },
     {
       "name": "mobile behavior demo UI-003 offers fallbacks after permission denial",
       "status": "passed",
-      "durationMs": 40.31516699999975,
-      "durationText": "40.32 мс",
+      "durationMs": 49.959292000000005,
+      "durationText": "49.96 мс",
       "suite": "ui"
     },
     {
       "name": "mobile behavior demo UI-003A explains permission recovery and retains gallery fallback",
       "status": "passed",
-      "durationMs": 60.29058399999985,
-      "durationText": "60.29 мс",
+      "durationMs": 60.92812499999991,
+      "durationText": "60.93 мс",
       "suite": "ui"
     },
     {
       "name": "mobile behavior demo SR-005 one unselected photo candidate uses a singular heading and one actionable row",
       "status": "passed",
-      "durationMs": 65.05520799999977,
-      "durationText": "65.06 мс",
+      "durationMs": 57.532208999999966,
+      "durationText": "57.53 мс",
       "suite": "ui"
     },
     {
       "name": "mobile behavior demo SR-005 one selected photo candidate sends its receipt into search and waits for explicit choice",
       "status": "passed",
-      "durationMs": 66.53912500000024,
-      "durationText": "66.54 мс",
+      "durationMs": 56.633666000000176,
+      "durationText": "56.63 мс",
       "suite": "ui"
     },
     {
       "name": "mobile behavior demo UI-011 rejects a non-image before API use",
       "status": "passed",
-      "durationMs": 25.738582999999835,
-      "durationText": "25.74 мс",
+      "durationMs": 21.17620799999986,
+      "durationText": "21.18 мс",
       "suite": "ui"
     },
     {
       "name": "mobile behavior demo UI-011 explains the accepted formats after a server photo rejection",
       "status": "passed",
-      "durationMs": 24.58791700000029,
-      "durationText": "24.59 мс",
+      "durationMs": 22.17537500000026,
+      "durationText": "22.18 мс",
       "suite": "ui"
     },
     {
       "name": "mobile behavior demo UI-008 keeps the catalog hidden until the user asks for it",
       "status": "passed",
-      "durationMs": 61.16791600000033,
-      "durationText": "61.17 мс",
+      "durationMs": 65.70245799999975,
+      "durationText": "65.70 мс",
       "suite": "ui"
     },
     {
       "name": "mobile behavior demo UI-004/005 cancellation returns to a clean Home and ignores old search",
       "status": "passed",
-      "durationMs": 49.53041699999994,
-      "durationText": "49.53 мс",
+      "durationMs": 48.977292000000034,
+      "durationText": "48.98 мс",
       "suite": "ui"
     },
     {
       "name": "mobile behavior demo UI-005 ignores a late manual response after leaving search",
       "status": "passed",
-      "durationMs": 108.7328749999997,
-      "durationText": "108.73 мс",
+      "durationMs": 108.54083300000002,
+      "durationText": "108.54 мс",
       "suite": "ui"
     },
     {
       "name": "mobile behavior demo UI-005 keeps the manual query available after returning Home",
       "status": "passed",
-      "durationMs": 148.0336659999998,
-      "durationText": "148.03 мс",
+      "durationMs": 146.85904200000004,
+      "durationText": "146.86 мс",
       "suite": "ui"
     },
     {
       "name": "mobile behavior demo UI-028 retry after a photo-search failure reuses a completed upload receipt",
       "status": "passed",
-      "durationMs": 56.21162499999991,
-      "durationText": "56.21 мс",
+      "durationMs": 52.95641599999999,
+      "durationText": "52.96 мс",
       "suite": "ui"
     },
     {
       "name": "mobile behavior demo UI-006 SR-008 manual candidates keep full accessible names and receive the shared leader badge",
       "status": "passed",
-      "durationMs": 121.88000000000011,
-      "durationText": "121.88 мс",
+      "durationMs": 121.29574999999977,
+      "durationText": "121.30 мс",
       "suite": "ui"
     },
     {
       "name": "mobile behavior demo SR-007 renders unknown fields and a broken catalog image without inventing metadata",
       "status": "passed",
-      "durationMs": 96.14891699999998,
-      "durationText": "96.15 мс",
+      "durationMs": 94.38054200000033,
+      "durationText": "94.38 мс",
       "suite": "ui"
     },
     {
       "name": "mobile behavior demo SR-001 SR-002 SR-003 SR-004 keeps multi-photo candidates ordered until a user chooses one, then restores the list",
       "status": "passed",
-      "durationMs": 88.42020899999989,
-      "durationText": "88.42 мс",
+      "durationMs": 86.35412499999984,
+      "durationText": "86.35 мс",
       "suite": "ui"
     },
     {
       "name": "mobile behavior demo SR-004 handles the system Back event from a chosen photo candidate without another search",
       "status": "passed",
-      "durationMs": 60.2453330000003,
-      "durationText": "60.25 мс",
+      "durationMs": 57.84379100000024,
+      "durationText": "57.84 мс",
       "suite": "ui"
     },
     {
       "name": "mobile behavior demo UI-007 identifies a fixture card as demo when no source URL is provided",
       "status": "passed",
-      "durationMs": 116.96283300000005,
-      "durationText": "116.96 мс",
+      "durationMs": 115.5607500000001,
+      "durationText": "115.56 мс",
       "suite": "ui"
     },
     {
       "name": "mobile behavior demo UI-008 does not send an empty manual query and keeps camera entry available",
       "status": "passed",
-      "durationMs": 45.10466700000006,
-      "durationText": "45.10 мс",
+      "durationMs": 42.34900000000016,
+      "durationText": "42.35 мс",
       "suite": "ui"
     },
     {
       "name": "mobile behavior demo SR-005 zero photo candidates offer the existing manual-search and reshoot fallback",
       "status": "passed",
-      "durationMs": 54.386708,
-      "durationText": "54.39 мс",
+      "durationMs": 53.341583999999784,
+      "durationText": "53.34 мс",
       "suite": "ui"
     },
     {
       "name": "mobile behavior demo AIR-023 camera Back preserves the 'empty' recovery reason",
       "status": "passed",
-      "durationMs": 61.18687499999987,
-      "durationText": "61.19 мс",
+      "durationMs": 60.74920800000018,
+      "durationText": "60.75 мс",
       "suite": "ui"
     },
     {
       "name": "mobile behavior demo AIR-023 camera Back preserves the 'rejected' recovery reason",
       "status": "passed",
-      "durationMs": 82.468167,
-      "durationText": "82.47 мс",
+      "durationMs": 84.22974999999997,
+      "durationText": "84.23 мс",
       "suite": "ui"
     },
     {
       "name": "mobile behavior demo SR-006 declining candidates keeps the editable correction context without its photo",
       "status": "passed",
-      "durationMs": 128.74175000000014,
-      "durationText": "128.74 мс",
+      "durationMs": 127.29037500000004,
+      "durationText": "127.29 мс",
       "suite": "ui"
     },
     {
       "name": "mobile behavior demo UI-009 keeps returned candidates in the uncertain path",
       "status": "passed",
-      "durationMs": 86.5994169999999,
-      "durationText": "86.60 мс",
+      "durationMs": 85.54637500000035,
+      "durationText": "85.55 мс",
       "suite": "ui"
     },
     {
       "name": "mobile behavior demo UI-010 accepts catalog candidates without a recognition selection",
       "status": "passed",
-      "durationMs": 80.27283299999999,
-      "durationText": "80.27 мс",
+      "durationMs": 80.91962500000045,
+      "durationText": "80.92 мс",
       "suite": "ui"
     },
     {
       "name": "mobile behavior demo UI-026 preview returns to its settled async origin instead of restoring stale loading",
       "status": "passed",
-      "durationMs": 57.652500000000146,
-      "durationText": "57.65 мс",
+      "durationMs": 55.26575000000048,
+      "durationText": "55.27 мс",
       "suite": "ui"
     },
     {
       "name": "mobile behavior demo UI-027 manual query, candidates, and correction preserve their return context",
       "status": "passed",
-      "durationMs": 213.26045800000065,
-      "durationText": "213.26 мс",
+      "durationMs": 223.07304099999965,
+      "durationText": "223.07 мс",
       "suite": "ui"
     },
     {
       "name": "mobile behavior demo UI-028 distinguishes network and server failures and retries a retained receipt",
       "status": "passed",
-      "durationMs": 128.28012500000023,
-      "durationText": "128.28 мс",
+      "durationMs": 127.99595800000043,
+      "durationText": "128.00 мс",
       "suite": "ui"
     },
     {
       "name": "mobile behavior demo UI-029 keeps catalog provenance separate from photo recognition",
       "status": "passed",
-      "durationMs": 74.49012500000026,
-      "durationText": "74.49 мс",
+      "durationMs": 79.5137080000004,
+      "durationText": "79.51 мс",
       "suite": "ui"
     },
     {
       "name": "Air 3.4 photo journey keeps the approved capture heading, actions and product navigation in the active Air skin",
       "status": "passed",
-      "durationMs": 202.83858400000008,
-      "durationText": "202.84 мс",
+      "durationMs": 181.54220799999985,
+      "durationText": "181.54 мс",
       "suite": "ui"
     },
     {
       "name": "Air 3.4 photo journey AIR-001 ignores a receipt delivered after Home during upload",
       "status": "passed",
-      "durationMs": 80.87858299999971,
-      "durationText": "80.88 мс",
+      "durationMs": 86.15129200000001,
+      "durationText": "86.15 мс",
       "suite": "ui"
     },
     {
       "name": "Air 3.4 photo journey AIR-001 clears Home and ignores a late photo-search success after cancellation",
       "status": "passed",
-      "durationMs": 90.4377499999996,
-      "durationText": "90.44 мс",
+      "durationMs": 85.28891699999986,
+      "durationText": "85.29 мс",
       "suite": "ui"
     },
     {
       "name": "Air 3.4 photo journey AIR-007 keeps even a confident singleton in the list until selection",
       "status": "passed",
-      "durationMs": 78.2049579999998,
-      "durationText": "78.20 мс",
+      "durationMs": 83.02925000000005,
+      "durationText": "83.03 мс",
       "suite": "ui"
     },
     {
       "name": "Air 3.4 photo journey AIR-006 preserves ranked multi-candidate order and waits for a choice",
       "status": "passed",
-      "durationMs": 47.92425000000003,
-      "durationText": "47.92 мс",
+      "durationMs": 47.640416999999616,
+      "durationText": "47.64 мс",
       "suite": "ui"
     },
     {
       "name": "Air 3.4 photo journey opens the saved shelf at its heading instead of inheriting photo-result scroll",
       "status": "passed",
-      "durationMs": 105.86508300000014,
-      "durationText": "105.87 мс",
+      "durationMs": 99.45900000000029,
+      "durationText": "99.46 мс",
       "suite": "ui"
     },
     {
       "name": "Air 3.4 photo journey opens the catalog directly from an empty saved shelf",
       "status": "passed",
-      "durationMs": 65.53900000000021,
-      "durationText": "65.54 мс",
+      "durationMs": 64.58516699999973,
+      "durationText": "64.59 мс",
       "suite": "ui"
     },
     {
       "name": "Air 3.4 photo journey AIR-003 gallery cancellation keeps the selected photo, ordered rows and scroll",
       "status": "passed",
-      "durationMs": 60.38829200000009,
-      "durationText": "60.39 мс",
+      "durationMs": 60.87583300000006,
+      "durationText": "60.88 мс",
       "suite": "ui"
     },
     {
       "name": "Air 3.4 photo journey AIR-003 keeps the 'empty' recovery state after gallery cancellation",
       "status": "passed",
-      "durationMs": 33.4744169999999,
-      "durationText": "33.47 мс",
+      "durationMs": 36.20008400000006,
+      "durationText": "36.20 мс",
       "suite": "ui"
     },
     {
       "name": "Air 3.4 photo journey AIR-003 keeps the 'server' recovery state after gallery cancellation",
       "status": "passed",
-      "durationMs": 56.56962499999963,
-      "durationText": "56.57 мс",
+      "durationMs": 56.14125000000013,
+      "durationText": "56.14 мс",
       "suite": "ui"
     },
     {
       "name": "Air 3.4 photo journey AIR-003 keeps the 'network' recovery state after gallery cancellation",
       "status": "passed",
-      "durationMs": 54.56929200000013,
-      "durationText": "54.57 мс",
+      "durationMs": 54.38854199999969,
+      "durationText": "54.39 мс",
       "suite": "ui"
     },
     {
       "name": "Air 3.4 photo journey AIR-011 distinguishes 'service' failure from an empty successful result",
       "status": "passed",
-      "durationMs": 33.58891700000004,
-      "durationText": "33.59 мс",
+      "durationMs": 34.83695799999987,
+      "durationText": "34.84 мс",
       "suite": "ui"
     },
     {
       "name": "Air 3.4 photo journey AIR-011 distinguishes 'network' failure from an empty successful result",
       "status": "passed",
-      "durationMs": 34.407374999999774,
-      "durationText": "34.41 мс",
+      "durationMs": 33.85874999999987,
+      "durationText": "33.86 мс",
       "suite": "ui"
     },
     {
       "name": "Air 3.4 photo journey AIR-012 retries failed search with the same accepted receipt and no second upload",
       "status": "passed",
-      "durationMs": 53.706916999999976,
-      "durationText": "53.71 мс",
+      "durationMs": 53.984375,
+      "durationText": "53.98 мс",
       "suite": "ui"
     },
     {
       "name": "Air 3.4 photo journey AIR-008 shows only known structured facts in rows and keeps the full card",
       "status": "passed",
-      "durationMs": 67.75487500000008,
-      "durationText": "67.75 мс",
+      "durationMs": 67.36433299999999,
+      "durationText": "67.36 мс",
       "suite": "ui"
     },
     {
       "name": "Air 3.4 photo journey AIR-014 lets notes pause while search and readable status continue",
       "status": "passed",
-      "durationMs": 52.81004199999961,
-      "durationText": "52.81 мс",
+      "durationMs": 50.596000000000004,
+      "durationText": "50.60 мс",
       "suite": "ui"
     },
     {
       "name": "Air 3.4 photo journey AIR-014 keeps notes static when reduced motion is active without stopping photo search",
       "status": "passed",
-      "durationMs": 28.860999999999876,
-      "durationText": "28.86 мс",
+      "durationMs": 27.84137499999997,
+      "durationText": "27.84 мс",
       "suite": "ui"
     },
     {
       "name": "Air 3.4 photo journey AIR-002 keeps one accepted photo through waiting, candidates and card, then clears it on Home",
       "status": "passed",
-      "durationMs": 89.73320899999999,
-      "durationText": "89.73 мс",
+      "durationMs": 90.60133399999995,
+      "durationText": "90.60 мс",
       "suite": "ui"
     },
     {
       "name": "Air 3.4 photo journey AIR-002 retains the accepted receipt for retry after a photo-search error",
       "status": "passed",
-      "durationMs": 56.83699999999999,
-      "durationText": "56.84 мс",
+      "durationMs": 55.26912500000026,
+      "durationText": "55.27 мс",
       "suite": "ui"
     },
     {
       "name": "Air 3.4 photo journey AIR-004 offers independent camera and gallery from 'results' without replacing the photo early",
       "status": "passed",
-      "durationMs": 55.299417000000176,
-      "durationText": "55.30 мс",
+      "durationMs": 53.50758399999995,
+      "durationText": "53.51 мс",
       "suite": "ui"
     },
     {
       "name": "Air 3.4 photo journey AIR-004 offers independent camera and gallery from 'empty' without replacing the photo early",
       "status": "passed",
-      "durationMs": 54.04500000000007,
-      "durationText": "54.05 мс",
+      "durationMs": 56.69133300000021,
+      "durationText": "56.69 мс",
       "suite": "ui"
     },
     {
       "name": "Air 3.4 photo journey AIR-004 offers independent camera and gallery from 'server' without replacing the photo early",
       "status": "passed",
-      "durationMs": 49.87287500000002,
-      "durationText": "49.87 мс",
+      "durationMs": 51.15987499999983,
+      "durationText": "51.16 мс",
       "suite": "ui"
     },
     {
       "name": "Air 3.4 photo journey AIR-004 offers independent camera and gallery from 'offline' without replacing the photo early",
       "status": "passed",
-      "durationMs": 51.29512499999964,
-      "durationText": "51.30 мс",
+      "durationMs": 50.16908300000023,
+      "durationText": "50.17 мс",
       "suite": "ui"
     },
     {
       "name": "Air 3.4 photo journey AIR-009 restores the non-leading photo candidate through $back Back",
       "status": "passed",
-      "durationMs": 68.72483399999965,
-      "durationText": "68.72 мс",
+      "durationMs": 69.27970800000003,
+      "durationText": "69.28 мс",
       "suite": "ui"
     },
     {
       "name": "Air 3.4 photo journey AIR-009 restores the non-leading photo candidate through $back Back",
       "status": "passed",
-      "durationMs": 62.884207999999944,
-      "durationText": "62.88 мс",
+      "durationMs": 60.17408299999988,
+      "durationText": "60.17 мс",
       "suite": "ui"
     },
     {
       "name": "Air 3.4 photo journey AIR-010 closes a photo preview onto the result that settled while it was open",
       "status": "passed",
-      "durationMs": 55.79191700000001,
-      "durationText": "55.79 мс",
+      "durationMs": 54.28720800000019,
+      "durationText": "54.29 мс",
       "suite": "ui"
     },
     {
       "name": "Air 3.4 photo journey AIR-010 returns from a photo preview to its result list or chosen card",
       "status": "passed",
-      "durationMs": 67.9934589999998,
-      "durationText": "67.99 мс",
+      "durationMs": 66.57891699999982,
+      "durationText": "66.58 мс",
       "suite": "ui"
     },
     {
       "name": "Air 3.4 photo journey AIR-013 retries upload of a retained file but never searches without a receipt",
       "status": "passed",
-      "durationMs": 51.3897079999997,
-      "durationText": "51.39 мс",
+      "durationMs": 47.55279100000007,
+      "durationText": "47.55 мс",
       "suite": "ui"
     },
     {
       "name": "Air 3.4 photo journey AIR-005 replaces a settled result with a newly accepted gallery photo",
       "status": "passed",
-      "durationMs": 52.26891599999999,
-      "durationText": "52.27 мс",
+      "durationMs": 52.70429100000001,
+      "durationText": "52.70 мс",
       "suite": "ui"
     },
     {
       "name": "Air 3.4 photo journey AIR-005 ignores a late $outcome from photo A after starting B",
       "status": "passed",
-      "durationMs": 48.12091700000019,
-      "durationText": "48.12 мс",
+      "durationMs": 53.70337500000005,
+      "durationText": "53.70 мс",
       "suite": "ui"
     },
     {
       "name": "Air 3.4 photo journey AIR-005 ignores a late $outcome from photo A after starting B",
       "status": "passed",
-      "durationMs": 43.36483300000009,
-      "durationText": "43.36 мс",
+      "durationMs": 42.36408299999994,
+      "durationText": "42.36 мс",
       "suite": "ui"
     },
     {
       "name": "Air 3.4 photo journey AIR-019 saves one wine, restores it after reload and removes only that wine",
       "status": "passed",
-      "durationMs": 88.55049999999983,
-      "durationText": "88.55 мс",
+      "durationMs": 81.33633399999962,
+      "durationText": "81.34 мс",
       "suite": "ui"
     },
     {
       "name": "Air 3.4 photo journey AIR-020 returns from a saved card to the same list and scroll without photo search",
       "status": "passed",
-      "durationMs": 48.7757500000007,
-      "durationText": "48.78 мс",
+      "durationMs": 46.4276660000005,
+      "durationText": "46.43 мс",
       "suite": "ui"
     },
     {
       "name": "Air 3.4 photo journey AIR-022 starts safely after lost photo-route history without invented photo or search",
       "status": "passed",
-      "durationMs": 26.226541999999426,
-      "durationText": "26.23 мс",
+      "durationMs": 27.6859170000007,
+      "durationText": "27.69 мс",
       "suite": "ui"
     },
     {
       "name": "Air 3.4 photo journey AIR-015 debounces visible input including IME, then submits explicitly without a duplicate",
       "status": "passed",
-      "durationMs": 41.355499999999665,
-      "durationText": "41.36 мс",
+      "durationMs": 40.67183300000033,
+      "durationText": "40.67 мс",
       "suite": "ui"
     },
     {
       "name": "Air 3.4 photo journey AIR-016 ignores A, pages only B once and clears to one unfiltered first page",
       "status": "passed",
-      "durationMs": 110.6748749999997,
-      "durationText": "110.67 мс",
+      "durationMs": 111.87979200000063,
+      "durationText": "111.88 мс",
       "suite": "ui"
     },
     {
       "name": "Air 3.4 photo journey AIR-016 keeps the current rows on 409 until a deliberate first-page refresh",
       "status": "passed",
-      "durationMs": 64.83145799999966,
-      "durationText": "64.83 мс",
+      "durationMs": 66.60058299999946,
+      "durationText": "66.60 мс",
       "suite": "ui"
     },
     {
       "name": "Air 3.4 photo journey AIR-017 shows the cellar mascot only before manual search work begins",
       "status": "passed",
-      "durationMs": 42.56037500000002,
-      "durationText": "42.56 мс",
+      "durationMs": 45.2691249999998,
+      "durationText": "45.27 мс",
       "suite": "ui"
     },
     {
       "name": "Air 3.5 product UI keeps one home action group without the duplicate framing hint",
       "status": "passed",
-      "durationMs": 163.4492919999998,
-      "durationText": "163.45 мс",
+      "durationMs": 172.79595900000004,
+      "durationText": "172.80 мс",
       "suite": "ui"
     },
     {
       "name": "Air 3.5 product UI exposes the camera scene, actions and camera-only guidance",
       "status": "passed",
-      "durationMs": 83.03279199999997,
-      "durationText": "83.03 мс",
+      "durationMs": 84.22862500000019,
+      "durationText": "84.23 мс",
       "suite": "ui"
     },
     {
       "name": "Air 3.5 product UI keeps API order and gives only the first photo result the leader hook",
       "status": "passed",
-      "durationMs": 73.99687499999982,
-      "durationText": "74.00 мс",
+      "durationMs": 59.889624999999796,
+      "durationText": "59.89 мс",
       "suite": "ui"
     },
     {
       "name": "Air 3.5 product UI uses one nav background hook and keeps it aligned with the active section",
       "status": "passed",
-      "durationMs": 113.20233300000018,
-      "durationText": "113.20 мс",
+      "durationMs": 131.78112499999997,
+      "durationText": "131.78 мс",
       "suite": "ui"
     },
     {
       "name": "Air 3.5 product UI distinguishes a real 'no_match' response",
       "status": "passed",
-      "durationMs": 32.101500000000215,
-      "durationText": "32.10 мс",
+      "durationMs": 30.29162499999984,
+      "durationText": "30.29 мс",
       "suite": "ui"
     },
     {
       "name": "Air 3.5 product UI distinguishes a real 'outside_display_catalog' response",
       "status": "passed",
-      "durationMs": 38.768375000000106,
-      "durationText": "38.77 мс",
+      "durationMs": 28.59629199999972,
+      "durationText": "28.60 мс",
       "suite": "ui"
     },
     {
       "name": "UI-025 versioned API client requests the v2 catalog, uploads a photo receipt, and searches with the receipt body",
       "status": "passed",
-      "durationMs": 2.535209000000009,
-      "durationText": "2.54 мс",
+      "durationMs": 3.544791000000032,
+      "durationText": "3.54 мс",
       "suite": "ui"
     },
     {
       "name": "UI-025 versioned API client accepts a real photo-search 'no_match' response",
       "status": "passed",
-      "durationMs": 0.3770829999999705,
+      "durationMs": 0.37824999999998,
       "durationText": "0.38 мс",
       "suite": "ui"
     },
     {
       "name": "UI-025 versioned API client accepts a real photo-search 'outside_display_catalog' response",
       "status": "passed",
-      "durationMs": 0.109958000000006,
+      "durationMs": 0.11133400000005622,
       "durationText": "0.11 мс",
       "suite": "ui"
     },
     {
       "name": "UI-025 versioned API client accepts ordered real candidates and rejects unknown search actions",
       "status": "passed",
-      "durationMs": 0.5121250000000828,
-      "durationText": "0.51 мс",
+      "durationMs": 0.5580410000000029,
+      "durationText": "0.56 мс",
       "suite": "ui"
     },
     {
       "name": "UI-011 distinguishes rejected image content from temporary upload failures",
       "status": "passed",
-      "durationMs": 0.2531659999999647,
-      "durationText": "0.25 мс",
+      "durationMs": 0.2785840000000235,
+      "durationText": "0.28 мс",
       "suite": "ui"
     },
     {
       "name": "validates recommendation responses and sends the bounded card request",
       "status": "passed",
-      "durationMs": 0.6496250000000146,
-      "durationText": "0.65 мс",
+      "durationMs": 0.6409169999999449,
+      "durationText": "0.64 мс",
       "suite": "ui"
     },
     {
       "name": "rejects catalog records with a non-HTTP source URL",
       "status": "passed",
-      "durationMs": 0.2907079999999951,
-      "durationText": "0.29 мс",
+      "durationMs": 0.29525000000001,
+      "durationText": "0.30 мс",
       "suite": "ui"
     },
     {
       "name": "FE-057 revised wine-card contract DESIGN-023 keeps the warm app palette while using white for the revised hero and result tiles",
       "status": "passed",
-      "durationMs": 0.9210840000000644,
-      "durationText": "0.92 мс",
+      "durationMs": 0.927541999999903,
+      "durationText": "0.93 мс",
       "suite": "ui"
     },
     {
       "name": "FE-057 revised wine-card contract DESIGN-024 retains named Back and Save controls and returns to the catalog context",
       "status": "passed",
-      "durationMs": 348.8968749999999,
-      "durationText": "348.90 мс",
+      "durationMs": 353.87433399999964,
+      "durationText": "353.87 мс",
       "suite": "ui"
     },
     {
       "name": "FE-057 revised wine-card contract DESIGN-025 keeps a complete long title in the existing hero and retains the card image fallback",
       "status": "passed",
-      "durationMs": 136.33424999999988,
-      "durationText": "136.33 мс",
+      "durationMs": 119.38470799999959,
+      "durationText": "119.38 мс",
       "suite": "ui"
     },
     {
       "name": "FE-057 revised wine-card contract DESIGN-026 keeps backend order and the original leader and row image sizes",
       "status": "passed",
-      "durationMs": 84.56645799999978,
-      "durationText": "84.57 мс",
+      "durationMs": 79.330375,
+      "durationText": "79.33 мс",
       "suite": "ui"
     },
     {
       "name": "BE-045 catalog display CAT003 exposes variant attributes, de-duplicates widths, and falls back on image errors",
       "status": "passed",
-      "durationMs": 238.637291,
-      "durationText": "238.64 мс",
+      "durationMs": 223.41208300000017,
+      "durationText": "223.41 мс",
       "suite": "ui"
     },
     {
       "name": "BE-045 catalog display CAT003 lazy-loads rows below the first four visible images",
       "status": "passed",
-      "durationMs": 78.29262500000004,
-      "durationText": "78.29 мс",
+      "durationMs": 76.8794170000001,
+      "durationText": "76.88 мс",
+      "suite": "ui"
+    },
+    {
+      "name": "BE-045 catalog display CAT004 keeps tasting color prose out of compact search rows",
+      "status": "passed",
+      "durationMs": 94.45499999999993,
+      "durationText": "94.45 мс",
       "suite": "ui"
     },
     {
       "name": "BE-045 catalog display CAT004 CAT005 shows 'unknown facts and invalid numeric val…'",
       "status": "passed",
-      "durationMs": 126.08325000000013,
-      "durationText": "126.08 мс",
+      "durationMs": 99.55737499999987,
+      "durationText": "99.56 мс",
       "suite": "ui"
     },
     {
       "name": "BE-045 catalog display CAT004 CAT005 shows 'a valid alcohol range without inventi…'",
       "status": "passed",
-      "durationMs": 93.43120799999997,
-      "durationText": "93.43 мс",
+      "durationMs": 83.26095899999973,
+      "durationText": "83.26 мс",
       "suite": "ui"
     },
     {
       "name": "BE-045 catalog display CAT004 CAT005 shows 'Abrau retains sugar without category …'",
       "status": "passed",
-      "durationMs": 87.20729200000005,
-      "durationText": "87.21 мс",
+      "durationMs": 77.47262499999988,
+      "durationText": "77.47 мс",
       "suite": "ui"
     },
     {
       "name": "BE-045 catalog display CAT004 CAT005 shows 'СКБ retains sugar without category or…'",
       "status": "passed",
-      "durationMs": 89.0906670000004,
-      "durationText": "89.09 мс",
+      "durationMs": 81.40054200000031,
+      "durationText": "81.40 мс",
       "suite": "ui"
     },
     {
       "name": "BE-045 catalog display CAT004 CAT005 shows 'ESSE retains color without category o…'",
       "status": "passed",
-      "durationMs": 77.71820899999966,
-      "durationText": "77.72 мс",
+      "durationMs": 76.2074160000002,
+      "durationText": "76.21 мс",
       "suite": "ui"
     },
     {
       "name": "BE-045 catalog display CAT007 shows real provenance and does not label a real catalog card as demo",
       "status": "passed",
-      "durationMs": 93.96212500000001,
-      "durationText": "93.96 мс",
+      "durationMs": 87.98000000000002,
+      "durationText": "87.98 мс",
       "suite": "ui"
     },
     {
       "name": "BE-045 catalog display CAT007 keeps a photo recognition reference notice alongside real provenance",
       "status": "passed",
-      "durationMs": 68.65858399999979,
-      "durationText": "68.66 мс",
+      "durationMs": 67.0785420000002,
+      "durationText": "67.08 мс",
       "suite": "ui"
     },
     {
       "name": "BE-045 catalog display CAT001 CAT002 searches the server and appends pages beyond the initial catalog page",
       "status": "passed",
-      "durationMs": 108.42008299999998,
-      "durationText": "108.42 мс",
+      "durationMs": 112.73258400000032,
+      "durationText": "112.73 мс",
       "suite": "ui"
     },
     {
       "name": "BE-045 catalog display CAT002 aborts an obsolete catalog query and ignores its late result",
       "status": "passed",
-      "durationMs": 164.3770830000003,
-      "durationText": "164.38 мс",
+      "durationMs": 158.40745799999968,
+      "durationText": "158.41 мс",
       "suite": "ui"
     },
     {
       "name": "BE-045 catalog display uses the paginated catalog contract",
       "status": "passed",
-      "durationMs": 1.3771670000000995,
-      "durationText": "1.38 мс",
+      "durationMs": 1.361084000000119,
+      "durationText": "1.36 мс",
       "suite": "ui"
     },
     {
       "name": "selected Wine UX 2.0 design contract DESIGN-001 uses the selected wine and warm-surface tokens",
       "status": "passed",
-      "durationMs": 0.6422919999999976,
+      "durationMs": 0.6359579999998459,
       "durationText": "0.64 мс",
       "suite": "ui"
     },
     {
       "name": "selected Wine UX 2.0 design contract DESIGN-003 keeps locally hosted Onest and selected Playfair display type",
       "status": "passed",
-      "durationMs": 0.43837500000017826,
-      "durationText": "0.44 мс",
+      "durationMs": 0.37495799999987867,
+      "durationText": "0.37 мс",
       "suite": "ui"
     },
     {
       "name": "selected Wine UX 2.0 design contract DESIGN-022 joins the welcome header and hero on one warm surface",
       "status": "passed",
-      "durationMs": 21.826208999999835,
-      "durationText": "21.83 мс",
+      "durationMs": 32.05545800000027,
+      "durationText": "32.06 мс",
       "suite": "ui"
     },
     {
       "name": "selected Wine UX 2.0 design contract DESIGN-004 keeps 320px actions reachable with a reduced centered mascot panel",
       "status": "passed",
-      "durationMs": 0.1406659999997828,
-      "durationText": "0.14 мс",
+      "durationMs": 0.11387500000000728,
+      "durationText": "0.11 мс",
       "suite": "ui"
     },
     {
       "name": "selected Wine UX 2.0 design contract DESIGN-002 keeps the primary scanner action whole, labeled, and touch-safe",
       "status": "passed",
-      "durationMs": 172.16874999999982,
-      "durationText": "172.17 мс",
+      "durationMs": 133.84412500000008,
+      "durationText": "133.84 мс",
       "suite": "ui"
     },
     {
       "name": "selected Wine UX 2.0 design contract DESIGN-005 renders only the product application, without report controls or prototype chrome",
       "status": "passed",
-      "durationMs": 11.227167000000009,
-      "durationText": "11.23 мс",
+      "durationMs": 12.934124999999767,
+      "durationText": "12.93 мс",
       "suite": "ui"
     },
     {
       "name": "selected Wine UX 2.0 design contract DESIGN-006 applies the selected centered display hierarchy to the welcome heading",
       "status": "passed",
-      "durationMs": 10.704416000000037,
-      "durationText": "10.70 мс",
+      "durationMs": 17.321457999999893,
+      "durationText": "17.32 мс",
       "suite": "ui"
     },
     {
       "name": "selected Wine UX 2.0 design contract DESIGN-008 uses a dark real-video camera surface",
       "status": "passed",
-      "durationMs": 25.363292,
-      "durationText": "25.36 мс",
+      "durationMs": 23.30054199999995,
+      "durationText": "23.30 мс",
       "suite": "ui"
     },
     {
       "name": "selected Wine UX 2.0 design contract DESIGN-009 keeps candidate rows as full actionable surfaces with readable metadata",
       "status": "passed",
-      "durationMs": 0.09020800000007512,
-      "durationText": "0.09 мс",
+      "durationMs": 0.08249999999998181,
+      "durationText": "0.08 мс",
       "suite": "ui"
     },
     {
       "name": "selected Wine UX 2.0 design contract SR-009 constrains the leader badge and preserves full titles at enlarged text",
       "status": "passed",
-      "durationMs": 0.0975839999996424,
-      "durationText": "0.10 мс",
+      "durationMs": 0.09191599999985556,
+      "durationText": "0.09 мс",
       "suite": "ui"
     },
     {
       "name": "selected Wine UX 2.0 design contract DESIGN-007 and DESIGN-010 preserve the real camera shutter and dynamic viewport",
       "status": "passed",
-      "durationMs": 0.049165999999786436,
+      "durationMs": 0.04729200000019773,
       "durationText": "0.05 мс",
       "suite": "ui"
     },
     {
       "name": "selected Wine UX 2.0 design contract DESIGN-011 keeps camera controls in flow with safe-area and landscape rules",
       "status": "passed",
-      "durationMs": 0.052708000000166066,
+      "durationMs": 0.04933400000027177,
       "durationText": "0.05 мс",
       "suite": "ui"
     },
     {
       "name": "selected Wine UX 2.0 design contract DESIGN-012 keeps the camera guidance outside the framed video",
       "status": "passed",
-      "durationMs": 27.260541999999987,
-      "durationText": "27.26 мс",
+      "durationMs": 29.494458000000122,
+      "durationText": "29.49 мс",
       "suite": "ui"
     },
     {
       "name": "selected Wine UX 2.0 design contract DESIGN-013 preserves the approved Atlas scan vector on the camera CTA",
       "status": "passed",
-      "durationMs": 7.810790999999881,
-      "durationText": "7.81 мс",
+      "durationMs": 15.191125000000284,
+      "durationText": "15.19 мс",
       "suite": "ui"
     },
     {
       "name": "selected Wine UX 2.0 design contract DESIGN-015 and DESIGN-017 preserve the desktop frame and app navigation shell",
       "status": "passed",
-      "durationMs": 9.253333999999995,
-      "durationText": "9.25 мс",
+      "durationMs": 8.511375000000044,
+      "durationText": "8.51 мс",
       "suite": "ui"
     },
     {
       "name": "selected Wine UX 2.0 design contract DESIGN-016 makes the camera use the desktop phone interior, not the outer viewport",
       "status": "passed",
-      "durationMs": 0.08195799999975861,
-      "durationText": "0.08 мс",
+      "durationMs": 0.08695799999986775,
+      "durationText": "0.09 мс",
       "suite": "ui"
     },
     {
       "name": "selected Wine UX 2.0 design contract DESIGN-018 marks the active product section and retains the product footer",
       "status": "passed",
-      "durationMs": 20.3576250000001,
-      "durationText": "20.36 мс",
+      "durationMs": 18.024917000000187,
+      "durationText": "18.02 мс",
       "suite": "ui"
     },
     {
       "name": "selected Wine UX 2.0 design contract DESIGN-019 and DESIGN-020 keep compact save and a single search control",
       "status": "passed",
-      "durationMs": 67.73433399999976,
-      "durationText": "67.73 мс",
+      "durationMs": 59.720792000000074,
+      "durationText": "59.72 мс",
       "suite": "ui"
     },
     {
       "name": "selected Wine UX 2.0 design contract DESIGN-022 places selected mascots only in their approved rendered app states",
       "status": "passed",
-      "durationMs": 89.41429100000005,
-      "durationText": "89.41 мс",
+      "durationMs": 65.70083400000021,
+      "durationText": "65.70 мс",
       "suite": "ui"
     },
     {
       "name": "selected Wine UX 2.0 design contract DESIGN-022 gives photo no-match actions the approved full-width geometry",
       "status": "passed",
-      "durationMs": 0.06199999999989814,
+      "durationMs": 0.060582999999951426,
       "durationText": "0.06 мс",
       "suite": "ui"
     },
     {
       "name": "FE-052 live catalog search CAT001 shows 24 of 2038 wines first and loads only the next page on demand",
       "status": "passed",
-      "durationMs": 349.9277500000003,
-      "durationText": "349.93 мс",
+      "durationMs": 363.4066250000001,
+      "durationText": "363.41 мс",
       "suite": "ui"
     },
     {
       "name": "FE-052 live catalog search CAT015 coalesces rapid typing into one request for the latest query",
       "status": "passed",
-      "durationMs": 61.42387499999995,
-      "durationText": "61.42 мс",
+      "durationMs": 53.45283300000028,
+      "durationText": "53.45 мс",
       "suite": "ui"
     },
     {
       "name": "FE-052 live catalog search CAT015 debounces the first nonblank character for 250ms and keeps loading, results, empty state, and focus inline",
       "status": "passed",
-      "durationMs": 50.33616699999993,
-      "durationText": "50.34 мс",
+      "durationMs": 58.39608300000009,
+      "durationText": "58.40 мс",
       "suite": "ui"
     },
     {
       "name": "FE-052 live catalog search CAT015 renders empty and failed requests inline, and retries the same query without navigation",
       "status": "passed",
-      "durationMs": 56.18229199999996,
-      "durationText": "56.18 мс",
+      "durationMs": 54.49108299999989,
+      "durationText": "54.49 мс",
       "suite": "ui"
     },
     {
       "name": "FE-052 live catalog search CAT016 invalidates an in-flight request immediately during the next debounce window and ignores late success and error",
       "status": "passed",
-      "durationMs": 44.286125000000084,
-      "durationText": "44.29 мс",
+      "durationMs": 42.840416000000005,
+      "durationText": "42.84 мс",
       "suite": "ui"
     },
     {
       "name": "FE-052 live catalog search CAT017 clears to the first catalog page and cancels deferred and in-flight work when leaving search",
       "status": "passed",
-      "durationMs": 61.088416999999936,
-      "durationText": "61.09 мс",
+      "durationMs": 50.81616699999995,
+      "durationText": "50.82 мс",
       "suite": "ui"
     },
     {
       "name": "FE-052 live catalog search CAT017 cancels a queued debounce when leaving search before it fires",
       "status": "passed",
-      "durationMs": 38.12824999999975,
-      "durationText": "38.13 мс",
+      "durationMs": 38.363000000000284,
+      "durationText": "38.36 мс",
       "suite": "ui"
     },
     {
       "name": "FE-052 live catalog search CAT018 searches visible IME text after 250ms without compositionend and keeps focus",
       "status": "passed",
-      "durationMs": 36.09220800000003,
-      "durationText": "36.09 мс",
+      "durationMs": 34.03408300000001,
+      "durationText": "34.03 мс",
       "suite": "ui"
     },
     {
       "name": "FE-052 live catalog search CAT018 keeps IME query cancellation and normal explicit submit",
       "status": "passed",
-      "durationMs": 49.65645799999993,
-      "durationText": "49.66 мс",
+      "durationMs": 48.785167,
+      "durationText": "48.79 мс",
       "suite": "ui"
     },
     {
       "name": "FE-052 live catalog search CAT018 debounces changed committed IME text and ignores a repeated final input",
       "status": "passed",
-      "durationMs": 29.81970900000033,
-      "durationText": "29.82 мс",
+      "durationMs": 27.946458000000348,
+      "durationText": "27.95 мс",
       "suite": "ui"
     },
     {
       "name": "FE-052 live catalog search CAT019 resets cursor and replaces the current page when the query changes",
       "status": "passed",
-      "durationMs": 46.7651249999999,
-      "durationText": "46.77 мс",
+      "durationMs": 46.15454099999988,
+      "durationText": "46.15 мс",
       "suite": "ui"
     },
     {
       "name": "FE-052 live catalog search CAT019 keeps loaded rows visible after an append error and retries that same cursor",
       "status": "passed",
-      "durationMs": 57.74641699999984,
-      "durationText": "57.75 мс",
+      "durationMs": 57.23770800000011,
+      "durationText": "57.24 мс",
       "suite": "ui"
     },
     {
       "name": "FE-052 live catalog search CAT019 refreshes the current query from page one after a stale cursor",
       "status": "passed",
-      "durationMs": 70.65404200000012,
-      "durationText": "70.65 мс",
+      "durationMs": 69.2831669999996,
+      "durationText": "69.28 мс",
       "suite": "ui"
     },
     {
       "name": "FE-052 live catalog search CAT019 aborts an obsolete append and ignores its late page after a query change",
       "status": "passed",
-      "durationMs": 39.978917000000365,
-      "durationText": "39.98 мс",
+      "durationMs": 39.77599999999984,
+      "durationText": "39.78 мс",
       "suite": "ui"
     },
     {
       "name": "FE-052 live catalog search CAT021 retains card and image nodes through debounce, request, and overlapping replacement",
       "status": "passed",
-      "durationMs": 48.98191599999973,
-      "durationText": "48.98 мс",
+      "durationMs": 47.479833999999755,
+      "durationText": "47.48 мс",
       "suite": "ui"
     },
     {
       "name": "FE-052 live catalog search CAT021 keeps old rows after a failed refinement and retries its first page",
       "status": "passed",
-      "durationMs": 49.880249999999705,
-      "durationText": "49.88 мс",
+      "durationMs": 49.12766699999975,
+      "durationText": "49.13 мс",
       "suite": "ui"
     },
     {
       "name": "FE-052 live catalog search CAT021 clears retained rows only after a successful empty response",
       "status": "passed",
-      "durationMs": 35.73129199999994,
-      "durationText": "35.73 мс",
+      "durationMs": 34.41150000000016,
+      "durationText": "34.41 мс",
       "suite": "ui"
     },
     {
       "name": "FE-052 live catalog search CAT021 returns from a previously shown card without claiming it matches the pending query",
       "status": "passed",
-      "durationMs": 56.873541999999816,
-      "durationText": "56.87 мс",
+      "durationMs": 58.19670900000028,
+      "durationText": "58.20 мс",
       "suite": "ui"
     },
     {
       "name": "FE-052 live catalog search CAT020 preserves the query, order, scroll, and cursor after choosing an appended card and using Back",
       "status": "passed",
-      "durationMs": 74.62037499999997,
-      "durationText": "74.62 мс",
+      "durationMs": 73.4089170000002,
+      "durationText": "73.41 мс",
       "suite": "ui"
     },
     {
       "name": "FE-052 live catalog search CAT020 AIR-018 restores a paged catalog after browser Back",
       "status": "passed",
-      "durationMs": 68.20687499999985,
-      "durationText": "68.21 мс",
+      "durationMs": 68.12437500000033,
+      "durationText": "68.12 мс",
       "suite": "ui"
     },
     {
       "name": "FE-052 live catalog search CAT017 clears composition state on leave so a normal query after re-entry can run",
       "status": "passed",
-      "durationMs": 50.69204099999979,
-      "durationText": "50.69 мс",
+      "durationMs": 49.821707999999944,
+      "durationText": "49.82 мс",
       "suite": "ui"
     },
     {
       "name": "FE-052 live catalog search CAT017 clears active composition and permits the next fresh composition",
       "status": "passed",
-      "durationMs": 35.26333300000033,
-      "durationText": "35.26 мс",
+      "durationMs": 34.13395799999989,
+      "durationText": "34.13 мс",
       "suite": "ui"
     },
     {
       "name": "FE-052 live catalog search CAT017 restores a correction result and cancels both queued and active catalog work on Back",
       "status": "passed",
-      "durationMs": 93.75366699999995,
-      "durationText": "93.75 мс",
+      "durationMs": 94.60566699999981,
+      "durationText": "94.61 мс",
       "suite": "ui"
     },
     {
       "name": "FE-052 live catalog search CAT020 runs the same live search from the home and bottom-navigation entries",
       "status": "passed",
-      "durationMs": 50.91137499999968,
-      "durationText": "50.91 мс",
+      "durationMs": 47.871834000000035,
+      "durationText": "47.87 мс",
       "suite": "ui"
     },
     {
       "name": "catalog navigation and saved wines UI-016 bottom navigation opens the catalog, searches on the server, and resets section scroll",
       "status": "passed",
-      "durationMs": 382.66075,
-      "durationText": "382.66 мс",
+      "durationMs": 361.1111249999999,
+      "durationText": "361.11 мс",
       "suite": "ui"
     },
     {
       "name": "catalog navigation and saved wines UI-022 bottom Home returns to the start screen without starting camera capture",
       "status": "passed",
-      "durationMs": 232.08725000000004,
-      "durationText": "232.09 мс",
+      "durationMs": 241.3469580000001,
+      "durationText": "241.35 мс",
       "suite": "ui"
     },
     {
       "name": "catalog navigation and saved wines UI-022 explicit scan CTA starts camera capture and retains denial fallback",
       "status": "passed",
-      "durationMs": 113.96991600000001,
-      "durationText": "113.97 мс",
+      "durationMs": 103.59866599999987,
+      "durationText": "103.60 мс",
       "suite": "ui"
     },
     {
       "name": "catalog navigation and saved wines UI-022 clears a completed scan photo when Home opens without camera",
       "status": "passed",
-      "durationMs": 57.5656670000003,
-      "durationText": "57.57 мс",
+      "durationMs": 58.71883399999979,
+      "durationText": "58.72 мс",
       "suite": "ui"
     },
     {
       "name": "catalog navigation and saved wines UI-017 saves one validated catalog snapshot and restores it after reload",
       "status": "passed",
-      "durationMs": 139.53470800000014,
-      "durationText": "139.53 мс",
+      "durationMs": 141.29962499999965,
+      "durationText": "141.30 мс",
       "suite": "ui"
     },
     {
       "name": "catalog navigation and saved wines UI-018 removes a saved wine and returns to the useful empty state",
       "status": "passed",
-      "durationMs": 85.16116699999975,
-      "durationText": "85.16 мс",
+      "durationMs": 87.20908299999974,
+      "durationText": "87.21 мс",
       "suite": "ui"
     },
     {
       "name": "catalog navigation and saved wines UI-019 clears corrupt or duplicate saved snapshots without crashing",
       "status": "passed",
-      "durationMs": 29.405166999999892,
-      "durationText": "29.41 мс",
+      "durationMs": 30.43995900000027,
+      "durationText": "30.44 мс",
       "suite": "ui"
     },
     {
       "name": "catalog navigation and saved wines UI-020 leaving catalog aborts the request and a late response cannot change section",
       "status": "passed",
-      "durationMs": 79.2316249999999,
-      "durationText": "79.23 мс",
+      "durationMs": 78.55650000000014,
+      "durationText": "78.56 мс",
       "suite": "ui"
     },
     {
       "name": "catalog navigation and saved wines UI-021 reports storage failure and does not claim the wine was saved",
       "status": "passed",
-      "durationMs": 96.55474999999979,
-      "durationText": "96.55 мс",
+      "durationMs": 95.86049999999977,
+      "durationText": "95.86 мс",
       "suite": "ui"
     },
     {
       "name": "catalog navigation and saved wines UI-023 toggles the stable compact header save action",
       "status": "passed",
-      "durationMs": 111.5536659999998,
-      "durationText": "111.55 мс",
+      "durationMs": 115.46645799999988,
+      "durationText": "115.47 мс",
       "suite": "ui"
     },
     {
       "name": "catalog navigation and saved wines UI-024 CAT002 submits the compact search field with its button and Enter",
       "status": "passed",
-      "durationMs": 140.0089579999999,
-      "durationText": "140.01 мс",
+      "durationMs": 136.2125420000002,
+      "durationText": "136.21 мс",
       "suite": "ui"
     },
     {
       "name": "catalog navigation and saved wines returns from a catalog card to the same list position",
       "status": "passed",
-      "durationMs": 102.86487499999976,
-      "durationText": "102.86 мс",
+      "durationMs": 99.2920409999997,
+      "durationText": "99.29 мс",
       "suite": "ui"
     },
     {
       "name": "catalog navigation and saved wines a saved card correction cannot reuse candidates from an older search",
       "status": "passed",
-      "durationMs": 156.5597090000001,
-      "durationText": "156.56 мс",
+      "durationMs": 154.41041700000005,
+      "durationText": "154.41 мс",
       "suite": "ui"
     },
     {
       "name": "photo feedback FB-001 confirms the displayed photo result and shows a durable receipt",
       "status": "passed",
-      "durationMs": 390.7764579999998,
-      "durationText": "390.78 мс",
+      "durationMs": 411.25983300000007,
+      "durationText": "411.26 мс",
       "suite": "ui"
     },
     {
       "name": "photo feedback FB-002 FB-004 requires an explicit different SKU before saving a correction",
       "status": "passed",
-      "durationMs": 150.45633399999997,
-      "durationText": "150.46 мс",
+      "durationMs": 139.02416700000003,
+      "durationText": "139.02 мс",
       "suite": "ui"
     },
     {
       "name": "photo feedback FB-011 lets a user identify the correct SKU after a model no-match",
       "status": "passed",
-      "durationMs": 117.24775,
-      "durationText": "117.25 мс",
+      "durationMs": 101.25504200000023,
+      "durationText": "101.26 мс",
       "suite": "ui"
     },
     {
       "name": "UI-025 local API proxy preserves Host and proxies catalog assets",
       "status": "passed",
-      "durationMs": 0.9854589999999916,
-      "durationText": "0.99 мс",
+      "durationMs": 1.180749999999989,
+      "durationText": "1.18 мс",
       "suite": "ui"
     },
     {
       "name": "UI-012 ordinary browser remains usable without installation support",
       "status": "passed",
-      "durationMs": 137.38854100000026,
-      "durationText": "137.39 мс",
+      "durationMs": 164.61029099999996,
+      "durationText": "164.61 мс",
       "suite": "ui"
     },
     {
       "name": "UI-013 installation only opens on click; dismissal preserves the web journey",
       "status": "passed",
-      "durationMs": 45.40141700000004,
-      "durationText": "45.40 мс",
+      "durationMs": 57.40595799999983,
+      "durationText": "57.41 мс",
       "suite": "ui"
     },
     {
       "name": "UI-013 refused browser install prompt does not break the page",
       "status": "passed",
-      "durationMs": 2.861499999999978,
-      "durationText": "2.86 мс",
+      "durationMs": 2.6540830000003552,
+      "durationText": "2.65 мс",
       "suite": "ui"
     },
     {
       "name": "UI-014 standalone exposes the same application without an install offer",
       "status": "passed",
-      "durationMs": 42.98912500000006,
-      "durationText": "42.99 мс",
+      "durationMs": 41.45258399999966,
+      "durationText": "41.45 мс",
       "suite": "ui"
     },
     {
       "name": "UI-014 successful installation removes the offer",
       "status": "passed",
-      "durationMs": 0.9044169999997393,
-      "durationText": "0.90 мс",
+      "durationMs": 4.487499999999727,
+      "durationText": "4.49 мс",
       "suite": "ui"
     },
     {
       "name": "UI-015 install manifest launches the same root with real PNG icons",
       "status": "passed",
-      "durationMs": 1.0844170000000304,
-      "durationText": "1.08 мс",
+      "durationMs": 1.003125000000182,
+      "durationText": "1.00 мс",
       "suite": "ui"
     },
     {
       "name": "UI-015 browser and installed app share the selected v2 theme",
       "status": "passed",
-      "durationMs": 4.0056250000002365,
-      "durationText": "4.01 мс",
+      "durationMs": 5.088708000000224,
+      "durationText": "5.09 мс",
       "suite": "ui"
     },
     {
       "name": "wine-card recommendations REC001 requests recommendations for the selected wine and labels them separately from search candidates",
       "status": "passed",
-      "durationMs": 357.7855410000002,
-      "durationText": "357.79 мс",
+      "durationMs": 357.665833,
+      "durationText": "357.67 мс",
       "suite": "ui"
     },
     {
       "name": "wine-card recommendations REC002 keeps the wine card intact when recommendations are empty",
       "status": "passed",
-      "durationMs": 161.22287499999993,
-      "durationText": "161.22 мс",
+      "durationMs": 168.1818330000001,
+      "durationText": "168.18 мс",
       "suite": "ui"
     },
     {
       "name": "wine-card recommendations REC003 exposes retry after a recommendation failure without replacing the wine card",
       "status": "passed",
-      "durationMs": 164.14829199999986,
-      "durationText": "164.15 мс",
+      "durationMs": 153.60379200000034,
+      "durationText": "153.60 мс",
       "suite": "ui"
     },
     {
       "name": "wine-card recommendations REC004 aborts an obsolete request and ignores its late response after navigation",
       "status": "passed",
-      "durationMs": 137.7262910000004,
-      "durationText": "137.73 мс",
+      "durationMs": 132.04445799999985,
+      "durationText": "132.04 мс",
       "suite": "ui"
     },
     {
       "name": "wine-card recommendations REC005 opens an explicitly selected recommendation and requests once for its new wine",
       "status": "passed",
-      "durationMs": 142.67658299999994,
-      "durationText": "142.68 мс",
+      "durationMs": 137.6154160000001,
+      "durationText": "137.62 мс",
       "suite": "ui"
     },
     {
       "name": "report dashboard regressions REPORT-001 keeps the scenario column and every section heading horizontally sticky",
       "status": "passed",
-      "durationMs": 77.16666699999996,
-      "durationText": "77.17 мс",
+      "durationMs": 79.502792,
+      "durationText": "79.50 мс",
       "suite": "ui"
     },
     {
       "name": "report dashboard regressions groups database scenarios under a sticky Database heading",
       "status": "passed",
-      "durationMs": 24.098124999999982,
-      "durationText": "24.10 мс",
+      "durationMs": 18.32325000000003,
+      "durationText": "18.32 мс",
       "suite": "ui"
     },
     {
       "name": "report dashboard regressions groups service and recommendation cases separately from model quality",
       "status": "passed",
-      "durationMs": 16.140416999999957,
-      "durationText": "16.14 мс",
+      "durationMs": 10.069582999999966,
+      "durationText": "10.07 мс",
       "suite": "ui"
     },
     {
       "name": "report dashboard regressions REPORT-002 orders an unordered index from newest run to the baseline",
       "status": "passed",
-      "durationMs": 9.724125000000072,
-      "durationText": "9.72 мс",
+      "durationMs": 8.56129199999998,
+      "durationText": "8.56 мс",
       "suite": "ui"
     },
     {
       "name": "report dashboard regressions REPORT-003 summarizes only the latest run and keeps skipped cases out of green success cells",
       "status": "passed",
-      "durationMs": 64.07283300000006,
-      "durationText": "64.07 мс",
+      "durationMs": 51.47141700000009,
+      "durationText": "51.47 мс",
       "suite": "ui"
     },
     {
       "name": "REPORT-004 preserves a backend failure when UI passes the same behavior and records all IDs",
       "status": "passed",
-      "durationMs": 8.338334000000032,
-      "durationText": "8.34 мс",
+      "durationMs": 14.58016699999996,
+      "durationText": "14.58 мс",
       "suite": "ui"
     },
     {
       "name": "REPORT-005 loads 2000 revisions and scenario rows in bounded portions without hiding the latest failure",
       "status": "passed",
-      "durationMs": 105.74008300000003,
-      "durationText": "105.74 мс",
+      "durationMs": 99.83504100000005,
+      "durationText": "99.84 мс",
       "suite": "ui"
     },
     {
       "name": "REPORT-005 keeps selected details and the latest summary when an older revision fails to load, then retries",
       "status": "passed",
-      "durationMs": 11.284666000000016,
-      "durationText": "11.28 мс",
+      "durationMs": 41.85612500000002,
+      "durationText": "41.86 мс",
       "suite": "ui"
     }
   ],
@@ -2758,16 +2765,16 @@
       "when": "пользователь начинает путь",
       "then": "есть вход в сканирование",
       "status": "passed",
-      "durationMs": 202.85433299999977,
-      "durationText": "202.85 мс",
+      "durationMs": 184.73612500000036,
+      "durationText": "184.74 мс",
       "reason": "Vitest-проверка: пройдена (mobile behavior demo UI-001 to UI-002 starts live camera and separates camera from gallery)",
       "output": "",
       "tests": [
         {
           "name": "mobile behavior demo UI-001 to UI-002 starts live camera and separates camera from gallery",
           "status": "passed",
-          "durationMs": 202.85433299999977,
-          "durationText": "202.85 мс",
+          "durationMs": 184.73612500000036,
+          "durationText": "184.74 мс",
           "output": ""
         }
       ]
@@ -2789,22 +2796,22 @@
         {
           "name": "mobile behavior demo UI-001 to UI-002 starts live camera and separates camera from gallery",
           "status": "passed",
-          "durationMs": 202.85433299999977,
-          "durationText": "202.85 мс",
+          "durationMs": 184.73612500000036,
+          "durationText": "184.74 мс",
           "output": ""
         },
         {
           "name": "mobile behavior demo stops a camera stream that resolves after leaving UI-002",
           "status": "passed",
-          "durationMs": 138.72699999999986,
-          "durationText": "138.73 мс",
+          "durationMs": 137.8230410000001,
+          "durationText": "137.82 мс",
           "output": ""
         },
         {
           "name": "mobile behavior demo UI-002 shutter captures a JPEG frame, uploads it, and stops the stream",
           "status": "passed",
-          "durationMs": 77.20491600000014,
-          "durationText": "77.20 мс",
+          "durationMs": 78.75262500000008,
+          "durationText": "78.75 мс",
           "output": ""
         }
       ]
@@ -2819,16 +2826,16 @@
       "when": "пользователь начинает путь",
       "then": "доступны fallback действия",
       "status": "passed",
-      "durationMs": 40.31516699999975,
-      "durationText": "40.32 мс",
+      "durationMs": 49.959292000000005,
+      "durationText": "49.96 мс",
       "reason": "Vitest-проверка: пройдена (mobile behavior demo UI-003 offers fallbacks after permission denial)",
       "output": "",
       "tests": [
         {
           "name": "mobile behavior demo UI-003 offers fallbacks after permission denial",
           "status": "passed",
-          "durationMs": 40.31516699999975,
-          "durationText": "40.32 мс",
+          "durationMs": 49.959292000000005,
+          "durationText": "49.96 мс",
           "output": ""
         }
       ]
@@ -2843,16 +2850,16 @@
       "when": "пользователь отменяет",
       "then": "главная показывает чистые входы без снимка и продолжения",
       "status": "passed",
-      "durationMs": 49.53041699999994,
-      "durationText": "49.53 мс",
+      "durationMs": 48.977292000000034,
+      "durationText": "48.98 мс",
       "reason": "Vitest-проверка: пройдена (mobile behavior demo UI-004/005 cancellation returns to a clean Home and ignores old search)",
       "output": "",
       "tests": [
         {
           "name": "mobile behavior demo UI-004/005 cancellation returns to a clean Home and ignores old search",
           "status": "passed",
-          "durationMs": 49.53041699999994,
-          "durationText": "49.53 мс",
+          "durationMs": 48.977292000000034,
+          "durationText": "48.98 мс",
           "output": ""
         }
       ]
@@ -2874,15 +2881,15 @@
         {
           "name": "mobile behavior demo UI-005 ignores a late manual response after leaving search",
           "status": "passed",
-          "durationMs": 108.7328749999997,
-          "durationText": "108.73 мс",
+          "durationMs": 108.54083300000002,
+          "durationText": "108.54 мс",
           "output": ""
         },
         {
           "name": "mobile behavior demo UI-005 keeps the manual query available after returning Home",
           "status": "passed",
-          "durationMs": 148.0336659999998,
-          "durationText": "148.03 мс",
+          "durationMs": 146.85904200000004,
+          "durationText": "146.86 мс",
           "output": ""
         }
       ]
@@ -2897,16 +2904,16 @@
       "when": "открыт поиск и введён query",
       "then": "каталог фильтруется, активный раздел выделен",
       "status": "passed",
-      "durationMs": 382.66075,
-      "durationText": "382.66 мс",
+      "durationMs": 361.1111249999999,
+      "durationText": "361.11 мс",
       "reason": "Vitest-проверка: пройдена (catalog navigation and saved wines UI-016 bottom navigation opens the catalog, searches on the server, and resets section scroll)",
       "output": "",
       "tests": [
         {
           "name": "catalog navigation and saved wines UI-016 bottom navigation opens the catalog, searches on the server, and resets section scroll",
           "status": "passed",
-          "durationMs": 382.66075,
-          "durationText": "382.66 мс",
+          "durationMs": 361.1111249999999,
+          "durationText": "361.11 мс",
           "output": ""
         }
       ]
@@ -2921,16 +2928,16 @@
       "when": "сохранить и перезагрузить",
       "then": "один local snapshot восстановлен",
       "status": "passed",
-      "durationMs": 139.53470800000014,
-      "durationText": "139.53 мс",
+      "durationMs": 141.29962499999965,
+      "durationText": "141.30 мс",
       "reason": "Vitest-проверка: пройдена (catalog navigation and saved wines UI-017 saves one validated catalog snapshot and restores it after reload)",
       "output": "",
       "tests": [
         {
           "name": "catalog navigation and saved wines UI-017 saves one validated catalog snapshot and restores it after reload",
           "status": "passed",
-          "durationMs": 139.53470800000014,
-          "durationText": "139.53 мс",
+          "durationMs": 141.29962499999965,
+          "durationText": "141.30 мс",
           "output": ""
         }
       ]
@@ -2945,16 +2952,16 @@
       "when": "удалить последнюю запись",
       "then": "показано полезное пустое состояние",
       "status": "passed",
-      "durationMs": 85.16116699999975,
-      "durationText": "85.16 мс",
+      "durationMs": 87.20908299999974,
+      "durationText": "87.21 мс",
       "reason": "Vitest-проверка: пройдена (catalog navigation and saved wines UI-018 removes a saved wine and returns to the useful empty state)",
       "output": "",
       "tests": [
         {
           "name": "catalog navigation and saved wines UI-018 removes a saved wine and returns to the useful empty state",
           "status": "passed",
-          "durationMs": 85.16116699999975,
-          "durationText": "85.16 мс",
+          "durationMs": 87.20908299999974,
+          "durationText": "87.21 мс",
           "output": ""
         }
       ]
@@ -2969,16 +2976,16 @@
       "when": "открыть приложение",
       "then": "запуск не падает, записи очищены",
       "status": "passed",
-      "durationMs": 29.405166999999892,
-      "durationText": "29.41 мс",
+      "durationMs": 30.43995900000027,
+      "durationText": "30.44 мс",
       "reason": "Vitest-проверка: пройдена (catalog navigation and saved wines UI-019 clears corrupt or duplicate saved snapshots without crashing)",
       "output": "",
       "tests": [
         {
           "name": "catalog navigation and saved wines UI-019 clears corrupt or duplicate saved snapshots without crashing",
           "status": "passed",
-          "durationMs": 29.405166999999892,
-          "durationText": "29.41 мс",
+          "durationMs": 30.43995900000027,
+          "durationText": "30.44 мс",
           "output": ""
         }
       ]
@@ -2993,16 +3000,16 @@
       "when": "уйти в другой раздел",
       "then": "запрос отменён, поздний ответ игнорирован",
       "status": "passed",
-      "durationMs": 79.2316249999999,
-      "durationText": "79.23 мс",
+      "durationMs": 78.55650000000014,
+      "durationText": "78.56 мс",
       "reason": "Vitest-проверка: пройдена (catalog navigation and saved wines UI-020 leaving catalog aborts the request and a late response cannot change section)",
       "output": "",
       "tests": [
         {
           "name": "catalog navigation and saved wines UI-020 leaving catalog aborts the request and a late response cannot change section",
           "status": "passed",
-          "durationMs": 79.2316249999999,
-          "durationText": "79.23 мс",
+          "durationMs": 78.55650000000014,
+          "durationText": "78.56 мс",
           "output": ""
         }
       ]
@@ -3017,16 +3024,16 @@
       "when": "сохранить карточку",
       "then": "ошибка видна, успех не заявлен",
       "status": "passed",
-      "durationMs": 96.55474999999979,
-      "durationText": "96.55 мс",
+      "durationMs": 95.86049999999977,
+      "durationText": "95.86 мс",
       "reason": "Vitest-проверка: пройдена (catalog navigation and saved wines UI-021 reports storage failure and does not claim the wine was saved)",
       "output": "",
       "tests": [
         {
           "name": "catalog navigation and saved wines UI-021 reports storage failure and does not claim the wine was saved",
           "status": "passed",
-          "durationMs": 96.55474999999979,
-          "durationText": "96.55 мс",
+          "durationMs": 95.86049999999977,
+          "durationText": "95.86 мс",
           "output": ""
         }
       ]
@@ -3041,16 +3048,16 @@
       "when": "пользователь исправляет ответ",
       "then": "можно выбрать другой результат",
       "status": "passed",
-      "durationMs": 121.88000000000011,
-      "durationText": "121.88 мс",
+      "durationMs": 121.29574999999977,
+      "durationText": "121.30 мс",
       "reason": "Vitest-проверка: пройдена (mobile behavior demo UI-006 SR-008 manual candidates keep full accessible names and receive the shared leader badge)",
       "output": "",
       "tests": [
         {
           "name": "mobile behavior demo UI-006 SR-008 manual candidates keep full accessible names and receive the shared leader badge",
           "status": "passed",
-          "durationMs": 121.88000000000011,
-          "durationText": "121.88 мс",
+          "durationMs": 121.29574999999977,
+          "durationText": "121.30 мс",
           "output": ""
         }
       ]
@@ -3065,16 +3072,16 @@
       "when": "React применяет ответ",
       "then": "карточка доступна после явного выбора, без автооткрытия",
       "status": "passed",
-      "durationMs": 116.96283300000005,
-      "durationText": "116.96 мс",
+      "durationMs": 115.5607500000001,
+      "durationText": "115.56 мс",
       "reason": "Vitest-проверка: пройдена (mobile behavior demo UI-007 identifies a fixture card as demo when no source URL is provided)",
       "output": "",
       "tests": [
         {
           "name": "mobile behavior demo UI-007 identifies a fixture card as demo when no source URL is provided",
           "status": "passed",
-          "durationMs": 116.96283300000005,
-          "durationText": "116.96 мс",
+          "durationMs": 115.5607500000001,
+          "durationText": "115.56 мс",
           "output": ""
         }
       ]
@@ -3096,15 +3103,15 @@
         {
           "name": "mobile behavior demo UI-008 keeps the catalog hidden until the user asks for it",
           "status": "passed",
-          "durationMs": 61.16791600000033,
-          "durationText": "61.17 мс",
+          "durationMs": 65.70245799999975,
+          "durationText": "65.70 мс",
           "output": ""
         },
         {
           "name": "mobile behavior demo UI-008 does not send an empty manual query and keeps camera entry available",
           "status": "passed",
-          "durationMs": 45.10466700000006,
-          "durationText": "45.10 мс",
+          "durationMs": 42.34900000000016,
+          "durationText": "42.35 мс",
           "output": ""
         }
       ]
@@ -3119,16 +3126,16 @@
       "when": "пользователь выбирает дальнейшее действие",
       "then": "фото ведёт к названию/пересъёмке, ручной поиск сохраняет query; чужие фото и случайные кандидаты не появляются",
       "status": "passed",
-      "durationMs": 86.5994169999999,
-      "durationText": "86.60 мс",
+      "durationMs": 85.54637500000035,
+      "durationText": "85.55 мс",
       "reason": "Vitest-проверка: пройдена (mobile behavior demo UI-009 keeps returned candidates in the uncertain path)",
       "output": "",
       "tests": [
         {
           "name": "mobile behavior demo UI-009 keeps returned candidates in the uncertain path",
           "status": "passed",
-          "durationMs": 86.5994169999999,
-          "durationText": "86.60 мс",
+          "durationMs": 85.54637500000035,
+          "durationText": "85.55 мс",
           "output": ""
         }
       ]
@@ -3143,16 +3150,16 @@
       "when": "React валидирует ответ",
       "then": "видна recoverable error",
       "status": "passed",
-      "durationMs": 80.27283299999999,
-      "durationText": "80.27 мс",
+      "durationMs": 80.91962500000045,
+      "durationText": "80.92 мс",
       "reason": "Vitest-проверка: пройдена (mobile behavior demo UI-010 accepts catalog candidates without a recognition selection)",
       "output": "",
       "tests": [
         {
           "name": "mobile behavior demo UI-010 accepts catalog candidates without a recognition selection",
           "status": "passed",
-          "durationMs": 80.27283299999999,
-          "durationText": "80.27 мс",
+          "durationMs": 80.91962500000045,
+          "durationText": "80.92 мс",
           "output": ""
         }
       ]
@@ -3171,22 +3178,22 @@
         {
           "name": "mobile behavior demo UI-011 rejects a non-image before API use",
           "status": "passed",
-          "durationMs": 25.738582999999835,
-          "durationText": "25.74 мс",
+          "durationMs": 21.17620799999986,
+          "durationText": "21.18 мс",
           "output": ""
         },
         {
           "name": "mobile behavior demo UI-011 explains the accepted formats after a server photo rejection",
           "status": "passed",
-          "durationMs": 24.58791700000029,
-          "durationText": "24.59 мс",
+          "durationMs": 22.17537500000026,
+          "durationText": "22.18 мс",
           "output": ""
         },
         {
           "name": "UI-011 distinguishes rejected image content from temporary upload failures",
           "status": "passed",
-          "durationMs": 0.2531659999999647,
-          "durationText": "0.25 мс",
+          "durationMs": 0.2785840000000235,
+          "durationText": "0.28 мс",
           "output": ""
         }
       ]
@@ -3198,16 +3205,16 @@
       "source": "apps/web/src/App.test.tsx",
       "spec": "docs/product/behavior-spec.md#demo-008",
       "status": "passed",
-      "durationMs": 60.29058399999985,
-      "durationText": "60.29 мс",
+      "durationMs": 60.92812499999991,
+      "durationText": "60.93 мс",
       "reason": "Vitest-проверка: пройдена (mobile behavior demo UI-003A explains permission recovery and retains gallery fallback)",
       "output": "",
       "tests": [
         {
           "name": "mobile behavior demo UI-003A explains permission recovery and retains gallery fallback",
           "status": "passed",
-          "durationMs": 60.29058399999985,
-          "durationText": "60.29 мс",
+          "durationMs": 60.92812499999991,
+          "durationText": "60.93 мс",
           "output": ""
         }
       ]
@@ -3237,16 +3244,16 @@
       "source": "apps/web/src/design.test.tsx",
       "spec": "apps/web/design-specs.md",
       "status": "passed",
-      "durationMs": 0.43837500000017826,
-      "durationText": "0.44 мс",
+      "durationMs": 0.37495799999987867,
+      "durationText": "0.37 мс",
       "reason": "Vitest-проверка: пройдена (selected Wine UX 2.0 design contract DESIGN-003 keeps locally hosted Onest and selected Playfair display type)",
       "output": "",
       "tests": [
         {
           "name": "selected Wine UX 2.0 design contract DESIGN-003 keeps locally hosted Onest and selected Playfair display type",
           "status": "passed",
-          "durationMs": 0.43837500000017826,
-          "durationText": "0.44 мс",
+          "durationMs": 0.37495799999987867,
+          "durationText": "0.37 мс",
           "output": ""
         }
       ]
@@ -3267,16 +3274,16 @@
       "source": "apps/web/src/design.test.tsx",
       "spec": "apps/web/design-specs.md",
       "status": "passed",
-      "durationMs": 11.227167000000009,
-      "durationText": "11.23 мс",
+      "durationMs": 12.934124999999767,
+      "durationText": "12.93 мс",
       "reason": "Vitest-проверка: пройдена (selected Wine UX 2.0 design contract DESIGN-005 renders only the product application, without report controls or prototype chrome)",
       "output": "",
       "tests": [
         {
           "name": "selected Wine UX 2.0 design contract DESIGN-005 renders only the product application, without report controls or prototype chrome",
           "status": "passed",
-          "durationMs": 11.227167000000009,
-          "durationText": "11.23 мс",
+          "durationMs": 12.934124999999767,
+          "durationText": "12.93 мс",
           "output": ""
         }
       ]
@@ -3297,7 +3304,7 @@
       "source": "apps/web/src/design.test.tsx",
       "spec": "apps/web/design-specs.md",
       "status": "passed",
-      "durationMs": 0.049165999999786436,
+      "durationMs": 0.04729200000019773,
       "durationText": "0.05 мс",
       "reason": "Vitest-проверка: пройдена (selected Wine UX 2.0 design contract DESIGN-007 and DESIGN-010 preserve the real camera shutter and dynamic viewport)",
       "output": "",
@@ -3305,7 +3312,7 @@
         {
           "name": "selected Wine UX 2.0 design contract DESIGN-007 and DESIGN-010 preserve the real camera shutter and dynamic viewport",
           "status": "passed",
-          "durationMs": 0.049165999999786436,
+          "durationMs": 0.04729200000019773,
           "durationText": "0.05 мс",
           "output": ""
         }
@@ -3339,16 +3346,16 @@
       "when": "открыть приложение без установки",
       "then": "основные действия доступны",
       "status": "passed",
-      "durationMs": 137.38854100000026,
-      "durationText": "137.39 мс",
+      "durationMs": 164.61029099999996,
+      "durationText": "164.61 мс",
       "reason": "Vitest-проверка: пройдена (UI-012 ordinary browser remains usable without installation support)",
       "output": "",
       "tests": [
         {
           "name": "UI-012 ordinary browser remains usable without installation support",
           "status": "passed",
-          "durationMs": 137.38854100000026,
-          "durationText": "137.39 мс",
+          "durationMs": 164.61029099999996,
+          "durationText": "164.61 мс",
           "output": ""
         }
       ]
@@ -3370,15 +3377,15 @@
         {
           "name": "UI-013 installation only opens on click; dismissal preserves the web journey",
           "status": "passed",
-          "durationMs": 45.40141700000004,
-          "durationText": "45.40 мс",
+          "durationMs": 57.40595799999983,
+          "durationText": "57.41 мс",
           "output": ""
         },
         {
           "name": "UI-013 refused browser install prompt does not break the page",
           "status": "passed",
-          "durationMs": 2.861499999999978,
-          "durationText": "2.86 мс",
+          "durationMs": 2.6540830000003552,
+          "durationText": "2.65 мс",
           "output": ""
         }
       ]
@@ -3400,15 +3407,15 @@
         {
           "name": "UI-014 standalone exposes the same application without an install offer",
           "status": "passed",
-          "durationMs": 42.98912500000006,
-          "durationText": "42.99 мс",
+          "durationMs": 41.45258399999966,
+          "durationText": "41.45 мс",
           "output": ""
         },
         {
           "name": "UI-014 successful installation removes the offer",
           "status": "passed",
-          "durationMs": 0.9044169999997393,
-          "durationText": "0.90 мс",
+          "durationMs": 4.487499999999727,
+          "durationText": "4.49 мс",
           "output": ""
         }
       ]
@@ -3430,15 +3437,15 @@
         {
           "name": "UI-015 install manifest launches the same root with real PNG icons",
           "status": "passed",
-          "durationMs": 1.0844170000000304,
-          "durationText": "1.08 мс",
+          "durationMs": 1.003125000000182,
+          "durationText": "1.00 мс",
           "output": ""
         },
         {
           "name": "UI-015 browser and installed app share the selected v2 theme",
           "status": "passed",
-          "durationMs": 4.0056250000002365,
-          "durationText": "4.01 мс",
+          "durationMs": 5.088708000000224,
+          "durationText": "5.09 мс",
           "output": ""
         }
       ]
@@ -3477,16 +3484,16 @@
       "when": "показаны рамка и подсказка",
       "then": "текст в отдельной строке, без пересечения рамки",
       "status": "passed",
-      "durationMs": 27.260541999999987,
-      "durationText": "27.26 мс",
+      "durationMs": 29.494458000000122,
+      "durationText": "29.49 мс",
       "reason": "Vitest-проверка: пройдена (selected Wine UX 2.0 design contract DESIGN-012 keeps the camera guidance outside the framed video)",
       "output": "",
       "tests": [
         {
           "name": "selected Wine UX 2.0 design contract DESIGN-012 keeps the camera guidance outside the framed video",
           "status": "passed",
-          "durationMs": 27.260541999999987,
-          "durationText": "27.26 мс",
+          "durationMs": 29.494458000000122,
+          "durationText": "29.49 мс",
           "output": ""
         }
       ]
@@ -3546,16 +3553,16 @@
       "source": "apps/web/src/design.test.tsx",
       "spec": "apps/web/design-specs.md",
       "status": "passed",
-      "durationMs": 9.253333999999995,
-      "durationText": "9.25 мс",
+      "durationMs": 8.511375000000044,
+      "durationText": "8.51 мс",
       "reason": "Vitest-проверка: пройдена (selected Wine UX 2.0 design contract DESIGN-015 and DESIGN-017 preserve the desktop frame and app navigation shell)",
       "output": "",
       "tests": [
         {
           "name": "selected Wine UX 2.0 design contract DESIGN-015 and DESIGN-017 preserve the desktop frame and app navigation shell",
           "status": "passed",
-          "durationMs": 9.253333999999995,
-          "durationText": "9.25 мс",
+          "durationMs": 8.511375000000044,
+          "durationText": "8.51 мс",
           "output": ""
         }
       ]
@@ -3824,22 +3831,22 @@
         {
           "name": "catalog navigation and saved wines UI-022 bottom Home returns to the start screen without starting camera capture",
           "status": "passed",
-          "durationMs": 232.08725000000004,
-          "durationText": "232.09 мс",
+          "durationMs": 241.3469580000001,
+          "durationText": "241.35 мс",
           "output": ""
         },
         {
           "name": "catalog navigation and saved wines UI-022 explicit scan CTA starts camera capture and retains denial fallback",
           "status": "passed",
-          "durationMs": 113.96991600000001,
-          "durationText": "113.97 мс",
+          "durationMs": 103.59866599999987,
+          "durationText": "103.60 мс",
           "output": ""
         },
         {
           "name": "catalog navigation and saved wines UI-022 clears a completed scan photo when Home opens without camera",
           "status": "passed",
-          "durationMs": 57.5656670000003,
-          "durationText": "57.57 мс",
+          "durationMs": 58.71883399999979,
+          "durationText": "58.72 мс",
           "output": ""
         }
       ]
@@ -3854,16 +3861,16 @@
       "when": "нажать закладку, затем повторно",
       "then": "состояние и сохранённый список переключаются согласованно",
       "status": "passed",
-      "durationMs": 111.5536659999998,
-      "durationText": "111.55 мс",
+      "durationMs": 115.46645799999988,
+      "durationText": "115.47 мс",
       "reason": "Vitest-проверка: пройдена (catalog navigation and saved wines UI-023 toggles the stable compact header save action)",
       "output": "",
       "tests": [
         {
           "name": "catalog navigation and saved wines UI-023 toggles the stable compact header save action",
           "status": "passed",
-          "durationMs": 111.5536659999998,
-          "durationText": "111.55 мс",
+          "durationMs": 115.46645799999988,
+          "durationText": "115.47 мс",
           "output": ""
         }
       ]
@@ -3878,16 +3885,16 @@
       "when": "показать действие сохранения",
       "then": "кнопка в шапке, без широкой рамки, доступная область нажатия",
       "status": "passed",
-      "durationMs": 67.73433399999976,
-      "durationText": "67.73 мс",
+      "durationMs": 59.720792000000074,
+      "durationText": "59.72 мс",
       "reason": "Vitest-проверка: пройдена (selected Wine UX 2.0 design contract DESIGN-019 and DESIGN-020 keep compact save and a single search control)",
       "output": "",
       "tests": [
         {
           "name": "selected Wine UX 2.0 design contract DESIGN-019 and DESIGN-020 keep compact save and a single search control",
           "status": "passed",
-          "durationMs": 67.73433399999976,
-          "durationText": "67.73 мс",
+          "durationMs": 59.720792000000074,
+          "durationText": "59.72 мс",
           "output": ""
         }
       ]
@@ -3902,16 +3909,16 @@
       "when": "нажать лупу либо Enter",
       "then": "запускается поиск того же запроса",
       "status": "passed",
-      "durationMs": 140.0089579999999,
-      "durationText": "140.01 мс",
+      "durationMs": 136.2125420000002,
+      "durationText": "136.21 мс",
       "reason": "Vitest-проверка: пройдена (catalog navigation and saved wines UI-024 CAT002 submits the compact search field with its button and Enter)",
       "output": "",
       "tests": [
         {
           "name": "catalog navigation and saved wines UI-024 CAT002 submits the compact search field with its button and Enter",
           "status": "passed",
-          "durationMs": 140.0089579999999,
-          "durationText": "140.01 мс",
+          "durationMs": 136.2125420000002,
+          "durationText": "136.21 мс",
           "output": ""
         }
       ]
@@ -3967,36 +3974,36 @@
         {
           "name": "UI-025 versioned API client requests the v2 catalog, uploads a photo receipt, and searches with the receipt body",
           "status": "passed",
-          "durationMs": 2.535209000000009,
-          "durationText": "2.54 мс",
+          "durationMs": 3.544791000000032,
+          "durationText": "3.54 мс",
           "output": ""
         },
         {
           "name": "UI-025 versioned API client accepts a real photo-search 'no_match' response",
           "status": "passed",
-          "durationMs": 0.3770829999999705,
+          "durationMs": 0.37824999999998,
           "durationText": "0.38 мс",
           "output": ""
         },
         {
           "name": "UI-025 versioned API client accepts a real photo-search 'outside_display_catalog' response",
           "status": "passed",
-          "durationMs": 0.109958000000006,
+          "durationMs": 0.11133400000005622,
           "durationText": "0.11 мс",
           "output": ""
         },
         {
           "name": "UI-025 versioned API client accepts ordered real candidates and rejects unknown search actions",
           "status": "passed",
-          "durationMs": 0.5121250000000828,
-          "durationText": "0.51 мс",
+          "durationMs": 0.5580410000000029,
+          "durationText": "0.56 мс",
           "output": ""
         },
         {
           "name": "UI-025 local API proxy preserves Host and proxies catalog assets",
           "status": "passed",
-          "durationMs": 0.9854589999999916,
-          "durationText": "0.99 мс",
+          "durationMs": 1.180749999999989,
+          "durationText": "1.18 мс",
           "output": ""
         }
       ]
@@ -4011,16 +4018,16 @@
       "when": "асинхронный поиск завершён до закрытия preview",
       "then": "возврат идёт на актуальный результат, не на stale loading",
       "status": "passed",
-      "durationMs": 57.652500000000146,
-      "durationText": "57.65 мс",
+      "durationMs": 55.26575000000048,
+      "durationText": "55.27 мс",
       "reason": "Vitest-проверка: пройдена (mobile behavior demo UI-026 preview returns to its settled async origin instead of restoring stale loading)",
       "output": "",
       "tests": [
         {
           "name": "mobile behavior demo UI-026 preview returns to its settled async origin instead of restoring stale loading",
           "status": "passed",
-          "durationMs": 57.652500000000146,
-          "durationText": "57.65 мс",
+          "durationMs": 55.26575000000048,
+          "durationText": "55.27 мс",
           "output": ""
         }
       ]
@@ -4035,16 +4042,16 @@
       "when": "открыть карточку, исправление и вернуться назад",
       "then": "сохраняются карточка, год, кандидаты и исходный query",
       "status": "passed",
-      "durationMs": 213.26045800000065,
-      "durationText": "213.26 мс",
+      "durationMs": 223.07304099999965,
+      "durationText": "223.07 мс",
       "reason": "Vitest-проверка: пройдена (mobile behavior demo UI-027 manual query, candidates, and correction preserve their return context)",
       "output": "",
       "tests": [
         {
           "name": "mobile behavior demo UI-027 manual query, candidates, and correction preserve their return context",
           "status": "passed",
-          "durationMs": 213.26045800000065,
-          "durationText": "213.26 мс",
+          "durationMs": 223.07304099999965,
+          "durationText": "223.07 мс",
           "output": ""
         }
       ]
@@ -4066,15 +4073,15 @@
         {
           "name": "mobile behavior demo UI-028 retry after a photo-search failure reuses a completed upload receipt",
           "status": "passed",
-          "durationMs": 56.21162499999991,
-          "durationText": "56.21 мс",
+          "durationMs": 52.95641599999999,
+          "durationText": "52.96 мс",
           "output": ""
         },
         {
           "name": "mobile behavior demo UI-028 distinguishes network and server failures and retries a retained receipt",
           "status": "passed",
-          "durationMs": 128.28012500000023,
-          "durationText": "128.28 мс",
+          "durationMs": 127.99595800000043,
+          "durationText": "128.00 мс",
           "output": ""
         }
       ]
@@ -4357,16 +4364,16 @@
       "when": "horizontal scrolling",
       "then": "scenario column and every section label remain anchored with opaque background",
       "status": "passed",
-      "durationMs": 77.16666699999996,
-      "durationText": "77.17 мс",
+      "durationMs": 79.502792,
+      "durationText": "79.50 мс",
       "reason": "Vitest-проверка: пройдена (report dashboard regressions REPORT-001 keeps the scenario column and every section heading horizontally sticky)",
       "output": "",
       "tests": [
         {
           "name": "report dashboard regressions REPORT-001 keeps the scenario column and every section heading horizontally sticky",
           "status": "passed",
-          "durationMs": 77.16666699999996,
-          "durationText": "77.17 мс",
+          "durationMs": 79.502792,
+          "durationText": "79.50 мс",
           "output": ""
         }
       ]
@@ -4381,16 +4388,16 @@
       "when": "render report",
       "then": "newest runs first",
       "status": "passed",
-      "durationMs": 9.724125000000072,
-      "durationText": "9.72 мс",
+      "durationMs": 8.56129199999998,
+      "durationText": "8.56 мс",
       "reason": "Vitest-проверка: пройдена (report dashboard regressions REPORT-002 orders an unordered index from newest run to the baseline)",
       "output": "",
       "tests": [
         {
           "name": "report dashboard regressions REPORT-002 orders an unordered index from newest run to the baseline",
           "status": "passed",
-          "durationMs": 9.724125000000072,
-          "durationText": "9.72 мс",
+          "durationMs": 8.56129199999998,
+          "durationText": "8.56 мс",
           "output": ""
         }
       ]
@@ -4405,16 +4412,16 @@
       "when": "render summary",
       "then": "latest counts only; skipped is not passed",
       "status": "passed",
-      "durationMs": 64.07283300000006,
-      "durationText": "64.07 мс",
+      "durationMs": 51.47141700000009,
+      "durationText": "51.47 мс",
       "reason": "Vitest-проверка: пройдена (report dashboard regressions REPORT-003 summarizes only the latest run and keeps skipped cases out of green success cells)",
       "output": "",
       "tests": [
         {
           "name": "report dashboard regressions REPORT-003 summarizes only the latest run and keeps skipped cases out of green success cells",
           "status": "passed",
-          "durationMs": 64.07283300000006,
-          "durationText": "64.07 мс",
+          "durationMs": 51.47141700000009,
+          "durationText": "51.47 мс",
           "output": ""
         }
       ]
@@ -4538,16 +4545,16 @@
       "when": "получить альтернативы выбранному ID",
       "then": "показан отдельный блок рекомендаций",
       "status": "passed",
-      "durationMs": 357.7855410000002,
-      "durationText": "357.79 мс",
+      "durationMs": 357.665833,
+      "durationText": "357.67 мс",
       "reason": "Vitest-проверка: пройдена (wine-card recommendations REC001 requests recommendations for the selected wine and labels them separately from search candidates)",
       "output": "",
       "tests": [
         {
           "name": "wine-card recommendations REC001 requests recommendations for the selected wine and labels them separately from search candidates",
           "status": "passed",
-          "durationMs": 357.7855410000002,
-          "durationText": "357.79 мс",
+          "durationMs": 357.665833,
+          "durationText": "357.67 мс",
           "output": ""
         }
       ]
@@ -4562,16 +4569,16 @@
       "when": "загрузить рекомендации",
       "then": "карточка доступна и показано пустое состояние",
       "status": "passed",
-      "durationMs": 161.22287499999993,
-      "durationText": "161.22 мс",
+      "durationMs": 168.1818330000001,
+      "durationText": "168.18 мс",
       "reason": "Vitest-проверка: пройдена (wine-card recommendations REC002 keeps the wine card intact when recommendations are empty)",
       "output": "",
       "tests": [
         {
           "name": "wine-card recommendations REC002 keeps the wine card intact when recommendations are empty",
           "status": "passed",
-          "durationMs": 161.22287499999993,
-          "durationText": "161.22 мс",
+          "durationMs": 168.1818330000001,
+          "durationText": "168.18 мс",
           "output": ""
         }
       ]
@@ -4586,16 +4593,16 @@
       "when": "открыть карточку и нажать повтор",
       "then": "карточка не исчезает, повтор восстанавливает рекомендации",
       "status": "passed",
-      "durationMs": 164.14829199999986,
-      "durationText": "164.15 мс",
+      "durationMs": 153.60379200000034,
+      "durationText": "153.60 мс",
       "reason": "Vitest-проверка: пройдена (wine-card recommendations REC003 exposes retry after a recommendation failure without replacing the wine card)",
       "output": "",
       "tests": [
         {
           "name": "wine-card recommendations REC003 exposes retry after a recommendation failure without replacing the wine card",
           "status": "passed",
-          "durationMs": 164.14829199999986,
-          "durationText": "164.15 мс",
+          "durationMs": 153.60379200000034,
+          "durationText": "153.60 мс",
           "output": ""
         }
       ]
@@ -4610,16 +4617,16 @@
       "when": "уйти с карточки до ответа",
       "then": "отмена передана; поздний ответ игнорируется",
       "status": "passed",
-      "durationMs": 137.7262910000004,
-      "durationText": "137.73 мс",
+      "durationMs": 132.04445799999985,
+      "durationText": "132.04 мс",
       "reason": "Vitest-проверка: пройдена (wine-card recommendations REC004 aborts an obsolete request and ignores its late response after navigation)",
       "output": "",
       "tests": [
         {
           "name": "wine-card recommendations REC004 aborts an obsolete request and ignores its late response after navigation",
           "status": "passed",
-          "durationMs": 137.7262910000004,
-          "durationText": "137.73 мс",
+          "durationMs": 132.04445799999985,
+          "durationText": "132.04 мс",
           "output": ""
         }
       ]
@@ -4634,16 +4641,16 @@
       "when": "явно нажать на него",
       "then": "открывается его карточка и один новый запрос рекомендаций",
       "status": "passed",
-      "durationMs": 142.67658299999994,
-      "durationText": "142.68 мс",
+      "durationMs": 137.6154160000001,
+      "durationText": "137.62 мс",
       "reason": "Vitest-проверка: пройдена (wine-card recommendations REC005 opens an explicitly selected recommendation and requests once for its new wine)",
       "output": "",
       "tests": [
         {
           "name": "wine-card recommendations REC005 opens an explicitly selected recommendation and requests once for its new wine",
           "status": "passed",
-          "durationMs": 142.67658299999994,
-          "durationText": "142.68 мс",
+          "durationMs": 137.6154160000001,
+          "durationText": "137.62 мс",
           "output": ""
         }
       ]
@@ -5058,16 +5065,16 @@
       "when": "принять ответ с selectedId",
       "then": "сохранить порядок и предоставить выбор",
       "status": "passed",
-      "durationMs": 88.42020899999989,
-      "durationText": "88.42 мс",
+      "durationMs": 86.35412499999984,
+      "durationText": "86.35 мс",
       "reason": "Vitest-проверка: пройдена (mobile behavior demo SR-001 SR-002 SR-003 SR-004 keeps multi-photo candidates ordered until a user chooses one, then restores the list)",
       "output": "",
       "tests": [
         {
           "name": "mobile behavior demo SR-001 SR-002 SR-003 SR-004 keeps multi-photo candidates ordered until a user chooses one, then restores the list",
           "status": "passed",
-          "durationMs": 88.42020899999989,
-          "durationText": "88.42 мс",
+          "durationMs": 86.35412499999984,
+          "durationText": "86.35 мс",
           "output": ""
         }
       ]
@@ -5082,16 +5089,16 @@
       "when": "открыть не первого",
       "then": "карточка выбранной записи",
       "status": "passed",
-      "durationMs": 88.42020899999989,
-      "durationText": "88.42 мс",
+      "durationMs": 86.35412499999984,
+      "durationText": "86.35 мс",
       "reason": "Vitest-проверка: пройдена (mobile behavior demo SR-001 SR-002 SR-003 SR-004 keeps multi-photo candidates ordered until a user chooses one, then restores the list)",
       "output": "",
       "tests": [
         {
           "name": "mobile behavior demo SR-001 SR-002 SR-003 SR-004 keeps multi-photo candidates ordered until a user chooses one, then restores the list",
           "status": "passed",
-          "durationMs": 88.42020899999989,
-          "durationText": "88.42 мс",
+          "durationMs": 86.35412499999984,
+          "durationText": "86.35 мс",
           "output": ""
         }
       ]
@@ -5106,16 +5113,16 @@
       "when": "экранный возврат",
       "then": "контекст и scroll без нового поиска",
       "status": "passed",
-      "durationMs": 88.42020899999989,
-      "durationText": "88.42 мс",
+      "durationMs": 86.35412499999984,
+      "durationText": "86.35 мс",
       "reason": "Vitest-проверка: пройдена (mobile behavior demo SR-001 SR-002 SR-003 SR-004 keeps multi-photo candidates ordered until a user chooses one, then restores the list)",
       "output": "",
       "tests": [
         {
           "name": "mobile behavior demo SR-001 SR-002 SR-003 SR-004 keeps multi-photo candidates ordered until a user chooses one, then restores the list",
           "status": "passed",
-          "durationMs": 88.42020899999989,
-          "durationText": "88.42 мс",
+          "durationMs": 86.35412499999984,
+          "durationText": "86.35 мс",
           "output": ""
         }
       ]
@@ -5137,15 +5144,15 @@
         {
           "name": "mobile behavior demo SR-001 SR-002 SR-003 SR-004 keeps multi-photo candidates ordered until a user chooses one, then restores the list",
           "status": "passed",
-          "durationMs": 88.42020899999989,
-          "durationText": "88.42 мс",
+          "durationMs": 86.35412499999984,
+          "durationText": "86.35 мс",
           "output": ""
         },
         {
           "name": "mobile behavior demo SR-004 handles the system Back event from a chosen photo candidate without another search",
           "status": "passed",
-          "durationMs": 60.2453330000003,
-          "durationText": "60.25 мс",
+          "durationMs": 57.84379100000024,
+          "durationText": "57.84 мс",
           "output": ""
         }
       ]
@@ -5167,22 +5174,22 @@
         {
           "name": "mobile behavior demo SR-005 one unselected photo candidate uses a singular heading and one actionable row",
           "status": "passed",
-          "durationMs": 65.05520799999977,
-          "durationText": "65.06 мс",
+          "durationMs": 57.532208999999966,
+          "durationText": "57.53 мс",
           "output": ""
         },
         {
           "name": "mobile behavior demo SR-005 one selected photo candidate sends its receipt into search and waits for explicit choice",
           "status": "passed",
-          "durationMs": 66.53912500000024,
-          "durationText": "66.54 мс",
+          "durationMs": 56.633666000000176,
+          "durationText": "56.63 мс",
           "output": ""
         },
         {
           "name": "mobile behavior demo SR-005 zero photo candidates offer the existing manual-search and reshoot fallback",
           "status": "passed",
-          "durationMs": 54.386708,
-          "durationText": "54.39 мс",
+          "durationMs": 53.341583999999784,
+          "durationText": "53.34 мс",
           "output": ""
         }
       ]
@@ -5197,16 +5204,16 @@
       "when": "отказаться",
       "then": "ручной поиск или пересъёмка",
       "status": "passed",
-      "durationMs": 128.74175000000014,
-      "durationText": "128.74 мс",
+      "durationMs": 127.29037500000004,
+      "durationText": "127.29 мс",
       "reason": "Vitest-проверка: пройдена (mobile behavior demo SR-006 declining candidates keeps the editable correction context without its photo)",
       "output": "",
       "tests": [
         {
           "name": "mobile behavior demo SR-006 declining candidates keeps the editable correction context without its photo",
           "status": "passed",
-          "durationMs": 128.74175000000014,
-          "durationText": "128.74 мс",
+          "durationMs": 127.29037500000004,
+          "durationText": "127.29 мс",
           "output": ""
         }
       ]
@@ -5221,16 +5228,16 @@
       "when": "отобразить результат",
       "then": "не выдумывать факты и не обрезать название",
       "status": "passed",
-      "durationMs": 96.14891699999998,
-      "durationText": "96.15 мс",
+      "durationMs": 94.38054200000033,
+      "durationText": "94.38 мс",
       "reason": "Vitest-проверка: пройдена (mobile behavior demo SR-007 renders unknown fields and a broken catalog image without inventing metadata)",
       "output": "",
       "tests": [
         {
           "name": "mobile behavior demo SR-007 renders unknown fields and a broken catalog image without inventing metadata",
           "status": "passed",
-          "durationMs": 96.14891699999998,
-          "durationText": "96.15 мс",
+          "durationMs": 94.38054200000033,
+          "durationText": "94.38 мс",
           "output": ""
         }
       ]
@@ -5245,16 +5252,16 @@
       "when": "отобразить список",
       "then": "первый кандидат выделен без изменения порядка",
       "status": "passed",
-      "durationMs": 121.88000000000011,
-      "durationText": "121.88 мс",
+      "durationMs": 121.29574999999977,
+      "durationText": "121.30 мс",
       "reason": "Vitest-проверка: пройдена (mobile behavior demo UI-006 SR-008 manual candidates keep full accessible names and receive the shared leader badge)",
       "output": "",
       "tests": [
         {
           "name": "mobile behavior demo UI-006 SR-008 manual candidates keep full accessible names and receive the shared leader badge",
           "status": "passed",
-          "durationMs": 121.88000000000011,
-          "durationText": "121.88 мс",
+          "durationMs": 121.29574999999977,
+          "durationText": "121.30 мс",
           "output": ""
         }
       ]
@@ -5269,16 +5276,16 @@
       "when": "читать и выбирать",
       "then": "полные названия, геометрия и фокус",
       "status": "passed",
-      "durationMs": 0.0975839999996424,
-      "durationText": "0.10 мс",
+      "durationMs": 0.09191599999985556,
+      "durationText": "0.09 мс",
       "reason": "Vitest-проверка: пройдена (selected Wine UX 2.0 design contract SR-009 constrains the leader badge and preserves full titles at enlarged text)",
       "output": "",
       "tests": [
         {
           "name": "selected Wine UX 2.0 design contract SR-009 constrains the leader badge and preserves full titles at enlarged text",
           "status": "passed",
-          "durationMs": 0.0975839999996424,
-          "durationText": "0.10 мс",
+          "durationMs": 0.09191599999985556,
+          "durationText": "0.09 мс",
           "output": ""
         }
       ]
@@ -5324,21 +5331,21 @@
         {
           "name": "TestCAT001LargeCatalogReturnsBoundedPages",
           "status": "passed",
-          "durationMs": 30,
-          "durationText": "30 мс"
+          "durationMs": 20,
+          "durationText": "20 мс"
         },
         {
           "name": "BE-045 catalog display CAT001 CAT002 searches the server and appends pages beyond the initial catalog page",
           "status": "passed",
-          "durationMs": 108.42008299999998,
-          "durationText": "108.42 мс",
+          "durationMs": 112.73258400000032,
+          "durationText": "112.73 мс",
           "output": ""
         },
         {
           "name": "FE-052 live catalog search CAT001 shows 24 of 2038 wines first and loads only the next page on demand",
           "status": "passed",
-          "durationMs": 349.9277500000003,
-          "durationText": "349.93 мс",
+          "durationMs": 363.4066250000001,
+          "durationText": "363.41 мс",
           "output": ""
         }
       ]
@@ -5372,22 +5379,22 @@
         {
           "name": "BE-045 catalog display CAT001 CAT002 searches the server and appends pages beyond the initial catalog page",
           "status": "passed",
-          "durationMs": 108.42008299999998,
-          "durationText": "108.42 мс",
+          "durationMs": 112.73258400000032,
+          "durationText": "112.73 мс",
           "output": ""
         },
         {
           "name": "BE-045 catalog display CAT002 aborts an obsolete catalog query and ignores its late result",
           "status": "passed",
-          "durationMs": 164.3770830000003,
-          "durationText": "164.38 мс",
+          "durationMs": 158.40745799999968,
+          "durationText": "158.41 мс",
           "output": ""
         },
         {
           "name": "catalog navigation and saved wines UI-024 CAT002 submits the compact search field with its button and Enter",
           "status": "passed",
-          "durationMs": 140.0089579999999,
-          "durationText": "140.01 мс",
+          "durationMs": 136.2125420000002,
+          "durationText": "136.21 мс",
           "output": ""
         }
       ]
@@ -5409,15 +5416,15 @@
         {
           "name": "BE-045 catalog display CAT003 exposes variant attributes, de-duplicates widths, and falls back on image errors",
           "status": "passed",
-          "durationMs": 238.637291,
-          "durationText": "238.64 мс",
+          "durationMs": 223.41208300000017,
+          "durationText": "223.41 мс",
           "output": ""
         },
         {
           "name": "BE-045 catalog display CAT003 lazy-loads rows below the first four visible images",
           "status": "passed",
-          "durationMs": 78.29262500000004,
-          "durationText": "78.29 мс",
+          "durationMs": 76.8794170000001,
+          "durationText": "76.88 мс",
           "output": ""
         }
       ]
@@ -5437,38 +5444,45 @@
       "output": "",
       "tests": [
         {
+          "name": "BE-045 catalog display CAT004 keeps tasting color prose out of compact search rows",
+          "status": "passed",
+          "durationMs": 94.45499999999993,
+          "durationText": "94.45 мс",
+          "output": ""
+        },
+        {
           "name": "BE-045 catalog display CAT004 CAT005 shows 'unknown facts and invalid numeric val…'",
           "status": "passed",
-          "durationMs": 126.08325000000013,
-          "durationText": "126.08 мс",
+          "durationMs": 99.55737499999987,
+          "durationText": "99.56 мс",
           "output": ""
         },
         {
           "name": "BE-045 catalog display CAT004 CAT005 shows 'a valid alcohol range without inventi…'",
           "status": "passed",
-          "durationMs": 93.43120799999997,
-          "durationText": "93.43 мс",
+          "durationMs": 83.26095899999973,
+          "durationText": "83.26 мс",
           "output": ""
         },
         {
           "name": "BE-045 catalog display CAT004 CAT005 shows 'Abrau retains sugar without category …'",
           "status": "passed",
-          "durationMs": 87.20729200000005,
-          "durationText": "87.21 мс",
+          "durationMs": 77.47262499999988,
+          "durationText": "77.47 мс",
           "output": ""
         },
         {
           "name": "BE-045 catalog display CAT004 CAT005 shows 'СКБ retains sugar without category or…'",
           "status": "passed",
-          "durationMs": 89.0906670000004,
-          "durationText": "89.09 мс",
+          "durationMs": 81.40054200000031,
+          "durationText": "81.40 мс",
           "output": ""
         },
         {
           "name": "BE-045 catalog display CAT004 CAT005 shows 'ESSE retains color without category o…'",
           "status": "passed",
-          "durationMs": 77.71820899999966,
-          "durationText": "77.72 мс",
+          "durationMs": 76.2074160000002,
+          "durationText": "76.21 мс",
           "output": ""
         }
       ]
@@ -5490,36 +5504,36 @@
         {
           "name": "BE-045 catalog display CAT004 CAT005 shows 'unknown facts and invalid numeric val…'",
           "status": "passed",
-          "durationMs": 126.08325000000013,
-          "durationText": "126.08 мс",
+          "durationMs": 99.55737499999987,
+          "durationText": "99.56 мс",
           "output": ""
         },
         {
           "name": "BE-045 catalog display CAT004 CAT005 shows 'a valid alcohol range without inventi…'",
           "status": "passed",
-          "durationMs": 93.43120799999997,
-          "durationText": "93.43 мс",
+          "durationMs": 83.26095899999973,
+          "durationText": "83.26 мс",
           "output": ""
         },
         {
           "name": "BE-045 catalog display CAT004 CAT005 shows 'Abrau retains sugar without category …'",
           "status": "passed",
-          "durationMs": 87.20729200000005,
-          "durationText": "87.21 мс",
+          "durationMs": 77.47262499999988,
+          "durationText": "77.47 мс",
           "output": ""
         },
         {
           "name": "BE-045 catalog display CAT004 CAT005 shows 'СКБ retains sugar without category or…'",
           "status": "passed",
-          "durationMs": 89.0906670000004,
-          "durationText": "89.09 мс",
+          "durationMs": 81.40054200000031,
+          "durationText": "81.40 мс",
           "output": ""
         },
         {
           "name": "BE-045 catalog display CAT004 CAT005 shows 'ESSE retains color without category o…'",
           "status": "passed",
-          "durationMs": 77.71820899999966,
-          "durationText": "77.72 мс",
+          "durationMs": 76.2074160000002,
+          "durationText": "76.21 мс",
           "output": ""
         }
       ]
@@ -5575,15 +5589,15 @@
         {
           "name": "BE-045 catalog display CAT007 shows real provenance and does not label a real catalog card as demo",
           "status": "passed",
-          "durationMs": 93.96212500000001,
-          "durationText": "93.96 мс",
+          "durationMs": 87.98000000000002,
+          "durationText": "87.98 мс",
           "output": ""
         },
         {
           "name": "BE-045 catalog display CAT007 keeps a photo recognition reference notice alongside real provenance",
           "status": "passed",
-          "durationMs": 68.65858399999979,
-          "durationText": "68.66 мс",
+          "durationMs": 67.0785420000002,
+          "durationText": "67.08 мс",
           "output": ""
         }
       ]
@@ -5603,12 +5617,6 @@
       "tests": [
         {
           "name": "TestCAT008LoadValidatesPackageAndKeepsTypedProjection",
-          "status": "passed",
-          "durationMs": 0,
-          "durationText": "<1 мс (разрешение Go)"
-        },
-        {
-          "name": "TestCAT008RejectsTraversalChecksumAndAliasConflicts/alias_target",
           "status": "passed",
           "durationMs": 0,
           "durationText": "<1 мс (разрешение Go)"
@@ -5638,13 +5646,25 @@
           "durationText": "<1 мс (разрешение Go)"
         },
         {
-          "name": "TestCAT008RejectsTraversalChecksumAndAliasConflicts",
+          "name": "TestCAT008RejectsTraversalChecksumAndAliasConflicts/alias_target",
           "status": "passed",
           "durationMs": 0,
           "durationText": "<1 мс (разрешение Go)"
         },
         {
+          "name": "TestCAT008RejectsTraversalChecksumAndAliasConflicts",
+          "status": "passed",
+          "durationMs": 10,
+          "durationText": "10 мс"
+        },
+        {
           "name": "TestCAT008RejectsSymlinkedAssets",
+          "status": "passed",
+          "durationMs": 0,
+          "durationText": "<1 мс (разрешение Go)"
+        },
+        {
+          "name": "TestCAT008RejectsNonNullImageWithoutPaths/missing_master_path",
           "status": "passed",
           "durationMs": 0,
           "durationText": "<1 мс (разрешение Go)"
@@ -5657,12 +5677,6 @@
         },
         {
           "name": "TestCAT008RejectsNonNullImageWithoutPaths/absent_image_field",
-          "status": "passed",
-          "durationMs": 0,
-          "durationText": "<1 мс (разрешение Go)"
-        },
-        {
-          "name": "TestCAT008RejectsNonNullImageWithoutPaths/missing_master_path",
           "status": "passed",
           "durationMs": 0,
           "durationText": "<1 мс (разрешение Go)"
@@ -5821,16 +5835,16 @@
       "when": "собрать отчёт",
       "then": "failed и оба свидетельства сохранены",
       "status": "passed",
-      "durationMs": 8.338334000000032,
-      "durationText": "8.34 мс",
+      "durationMs": 14.58016699999996,
+      "durationText": "14.58 мс",
       "reason": "Vitest-проверка: пройдена (REPORT-004 preserves a backend failure when UI passes the same behavior and records all IDs)",
       "output": "",
       "tests": [
         {
           "name": "REPORT-004 preserves a backend failure when UI passes the same behavior and records all IDs",
           "status": "passed",
-          "durationMs": 8.338334000000032,
-          "durationText": "8.34 мс",
+          "durationMs": 14.58016699999996,
+          "durationText": "14.58 мс",
           "output": ""
         }
       ]
@@ -5852,15 +5866,15 @@
         {
           "name": "REPORT-005 loads 2000 revisions and scenario rows in bounded portions without hiding the latest failure",
           "status": "passed",
-          "durationMs": 105.74008300000003,
-          "durationText": "105.74 мс",
+          "durationMs": 99.83504100000005,
+          "durationText": "99.84 мс",
           "output": ""
         },
         {
           "name": "REPORT-005 keeps selected details and the latest summary when an older revision fails to load, then retries",
           "status": "passed",
-          "durationMs": 11.284666000000016,
-          "durationText": "11.28 мс",
+          "durationMs": 41.85612500000002,
+          "durationText": "41.86 мс",
           "output": ""
         }
       ]
@@ -5882,22 +5896,22 @@
         {
           "name": "FE-052 live catalog search CAT015 coalesces rapid typing into one request for the latest query",
           "status": "passed",
-          "durationMs": 61.42387499999995,
-          "durationText": "61.42 мс",
+          "durationMs": 53.45283300000028,
+          "durationText": "53.45 мс",
           "output": ""
         },
         {
           "name": "FE-052 live catalog search CAT015 debounces the first nonblank character for 250ms and keeps loading, results, empty state, and focus inline",
           "status": "passed",
-          "durationMs": 50.33616699999993,
-          "durationText": "50.34 мс",
+          "durationMs": 58.39608300000009,
+          "durationText": "58.40 мс",
           "output": ""
         },
         {
           "name": "FE-052 live catalog search CAT015 renders empty and failed requests inline, and retries the same query without navigation",
           "status": "passed",
-          "durationMs": 56.18229199999996,
-          "durationText": "56.18 мс",
+          "durationMs": 54.49108299999989,
+          "durationText": "54.49 мс",
           "output": ""
         }
       ]
@@ -5912,16 +5926,16 @@
       "when": "изменить текст до нового debounce",
       "then": "сразу отменён; поздний success/error проигнорирован",
       "status": "passed",
-      "durationMs": 44.286125000000084,
-      "durationText": "44.29 мс",
+      "durationMs": 42.840416000000005,
+      "durationText": "42.84 мс",
       "reason": "Vitest-проверка: пройдена (FE-052 live catalog search CAT016 invalidates an in-flight request immediately during the next debounce window and ignores late success and error)",
       "output": "",
       "tests": [
         {
           "name": "FE-052 live catalog search CAT016 invalidates an in-flight request immediately during the next debounce window and ignores late success and error",
           "status": "passed",
-          "durationMs": 44.286125000000084,
-          "durationText": "44.29 мс",
+          "durationMs": 42.840416000000005,
+          "durationText": "42.84 мс",
           "output": ""
         }
       ]
@@ -5943,36 +5957,36 @@
         {
           "name": "FE-052 live catalog search CAT017 clears to the first catalog page and cancels deferred and in-flight work when leaving search",
           "status": "passed",
-          "durationMs": 61.088416999999936,
-          "durationText": "61.09 мс",
+          "durationMs": 50.81616699999995,
+          "durationText": "50.82 мс",
           "output": ""
         },
         {
           "name": "FE-052 live catalog search CAT017 cancels a queued debounce when leaving search before it fires",
           "status": "passed",
-          "durationMs": 38.12824999999975,
-          "durationText": "38.13 мс",
+          "durationMs": 38.363000000000284,
+          "durationText": "38.36 мс",
           "output": ""
         },
         {
           "name": "FE-052 live catalog search CAT017 clears composition state on leave so a normal query after re-entry can run",
           "status": "passed",
-          "durationMs": 50.69204099999979,
-          "durationText": "50.69 мс",
+          "durationMs": 49.821707999999944,
+          "durationText": "49.82 мс",
           "output": ""
         },
         {
           "name": "FE-052 live catalog search CAT017 clears active composition and permits the next fresh composition",
           "status": "passed",
-          "durationMs": 35.26333300000033,
-          "durationText": "35.26 мс",
+          "durationMs": 34.13395799999989,
+          "durationText": "34.13 мс",
           "output": ""
         },
         {
           "name": "FE-052 live catalog search CAT017 restores a correction result and cancels both queued and active catalog work on Back",
           "status": "passed",
-          "durationMs": 93.75366699999995,
-          "durationText": "93.75 мс",
+          "durationMs": 94.60566699999981,
+          "durationText": "94.61 мс",
           "output": ""
         }
       ]
@@ -5994,22 +6008,22 @@
         {
           "name": "FE-052 live catalog search CAT018 searches visible IME text after 250ms without compositionend and keeps focus",
           "status": "passed",
-          "durationMs": 36.09220800000003,
-          "durationText": "36.09 мс",
+          "durationMs": 34.03408300000001,
+          "durationText": "34.03 мс",
           "output": ""
         },
         {
           "name": "FE-052 live catalog search CAT018 keeps IME query cancellation and normal explicit submit",
           "status": "passed",
-          "durationMs": 49.65645799999993,
-          "durationText": "49.66 мс",
+          "durationMs": 48.785167,
+          "durationText": "48.79 мс",
           "output": ""
         },
         {
           "name": "FE-052 live catalog search CAT018 debounces changed committed IME text and ignores a repeated final input",
           "status": "passed",
-          "durationMs": 29.81970900000033,
-          "durationText": "29.82 мс",
+          "durationMs": 27.946458000000348,
+          "durationText": "27.95 мс",
           "output": ""
         }
       ]
@@ -6031,29 +6045,29 @@
         {
           "name": "FE-052 live catalog search CAT019 resets cursor and replaces the current page when the query changes",
           "status": "passed",
-          "durationMs": 46.7651249999999,
-          "durationText": "46.77 мс",
+          "durationMs": 46.15454099999988,
+          "durationText": "46.15 мс",
           "output": ""
         },
         {
           "name": "FE-052 live catalog search CAT019 keeps loaded rows visible after an append error and retries that same cursor",
           "status": "passed",
-          "durationMs": 57.74641699999984,
-          "durationText": "57.75 мс",
+          "durationMs": 57.23770800000011,
+          "durationText": "57.24 мс",
           "output": ""
         },
         {
           "name": "FE-052 live catalog search CAT019 refreshes the current query from page one after a stale cursor",
           "status": "passed",
-          "durationMs": 70.65404200000012,
-          "durationText": "70.65 мс",
+          "durationMs": 69.2831669999996,
+          "durationText": "69.28 мс",
           "output": ""
         },
         {
           "name": "FE-052 live catalog search CAT019 aborts an obsolete append and ignores its late page after a query change",
           "status": "passed",
-          "durationMs": 39.978917000000365,
-          "durationText": "39.98 мс",
+          "durationMs": 39.77599999999984,
+          "durationText": "39.78 мс",
           "output": ""
         }
       ]
@@ -6075,22 +6089,22 @@
         {
           "name": "FE-052 live catalog search CAT020 preserves the query, order, scroll, and cursor after choosing an appended card and using Back",
           "status": "passed",
-          "durationMs": 74.62037499999997,
-          "durationText": "74.62 мс",
+          "durationMs": 73.4089170000002,
+          "durationText": "73.41 мс",
           "output": ""
         },
         {
           "name": "FE-052 live catalog search CAT020 AIR-018 restores a paged catalog after browser Back",
           "status": "passed",
-          "durationMs": 68.20687499999985,
-          "durationText": "68.21 мс",
+          "durationMs": 68.12437500000033,
+          "durationText": "68.12 мс",
           "output": ""
         },
         {
           "name": "FE-052 live catalog search CAT020 runs the same live search from the home and bottom-navigation entries",
           "status": "passed",
-          "durationMs": 50.91137499999968,
-          "durationText": "50.91 мс",
+          "durationMs": 47.871834000000035,
+          "durationText": "47.87 мс",
           "output": ""
         }
       ]
@@ -6112,29 +6126,29 @@
         {
           "name": "FE-052 live catalog search CAT021 retains card and image nodes through debounce, request, and overlapping replacement",
           "status": "passed",
-          "durationMs": 48.98191599999973,
-          "durationText": "48.98 мс",
+          "durationMs": 47.479833999999755,
+          "durationText": "47.48 мс",
           "output": ""
         },
         {
           "name": "FE-052 live catalog search CAT021 keeps old rows after a failed refinement and retries its first page",
           "status": "passed",
-          "durationMs": 49.880249999999705,
-          "durationText": "49.88 мс",
+          "durationMs": 49.12766699999975,
+          "durationText": "49.13 мс",
           "output": ""
         },
         {
           "name": "FE-052 live catalog search CAT021 clears retained rows only after a successful empty response",
           "status": "passed",
-          "durationMs": 35.73129199999994,
-          "durationText": "35.73 мс",
+          "durationMs": 34.41150000000016,
+          "durationText": "34.41 мс",
           "output": ""
         },
         {
           "name": "FE-052 live catalog search CAT021 returns from a previously shown card without claiming it matches the pending query",
           "status": "passed",
-          "durationMs": 56.873541999999816,
-          "durationText": "56.87 мс",
+          "durationMs": 58.19670900000028,
+          "durationText": "58.20 мс",
           "output": ""
         }
       ]
@@ -6161,16 +6175,16 @@
       "when": "показать шапку, отдельно вернуться и переключить сохранение",
       "then": "верхний отступ уменьшен около 10px, после панели около 6px; safe area один раз, цели ≥44px",
       "status": "passed",
-      "durationMs": 348.8968749999999,
-      "durationText": "348.90 мс",
+      "durationMs": 353.87433399999964,
+      "durationText": "353.87 мс",
       "reason": "Vitest-проверка: пройдена (FE-057 revised wine-card contract DESIGN-024 retains named Back and Save controls and returns to the catalog context)",
       "output": "",
       "tests": [
         {
           "name": "FE-057 revised wine-card contract DESIGN-024 retains named Back and Save controls and returns to the catalog context",
           "status": "passed",
-          "durationMs": 348.8968749999999,
-          "durationText": "348.90 мс",
+          "durationMs": 353.87433399999964,
+          "durationText": "353.87 мс",
           "output": ""
         }
       ]
@@ -6217,15 +6231,15 @@
         {
           "name": "Air 3.4 photo journey AIR-001 ignores a receipt delivered after Home during upload",
           "status": "passed",
-          "durationMs": 80.87858299999971,
-          "durationText": "80.88 мс",
+          "durationMs": 86.15129200000001,
+          "durationText": "86.15 мс",
           "output": ""
         },
         {
           "name": "Air 3.4 photo journey AIR-001 clears Home and ignores a late photo-search success after cancellation",
           "status": "passed",
-          "durationMs": 90.4377499999996,
-          "durationText": "90.44 мс",
+          "durationMs": 85.28891699999986,
+          "durationText": "85.29 мс",
           "output": ""
         }
       ]
@@ -6248,15 +6262,15 @@
         {
           "name": "Air 3.4 photo journey AIR-002 keeps one accepted photo through waiting, candidates and card, then clears it on Home",
           "status": "passed",
-          "durationMs": 89.73320899999999,
-          "durationText": "89.73 мс",
+          "durationMs": 90.60133399999995,
+          "durationText": "90.60 мс",
           "output": ""
         },
         {
           "name": "Air 3.4 photo journey AIR-002 retains the accepted receipt for retry after a photo-search error",
           "status": "passed",
-          "durationMs": 56.83699999999999,
-          "durationText": "56.84 мс",
+          "durationMs": 55.26912500000026,
+          "durationText": "55.27 мс",
           "output": ""
         }
       ]
@@ -6279,29 +6293,29 @@
         {
           "name": "Air 3.4 photo journey AIR-003 gallery cancellation keeps the selected photo, ordered rows and scroll",
           "status": "passed",
-          "durationMs": 60.38829200000009,
-          "durationText": "60.39 мс",
+          "durationMs": 60.87583300000006,
+          "durationText": "60.88 мс",
           "output": ""
         },
         {
           "name": "Air 3.4 photo journey AIR-003 keeps the 'empty' recovery state after gallery cancellation",
           "status": "passed",
-          "durationMs": 33.4744169999999,
-          "durationText": "33.47 мс",
+          "durationMs": 36.20008400000006,
+          "durationText": "36.20 мс",
           "output": ""
         },
         {
           "name": "Air 3.4 photo journey AIR-003 keeps the 'server' recovery state after gallery cancellation",
           "status": "passed",
-          "durationMs": 56.56962499999963,
-          "durationText": "56.57 мс",
+          "durationMs": 56.14125000000013,
+          "durationText": "56.14 мс",
           "output": ""
         },
         {
           "name": "Air 3.4 photo journey AIR-003 keeps the 'network' recovery state after gallery cancellation",
           "status": "passed",
-          "durationMs": 54.56929200000013,
-          "durationText": "54.57 мс",
+          "durationMs": 54.38854199999969,
+          "durationText": "54.39 мс",
           "output": ""
         }
       ]
@@ -6324,29 +6338,29 @@
         {
           "name": "Air 3.4 photo journey AIR-004 offers independent camera and gallery from 'results' without replacing the photo early",
           "status": "passed",
-          "durationMs": 55.299417000000176,
-          "durationText": "55.30 мс",
+          "durationMs": 53.50758399999995,
+          "durationText": "53.51 мс",
           "output": ""
         },
         {
           "name": "Air 3.4 photo journey AIR-004 offers independent camera and gallery from 'empty' without replacing the photo early",
           "status": "passed",
-          "durationMs": 54.04500000000007,
-          "durationText": "54.05 мс",
+          "durationMs": 56.69133300000021,
+          "durationText": "56.69 мс",
           "output": ""
         },
         {
           "name": "Air 3.4 photo journey AIR-004 offers independent camera and gallery from 'server' without replacing the photo early",
           "status": "passed",
-          "durationMs": 49.87287500000002,
-          "durationText": "49.87 мс",
+          "durationMs": 51.15987499999983,
+          "durationText": "51.16 мс",
           "output": ""
         },
         {
           "name": "Air 3.4 photo journey AIR-004 offers independent camera and gallery from 'offline' without replacing the photo early",
           "status": "passed",
-          "durationMs": 51.29512499999964,
-          "durationText": "51.30 мс",
+          "durationMs": 50.16908300000023,
+          "durationText": "50.17 мс",
           "output": ""
         }
       ]
@@ -6369,22 +6383,22 @@
         {
           "name": "Air 3.4 photo journey AIR-005 replaces a settled result with a newly accepted gallery photo",
           "status": "passed",
-          "durationMs": 52.26891599999999,
-          "durationText": "52.27 мс",
+          "durationMs": 52.70429100000001,
+          "durationText": "52.70 мс",
           "output": ""
         },
         {
           "name": "Air 3.4 photo journey AIR-005 ignores a late $outcome from photo A after starting B",
           "status": "passed",
-          "durationMs": 48.12091700000019,
-          "durationText": "48.12 мс",
+          "durationMs": 53.70337500000005,
+          "durationText": "53.70 мс",
           "output": ""
         },
         {
           "name": "Air 3.4 photo journey AIR-005 ignores a late $outcome from photo A after starting B",
           "status": "passed",
-          "durationMs": 43.36483300000009,
-          "durationText": "43.36 мс",
+          "durationMs": 42.36408299999994,
+          "durationText": "42.36 мс",
           "output": ""
         }
       ]
@@ -6400,16 +6414,16 @@
       "then": "показаны лидер и остальные кандидаты в порядке ответа",
       "scenarioText": "Сценарий: AIR-006 Список кандидатов остаётся выбором пользователя\n    Дано поиск по фото вернул несколько кандидатов с selectedId или высокой уверенностью\n    Когда ответ принят\n    Тогда показаны лидер и остальные кандидаты в порядке ответа\n    И первый кандидат визуально выделен без процента или выдуманной точности\n    И карточка не открывается до выбора пользователя",
       "status": "passed",
-      "durationMs": 47.92425000000003,
-      "durationText": "47.92 мс",
+      "durationMs": 47.640416999999616,
+      "durationText": "47.64 мс",
       "reason": "Vitest-проверка: пройдена (Air 3.4 photo journey AIR-006 preserves ranked multi-candidate order and waits for a choice)",
       "output": "",
       "tests": [
         {
           "name": "Air 3.4 photo journey AIR-006 preserves ranked multi-candidate order and waits for a choice",
           "status": "passed",
-          "durationMs": 47.92425000000003,
-          "durationText": "47.92 мс",
+          "durationMs": 47.640416999999616,
+          "durationText": "47.64 мс",
           "output": ""
         }
       ]
@@ -6425,16 +6439,16 @@
       "then": "виден один кандидат без фиктивных альтернатив и автоматического перехода",
       "scenarioText": "Сценарий: AIR-007 Единственный и отсутствующий кандидат\n    Дано поиск по фото вернул одного кандидата, в том числе exact match\n    Когда ответ принят\n    Тогда виден один кандидат без фиктивных альтернатив и автоматического перехода\n    Когда другой поиск возвращает пустой успешный ответ\n    Тогда показано «Ничего не найдено» с поиском по названию, камерой и галереей",
       "status": "passed",
-      "durationMs": 78.2049579999998,
-      "durationText": "78.20 мс",
+      "durationMs": 83.02925000000005,
+      "durationText": "83.03 мс",
       "reason": "Vitest-проверка: пройдена (Air 3.4 photo journey AIR-007 keeps even a confident singleton in the list until selection)",
       "output": "",
       "tests": [
         {
           "name": "Air 3.4 photo journey AIR-007 keeps even a confident singleton in the list until selection",
           "status": "passed",
-          "durationMs": 78.2049579999998,
-          "durationText": "78.20 мс",
+          "durationMs": 83.02925000000005,
+          "durationText": "83.03 мс",
           "output": ""
         }
       ]
@@ -6450,16 +6464,16 @@
       "then": "её известные поля показаны без цены, рейтинга и вероятности совпадения",
       "scenarioText": "Сценарий: AIR-008 Выдача показывает только известные структурированные факты\n    Дано каталог вернул винодельню, название, год, тип, сахар и крепость для записи A\n    Когда показана строка кандидата A\n    Тогда её известные поля показаны без цены, рейтинга и вероятности совпадения\n    Когда показана строка B без года, сахара и крепости\n    Тогда отсутствующие поля скрыты, а не заполнены предположением или сенсорным текстом\n    И открытая карточка B сохраняет настоящее описание и другие предусмотренные поля карточки",
       "status": "passed",
-      "durationMs": 67.75487500000008,
-      "durationText": "67.75 мс",
+      "durationMs": 67.36433299999999,
+      "durationText": "67.36 мс",
       "reason": "Vitest-проверка: пройдена (Air 3.4 photo journey AIR-008 shows only known structured facts in rows and keeps the full card)",
       "output": "",
       "tests": [
         {
           "name": "Air 3.4 photo journey AIR-008 shows only known structured facts in rows and keeps the full card",
           "status": "passed",
-          "durationMs": 67.75487500000008,
-          "durationText": "67.75 мс",
+          "durationMs": 67.36433299999999,
+          "durationText": "67.36 мс",
           "output": ""
         }
       ]
@@ -6482,15 +6496,15 @@
         {
           "name": "Air 3.4 photo journey AIR-009 restores the non-leading photo candidate through $back Back",
           "status": "passed",
-          "durationMs": 68.72483399999965,
-          "durationText": "68.72 мс",
+          "durationMs": 69.27970800000003,
+          "durationText": "69.28 мс",
           "output": ""
         },
         {
           "name": "Air 3.4 photo journey AIR-009 restores the non-leading photo candidate through $back Back",
           "status": "passed",
-          "durationMs": 62.884207999999944,
-          "durationText": "62.88 мс",
+          "durationMs": 60.17408299999988,
+          "durationText": "60.17 мс",
           "output": ""
         }
       ]
@@ -6513,15 +6527,15 @@
         {
           "name": "Air 3.4 photo journey AIR-010 closes a photo preview onto the result that settled while it was open",
           "status": "passed",
-          "durationMs": 55.79191700000001,
-          "durationText": "55.79 мс",
+          "durationMs": 54.28720800000019,
+          "durationText": "54.29 мс",
           "output": ""
         },
         {
           "name": "Air 3.4 photo journey AIR-010 returns from a photo preview to its result list or chosen card",
           "status": "passed",
-          "durationMs": 67.9934589999998,
-          "durationText": "67.99 мс",
+          "durationMs": 66.57891699999982,
+          "durationText": "66.58 мс",
           "output": ""
         }
       ]
@@ -6544,15 +6558,15 @@
         {
           "name": "Air 3.4 photo journey AIR-011 distinguishes 'service' failure from an empty successful result",
           "status": "passed",
-          "durationMs": 33.58891700000004,
-          "durationText": "33.59 мс",
+          "durationMs": 34.83695799999987,
+          "durationText": "34.84 мс",
           "output": ""
         },
         {
           "name": "Air 3.4 photo journey AIR-011 distinguishes 'network' failure from an empty successful result",
           "status": "passed",
-          "durationMs": 34.407374999999774,
-          "durationText": "34.41 мс",
+          "durationMs": 33.85874999999987,
+          "durationText": "33.86 мс",
           "output": ""
         }
       ]
@@ -6568,16 +6582,16 @@
       "then": "отправлен поиск с тем же receipt без второго upload",
       "scenarioText": "Сценарий: AIR-012 Повтор не загружает фото снова\n    Дано поиск по фото завершился ошибкой сервиса или сети после успешного upload\n    Когда пользователь повторяет поиск\n    Тогда отправлен поиск с тем же receipt без второго upload",
       "status": "passed",
-      "durationMs": 53.706916999999976,
-      "durationText": "53.71 мс",
+      "durationMs": 53.984375,
+      "durationText": "53.98 мс",
       "reason": "Vitest-проверка: пройдена (Air 3.4 photo journey AIR-012 retries failed search with the same accepted receipt and no second upload)",
       "output": "",
       "tests": [
         {
           "name": "Air 3.4 photo journey AIR-012 retries failed search with the same accepted receipt and no second upload",
           "status": "passed",
-          "durationMs": 53.706916999999976,
-          "durationText": "53.71 мс",
+          "durationMs": 53.984375,
+          "durationText": "53.98 мс",
           "output": ""
         }
       ]
@@ -6593,16 +6607,16 @@
       "then": "поиск не отправляется с отсутствующим photoId",
       "scenarioText": "Сценарий: AIR-013 Ошибка до принятия фото\n    Дано снимок не был принят либо фото не удалось загрузить и receipt отсутствует\n    Когда пользователь пытается повторить поиск без действительного receipt\n    Тогда поиск не отправляется с отсутствующим photoId\n    И при сохранённом локальном файле возможен повтор upload этого файла\n    И доступны новый снимок и поиск по названию",
       "status": "passed",
-      "durationMs": 51.3897079999997,
-      "durationText": "51.39 мс",
+      "durationMs": 47.55279100000007,
+      "durationText": "47.55 мс",
       "reason": "Vitest-проверка: пройдена (Air 3.4 photo journey AIR-013 retries upload of a retained file but never searches without a receipt)",
       "output": "",
       "tests": [
         {
           "name": "Air 3.4 photo journey AIR-013 retries upload of a retained file but never searches without a receipt",
           "status": "passed",
-          "durationMs": 51.3897079999997,
-          "durationText": "51.39 мс",
+          "durationMs": 47.55279100000007,
+          "durationText": "47.55 мс",
           "output": ""
         }
       ]
@@ -6625,15 +6639,15 @@
         {
           "name": "Air 3.4 photo journey AIR-014 lets notes pause while search and readable status continue",
           "status": "passed",
-          "durationMs": 52.81004199999961,
-          "durationText": "52.81 мс",
+          "durationMs": 50.596000000000004,
+          "durationText": "50.60 мс",
           "output": ""
         },
         {
           "name": "Air 3.4 photo journey AIR-014 keeps notes static when reduced motion is active without stopping photo search",
           "status": "passed",
-          "durationMs": 28.860999999999876,
-          "durationText": "28.86 мс",
+          "durationMs": 27.84137499999997,
+          "durationText": "27.84 мс",
           "output": ""
         }
       ]
@@ -6649,16 +6663,16 @@
       "then": "поиск по всему каталогу запускается через действующую задержку 250 мс",
       "scenarioText": "Сценарий: AIR-015 Ручной поиск остаётся живым поиском каталога\n    Дано открыт поиск по названию с пустым полем\n    Когда пользователь вводит непустой запрос\n    Тогда поиск по всему каталогу запускается через действующую задержку 250 мс\n    И видимый текст IME-композиции тоже участвует в задержке, даже без compositionend\n    И Enter во время композиции не ускоряет запрос\n    И compositionend с неизменным текстом не создаёт дубль\n    И Enter или кнопка поиска вне композиции запускает ожидающий запрос сразу без отложенного дубля",
       "status": "passed",
-      "durationMs": 41.355499999999665,
-      "durationText": "41.36 мс",
+      "durationMs": 40.67183300000033,
+      "durationText": "40.67 мс",
       "reason": "Vitest-проверка: пройдена (Air 3.4 photo journey AIR-015 debounces visible input including IME, then submits explicitly without a duplicate)",
       "output": "",
       "tests": [
         {
           "name": "Air 3.4 photo journey AIR-015 debounces visible input including IME, then submits explicitly without a duplicate",
           "status": "passed",
-          "durationMs": 41.355499999999665,
-          "durationText": "41.36 мс",
+          "durationMs": 40.67183300000033,
+          "durationText": "40.67 мс",
           "output": ""
         }
       ]
@@ -6681,15 +6695,15 @@
         {
           "name": "Air 3.4 photo journey AIR-016 ignores A, pages only B once and clears to one unfiltered first page",
           "status": "passed",
-          "durationMs": 110.6748749999997,
-          "durationText": "110.67 мс",
+          "durationMs": 111.87979200000063,
+          "durationText": "111.88 мс",
           "output": ""
         },
         {
           "name": "Air 3.4 photo journey AIR-016 keeps the current rows on 409 until a deliberate first-page refresh",
           "status": "passed",
-          "durationMs": 64.83145799999966,
-          "durationText": "64.83 мс",
+          "durationMs": 66.60058299999946,
+          "durationText": "66.60 мс",
           "output": ""
         }
       ]
@@ -6705,16 +6719,16 @@
       "then": "в нём виден существующий 2D alpha маскот погреба",
       "scenarioText": "Сценарий: AIR-017 Пустой ручной поиск и маскот погреба\n    Дано открыт поиск по названию до ввода текста\n    Когда показано свободное место страницы\n    Тогда в нём виден существующий 2D alpha маскот погреба\n    Когда появился запрос, загрузка, результаты, пустая выдача или ошибка\n    Тогда маскот скрыт, а сообщения и результаты доступны",
       "status": "passed",
-      "durationMs": 42.56037500000002,
-      "durationText": "42.56 мс",
+      "durationMs": 45.2691249999998,
+      "durationText": "45.27 мс",
       "reason": "Vitest-проверка: пройдена (Air 3.4 photo journey AIR-017 shows the cellar mascot only before manual search work begins)",
       "output": "",
       "tests": [
         {
           "name": "Air 3.4 photo journey AIR-017 shows the cellar mascot only before manual search work begins",
           "status": "passed",
-          "durationMs": 42.56037500000002,
-          "durationText": "42.56 мс",
+          "durationMs": 45.2691249999998,
+          "durationText": "45.27 мс",
           "output": ""
         }
       ]
@@ -6730,16 +6744,16 @@
       "then": "запрос, страницы, курсор и прокрутка восстановлены без нового HTTP-запроса",
       "scenarioText": "Сценарий: AIR-018 Возврат в ручной поиск восстанавливает контекст\n    Дано у ручного поиска есть запрос, загруженные страницы, курсор и прокрутка\n    Когда пользователь открывает карточку и возвращается экранной или системной кнопкой назад\n    Тогда запрос, страницы, курсор и прокрутка восстановлены без нового HTTP-запроса\n    И исходное фото не создаётся",
       "status": "passed",
-      "durationMs": 68.20687499999985,
-      "durationText": "68.21 мс",
+      "durationMs": 68.12437500000033,
+      "durationText": "68.12 мс",
       "reason": "Vitest-проверка: пройдена (FE-052 live catalog search CAT020 AIR-018 restores a paged catalog after browser Back)",
       "output": "",
       "tests": [
         {
           "name": "FE-052 live catalog search CAT020 AIR-018 restores a paged catalog after browser Back",
           "status": "passed",
-          "durationMs": 68.20687499999985,
-          "durationText": "68.21 мс",
+          "durationMs": 68.12437500000033,
+          "durationText": "68.12 мс",
           "output": ""
         }
       ]
@@ -6755,16 +6769,16 @@
       "then": "в списке есть ровно одна запись X с её данными",
       "scenarioText": "Сценарий: AIR-019 Сохранить и удалить без дублей\n    Дано открыта карточка вина с ID X\n    Когда пользователь нажимает «Сохранить» и открывает раздел «Сохранённое»\n    Тогда в списке есть ровно одна запись X с её данными\n    И повторное открытие или восстановление записи не создаёт дубль X\n    Когда пользователь повторно нажимает кнопку сохранения в карточке или удаляет X из списка\n    Тогда X исчезает, а при удалении последней записи показано пустое состояние\n    И исходное фото не удаляется действием сохранения",
       "status": "passed",
-      "durationMs": 88.55049999999983,
-      "durationText": "88.55 мс",
+      "durationMs": 81.33633399999962,
+      "durationText": "81.34 мс",
       "reason": "Vitest-проверка: пройдена (Air 3.4 photo journey AIR-019 saves one wine, restores it after reload and removes only that wine)",
       "output": "",
       "tests": [
         {
           "name": "Air 3.4 photo journey AIR-019 saves one wine, restores it after reload and removes only that wine",
           "status": "passed",
-          "durationMs": 88.55049999999983,
-          "durationText": "88.55 мс",
+          "durationMs": 81.33633399999962,
+          "durationText": "81.34 мс",
           "output": ""
         }
       ]
@@ -6780,16 +6794,16 @@
       "then": "восстановлены тот же список и прокрутка без нового поиска по фото",
       "scenarioText": "Сценарий: AIR-020 Открытие сохранённого возвращает в свой список\n    Дано в сохранённом есть несколько записей\n    Когда пользователь открывает одну и возвращается назад\n    Тогда восстановлены тот же список и прокрутка без нового поиска по фото",
       "status": "passed",
-      "durationMs": 48.7757500000007,
-      "durationText": "48.78 мс",
+      "durationMs": 46.4276660000005,
+      "durationText": "46.43 мс",
       "reason": "Vitest-проверка: пройдена (Air 3.4 photo journey AIR-020 returns from a saved card to the same list and scroll without photo search)",
       "output": "",
       "tests": [
         {
           "name": "Air 3.4 photo journey AIR-020 returns from a saved card to the same list and scroll without photo search",
           "status": "passed",
-          "durationMs": 48.7757500000007,
-          "durationText": "48.78 мс",
+          "durationMs": 46.4276660000005,
+          "durationText": "46.43 мс",
           "output": ""
         }
       ]
@@ -6818,16 +6832,16 @@
       "then": "оно не показывает чужой или выдуманный снимок и не отправляет поиск с пустым photoId",
       "scenarioText": "Сценарий: AIR-022 Прямое открытие страницы без контекста безопасно\n    Дано приложение стартует без активного фото или история возвращает в утраченное состояние фото-пути\n    Когда приложение восстанавливает экран\n    Тогда оно не показывает чужой или выдуманный снимок и не отправляет поиск с пустым photoId\n    И доступны чистая Главная, камера, галерея и поиск по названию",
       "status": "passed",
-      "durationMs": 26.226541999999426,
-      "durationText": "26.23 мс",
+      "durationMs": 27.6859170000007,
+      "durationText": "27.69 мс",
       "reason": "Vitest-проверка: пройдена (Air 3.4 photo journey AIR-022 starts safely after lost photo-route history without invented photo or search)",
       "output": "",
       "tests": [
         {
           "name": "Air 3.4 photo journey AIR-022 starts safely after lost photo-route history without invented photo or search",
           "status": "passed",
-          "durationMs": 26.226541999999426,
-          "durationText": "26.23 мс",
+          "durationMs": 27.6859170000007,
+          "durationText": "27.69 мс",
           "output": ""
         }
       ]
@@ -6850,15 +6864,15 @@
         {
           "name": "mobile behavior demo AIR-023 camera Back preserves the 'empty' recovery reason",
           "status": "passed",
-          "durationMs": 61.18687499999987,
-          "durationText": "61.19 мс",
+          "durationMs": 60.74920800000018,
+          "durationText": "60.75 мс",
           "output": ""
         },
         {
           "name": "mobile behavior demo AIR-023 camera Back preserves the 'rejected' recovery reason",
           "status": "passed",
-          "durationMs": 82.468167,
-          "durationText": "82.47 мс",
+          "durationMs": 84.22974999999997,
+          "durationText": "84.23 мс",
           "output": ""
         }
       ]
@@ -6943,125 +6957,125 @@
     }
   ],
   "artifacts": [
-    "data/runs/20260925T205643Z-fast-1dce01fb.api-go.jsonl",
-    "data/runs/20260925T205643Z-fast-1dce01fb.eval-go.jsonl",
-    "data/runs/20260925T205643Z-fast-1dce01fb.web-vitest.json"
+    "data/runs/20260925T210029Z-fast-e7039501.api-go.jsonl",
+    "data/runs/20260925T210029Z-fast-e7039501.eval-go.jsonl",
+    "data/runs/20260925T210029Z-fast-e7039501.web-vitest.json"
   ],
   "sources": [
-    "data/runs/20260925T205643Z-fast-1dce01fb.sources/live-search.test.tsx",
-    "data/runs/20260925T205643Z-fast-1dce01fb.sources/catalog_search.go",
-    "data/runs/20260925T205643Z-fast-1dce01fb.sources/catalog_search_test.go",
-    "data/runs/20260925T205643Z-fast-1dce01fb.sources/catalog_search_integration_test.go",
-    "data/runs/20260925T205643Z-fast-1dce01fb.sources/catalog_assets.go",
-    "data/runs/20260925T205643Z-fast-1dce01fb.sources/catalog_paging.go",
-    "data/runs/20260925T205643Z-fast-1dce01fb.sources/catalog_display_test.go",
-    "data/runs/20260925T205643Z-fast-1dce01fb.sources/catalog_import_integration_test.go",
-    "data/runs/20260925T205643Z-fast-1dce01fb.sources/00002_catalog_import.sql",
-    "data/runs/20260925T205643Z-fast-1dce01fb.sources/catalog.test.tsx",
-    "data/runs/20260925T205643Z-fast-1dce01fb.sources/be-045-bdd-audit.md",
-    "data/runs/20260925T205643Z-fast-1dce01fb.sources/report-results.d.mts",
-    "data/runs/20260925T205643Z-fast-1dce01fb.sources/import.go",
-    "data/runs/20260925T205643Z-fast-1dce01fb.sources/import_test.go",
-    "data/runs/20260925T205643Z-fast-1dce01fb.sources/catalog-import-main.go",
-    "data/runs/20260925T205643Z-fast-1dce01fb.sources/report-results.mjs",
-    "data/runs/20260925T205643Z-fast-1dce01fb.sources/catalog-display.md",
-    "data/runs/20260925T205643Z-fast-1dce01fb.sources/catalog-display-spec.md",
-    "data/runs/20260925T205643Z-fast-1dce01fb.sources/card-polish-spec.md",
-    "data/runs/20260925T205643Z-fast-1dce01fb.sources/wine.go",
-    "data/runs/20260925T205643Z-fast-1dce01fb.sources/model_services_regression_test.go",
-    "data/runs/20260925T205643Z-fast-1dce01fb.sources/model_services.go",
-    "data/runs/20260925T205643Z-fast-1dce01fb.sources/model_services_test.go",
-    "data/runs/20260925T205643Z-fast-1dce01fb.sources/referenceengine.go",
-    "data/runs/20260925T205643Z-fast-1dce01fb.sources/decode.go",
-    "data/runs/20260925T205643Z-fast-1dce01fb.sources/decode_test.go",
-    "data/runs/20260925T205643Z-fast-1dce01fb.sources/roman-conformance-main.go",
-    "data/runs/20260925T205643Z-fast-1dce01fb.sources/roman-conformance-main_test.go",
-    "data/runs/20260925T205643Z-fast-1dce01fb.sources/reference-engine-main.go",
-    "data/runs/20260925T205643Z-fast-1dce01fb.sources/wine-services.md",
-    "data/runs/20260925T205643Z-fast-1dce01fb.sources/wine-services.openapi.json",
-    "data/runs/20260925T205643Z-fast-1dce01fb.sources/ROMAN-SERVICES.md",
-    "data/runs/20260925T205643Z-fast-1dce01fb.sources/recommendations.test.tsx",
-    "data/runs/20260925T205643Z-fast-1dce01fb.sources/vite.config.ts",
-    "data/runs/20260925T205643Z-fast-1dce01fb.sources/proxy.test.ts",
-    "data/runs/20260925T205643Z-fast-1dce01fb.sources/assets-v2-provenance.md",
-    "data/runs/20260925T205643Z-fast-1dce01fb.sources/PlayfairDisplay-VariableFont_wght.woff2",
-    "data/runs/20260925T205643Z-fast-1dce01fb.sources/go.mod",
-    "data/runs/20260925T205643Z-fast-1dce01fb.sources/go.sum",
-    "data/runs/20260925T205643Z-fast-1dce01fb.sources/run-fast-checks.mjs",
-    "data/runs/20260925T205643Z-fast-1dce01fb.sources/README.md",
-    "data/runs/20260925T205643Z-fast-1dce01fb.sources/report-index.html",
-    "data/runs/20260925T205643Z-fast-1dce01fb.sources/report.test.ts",
-    "data/runs/20260925T205643Z-fast-1dce01fb.sources/eval-predict.md",
-    "data/runs/20260925T205643Z-fast-1dce01fb.sources/database.md",
-    "data/runs/20260925T205643Z-fast-1dce01fb.sources/eval_predict.go",
-    "data/runs/20260925T205643Z-fast-1dce01fb.sources/eval_predict_test.go",
-    "data/runs/20260925T205643Z-fast-1dce01fb.sources/cases.json",
-    "data/runs/20260925T205643Z-fast-1dce01fb.sources/behavior-spec.md",
-    "data/runs/20260925T205643Z-fast-1dce01fb.sources/security-spec.md",
-    "data/runs/20260925T205643Z-fast-1dce01fb.sources/demo-catalog.md",
-    "data/runs/20260925T205643Z-fast-1dce01fb.sources/demo-search.schema.json",
-    "data/runs/20260925T205643Z-fast-1dce01fb.sources/api-versioning.md",
-    "data/runs/20260925T205643Z-fast-1dce01fb.sources/main.go",
-    "data/runs/20260925T205643Z-fast-1dce01fb.sources/docs.go",
-    "data/runs/20260925T205643Z-fast-1dce01fb.sources/security.go",
-    "data/runs/20260925T205643Z-fast-1dce01fb.sources/uploads.go",
-    "data/runs/20260925T205643Z-fast-1dce01fb.sources/catalog_store.go",
-    "data/runs/20260925T205643Z-fast-1dce01fb.sources/catalog_store_test.go",
-    "data/runs/20260925T205643Z-fast-1dce01fb.sources/migrate.go",
-    "data/runs/20260925T205643Z-fast-1dce01fb.sources/demo_catalog.sql",
-    "data/runs/20260925T205643Z-fast-1dce01fb.sources/00001_demo_catalog.sql",
-    "data/runs/20260925T205643Z-fast-1dce01fb.sources/catalog.json",
-    "data/runs/20260925T205643Z-fast-1dce01fb.sources/openapi.json",
-    "data/runs/20260925T205643Z-fast-1dce01fb.sources/main_test.go",
-    "data/runs/20260925T205643Z-fast-1dce01fb.sources/docs_test.go",
-    "data/runs/20260925T205643Z-fast-1dce01fb.sources/security_test.go",
-    "data/runs/20260925T205643Z-fast-1dce01fb.sources/request_security_test.go",
-    "data/runs/20260925T205643Z-fast-1dce01fb.sources/brutforce-demo.service",
-    "data/runs/20260925T205643Z-fast-1dce01fb.sources/App.tsx",
-    "data/runs/20260925T205643Z-fast-1dce01fb.sources/api.ts",
-    "data/runs/20260925T205643Z-fast-1dce01fb.sources/api.test.ts",
-    "data/runs/20260925T205643Z-fast-1dce01fb.sources/types.ts",
-    "data/runs/20260925T205643Z-fast-1dce01fb.sources/styles.css",
-    "data/runs/20260925T205643Z-fast-1dce01fb.sources/overrides.css",
-    "data/runs/20260925T205643Z-fast-1dce01fb.sources/v2.css",
-    "data/runs/20260925T205643Z-fast-1dce01fb.sources/V2Visual.tsx",
-    "data/runs/20260925T205643Z-fast-1dce01fb.sources/App.test.tsx",
-    "data/runs/20260925T205643Z-fast-1dce01fb.sources/design.test.tsx",
-    "data/runs/20260925T205643Z-fast-1dce01fb.sources/navigation.test.tsx",
-    "data/runs/20260925T205643Z-fast-1dce01fb.sources/design-specs.md",
-    "data/runs/20260925T205643Z-fast-1dce01fb.sources/AtlasIcons.tsx",
-    "data/runs/20260925T205643Z-fast-1dce01fb.sources/InstallApp.tsx",
-    "data/runs/20260925T205643Z-fast-1dce01fb.sources/pwa.test.tsx",
-    "data/runs/20260925T205643Z-fast-1dce01fb.sources/manifest.webmanifest",
-    "data/runs/20260925T205643Z-fast-1dce01fb.sources/mascot-hold-2d-alpha.webp",
-    "data/runs/20260925T205643Z-fast-1dce01fb.sources/mascot-walk-2d-alpha.webp",
-    "data/runs/20260925T205643Z-fast-1dce01fb.sources/mascot-counter-thoughtful-2d-alpha.webp",
-    "data/runs/20260925T205643Z-fast-1dce01fb.sources/mascot-cellar-2d-alpha.webp",
-    "data/runs/20260925T205643Z-fast-1dce01fb.sources/mascot-offline-2d-alpha.webp",
-    "data/runs/20260925T205643Z-fast-1dce01fb.sources/svoe-vino-logo.svg",
-    "data/runs/20260925T205643Z-fast-1dce01fb.sources/index.html",
-    "data/runs/20260925T205643Z-fast-1dce01fb.sources/database_integration_test.go",
-    "data/runs/20260925T205643Z-fast-1dce01fb.sources/catalog-migrate-main.go",
-    "data/runs/20260925T205643Z-fast-1dce01fb.sources/card-polish.test.tsx",
-    "data/runs/20260925T205643Z-fast-1dce01fb.sources/card-polish-check.mjs",
-    "data/runs/20260925T205643Z-fast-1dce01fb.sources/air-v34.test.tsx",
-    "data/runs/20260925T205643Z-fast-1dce01fb.sources/air-v35.test.tsx",
-    "data/runs/20260925T205643Z-fast-1dce01fb.sources/photo-feedback.test.tsx",
-    "data/runs/20260925T205643Z-fast-1dce01fb.sources/air.css",
-    "data/runs/20260925T205643Z-fast-1dce01fb.sources/server-error-a.png",
-    "data/runs/20260925T205643Z-fast-1dce01fb.sources/vision_service.go",
-    "data/runs/20260925T205643Z-fast-1dce01fb.sources/vision_service_test.go",
-    "data/runs/20260925T205643Z-fast-1dce01fb.sources/feedback.go",
-    "data/runs/20260925T205643Z-fast-1dce01fb.sources/feedback_test.go",
-    "data/runs/20260925T205643Z-fast-1dce01fb.sources/demo-search.schema.json",
-    "data/runs/20260925T205643Z-fast-1dce01fb.sources/vision-serving.md",
-    "data/runs/20260925T205643Z-fast-1dce01fb.sources/photo-feedback.md",
-    "data/runs/20260925T205643Z-fast-1dce01fb.sources/fast-report-exceptions.json",
-    "data/runs/20260925T205643Z-fast-1dce01fb.sources/air-v34-behavior-spec.md",
-    "data/runs/20260925T205643Z-fast-1dce01fb.sources/air-v34-bdd-audit.md",
-    "data/runs/20260925T205643Z-fast-1dce01fb.sources/air-v34-implementation-qa.md",
-    "data/runs/20260925T205643Z-fast-1dce01fb.sources/air-v35-bdd-audit.md",
-    "data/runs/20260925T205643Z-fast-1dce01fb.sources/air-v35-implementation-qa.md",
-    "data/runs/20260925T205643Z-fast-1dce01fb.sources/behavior-v3.feature"
+    "data/runs/20260925T210029Z-fast-e7039501.sources/live-search.test.tsx",
+    "data/runs/20260925T210029Z-fast-e7039501.sources/catalog_search.go",
+    "data/runs/20260925T210029Z-fast-e7039501.sources/catalog_search_test.go",
+    "data/runs/20260925T210029Z-fast-e7039501.sources/catalog_search_integration_test.go",
+    "data/runs/20260925T210029Z-fast-e7039501.sources/catalog_assets.go",
+    "data/runs/20260925T210029Z-fast-e7039501.sources/catalog_paging.go",
+    "data/runs/20260925T210029Z-fast-e7039501.sources/catalog_display_test.go",
+    "data/runs/20260925T210029Z-fast-e7039501.sources/catalog_import_integration_test.go",
+    "data/runs/20260925T210029Z-fast-e7039501.sources/00002_catalog_import.sql",
+    "data/runs/20260925T210029Z-fast-e7039501.sources/catalog.test.tsx",
+    "data/runs/20260925T210029Z-fast-e7039501.sources/be-045-bdd-audit.md",
+    "data/runs/20260925T210029Z-fast-e7039501.sources/report-results.d.mts",
+    "data/runs/20260925T210029Z-fast-e7039501.sources/import.go",
+    "data/runs/20260925T210029Z-fast-e7039501.sources/import_test.go",
+    "data/runs/20260925T210029Z-fast-e7039501.sources/catalog-import-main.go",
+    "data/runs/20260925T210029Z-fast-e7039501.sources/report-results.mjs",
+    "data/runs/20260925T210029Z-fast-e7039501.sources/catalog-display.md",
+    "data/runs/20260925T210029Z-fast-e7039501.sources/catalog-display-spec.md",
+    "data/runs/20260925T210029Z-fast-e7039501.sources/card-polish-spec.md",
+    "data/runs/20260925T210029Z-fast-e7039501.sources/wine.go",
+    "data/runs/20260925T210029Z-fast-e7039501.sources/model_services_regression_test.go",
+    "data/runs/20260925T210029Z-fast-e7039501.sources/model_services.go",
+    "data/runs/20260925T210029Z-fast-e7039501.sources/model_services_test.go",
+    "data/runs/20260925T210029Z-fast-e7039501.sources/referenceengine.go",
+    "data/runs/20260925T210029Z-fast-e7039501.sources/decode.go",
+    "data/runs/20260925T210029Z-fast-e7039501.sources/decode_test.go",
+    "data/runs/20260925T210029Z-fast-e7039501.sources/roman-conformance-main.go",
+    "data/runs/20260925T210029Z-fast-e7039501.sources/roman-conformance-main_test.go",
+    "data/runs/20260925T210029Z-fast-e7039501.sources/reference-engine-main.go",
+    "data/runs/20260925T210029Z-fast-e7039501.sources/wine-services.md",
+    "data/runs/20260925T210029Z-fast-e7039501.sources/wine-services.openapi.json",
+    "data/runs/20260925T210029Z-fast-e7039501.sources/ROMAN-SERVICES.md",
+    "data/runs/20260925T210029Z-fast-e7039501.sources/recommendations.test.tsx",
+    "data/runs/20260925T210029Z-fast-e7039501.sources/vite.config.ts",
+    "data/runs/20260925T210029Z-fast-e7039501.sources/proxy.test.ts",
+    "data/runs/20260925T210029Z-fast-e7039501.sources/assets-v2-provenance.md",
+    "data/runs/20260925T210029Z-fast-e7039501.sources/PlayfairDisplay-VariableFont_wght.woff2",
+    "data/runs/20260925T210029Z-fast-e7039501.sources/go.mod",
+    "data/runs/20260925T210029Z-fast-e7039501.sources/go.sum",
+    "data/runs/20260925T210029Z-fast-e7039501.sources/run-fast-checks.mjs",
+    "data/runs/20260925T210029Z-fast-e7039501.sources/README.md",
+    "data/runs/20260925T210029Z-fast-e7039501.sources/report-index.html",
+    "data/runs/20260925T210029Z-fast-e7039501.sources/report.test.ts",
+    "data/runs/20260925T210029Z-fast-e7039501.sources/eval-predict.md",
+    "data/runs/20260925T210029Z-fast-e7039501.sources/database.md",
+    "data/runs/20260925T210029Z-fast-e7039501.sources/eval_predict.go",
+    "data/runs/20260925T210029Z-fast-e7039501.sources/eval_predict_test.go",
+    "data/runs/20260925T210029Z-fast-e7039501.sources/cases.json",
+    "data/runs/20260925T210029Z-fast-e7039501.sources/behavior-spec.md",
+    "data/runs/20260925T210029Z-fast-e7039501.sources/security-spec.md",
+    "data/runs/20260925T210029Z-fast-e7039501.sources/demo-catalog.md",
+    "data/runs/20260925T210029Z-fast-e7039501.sources/demo-search.schema.json",
+    "data/runs/20260925T210029Z-fast-e7039501.sources/api-versioning.md",
+    "data/runs/20260925T210029Z-fast-e7039501.sources/main.go",
+    "data/runs/20260925T210029Z-fast-e7039501.sources/docs.go",
+    "data/runs/20260925T210029Z-fast-e7039501.sources/security.go",
+    "data/runs/20260925T210029Z-fast-e7039501.sources/uploads.go",
+    "data/runs/20260925T210029Z-fast-e7039501.sources/catalog_store.go",
+    "data/runs/20260925T210029Z-fast-e7039501.sources/catalog_store_test.go",
+    "data/runs/20260925T210029Z-fast-e7039501.sources/migrate.go",
+    "data/runs/20260925T210029Z-fast-e7039501.sources/demo_catalog.sql",
+    "data/runs/20260925T210029Z-fast-e7039501.sources/00001_demo_catalog.sql",
+    "data/runs/20260925T210029Z-fast-e7039501.sources/catalog.json",
+    "data/runs/20260925T210029Z-fast-e7039501.sources/openapi.json",
+    "data/runs/20260925T210029Z-fast-e7039501.sources/main_test.go",
+    "data/runs/20260925T210029Z-fast-e7039501.sources/docs_test.go",
+    "data/runs/20260925T210029Z-fast-e7039501.sources/security_test.go",
+    "data/runs/20260925T210029Z-fast-e7039501.sources/request_security_test.go",
+    "data/runs/20260925T210029Z-fast-e7039501.sources/brutforce-demo.service",
+    "data/runs/20260925T210029Z-fast-e7039501.sources/App.tsx",
+    "data/runs/20260925T210029Z-fast-e7039501.sources/api.ts",
+    "data/runs/20260925T210029Z-fast-e7039501.sources/api.test.ts",
+    "data/runs/20260925T210029Z-fast-e7039501.sources/types.ts",
+    "data/runs/20260925T210029Z-fast-e7039501.sources/styles.css",
+    "data/runs/20260925T210029Z-fast-e7039501.sources/overrides.css",
+    "data/runs/20260925T210029Z-fast-e7039501.sources/v2.css",
+    "data/runs/20260925T210029Z-fast-e7039501.sources/V2Visual.tsx",
+    "data/runs/20260925T210029Z-fast-e7039501.sources/App.test.tsx",
+    "data/runs/20260925T210029Z-fast-e7039501.sources/design.test.tsx",
+    "data/runs/20260925T210029Z-fast-e7039501.sources/navigation.test.tsx",
+    "data/runs/20260925T210029Z-fast-e7039501.sources/design-specs.md",
+    "data/runs/20260925T210029Z-fast-e7039501.sources/AtlasIcons.tsx",
+    "data/runs/20260925T210029Z-fast-e7039501.sources/InstallApp.tsx",
+    "data/runs/20260925T210029Z-fast-e7039501.sources/pwa.test.tsx",
+    "data/runs/20260925T210029Z-fast-e7039501.sources/manifest.webmanifest",
+    "data/runs/20260925T210029Z-fast-e7039501.sources/mascot-hold-2d-alpha.webp",
+    "data/runs/20260925T210029Z-fast-e7039501.sources/mascot-walk-2d-alpha.webp",
+    "data/runs/20260925T210029Z-fast-e7039501.sources/mascot-counter-thoughtful-2d-alpha.webp",
+    "data/runs/20260925T210029Z-fast-e7039501.sources/mascot-cellar-2d-alpha.webp",
+    "data/runs/20260925T210029Z-fast-e7039501.sources/mascot-offline-2d-alpha.webp",
+    "data/runs/20260925T210029Z-fast-e7039501.sources/svoe-vino-logo.svg",
+    "data/runs/20260925T210029Z-fast-e7039501.sources/index.html",
+    "data/runs/20260925T210029Z-fast-e7039501.sources/database_integration_test.go",
+    "data/runs/20260925T210029Z-fast-e7039501.sources/catalog-migrate-main.go",
+    "data/runs/20260925T210029Z-fast-e7039501.sources/card-polish.test.tsx",
+    "data/runs/20260925T210029Z-fast-e7039501.sources/card-polish-check.mjs",
+    "data/runs/20260925T210029Z-fast-e7039501.sources/air-v34.test.tsx",
+    "data/runs/20260925T210029Z-fast-e7039501.sources/air-v35.test.tsx",
+    "data/runs/20260925T210029Z-fast-e7039501.sources/photo-feedback.test.tsx",
+    "data/runs/20260925T210029Z-fast-e7039501.sources/air.css",
+    "data/runs/20260925T210029Z-fast-e7039501.sources/server-error-a.png",
+    "data/runs/20260925T210029Z-fast-e7039501.sources/vision_service.go",
+    "data/runs/20260925T210029Z-fast-e7039501.sources/vision_service_test.go",
+    "data/runs/20260925T210029Z-fast-e7039501.sources/feedback.go",
+    "data/runs/20260925T210029Z-fast-e7039501.sources/feedback_test.go",
+    "data/runs/20260925T210029Z-fast-e7039501.sources/demo-search.schema.json",
+    "data/runs/20260925T210029Z-fast-e7039501.sources/vision-serving.md",
+    "data/runs/20260925T210029Z-fast-e7039501.sources/photo-feedback.md",
+    "data/runs/20260925T210029Z-fast-e7039501.sources/fast-report-exceptions.json",
+    "data/runs/20260925T210029Z-fast-e7039501.sources/air-v34-behavior-spec.md",
+    "data/runs/20260925T210029Z-fast-e7039501.sources/air-v34-bdd-audit.md",
+    "data/runs/20260925T210029Z-fast-e7039501.sources/air-v34-implementation-qa.md",
+    "data/runs/20260925T210029Z-fast-e7039501.sources/air-v35-bdd-audit.md",
+    "data/runs/20260925T210029Z-fast-e7039501.sources/air-v35-implementation-qa.md",
+    "data/runs/20260925T210029Z-fast-e7039501.sources/behavior-v3.feature"
   ]
 }

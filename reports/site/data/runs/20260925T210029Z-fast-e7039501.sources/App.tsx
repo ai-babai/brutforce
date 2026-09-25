@@ -1673,7 +1673,9 @@ function WineList({
       {wines.map((wine, index) => {
         const isLeader = leader && index === 0;
         const year = wine.year && wine.year > 0 ? String(wine.year) : "";
-        const facts = [wine.categoryAndSweetness || [wine.color, wine.sugar].filter(Boolean).join(" "), alcoholLabel(wine)].filter(Boolean);
+        const color = wine.color?.trim() || "";
+        const basicColor = /^(красное|белое|розовое)$/i.test(color) ? color : "";
+        const facts = [wine.categoryAndSweetness || [basicColor, wine.sugar].filter(Boolean).join(" "), alcoholLabel(wine)].filter(Boolean);
         return (
         <button
           key={wine.id}
