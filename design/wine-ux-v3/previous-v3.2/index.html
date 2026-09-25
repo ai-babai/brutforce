@@ -1,22 +1,23 @@
 <!doctype html>
 <html lang="ru">
 <head>
+  <base href="../">
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#fefdfa">
   <title>Своё Вино · мобильный сценарий v3</title>
-  <link rel="stylesheet" href="styles.css">
-  <script src="app.js" defer></script>
+  <link rel="stylesheet" href="previous-v3.2/styles.css">
+  <script src="previous-v3.2/app.js" defer></script>
 </head>
 <body>
   <main class="studio">
     <aside class="studio-side">
       <div class="studio-mark"><span class="studio-mark-icon">✳</span> BRUTFORCE / DESIGN STUDY</div>
-      <p class="studio-index">Мобильный сценарий · версия 3.3</p>
+      <p class="studio-index">Мобильный сценарий · версия 3.2</p>
       <h1>Узнать вино.<br><em>Понять, что дальше.</em></h1>
       <p class="studio-lead">Самостоятельный кликабельный макет: от снимка этикетки до карточки, похожих бутылок и восстановления после ошибки.</p>
       <div class="studio-note"><b>Граница макета</b><p>Все вина и результаты здесь демонстрационные. Камера, галерея, поиск и серверные ответы смоделированы локально.</p></div>
-      <p class="report-doc-links"><a href="review.html">Новая итерация и сравнение ↗</a><a href="research-iteration-3.md">Исследование новой итерации ↗</a></p>
+      <p class="report-doc-links"><a href="review.html">Сравнение до / после на iPhone ↗</a><a href="research-iteration-2.md">Исследование новой итерации ↗</a></p>
       <div class="scenario-heading"><h2>Сценарии</h2><span>Выберите состояние</span></div>
       <div class="scenario-list" id="scenario-list"></div>
       <section class="state-rationale" aria-live="polite"><span>РЕШЕНИЕ ДЛЯ ЭКРАНА</span><p id="state-rationale"></p></section>
@@ -31,7 +32,7 @@
         <div class="variant-study"><div><span>ИЛЛЮСТРАЦИЯ ОШИБКИ СЕРВЕРА</span><h3>Два спокойных образа</h3><p>Выбор меняет только иллюстрацию экрана «Ошибка сервера». Вариант A выбран по умолчанию.</p></div><div class="variant-options"><button data-action="server-variant:a" class="selected" aria-pressed="true"><img src="assets/server-error-a.png" alt="Пёс рядом с прибором на паузе"><span>A · пауза сервиса</span></button><button data-action="server-variant:b" aria-pressed="false"><img src="assets/server-error-b.png" alt="Пёс рядом с песочными часами"><span>B · ожидание</span></button></div></div>
         <p class="research-links">Дополнительно: <a href="https://www.vivino.com/en/wine-news/how-the-vivino-label-scanner-works" target="_blank" rel="noopener noreferrer">Vivino — ручной путь после неудачного сканирования</a> · <a href="https://www.wine-searcher.com/find/achaval%2Bferrer%2Bquimera%2Bmendoza%2Bargentina/2019" target="_blank" rel="noopener noreferrer">Wine-Searcher — поля вина</a> · <a href="https://developer.apple.com/design/human-interface-guidelines/motion" target="_blank" rel="noopener noreferrer">Apple — движение</a> · <a href="https://developer.android.com/topic/libraries/architecture/paging/load-state" target="_blank" rel="noopener noreferrer">Android — повтор после ошибки</a>.</p>
       </section>
-      <details class="studio-details"><summary>История изменений <span>↗</span></summary><div><p><b>v3.3 · 25 сентября 2026</b></p><p>Выдача теперь «Нашли похожие вина», без привязки к этикетке. Камера и галерея — крупные иконки. На ожидании наклонённый снимок расположен под маскотом, справа плавно сменяются проверенные заметки о вине. Смена останавливается кнопкой паузы и при сокращении движения. Причина: замечания Макса о лишнем тексте и слишком формальной композиции.</p><p><a href="review-v3.2.html">Сравнение v3.1 / v3.2</a> · <a href="previous-v3.2/?screen=slow">Макет v3.2</a></p><p><b>v3.2 · 25 сентября 2026</b></p><p>Действия замены фото поставлены вертикально. Маскот ожидания увеличен и поднят; снимок и статус объединены под ним. Убрана кнопка демо из телефона. Белая выдача с винным контуром восстановлена по FE-057. Причина: замечания Макса и сравнение снимков 390×844.</p><p><b>v3 · 25 сентября 2026</b></p><p>Добавлены отдельные состояния ошибки сервера и отсутствия совпадений, чистая Главная, компактное сравнение кандидатов и сканирование только внутри фотографии. Уточнены поля карточки и возвраты между экранами.</p></div></details>
+      <details class="studio-details"><summary>История изменений <span>↗</span></summary><div><p><b>v3.2 · 25 сентября 2026</b></p><p>Действия замены фото поставлены вертикально. Маскот ожидания увеличен и поднят; снимок и статус объединены под ним. Убрана кнопка демо из телефона. Белая выдача с винным контуром восстановлена по FE-057. Причина: замечания Макса и сравнение снимков 390×844.</p><p><b>v3 · 25 сентября 2026</b></p><p>Добавлены отдельные состояния ошибки сервера и отсутствия совпадений, чистая Главная, компактное сравнение кандидатов и сканирование только внутри фотографии. Уточнены поля карточки и возвраты между экранами.</p></div></details>
     </aside>
     <section class="phone-area" aria-label="Интерактивный макет телефона">
       <div class="phone-controls"><span>ПРОТОТИП · <span id="state-name">Главная</span></span><div class="width-controls" aria-label="Ширина макета"><button data-width="320">320</button><button data-width="360">360</button><button data-width="390">390</button><button data-width="430" class="selected" aria-pressed="true">430</button></div></div>
