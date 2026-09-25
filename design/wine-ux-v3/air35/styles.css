@@ -5,7 +5,7 @@
 #screen-stage>.home-screen{flex:1}
 .home-hero{min-height:537px}
 .hero-dog{height:352px}
-.hero-dog .dog{height:365px;width:400px}
+.hero-dog .dog{height:365px;width:400px;transform:scale(1.16);transform-origin:bottom center}
 .btn.primary,.home-scan,.home-scan-copy b{font-family:Onest,Arial,sans-serif;font-size:var(--primary-label-size);font-weight:var(--primary-label-weight);line-height:1.25}
 .btn.primary{min-height:56px}
 .bottom-nav .nav-slider{transition:transform 320ms cubic-bezier(.22,.8,.3,1);will-change:transform;background:#f3e7dd}
@@ -39,8 +39,8 @@
 
 @container prototype (max-width:380px){.results-screen,.capture-immersive{--screen-gutter:20px}.capture-immersive .capture-screen h2{font-size:28px}}
 @media(min-width:901px){.capture-immersive{min-height:858px}}
-@media(max-height:850px){.home-hero{min-height:450px}.hero-dog{height:287px}.hero-dog .dog{height:305px;width:385px}}
-@media(max-height:740px){.home-hero{min-height:365px}.hero-dog{height:219px}.hero-dog .dog{height:233px;width:340px}}
+@media(max-height:850px){.home-hero{min-height:450px}.hero-dog{height:287px}.hero-dog .dog{height:305px;width:385px;transform:scale(1.07)}}
+@media(max-height:740px){.home-hero{min-height:365px}.hero-dog{height:219px}.hero-dog .dog{height:233px;width:340px;transform:none}}
 @media(max-height:740px){.capture-immersive .capture-screen{padding-top:8px}.capture-immersive .capture-screen h2{font-size:26px}.capture-immersive .subcopy{line-height:1.4}.capture-immersive .photo-bottle{padding:160px 70px 170px}.capture-immersive .camera-corners{inset:180px 48px 210px}.capture-immersive .fixture-note{display:none}}
 @media(prefers-reduced-motion:reduce){.bottom-nav .nav-slider{transition:none}}
 @media(max-height:500px) and (orientation:landscape){
