@@ -580,7 +580,7 @@ describe("mobile behavior demo", () => {
     render(<App />);
     await userEvent.upload(screen.getByLabelText(/Загрузить фотографию/i), new File(["photo"], "wine.jpg", { type: "image/jpeg" }));
     await waitFor(() => expect(screen.getByRole("heading", { name: "Карточка пока недоступна" })).toBeVisible());
-    expect(screen.getByText(/Вино распознано, но его карточки нет/)).toBeVisible();
+    expect(screen.getByText("Найден кандидат, но его карточки нет в этой версии витрины.")).toBeVisible();
   });
   it("SR-006 declining candidates keeps the editable correction context without its photo", async () => {
     vi.stubGlobal("URL", {

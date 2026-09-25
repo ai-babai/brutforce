@@ -1202,7 +1202,7 @@ export function App({
               />
               <h2>{missingAction === "outside_display_catalog" ? "Карточка пока недоступна" : "Вино не найдено"}</h2>
               <p>{missingAction === "outside_display_catalog"
-                ? "Вино распознано, но его карточки нет в этой версии каталога."
+                ? "Найден кандидат, но его карточки нет в этой версии витрины."
                 : "Подходящего совпадения не нашлось."}</p>
               <MascotScene scene="counter" />
               {lastRequest.current.hasPhoto ? (
