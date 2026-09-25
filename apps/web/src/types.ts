@@ -23,7 +23,9 @@ export type Candidate = {
 };
 export type ImageVariant = { role: string; path: string; width: number; height: number; bytes: number; mimeType: string; sha256: string };
 export type Rating = { kind: string; source_text: string };
-export type SearchResponse = { demo: true; candidates: Candidate[]; selectedId?: string };
+export type SearchResponse = { demo: true; candidates: Candidate[]; selectedId?: string; catalogVersion?: string; modelVersion?: string; feedbackToken?: string };
 export type CatalogResponse = { demo: boolean; candidates: Candidate[]; nextCursor?: string; catalogVersion: string };
 export type RecommendationResponse = { demo: boolean; candidates: Candidate[]; catalogVersion?: string; modelVersion?: string };
 export type PhotoReceipt = { id: string; createdAt: string; bytes: number; mime: string; width: number; height: number };
+export type FeedbackDecision = 'confirm' | 'correct';
+export type FeedbackReceipt = { feedbackId: string; createdAt: string; reviewStatus: 'pending_review'; duplicate: boolean };

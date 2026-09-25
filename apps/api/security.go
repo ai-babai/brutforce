@@ -37,12 +37,13 @@ func (b *requestBudget) allow(now time.Time) bool {
 }
 func protectRequests(next http.Handler, now func() time.Time) http.Handler {
 	search := &requestBudget{burst: 10, perSecond: 1}
+	feedback := &requestBudget{burst: 10, perSecond: 1}
 	uploads := &requestBudget{burst: 4, perSecond: 0.2}
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("X-Content-Type-Options", "nosniff")
 		w.Header().Set("Referrer-Policy", "same-origin")
 		w.Header().Set("X-Frame-Options", "DENY")
-		if r.Method == http.MethodPost && (r.URL.Path == "/v1/search" || r.URL.Path == "/v1/photos" || r.URL.Path == "/v1/eval/predict" || r.URL.Path == "/v1/recommendations") {
+		if r.Method == http.MethodPost && (r.URL.Path == "/v1/search" || r.URL.Path == "/v1/photos" || r.URL.Path == "/v1/eval/predict" || r.URL.Path == "/v1/recommendations" || r.URL.Path == "/v1/feedback") {
 			w.Header().Set("Cache-Control", "no-store")
 			if enc := r.Header.Get("Content-Encoding"); enc != "" && enc != "identity" {
 				writeRequestError(w, r, 415, "unsupported_encoding", "compressed request bodies are not supported")
@@ -55,7 +56,7 @@ func protectRequests(next http.Handler, now func() time.Time) http.Handler {
 					return
 				}
 			}
-			if r.URL.Path == "/v1/search" || r.URL.Path == "/v1/recommendations" {
+			if r.URL.Path == "/v1/search" || r.URL.Path == "/v1/recommendations" || r.URL.Path == "/v1/feedback" {
 				media, _, e := mime.ParseMediaType(r.Header.Get("Content-Type"))
 				if e != nil || media != "application/json" {
 					writeRequestError(w, r, 415, "unsupported_media_type", "use application/json")
@@ -71,6 +72,9 @@ func protectRequests(next http.Handler, now func() time.Time) http.Handler {
 			if r.URL.Path == "/v1/photos" {
 				budget = uploads
 				retry = "5"
+			}
+			if r.URL.Path == "/v1/feedback" {
+				budget = feedback
 			}
 			if !budget.allow(now()) {
 				w.Header().Set("Retry-After", retry)
