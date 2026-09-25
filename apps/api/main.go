@@ -209,7 +209,7 @@ func searchHandlerWithFeedback(store *photoStore, feedback *feedbackStore, catal
 			writeError(w, http.StatusServiceUnavailable, "catalog_unavailable", "catalog is temporarily unavailable")
 			return
 		}
-		if !info.Demo {
+		if !info.Demo && services.search == nil {
 			writeError(w, http.StatusServiceUnavailable, "recognition_unavailable", "reference recognition is unavailable for the imported catalog")
 			return
 		}
