@@ -3,11 +3,14 @@ package main
 import (
 	"bytes"
 	"context"
+	"crypto/sha256"
+	"encoding/hex"
 	"encoding/json"
 	"image"
 	"net/http"
 	"net/http/httptest"
 	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 )
@@ -67,7 +70,7 @@ func TestVISION001ContestAndAppUseSameRealRanking(t *testing.T) {
 		_ = json.NewEncoder(w).Encode(visionResult{Slug: first, RankedSlugs: []string{first, second}, CatalogVersion: "organizer-catalog-20260919", IndexVersion: "index-v1", ModelVersion: "model-v1"})
 	}))
 	defer upstream.Close()
-	client := &visionClient{baseURL: upstream.URL, catalogVersion: "organizer-catalog-20260919", indexVersion: "index-v1", client: noRedirectHTTPClient()}
+	client := &visionClient{baseURL: upstream.URL, catalogVersion: "organizer-catalog-20260919", indexVersion: "index-v1", client: noRedirectHTTPClient(), validSlugs: map[string]struct{}{first: {}, second: {}}}
 	storeDir := t.TempDir()
 	store, err := openPhotoStore(storeDir, 20<<20, defaultMaxPhotoPixels)
 	if err != nil {
@@ -107,21 +110,70 @@ func TestVISION002AbstentionAndUnknownSlugStayDistinct(t *testing.T) {
 		out := visionResult{CatalogVersion: "organizer-catalog-20260919", IndexVersion: "index-v1", ModelVersion: "model-v1", RankedSlugs: []string{}}
 		if mode == "bad" {
 			out.Slug, out.RankedSlugs = "unknown", []string{"unknown"}
+		} else if mode == "organizer-only" {
+			out.Slug, out.RankedSlugs = "organizer-only", []string{"organizer-only"}
 		} else {
 			out.Action = mode
 		}
 		_ = json.NewEncoder(w).Encode(out)
 	}))
 	defer upstream.Close()
-	client := &visionClient{baseURL: upstream.URL, client: noRedirectHTTPClient()}
+	client := &visionClient{baseURL: upstream.URL, client: noRedirectHTTPClient(), validSlugs: map[string]struct{}{"known": {}, "organizer-only": {}}}
 	h := newHandlerWithCatalogAndServices("", nil, catalog, modelServices{vision: client})
 	noMatch := evalImageRequest(t, h, "image", "label.png", smallPNG(t), nil)
 	if noMatch.Code != 200 || !strings.Contains(noMatch.Body.String(), `"action":"no_match"`) {
 		t.Fatalf("no match: %d %s", noMatch.Code, noMatch.Body.String())
 	}
+	mode = "organizer-only"
+	outside := evalImageRequest(t, h, "image", "label.png", smallPNG(t), nil)
+	if outside.Code != 200 || !strings.Contains(outside.Body.String(), `"slug":"organizer-only"`) {
+		t.Fatalf("valid organizer-only slug: %d %s", outside.Code, outside.Body.String())
+	}
+	photo := smallPNG(t)
+	dir := t.TempDir()
+	store, err := openPhotoStore(dir, 20<<20, defaultMaxPhotoPixels)
+	if err != nil {
+		t.Fatal(err)
+	}
+	receipt, err := store.save(photo, "image/png", image.Config{Width: 2, Height: 3})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := os.Setenv("UPLOAD_DIR", dir); err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(func() { _ = os.Unsetenv("UPLOAD_DIR") })
+	h = newHandlerWithCatalogAndServices("", nil, catalog, modelServices{vision: client})
+	search := request(t, h, http.MethodPost, "/v1/search", `{"photoId":"`+receipt.ID+`"}`)
+	var result searchResponse
+	if err := json.Unmarshal(search.Body.Bytes(), &result); err != nil {
+		t.Fatal(err)
+	}
+	if search.Code != 200 || result.Action != "outside_display_catalog" || result.RecognizedSlug != "organizer-only" || len(result.Candidates) != 0 {
+		t.Fatalf("outside display response: %d %+v", search.Code, result)
+	}
 	mode = "bad"
 	unknown := evalImageRequest(t, h, "image", "label.png", smallPNG(t), nil)
 	if unknown.Code != 502 || !strings.Contains(unknown.Body.String(), "recognition_invalid_result") {
 		t.Fatalf("unknown: %d %s", unknown.Code, unknown.Body.String())
+	}
+}
+
+func TestVISION003PinnedOrganizerAllowlist(t *testing.T) {
+	data := []byte(`{"catalog_version":"organizer-catalog-20260919","slugs":["known","organizer-only"]}`)
+	path := filepath.Join(t.TempDir(), "slugs.json")
+	if err := os.WriteFile(path, data, 0600); err != nil {
+		t.Fatal(err)
+	}
+	sum := sha256.Sum256(data)
+	known, err := loadVisionSlugs(path, hex.EncodeToString(sum[:]), "organizer-catalog-20260919")
+	if err != nil || len(known) != 2 {
+		t.Fatalf("known=%v err=%v", known, err)
+	}
+	if _, err := loadVisionSlugs(path, strings.Repeat("0", 64), "organizer-catalog-20260919"); err == nil {
+		t.Fatal("mismatched hash accepted")
+	}
+	if _, err := loadVisionSlugs(path, hex.EncodeToString(sum[:]), "other-catalog"); err == nil {
+		t.Fatal("mismatched version accepted")
 	}
 }

@@ -64,7 +64,8 @@ function isSearchResponse(value: unknown): value is SearchResponse {
     return isCandidate(item);
   });
   if (!validCandidates) return false;
-  if (['catalogVersion', 'modelVersion'].some(key => data[key] !== undefined && typeof data[key] !== 'string')) return false;
+  if (['catalogVersion', 'recognitionCatalogVersion', 'modelVersion', 'recognizedSlug'].some(key => data[key] !== undefined && typeof data[key] !== 'string')) return false;
+  if (data.action !== undefined && !['no_match', 'insufficient_information', 'outside_display_catalog', 'partial_display_catalog'].includes(data.action as string)) return false;
   if (data.selectedId === undefined) return true;
   return typeof data.selectedId === 'string' && data.candidates.some(candidate => candidate.id === data.selectedId);
 }

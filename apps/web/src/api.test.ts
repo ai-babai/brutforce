@@ -72,6 +72,12 @@ it('accepts ranked real-catalog search candidates without a synthetic disclosure
   await expect(searchWine('exact', undefined, undefined, receipt.id)).rejects.toThrow(/некорректный ответ/i);
 });
 
+it('preserves an explicit result when the organizer wine has no display card', async () => {
+  const outside = { demo: false, candidates: [], action: 'outside_display_catalog', recognizedSlug: 'organizer-only', catalogVersion: 'svoe-v2', recognitionCatalogVersion: 'organizer-catalog-v1', modelVersion: 'whole-only' };
+  vi.stubGlobal('fetch', vi.fn().mockResolvedValue(response(outside)));
+  await expect(searchWine('exact', undefined, undefined, receipt.id)).resolves.toEqual(outside);
+});
+
 it('rejects catalog records with a non-HTTP source URL', async () => {
   vi.stubGlobal('fetch', vi.fn().mockResolvedValue(response({
     demo: false,

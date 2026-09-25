@@ -37,13 +37,16 @@ type apiError struct {
 }
 
 type searchResponse struct {
-	Demo           bool      `json:"demo"`
-	Candidates     []wine    `json:"candidates"`
-	SelectedID     string    `json:"selectedId,omitempty"`
-	CatalogVersion string    `json:"catalogVersion,omitempty"`
-	NextCursor     string    `json:"nextCursor,omitempty"`
-	ModelVersion   string    `json:"modelVersion,omitempty"`
-	Error          *apiError `json:"error,omitempty"`
+	Demo                      bool      `json:"demo"`
+	Candidates                []wine    `json:"candidates"`
+	SelectedID                string    `json:"selectedId,omitempty"`
+	Action                    string    `json:"action,omitempty"`
+	RecognizedSlug            string    `json:"recognizedSlug,omitempty"`
+	CatalogVersion            string    `json:"catalogVersion,omitempty"`
+	RecognitionCatalogVersion string    `json:"recognitionCatalogVersion,omitempty"`
+	NextCursor                string    `json:"nextCursor,omitempty"`
+	ModelVersion              string    `json:"modelVersion,omitempty"`
+	Error                     *apiError `json:"error,omitempty"`
 }
 
 //go:embed catalog.json
@@ -73,10 +76,14 @@ func main() {
 	if address == "" {
 		address = "127.0.0.1:8097"
 	}
+	services := configuredModelServices()
+	if services.vision != nil && services.vision.configErr != nil {
+		log.Fatal("vision service configuration is invalid")
+	}
 	log.Printf("demo API listening on %s", address)
 	server := &http.Server{
 		Addr:              address,
-		Handler:           newHandlerWithCatalogAndServices(os.Getenv("WEB_ROOT"), nil, catalog, configuredModelServices()),
+		Handler:           newHandlerWithCatalogAndServices(os.Getenv("WEB_ROOT"), nil, catalog, services),
 		ReadHeaderTimeout: 5 * time.Second,
 		ReadTimeout:       10 * time.Second,
 		WriteTimeout:      10 * time.Second,
@@ -102,7 +109,7 @@ func newHandlerWithCatalog(webRoot string, recognizer Recognizer, catalog catalo
 
 func newHandlerWithCatalogAndServices(webRoot string, recognizer Recognizer, catalog catalogReader, services modelServices) http.Handler {
 	if recognizer == nil && services.vision != nil {
-		recognizer = &visionRecognizer{client: services.vision, catalog: catalog}
+		recognizer = &visionRecognizer{client: services.vision}
 	}
 	store := configuredPhotoStore()
 	mux := http.NewServeMux()

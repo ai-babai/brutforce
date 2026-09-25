@@ -25,7 +25,7 @@ const (
 
 // Recognizer is the only dependency of the contest HTTP boundary. It receives
 // a decoded, bounded image and must return the exact catalog slug it selected.
-// The current executable intentionally has no implementation wired into it.
+// The executable wires a versioned HTTP adapter when VISION_SERVICE_URL is set.
 type Recognizer interface {
 	Recognize(context.Context, image.Image) (string, error)
 }

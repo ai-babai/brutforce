@@ -567,6 +567,21 @@ describe("mobile behavior demo", () => {
     await userEvent.click(reshoot);
     expect(await screen.findByLabelText(/Изображение с камеры/i)).toBeVisible();
   });
+  it("shows that an organizer match has no card in the display catalog", async () => {
+    vi.spyOn(HTMLMediaElement.prototype, "play").mockResolvedValue();
+    vi.stubGlobal("URL", {
+      ...URL,
+      createObjectURL: vi.fn(() => "blob:organizer-only"),
+      revokeObjectURL: vi.fn(),
+    });
+    vi.stubGlobal("fetch", vi.fn()
+      .mockResolvedValueOnce(response(receipt))
+      .mockResolvedValueOnce(response({ demo: false, candidates: [], action: "outside_display_catalog", recognizedSlug: "organizer-only" })));
+    render(<App />);
+    await userEvent.upload(screen.getByLabelText(/Загрузить фотографию/i), new File(["photo"], "wine.jpg", { type: "image/jpeg" }));
+    await waitFor(() => expect(screen.getByRole("heading", { name: "Карточка пока недоступна" })).toBeVisible());
+    expect(screen.getByText(/Вино распознано, но его карточки нет/)).toBeVisible();
+  });
   it("SR-006 declining candidates keeps the editable correction context without its photo", async () => {
     vi.stubGlobal("URL", {
       ...URL,

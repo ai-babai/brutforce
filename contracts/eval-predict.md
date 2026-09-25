@@ -28,14 +28,15 @@ requests are not rejected by the demo's low burst limit.
 ## Response
 
 On a successful recognizer result, the response is HTTP 200 with the exact
-nonempty slug returned by the recognizer and verified against the active real catalog:
+nonempty slug returned by the recognizer and verified against the pinned
+organizer slug allowlist:
 
 ```json
 {"slug":"catalog-slug"}
 ```
 
 The standalone boundary does not normalize or invent a slug. The configured
-vision adapter checks it against the active real catalog. A test stub proves
+vision adapter checks it against the organizer catalog allowlist. A test stub proves
 only the HTTP hand-off; it is not evidence of recognition quality.
 
 A deliberate `no_match` or `insufficient_information` response is HTTP 200

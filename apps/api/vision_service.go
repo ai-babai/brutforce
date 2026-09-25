@@ -3,6 +3,8 @@ package main
 import (
 	"bytes"
 	"context"
+	"crypto/sha256"
+	"encoding/hex"
 	"encoding/json"
 	"errors"
 	"image"
@@ -30,6 +32,7 @@ type visionClient struct {
 	baseURL, catalogVersion, indexVersion string
 	client                                *http.Client
 	configErr                             error
+	validSlugs                            map[string]struct{}
 }
 
 type visionResult struct {
@@ -53,7 +56,41 @@ func configuredVisionClient() *visionClient {
 		return c
 	}
 	c.baseURL = strings.TrimRight(raw, "/")
+	c.validSlugs, c.configErr = loadVisionSlugs(os.Getenv("VISION_SLUGS_FILE"), os.Getenv("VISION_SLUGS_SHA256"), c.catalogVersion)
 	return c
+}
+
+func loadVisionSlugs(path, wantedSHA, wantedVersion string) (map[string]struct{}, error) {
+	if path == "" || wantedSHA == "" || wantedVersion == "" {
+		return nil, errors.New("vision slug allowlist is not configured")
+	}
+	data, err := os.ReadFile(path)
+	if err != nil || len(data) == 0 || len(data) > maxVisionResponse {
+		return nil, errors.New("vision slug allowlist is unavailable")
+	}
+	checksum, err := hex.DecodeString(wantedSHA)
+	actualSHA := sha256.Sum256(data)
+	if err != nil || len(checksum) != sha256.Size || !bytes.Equal(checksum, actualSHA[:]) {
+		return nil, errors.New("vision slug allowlist checksum mismatch")
+	}
+	var catalog struct {
+		Version string   `json:"catalog_version"`
+		Slugs   []string `json:"slugs"`
+	}
+	if json.Unmarshal(data, &catalog) != nil || catalog.Version != wantedVersion || len(catalog.Slugs) == 0 || len(catalog.Slugs) > 10000 {
+		return nil, errors.New("vision slug allowlist version or shape is invalid")
+	}
+	known := make(map[string]struct{}, len(catalog.Slugs))
+	for _, slug := range catalog.Slugs {
+		if slug == "" || len(slug) > 512 {
+			return nil, errVisionInvalid
+		}
+		if _, duplicate := known[slug]; duplicate {
+			return nil, errVisionInvalid
+		}
+		known[slug] = struct{}{}
+	}
+	return known, nil
 }
 
 func (c *visionClient) predict(ctx context.Context, data []byte) (visionResult, error) {
@@ -121,14 +158,18 @@ func (c *visionClient) predict(ctx context.Context, data []byte) (visionResult, 
 		if slug == "" || len(slug) > 512 || seen[slug] {
 			return visionResult{}, errVisionInvalid
 		}
+		if c.validSlugs != nil {
+			if _, ok := c.validSlugs[slug]; !ok {
+				return visionResult{}, errVisionInvalid
+			}
+		}
 		seen[slug] = true
 	}
 	return result, nil
 }
 
 type visionRecognizer struct {
-	client  *visionClient
-	catalog catalogReader
+	client *visionClient
 }
 
 // Recognize satisfies the original injection contract; normal HTTP requests
@@ -151,14 +192,6 @@ func (v *visionRecognizer) RecognizeEncoded(ctx context.Context, data []byte) (s
 	}
 	if result.Action == "insufficient_information" {
 		return "", errVisionInsufficient
-	}
-	info, err := catalogInfoFor(ctx, v.catalog)
-	if err != nil || info.Demo {
-		return "", errCatalogUnavailable
-	}
-	item, _, _, err := catalogLookup(ctx, v.catalog, result.Slug)
-	if err != nil || item.Slug != result.Slug {
-		return "", errVisionInvalid
 	}
 	return result.Slug, nil
 }
@@ -184,8 +217,9 @@ func configuredVisionSearch(r *http.Request, store *photoStore, catalog catalogR
 	if err != nil || info.Demo {
 		return searchResponse{}, 503, "catalog_unavailable", "catalog is temporarily unavailable"
 	}
-	response := searchResponse{Demo: false, Candidates: []wine{}, CatalogVersion: info.Version, ModelVersion: result.ModelVersion}
+	response := searchResponse{Demo: false, Candidates: []wine{}, CatalogVersion: info.Version, RecognitionCatalogVersion: result.CatalogVersion, ModelVersion: result.ModelVersion}
 	if len(result.RankedSlugs) == 0 {
+		response.Action = result.Action
 		return response, 0, "", ""
 	}
 	known, err := catalog.List(r.Context())
@@ -196,14 +230,18 @@ func configuredVisionSearch(r *http.Request, store *photoStore, catalog catalogR
 	for _, item := range known {
 		bySlug[item.Slug] = item
 	}
-	for _, slug := range result.RankedSlugs {
+	response.RecognizedSlug = result.Slug
+	if _, ok := bySlug[result.Slug]; !ok {
+		response.Action = "outside_display_catalog"
+		return response, 0, "", ""
+	}
+	for _, slug := range result.RankedSlugs[:min(5, len(result.RankedSlugs))] {
 		item, ok := bySlug[slug]
 		if !ok {
-			return searchResponse{}, 502, "recognition_upstream_invalid", "recognition returned an unknown catalog slug"
+			response.Action = "partial_display_catalog"
+			continue
 		}
-		if len(response.Candidates) < 5 {
-			response.Candidates = append(response.Candidates, item)
-		}
+		response.Candidates = append(response.Candidates, item)
 	}
 	// Candidate rank is evidence for inspection, not calibrated confidence.
 	// Selection remains explicit in the product UI until its UX rule is settled.
