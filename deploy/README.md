@@ -21,6 +21,16 @@
 Для первого релиза: остановить brutforce-demo, убрать только z-brutforce-demo.caddy,
 восстановить резервную копию maks-reports.caddy, validate и reload Caddy.
 
+Для выпуска только кода/интерфейса из успешного main CI без изменения SQL и каталога
+используй `deploy/maks_preview.py` на Sigma. Передай точный архив CI, его опубликованный
+SHA-256 и полный Git SHA: сначала `preflight ARCHIVE SHA256 REVISION`, затем
+`sudo python3 maks_preview.py install ARCHIVE SHA256 REVISION`. Проверяются архив,
+манифест, release evidence, область `maks-demo-only` и совпадение SQL-миграций.
+Скрипт переключает только этот preview; Caddy, общие TEST/PROD и данные БД не меняет.
+После установки проверь публичные `/v1/health`, `/release.json`, `/v2/catalog?limit=1`
+и основные экраны в браузере. Откат: `sudo python3 maks_preview.py rollback REVISION`;
+предыдущий каталог и состояние записаны в `preview-deployments/REVISION.json`.
+
 Файл demo.caddy устанавливается как /etc/caddy/sites-enabled/z-brutforce-demo.caddy: общий snippet загружается раньше из lct-previews.caddy.
 
 ## Каталог PostgreSQL — BE-031
