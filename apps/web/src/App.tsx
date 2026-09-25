@@ -25,6 +25,7 @@ import type { Candidate, FeedbackDecision, FeedbackReceipt, PhotoReceipt, Scenar
 import { AtlasScan } from "./AtlasIcons";
 import { InstallApp } from "./InstallApp";
 import { MascotScene, V2Logo } from "./V2Visual";
+import { shuffleWineNotes, wineNotes } from "./wineNotes";
 
 type Screen =
   | "welcome"
@@ -94,6 +95,10 @@ export function App({
   const [notePaused, setNotePaused] = useState(false);
   const [noteIndex, setNoteIndex] = useState(0);
   const [reducedMotion, setReducedMotion] = useState(false);
+  const [tabHidden, setTabHidden] = useState(document.hidden);
+  const [noteSearchId, setNoteSearchId] = useState(0);
+  const noteDeck = useRef<number[]>([]);
+  const noteCursor = useRef(0);
   const [recommendations, setRecommendations] = useState<{
     status: RecommendationStatus;
     candidates: Candidate[];
@@ -206,12 +211,29 @@ export function App({
     return () => media.removeEventListener?.("change", update);
   }, []);
   useEffect(() => {
-    if (!["loading", "waiting"].includes(screen) || notePaused || reducedMotion) return;
-    const timer = window.setInterval(() => {
-      if (!document.hidden) setNoteIndex((index) => (index + 1) % 3);
-    }, 7000);
-    return () => window.clearInterval(timer);
-  }, [screen, notePaused, reducedMotion]);
+    const update = () => setTabHidden(document.hidden);
+    document.addEventListener("visibilitychange", update);
+    return () => document.removeEventListener("visibilitychange", update);
+  }, []);
+  const notesActive = ["loading", "waiting"].includes(screen) && !notePaused && !reducedMotion && !tabHidden && !expandedPhoto;
+  useEffect(() => {
+    if (!notesActive) return;
+    const timer = window.setTimeout(() => {
+      if (noteCursor.current + 1 === wineNotes.length) {
+        noteDeck.current = shuffleWineNotes(Math.random, noteDeck.current[noteCursor.current]);
+        noteCursor.current = 0;
+      } else noteCursor.current += 1;
+      setNoteIndex(noteDeck.current[noteCursor.current]);
+    }, 8000);
+    return () => window.clearTimeout(timer);
+  }, [notesActive, noteIndex, noteSearchId]);
+  const beginWineNotes = () => {
+    const previous = noteDeck.current[noteCursor.current];
+    noteDeck.current = shuffleWineNotes(Math.random, previous);
+    noteCursor.current = 0;
+    setNoteIndex(noteDeck.current[0]);
+    setNoteSearchId((id) => id + 1);
+  };
   useEffect(
     () => () => {
       if (photo?.startsWith("blob:")) URL.revokeObjectURL(photo);
@@ -311,6 +333,7 @@ export function App({
     uploadThenSearch(file, scenario);
   };
   const uploadThenSearch = async (file: File, next: Scenario, q?: string) => {
+    beginWineNotes();
     abort.current?.abort();
     clearWaitTimer();
     const controller = new AbortController();
@@ -351,6 +374,7 @@ export function App({
     knownReceipt?: PhotoReceipt,
     existingController?: AbortController,
   ) => {
+    if (!existingController) beginWineNotes();
     if (!existingController) abort.current?.abort();
     clearWaitTimer(existingController);
     const controller = existingController ?? new AbortController();
@@ -1009,7 +1033,7 @@ export function App({
               {photo && lastRequest.current.hasPhoto && (
                 <div className="air-waiting-photo">
                   <Photo photo={photo} onExpand={() => setExpandedPhoto(true)} />
-                  <div className="scan-line" aria-hidden="true" />
+                  <div className="air-scan-viewport" aria-hidden="true"><div className="scan-line" /></div>
                 </div>
               )}
               <aside className="air-wine-note" aria-label="Заметка о вине">
@@ -1019,7 +1043,7 @@ export function App({
                     {notePaused ? <Play weight="light" /> : <Pause weight="light" />}
                   </button>
                 </div>
-                <p>{["Вино начинается с истории места и винограда.", "В карточке можно сверить название и винодельню.", "Если вариант не подходит, выберите другое вино из списка."][noteIndex]}</p>
+                <p key={noteIndex}>{wineNotes[noteIndex]}</p>
               </aside>
               </div>
               <p className="status" role="status">
