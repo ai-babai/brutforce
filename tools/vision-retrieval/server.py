@@ -48,16 +48,21 @@ class Pipeline:
   if track=='service':
    target,selection=self.model.select_service(image)
    stage['detect_ms']=selection['detect_ms'];stage['class_ms']=selection['class_ms']
-   standalone=None
+   standalone=None;rescue=None
    if target is None and selection['selection_reason']=='no_bottle_detected':
     region,standalone=self.model.label_region(image)
     if standalone['source'].startswith(('owlv2','yoloe26s')) and standalone['score']>=.15:
      target=region;selection['selected_box']=standalone['box']
      selection['selection_reason']='standalone_label_no_bottle'
+   elif target is None and selection['selection_reason']=='detected_bottles_classified_nonwine' and hasattr(self,'rescue_rejected'):
+    target,rescue=self.rescue_rejected(image,selection)
+    if target is not None:
+     selection['selected_box']=rescue['selected_box']
+     selection['selection_reason']='independent_label_ocr_rescue'
   else:
    target=image;selection={'boxes':[],'selected_box':[0,0,*image.size],
                            'selection_reason':'verified_retrieval_crop'}
-   stage['detect_ms']=0;stage['class_ms']=0;standalone=None
+   stage['detect_ms']=0;stage['class_ms']=0;standalone=None;rescue=None
   whole=[];label=[];ocr_rank=[];raw_text='';ocr_error=None;label_choice=None;label_context_box=None
   stage.update(label_detect_ms=0,whole_embedding_ms=0,label_embedding_ms=0,ocr_ms=0,rank_ms=0)
   if target is None and standalone:stage['label_detect_ms']=standalone['detect_ms']
@@ -78,18 +83,22 @@ class Pipeline:
    label_scores=np.where(np.isfinite(self.label).all(axis=1),self.label@label_feature,np.nan)
    whole=top(whole_scores,self.slugs);label=top(label_scores,self.slugs)
    stage['rank_ms']=round((time.perf_counter()-t)*1000)
-   t=time.perf_counter()
-   try:
-    # Match offline OCR's JPEG-92 target bytes before BGR decoding.
-    buf=io.BytesIO();target.save(buf,'JPEG',quality=92)
-    with Image.open(io.BytesIO(buf.getvalue())) as encoded:
-     ocr_image=np.asarray(encoded.convert('RGB'))[:,:,::-1].copy()
-    result=list(self.ocr.predict(ocr_image))
-    res=result[0].json['res'] if result else {}
-    raw_text='\n'.join(str(v) for v,s in zip(res.get('rec_texts',[]),res.get('rec_scores',[])) if float(s)>=.35)
-    ocr_rank=ocr_top(self.lexical,raw_text,self.slugs)
-   except Exception as e:ocr_error=type(e).__name__+': '+str(e)[:250]
-   stage['ocr_ms']=round((time.perf_counter()-t)*1000)
+   if rescue is not None and rescue.get('ocr_text') is not None:
+    raw_text=rescue['ocr_text'];ocr_rank=ocr_top(self.lexical,raw_text,self.slugs)
+    stage['ocr_ms']=rescue['ocr_ms']
+   else:
+    t=time.perf_counter()
+    try:
+     # Match offline OCR's JPEG-92 target bytes before BGR decoding.
+     buf=io.BytesIO();target.save(buf,'JPEG',quality=92)
+     with Image.open(io.BytesIO(buf.getvalue())) as encoded:
+      ocr_image=np.asarray(encoded.convert('RGB'))[:,:,::-1].copy()
+     result=list(self.ocr.predict(ocr_image))
+     res=result[0].json['res'] if result else {}
+     raw_text='\n'.join(str(v) for v,s in zip(res.get('rec_texts',[]),res.get('rec_scores',[])) if float(s)>=.35)
+     ocr_rank=ocr_top(self.lexical,raw_text,self.slugs)
+    except Exception as e:ocr_error=type(e).__name__+': '+str(e)[:250]
+    stage['ocr_ms']=round((time.perf_counter()-t)*1000)
   t=time.perf_counter()
   branches={'whole':whole,'label':label,'ocr':ocr_rank}
   variants={name:rank_fuse({key:branches[key] for key in subset}) for name,subset in VARIANTS.items()}
@@ -104,7 +113,8 @@ class Pipeline:
           'label_selection':label_choice,'label_context_box':label_context_box,
           'label_crop_mode':LABEL_CONTEXT_VERSION if self.label_context else 'v1-detected-box',
           'branches_top20':branches,'variants_top20':variants,
-          'ocr_text':raw_text,'ocr_error':ocr_error,'image_sha256':hashlib.sha256(content).hexdigest()}
+          'ocr_text':raw_text,'ocr_error':ocr_error,'rescue':rescue,
+          'image_sha256':hashlib.sha256(content).hexdigest()}
   return result
 
 class Handler(BaseHTTPRequestHandler):
