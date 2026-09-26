@@ -1,0 +1,16 @@
+{
+  "experiment": "ML-086-R1",
+  "config_version": "v5-freeze",
+  "candidate_pool": "historical ORT6 fixed Top20; never extended",
+  "reader_crop": "ORT6 selected target, JPEG quality=90, RGB LANCZOS longest_edge<=768",
+  "gpu_reader_model": "Qwen/Qwen3-VL-2B-Instruct",
+  "gpu_reader_revision": "89644892e4d85e24eaac8bacfd4f463576704203",
+  "gpu_reader_max_new_tokens": 128,
+  "reader_prompt": "Задача OCR: выпиши только надписи, которые видны на этикетке, по строкам. Никаких вступлений, описаний, исправлений и догадок. Если ни одной надписи не читается, напиши ровно <EMPTY>.",
+  "cpu_reader": "PaddleOCR 3.7.0 / paddlepaddle 3.3.0, CPU threads=2",
+  "minimum_cpu_ocr_confidence": 0.5,
+  "matcher_scope": "same Top1 winery positions only; title literal overlap before positive grape; absent grape unknown",
+  "metadata_missing": "not_run, never no_target or contradiction",
+  "timing_scope": "offline cached stages; full HTTP timeout not established",
+  "private_gold_available_to_inference": false
+}
