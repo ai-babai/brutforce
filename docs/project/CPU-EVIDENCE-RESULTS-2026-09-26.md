@@ -137,6 +137,31 @@ literal при любом confidence в 1/33 кадре; при пороге ≥
 Для остальных 180 frozen нет сохранённого OCR: counterfactual **не измерен**.
 Replay не является полным результатом H2 по HTTP, качеству или latency.
 
+### Нормализация grape `cc6eb78`: offline ablation тех же 33
+
+Проверен точный diff от H2: `GrapeNormalizedFieldMatcher` применяет
+каталожно подтверждённые соответствия к `cards.title` **до**
+`card_identity` и к OCR; полная grape-фраза может проходить через две
+соседние строки с минимальным confidence. Порог ≥0,75 не менялся.
+По pinned публичным cards активны только `Cabernet Sauvignon` →
+`Каберне Совиньон` (поддержка 19, конфликтов 0) и `Chardonnay` →
+`Шардоне` (22/0); остальные четыре конфликтные пары нейтральны.
+Источник `cc6eb7833235952f271f58a05c7a787c5b33b41d`, те же sealed
+raw 33, pinned cards и trusted gold. Source/input SHA и private детали — в
+`/Users/skif/ml-data/brutforce/cpu-evidence-20260926/grape-normalization-cc6eb78-frozen33-private-replay-v2.json`
+(SHA-256 `1791da499d914aeae41de7e34be6e173286301f0dc0d093af539142f1b225247`).
+
+Подтверждено независимым replay: наблюдаемый grape **1→8/33 запросов**
+относительно H2; gold-blind совпадение grape-фразы Top-20 с OCR literal
+после нормализации при любом confidence 9/33, при ≥0,75 — 8/33.
+Наблюдаемый line 3, producer 0; неоднозначный line 14, producer 3.
+`insufficient_field_evidence` 31, `visual_winner_not_contradicted` 2;
+поддержанных identity 0/660 позиций, rank flips 0, качество на этих
+33 остаётся 28→28, исправлений/ухудшений 0/0. Текстовое совпадение
+улучшилось, но downstream-решение не изменилось. У оставшихся 180 нет
+сохранённого OCR; это не результат полной H2-проверки, HTTP-замер или
+доказательство выигрыша ML/latency.
+
 ## Парная оценка кандидата
 
 Вход: исходные 316 публичных изображений с проверкой SHA, каждый полный HTTP-ответ
