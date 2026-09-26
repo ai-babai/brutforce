@@ -32,7 +32,7 @@ describe("Air 3.4 photo journey", () => {
     try {
       render(<App />);
       await userEvent.click(screen.getByRole("button", { name: /Сканировать вино/i }));
-      expect(screen.getByRole("heading", { name: "Наведите на этикетку" })).toBeVisible();
+      expect(screen.getByText("Этикетка вина")).toBeVisible();
       expect(screen.getByRole("button", { name: "Сделать снимок" })).toBeVisible();
       expect(screen.getByRole("navigation", { name: "Основная навигация" })).toBeVisible();
       expect(screen.getByLabelText("Изображение с камеры")).toBeVisible();
@@ -165,7 +165,7 @@ describe("Air 3.4 photo journey", () => {
     fireEvent.change(picker, { target: { files: [] } });
     expect(screen.getByRole("heading", { name: heading })).toBeVisible();
     if (state !== "empty") {
-      expect(screen.queryByRole("img", { name: "Загруженная фотография этикетки" })).not.toBeInTheDocument();
+      expect(screen.getByRole("img", { name: "Загруженная фотография этикетки" })).toBeVisible();
       await userEvent.click(screen.getByRole("button", { name: state === "network" ? /Проверить ещё раз/i : /Повторить поиск/i }));
       await waitFor(() => expect(searchCalls()).toHaveLength(2));
       expect(JSON.parse((searchCalls()[1][1] as RequestInit).body as string).photoId).toBe(receipt.id);
@@ -188,7 +188,9 @@ describe("Air 3.4 photo journey", () => {
     expect(screen.queryByRole("heading", { name: /Ничего не найдено|Вино не найдено/i })).not.toBeInTheDocument();
     expect(document.querySelector("#UI-010 .mascot-scene img")?.getAttribute("src")).toBe(reply
       ? "/assets/v2/server-error-a.png" : "/assets/v2/mascot-offline-2d-alpha.webp");
-    expect(screen.queryByRole("button", { name: /Открыть исходную фотографию/i })).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /Открыть исходную фотографию/i })).toBeVisible();
+    expect(screen.getByText("Ваше фото")).toBeVisible();
+    expect(document.querySelectorAll("#UI-010 .air-recovery-photo")).toHaveLength(1);
     expect(screen.getByRole("button", { name: reply ? /Повторить поиск/i : /Проверить ещё раз/i })).toBeVisible();
     expect(photoCalls()).toHaveLength(1);
   });
@@ -329,7 +331,7 @@ describe("Air 3.4 photo journey", () => {
       expect(pickerClick).toHaveBeenCalledOnce();
       expect(screen.getByRole("heading", { name: heading })).toBeVisible();
       fireEvent.click(screen.getByRole("button", { name: /Камера|Сделать новый снимок/i }));
-      expect(screen.getByRole("heading", { name: "Наведите на этикетку" })).toBeVisible();
+      expect(screen.getByText("Этикетка вина")).toBeVisible();
       expect(getUserMedia).toHaveBeenCalled();
       fireEvent.click(screen.getByRole("button", { name: "Назад" }));
       expect(screen.getByRole("heading", { name: heading })).toBeVisible();

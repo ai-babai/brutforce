@@ -106,7 +106,7 @@ describe('selected Wine UX 2.0 design contract', () => {
     expect(css).toContain('.camera-actions{grid-template-columns:1fr;grid-template-rows:1fr 66px 1fr');
   });
 
-  it('DESIGN-012 keeps the camera guidance outside the framed video', () => {
+  it('DESIGN-012 keeps one camera hint outside the framed video', () => {
     const mediaDevices = navigator.mediaDevices;
     Object.defineProperty(navigator, 'mediaDevices', { configurable: true, value: { getUserMedia: vi.fn(() => new Promise(() => {})) } });
     try {
@@ -114,10 +114,11 @@ describe('selected Wine UX 2.0 design contract', () => {
       fireEvent.click(screen.getByRole('button', { name: /Сканировать вино/i }));
       const hint = screen.getByText('Нужная бутылка по центру');
       expect(hint.closest('.viewfinder')).toBeNull();
-      expect(hint.parentElement).toHaveClass('camera-preview');
+      expect(hint.parentElement).toHaveClass('camera-header');
+      expect(screen.getAllByText('Нужная бутылка по центру')).toHaveLength(1);
       expect(document.querySelector('.camera-preview>.viewfinder .camera-frame')).not.toBeNull();
       expect(css).toContain('.camera-preview{display:grid;grid-template-rows:minmax(0,1fr) auto;min-height:0');
-      expect(css).toContain('.camera-preview>.neighbor-hint{display:block');
+      expect(screen.queryByText('Наведите на этикетку')).not.toBeInTheDocument();
     } finally { Object.defineProperty(navigator, 'mediaDevices', { configurable: true, value: mediaDevices }); }
   });
 
@@ -150,10 +151,11 @@ describe('selected Wine UX 2.0 design contract', () => {
     expect(css).toContain('.app-content{min-height:0;overflow-y:auto');
   });
 
-  it('DESIGN-018 marks the active product section and retains the product footer', () => {
+  it('DESIGN-018 marks the active product section without the extra Home footer', () => {
     render(<App />);
     expect(screen.getByRole('button', { name: 'Главная' })).toHaveAttribute('aria-current', 'page');
-    expect(screen.getByText('Информация о российских винах')).toBeVisible();
+    expect(screen.queryByText('Информация о российских винах')).not.toBeInTheDocument();
+    expect(document.querySelectorAll('.bottom-nav .nav-slider')).toHaveLength(1);
     expect(css).toContain('.bottom-nav{gap:4px;padding:8px 12px max(10px,env(safe-area-inset-bottom));border-top-color:#e9dfd3;background:#fefdfa}');
     expect(css).toContain('.bottom-nav button{min-height:48px;gap:4px;border-radius:12px;color:#746e68;font:500 11px/1.2 Onest,sans-serif}');
     expect(css).toContain('.bottom-nav button[aria-current="page"]{background:#f5e8df;color:#8f3d42}');

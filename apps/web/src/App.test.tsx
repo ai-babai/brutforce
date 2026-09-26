@@ -75,7 +75,7 @@ describe("mobile behavior demo", () => {
     await userEvent.click(
       screen.getByRole("button", { name: /Сканировать вино/i }),
     );
-    expect(await screen.findByText(/Покажите название целиком/i)).toBeVisible();
+    expect(await screen.findByText('Нужная бутылка по центру')).toBeVisible();
     expect(screen.getByLabelText(/Изображение с камеры/i)).toBeVisible();
     expect(screen.getByLabelText(/Снять фотографию/i)).toHaveAttribute(
       "capture",
@@ -540,7 +540,10 @@ describe("mobile behavior demo", () => {
     const reshoot = screen.getByRole("button", { name: "Камера" });
     expect(screen.getByRole("button", { name: "Галерея" })).toBeVisible();
     expect(manual).toHaveClass("primary");
-    expect(reshoot).toHaveClass("secondary");
+    expect(reshoot).toHaveClass("air-photo-action");
+    expect(screen.getByRole("button", { name: "Открыть исходную фотографию" })).toBeVisible();
+    expect(screen.getByText("Ваше фото")).toBeVisible();
+    expect(document.querySelectorAll("#UI-009 .air-recovery-photo")).toHaveLength(1);
     expect(screen.queryByRole("button", { name: /Каберне Совиньон/i })).not.toBeInTheDocument();
     await userEvent.click(reshoot);
     expect(await screen.findByLabelText(/Изображение с камеры/i)).toBeVisible();

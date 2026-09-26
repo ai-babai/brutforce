@@ -69,8 +69,14 @@ describe('Air 3.5 product UI', () => {
       );
       expect(document.querySelector('#UI-002 .camera-frame')).not.toBeNull();
       expect(screen.getByText('Нужная бутылка по центру')).toBeVisible();
+      expect(screen.getAllByText('Нужная бутылка по центру')).toHaveLength(1);
+      expect(screen.getByText('Этикетка вина')).toBeVisible();
+      expect(screen.queryByText('Наведите на этикетку')).not.toBeInTheDocument();
       expect(screen.getByRole('button', { name: 'Сделать снимок' })).toBeVisible();
       expect(screen.getByRole('button', { name: 'Выбрать из галереи' })).toBeVisible();
+      expect([...document.querySelectorAll('#UI-002 .camera-actions > *')].map((item) => item.getAttribute('aria-label'))).toEqual([
+        'Выбрать из галереи', 'Сделать снимок', null,
+      ]);
       expect(screen.getByRole('button', { name: 'Назад' })).toBeVisible();
       expect(screen.getByRole('navigation', { name: 'Основная навигация' })).toBeVisible();
     } finally {

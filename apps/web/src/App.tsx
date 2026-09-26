@@ -925,15 +925,13 @@ export function App({
                 </div>
               </div>
               <InstallApp />
-              <ProductFooter />
             </Page>
           )}
           {screen === "camera" && (
             <div className="camera-page" id="UI-002">
               <div className="camera-header">
-                <Top title="Снимок этикетки" onBack={backFromCamera} />
-                <h2>Наведите на этикетку</h2>
-                <p>Покажите название целиком и держите бутылку по центру.</p>
+                <Top title="Этикетка вина" onBack={backFromCamera} />
+                <p>Нужная бутылка по центру</p>
               </div>
               <div className="camera-preview">
                 <div className="viewfinder">
@@ -945,22 +943,24 @@ export function App({
                   />
                   <div className="camera-frame" />
                 </div>
-                <span className="neighbor-hint">Нужная бутылка по центру</span>
               </div>
               <canvas ref={canvasRef} hidden />
               <div className="camera-actions">
                 <button
-                  className="primary air-capture-action"
-                  onClick={capture}
-                >
-                  <Camera weight="light" /> Сделать снимок
-                </button>
-                <button
-                  className="text-button"
+                  className="camera-gallery-action"
+                  aria-label="Выбрать из галереи"
                   onClick={() => galleryRef.current?.click()}
                 >
-                  <ImageSquare weight="light" /> Выбрать из галереи
+                  <ImageSquare weight="light" />
                 </button>
+                <button
+                  className="shutter"
+                  aria-label="Сделать снимок"
+                  onClick={capture}
+                >
+                  <span />
+                </button>
+                <span aria-hidden="true" />
               </div>
             </div>
           )}
@@ -1404,7 +1404,7 @@ export function App({
                   ? "Вино распознано, но его карточки пока нет в нашем каталоге."
                   : "Сервис не нашёл подходящего совпадения."}</p>
               {photo && lastRequest.current.hasPhoto && (
-                <Photo photo={photo} compact onExpand={() => setExpandedPhoto(true)} />
+                <RecoveryPhoto photo={photo} onExpand={() => setExpandedPhoto(true)} onCamera={newCapture} onGallery={() => galleryRef.current?.click()} />
               )}
               {photo && lastRequest.current.hasPhoto && feedbackToken && (
                 <section className="photo-feedback" aria-labelledby="missing-feedback-title">
@@ -1450,10 +1450,6 @@ export function App({
                   <button className="primary" onClick={openSearch}>
                     Найти по названию
                   </button>
-                  <div className="air-recovery-secondary">
-                    <button className="secondary" onClick={newCapture}><Camera weight="light" /> Камера</button>
-                    <button className="secondary" onClick={() => galleryRef.current?.click()}><ImageSquare weight="light" /> Галерея</button>
-                  </div>
                 </div>
               ) : (
                 <div className="missing-actions">
@@ -1491,15 +1487,12 @@ export function App({
                   ? " Снимок сохранён в этой вкладке."
                   : ""}
               </p>
+              {photo && lastRequest.current.hasPhoto && (
+                <RecoveryPhoto photo={photo} onExpand={() => setExpandedPhoto(true)} onCamera={newCapture} onGallery={() => galleryRef.current?.click()} />
+              )}
               <button className="primary" onClick={retry}>
                 {errorKind === "network" ? "Проверить ещё раз" : "Повторить поиск"}
               </button>
-              {photo && lastRequest.current.hasPhoto && (
-                <div className="air-recovery-secondary">
-                  <button className="secondary" onClick={newCapture}><Camera weight="light" /> Камера</button>
-                  <button className="secondary" onClick={() => galleryRef.current?.click()}><ImageSquare weight="light" /> Галерея</button>
-                </div>
-              )}
             </Page>
           )}
           {screen === "badphoto" && (
@@ -1647,6 +1640,20 @@ function Photo({
       <span>Ваше фото</span>
     </button>
   );
+}
+function RecoveryPhoto({ photo, onExpand, onCamera, onGallery }: {
+  photo: string;
+  onExpand: () => void;
+  onCamera: () => void;
+  onGallery: () => void;
+}) {
+  return <div className="air-recovery-photo" role="group" aria-label="Исходный снимок и замена">
+    <Photo photo={photo} compact onExpand={onExpand} />
+    <div className="air-recovery-photo-actions">
+      <button className="air-photo-action" aria-label="Камера" onClick={onCamera}><Camera weight="light" /></button>
+      <button className="air-photo-action" aria-label="Галерея" onClick={onGallery}><ImageSquare weight="light" /></button>
+    </div>
+  </div>;
 }
 function CandidateImage({ candidate, role = "thumbnail", priority = false, size = "64px" }: { candidate: Candidate; role?: "thumbnail" | "card"; priority?: boolean; size?: string }) {
   const [broken, setBroken] = useState(false);
