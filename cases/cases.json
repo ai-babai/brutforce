@@ -1234,6 +1234,20 @@
       "title": "Главная объединяет сцену и действия",
       "source": "design/wine-ux-v3/air/behavior-v3.feature",
       "spec": "docs/product/behavior-spec.md#air-35--камера-фото-поиск-и-единая-визуальная-система"
+    },
+    {
+      "id": "AIR-039",
+      "area": "web",
+      "title": "Компактная навигация сохраняет три доступные вкладки",
+      "source": "design/wine-ux-v3/air36/behavior-v36.feature",
+      "spec": "docs/product/behavior-spec.md#air-36-compact--fe-080081"
+    },
+    {
+      "id": "AIR-040",
+      "area": "web",
+      "title": "Исходное фото и подпись образуют одну кнопку",
+      "source": "design/wine-ux-v3/air36/behavior-v36.feature",
+      "spec": "docs/product/behavior-spec.md#air-36-compact--fe-080081"
     }
   ]
 }
