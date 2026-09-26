@@ -6,6 +6,9 @@ import re
 from ranking import norm
 
 
+LOOKALIKE = str.maketrans({'A':'А','B':'В','C':'С','E':'Е','H':'Н','K':'К','M':'М',
+                           'O':'О','P':'Р','T':'Т','X':'Х','Y':'У','a':'а','c':'с',
+                           'e':'е','o':'о','p':'р','x':'х','y':'у'})
 GENERIC = {'wine', 'vino', 'vin', 'krasnoe', 'beloe', 'rozovoe',
            'suhoe', 'polusuhoe', 'sladkoe', 'polusladkoe', 'brut', 'reserve',
            'rezerv', 'seriya', 'series', 'lineika', 'line', 'kollekciya',
@@ -18,12 +21,21 @@ def contains(text: str, phrase: str) -> bool:
                                      r'(?![a-z0-9])', text))
 
 
+def evidence_norm(value: str) -> str:
+    # Same tested mixed-script correction as night-experiments/homoglyph_ablation.py.
+    # Pure Latin words and digits are not rewritten.
+    def correct(match):
+        token = match.group()
+        return token.translate(LOOKALIKE) if re.search('[А-Яа-яЁё]', token) and re.search('[A-Za-z]', token) else token
+    return norm(re.sub(r'[A-Za-zА-Яа-яЁё0-9]+', correct, value))
+
+
 def card_identity(card: dict) -> dict:
     """Trust a single catalog grape only when the title independently names it."""
-    title = norm(card.get('title', ''))
-    producer = norm(card.get('winery', ''))
+    title = evidence_norm(card.get('title') or '')
+    producer = evidence_norm(card.get('winery') or '')
     raw_grapes = card.get('grapes') or ''
-    grapes = [norm(value) for value in re.split(r'[,;/]', raw_grapes)] if isinstance(raw_grapes, str) else []
+    grapes = [evidence_norm(value) for value in re.split(r'[,;/]', raw_grapes)] if isinstance(raw_grapes, str) else []
     grape = grapes[0] if len(grapes) == 1 and len(grapes[0]) >= 5 and contains(title, grapes[0]) else None
     remainder = re.sub(r'(?<![a-z0-9])' + re.escape(grape) + r'(?![a-z0-9])', ' ', title) if grape else title
     producer_words = set(producer.split())
@@ -75,23 +87,27 @@ class Matcher:
         family = self.cards[before[0]]['family']
         anchor_tokens = self.anchor_tokens(self.cards[before[0]])
         # Individual OCR lines preserve recognition confidence; never synthesize missing text.
-        lines = [(norm(text), float(score)) for text, score in zip(texts, scores)
+        lines = [(evidence_norm(text), float(score), text) for text, score in zip(texts, scores)
                  if isinstance(text, str) and isinstance(score, (float, int)) and 0 <= score <= 1]
         anchors = [{'literal': texts[i], 'score': score} for i, score in enumerate(scores)
                    if isinstance(score, (float, int)) and score >= .65 and
                    isinstance(texts[i], str) and
-                   any(contains(norm(texts[i]), token) for token in anchor_tokens)]
+                   any(contains(evidence_norm(texts[i]), token) for token in anchor_tokens)]
         if not anchors:
             info['state'] = 'family_not_observed' if family else 'producer_not_observed'
             return ranks, info
         variants = {self.cards[before[i]]['grape'] for i in positions}
         observed = {grape for grape in variants if any(score >= .75 and contains(text, grape)
-                                                      for text, score in lines)}
+                                                      for text, score, _ in lines)}
         info['observations'] = [{'field': 'family' if family else 'producer',
                                  'literal': anchor['literal'],
                                  'score': anchor['score']} for anchor in anchors]
         info['observations'] += [{'field': 'grape', 'value': grape,
-                                  'source': 'target_ocr_line'} for grape in sorted(observed)]
+                                  'source': 'target_ocr_line', 'literal': literal,
+                                  'score': score}
+                                 for grape in sorted(observed)
+                                 for text, score, literal in lines
+                                 if score >= .75 and contains(text, grape)]
         if len(observed) != 1:
             info['state'] = 'grape_ambiguous' if observed else 'grape_not_observed'
             return ranks, info

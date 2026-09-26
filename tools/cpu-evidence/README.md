@@ -25,12 +25,35 @@ errors. Only an OCR family/producer anchor at score ≥0.65 and a single candida
 grape at score ≥0.75 permit promotion; missing/ambiguous readings stay unknown.
 The response also retains the original whole-view branch and image SHA. Never write OCR/photo
 contents to common logs; raw HTTP rows are private evaluation artifacts.
+OCR and catalog strings use the night experiment's mixed-script lookalike
+normalization before transliteration; diagnostics preserve each literal line and
+its confidence. The 8.5-second product budget leaves a 350 ms response reserve:
+the OCR timeout is the minimum of the configured cap and remaining time. If the
+remaining budget is too small, `budget_exhausted` leaves the visual order intact.
 
-Runtime owner runs this on an isolated loopback port only after checking memory
-against the already-running TEST; the same hook can later run in the existing
-CPUPipeline without a second encoder. Use the pinned ORT6 runtime environment,
-`NIGHT_SO_ONNX_DIR`, and `PYTHONPATH` containing `tools/vision-retrieval` and
-`tools/night-cpu`:
+On Sigma, TEST already holds SO400M and lacks enough free memory for a second
+ORT6 process. For the paired experiment the runtime owner runs the lightweight
+`http_wrapper.py` on loopback 8127, forwarding each image to existing ORT6 on
+8125, then asking the independent OCR worker on 8129 only when a same-family
+variant is near the visual winner. No second encoder is loaded. The existing
+backend must first expose `target_selection` (selected/competing boxes, original
+whole Top20 with scores, selection reason) solely to loopback requests carrying
+`X-ML083-Diagnostic: target-v1`. Normal response shape and rankings remain
+unchanged; **coordinator reviews the diff before the runtime owner changes TEST**.
+
+```sh
+python tools/cpu-evidence/http_wrapper.py \
+  --backend http://127.0.0.1:8125 --port 8127 \
+  --catalog /srv/lct/data/vision-retrieval/20260925/detectors/catalog-audit/catalog-bundle.json \
+  --cards /srv/lct/data/vision-retrieval/cpu-evidence-20260926/cards.json \
+  --ocr-url http://127.0.0.1:8129 --ocr-timeout 3.0
+```
+
+After acceptance, the same matcher/OCR processor can run inside the existing
+CPUPipeline without a forwarding hop. Its in-process hook also serves as a
+reference for a machine with enough memory. Use the pinned ORT6 runtime
+environment, `NIGHT_SO_ONNX_DIR`, and `PYTHONPATH` containing
+`tools/vision-retrieval` and `tools/night-cpu`:
 
 ```sh
 python tools/night-cpu/night_server.py \
@@ -38,12 +61,13 @@ python tools/night-cpu/night_server.py \
   --catalog /srv/lct/data/vision-retrieval/20260925/detectors/catalog-audit/catalog-bundle.json \
   --index-dir /srv/lct/data/vision-retrieval/20260925/detectors/so400m-gatev2/index \
   --evidence-cards /srv/lct/data/vision-service/benchmarks/ml-083/cards.json \
-  --evidence-url http://127.0.0.1:8129 --evidence-timeout 2.0
+  --evidence-url http://127.0.0.1:8129 --evidence-timeout 3.0
 ```
 
 The cards path is an example for the runtime owner to fill with a hash-verified
 copy; its presence is required. Only the OCR worker needs an OCR package; the
-matcher/hook uses existing PIL, catalog and ORT6 dependencies plus stdlib.
+matcher/wrapper uses existing PIL and stdlib. The in-process hook reuses the
+ORT6 dependencies already loaded by CPUPipeline.
 
 The inference process must not load gold. First compare paired full HTTP rows
 on the pinned frozen 213 and organizer 103 inputs via the independent evaluator;

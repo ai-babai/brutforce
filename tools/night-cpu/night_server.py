@@ -16,7 +16,6 @@ import sys
 import threading
 import time
 import unicodedata
-import urllib.error
 import urllib.request
 from http.server import ThreadingHTTPServer
 from pathlib import Path
@@ -41,7 +40,7 @@ class CPUPipeline:
     def __init__(self, catalog: Path, index_dir: Path, threads: int, encoder: str,
                   ocr_url: str | None = None, route: str = 'standard',
                   ocr_policy: str = 'all', evidence_url: str | None = None,
-                  evidence_cards: Path | None = None, evidence_timeout: float = 2.0):
+                  evidence_cards: Path | None = None, evidence_timeout: float = 3.0):
         import torch
         if bool(evidence_url) != bool(evidence_cards):
             raise ValueError('evidence URL and catalog cards must be supplied together')
@@ -89,9 +88,9 @@ class CPUPipeline:
             '-evidence-v1' if evidence_url else '')
         if evidence_url:
             sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'cpu-evidence'))
-            from matcher import Matcher
-            self.matcher = Matcher(json.loads(evidence_cards.read_text()),
-                                   [ref['slug'] for ref in catalog_info['references']])
+            from processor import EvidenceProcessor
+            self.evidence = EvidenceProcessor(json.loads(evidence_cards.read_text()),
+                [ref['slug'] for ref in catalog_info['references']], evidence_url, evidence_timeout)
         if ocr_url:
             from ranking import Lexical
             refs = catalog_info['references']
@@ -114,69 +113,6 @@ class CPUPipeline:
             return text, ocr_top(self.lexical, text, self.slugs), None, round((time.perf_counter()-started)*1000)
         except Exception as exc:
             return '', [], type(exc).__name__ + ': ' + str(exc)[:200], round((time.perf_counter()-started)*1000)
-
-    def _evidence_rerank(self, content, raw, ranks, track):
-        import hashlib
-        from PIL import Image, ImageOps
-
-        started = time.perf_counter()
-        positions = self.matcher.family_positions(ranks)
-        diag = {'state': 'not_eligible', 'before': [x['slug'] for x in ranks],
-                'after': [x['slug'] for x in ranks], 'family_positions_1based':
-                [i + 1 for i in positions], 'target_box': raw['selection']['selected_box'],
-                'target_sha256': None, 'ocr_error': None, 'ocr_texts': [], 'ocr_scores': [],
-                'worker_ocr_ms': None, 'candidate_evidence': [], 'observations': []}
-        if raw['selection']['selected_box'] is None:
-            diag['state'] = 'no_selected_target'
-            return ranks, diag, round((time.perf_counter()-started)*1000)
-        if not positions:
-            return ranks, diag, round((time.perf_counter()-started)*1000)
-
-        box = raw['selection']['selected_box']
-        # An overlapping detector box may be a second physical bottle; do not
-        # assign its writing to the selected target without a separate polygon.
-        if track == 'service':
-            area = max(1, (box[2]-box[0]) * (box[3]-box[1]))
-            for other in raw['selection']['boxes']:
-                candidate = other['box']
-                if candidate == box:
-                    continue
-                intersection = max(0, min(box[2], candidate[2])-max(box[0], candidate[0])) * (
-                    max(0, min(box[3], candidate[3])-max(box[1], candidate[1])))
-                if intersection / area > .2:
-                    diag['state'] = 'target_overlaps_other_bottle'
-                    return ranks, diag, round((time.perf_counter()-started)*1000)
-        try:
-            with Image.open(io.BytesIO(content)) as source:
-                target = ImageOps.exif_transpose(source).convert('RGB').crop(box)
-            image_out = io.BytesIO()
-            target.save(image_out, 'JPEG', quality=92)
-            data = image_out.getvalue()
-            diag['target_sha256'] = hashlib.sha256(data).hexdigest()
-            request = urllib.request.Request(self.evidence_url.rstrip('/') + '/ocr',
-                data=data, method='POST', headers={'Content-Type': 'image/jpeg'})
-            with urllib.request.urlopen(request, timeout=self.evidence_timeout) as response:
-                value = json.load(response)
-            if 'error' in value:
-                raise ValueError(str(value['error'])[:200])
-            texts, scores = value['texts'], value['scores']
-            if not isinstance(texts, list) or not isinstance(scores, list):
-                raise ValueError('invalid OCR arrays')
-            diag['ocr_texts'], diag['ocr_scores'] = texts, scores
-            diag['worker_ocr_ms'] = value.get('ocr_ms')
-            ranks, matched = self.matcher.rerank(ranks, positions, texts, scores)
-            diag.update(matched)
-        except urllib.error.HTTPError as exc:
-            try:
-                worker_error = json.load(exc).get('error', '')
-            except (ValueError, OSError):
-                worker_error = ''
-            diag['state'] = 'ocr_failed'
-            diag['ocr_error'] = f'HTTP {exc.code}: {str(worker_error)[:200]}'
-        except Exception as exc:
-            diag['state'] = 'ocr_failed'
-            diag['ocr_error'] = type(exc).__name__ + ': ' + str(exc)[:200]
-        return ranks, diag, round((time.perf_counter()-started)*1000)
 
     def _softgate_rescue(self, raw, content):
         import numpy as np
@@ -268,9 +204,10 @@ class CPUPipeline:
         raw['timings_ms']['total_ms'] += raw['timings_ms']['ocr_ms']
         evidence = None
         if self.evidence_url:
-            ranks, evidence, evidence_ms = self._evidence_rerank(content, raw, ranks, track)
+            ranks, evidence, evidence_ms = self.evidence.rerank(
+                content, raw['selection'], ranks, track, raw['timings_ms']['total_ms'])
             raw['timings_ms']['evidence_ms'] = evidence_ms
-            raw['timings_ms']['ocr_ms'] = evidence_ms if evidence['target_sha256'] else 0
+            raw['timings_ms']['ocr_ms'] = evidence_ms if evidence['ocr_timeout_ms'] else 0
             raw['timings_ms']['total_ms'] += evidence_ms
         rejected_fullframe = False
         if self.route == 'fullframe' and raw['selection']['selection_reason'] == 'fullframe_no_bottle_hypothesis':
@@ -293,6 +230,12 @@ class CPUPipeline:
             'ranked_slugs': ranked_slugs,
             'timings_ms': raw['timings_ms'],
             'image_sha256': raw['image_sha256'],
+            'target_selection': {
+                'selected_box': raw['selection']['selected_box'],
+                'boxes': [{'box': item['box']} for item in raw['selection']['boxes']],
+                'selection_reason': raw['selection']['selection_reason'],
+                'whole_top20': raw['branches_top20']['whole'],
+            },
         }
         if self.ocr_url:
             result.update({'branches_top20': {'whole': raw['branches_top20']['whole'],
@@ -313,7 +256,7 @@ class CPUPipeline:
             result['selection_reason'] = raw['selection']['selection_reason']
             result['ocr_error'] = evidence['ocr_error']
             result['ocr_text'] = '\n'.join(evidence['ocr_texts'])
-            result['ocr_used'] = evidence['target_sha256'] is not None
+            result['ocr_used'] = evidence['ocr_timeout_ms'] is not None
         if track == 'service':
             if ranked_slugs:
                 result['slug'] = ranked_slugs[0]
@@ -338,6 +281,10 @@ def make_handler(base_handler, pipeline, threads: int):
 
         def respond(self, status, payload):
             try:
+                if ('target_selection' in payload and
+                        (self.client_address[0] != '127.0.0.1' or
+                         self.headers.get('X-ML083-Diagnostic') != 'target-v1')):
+                    payload = {k: v for k, v in payload.items() if k != 'target_selection'}
                 super().respond(status, payload)
             except (BrokenPipeError, ConnectionResetError):
                 # A timed-out client may disconnect while inference finishes.
@@ -383,7 +330,7 @@ def main() -> None:
                                             'onnx640', 'onnx_dual', 'onnx_int8'], default='standard')
     parser.add_argument('--evidence-url')
     parser.add_argument('--evidence-cards', type=Path)
-    parser.add_argument('--evidence-timeout', type=float, default=2.0)
+    parser.add_argument('--evidence-timeout', type=float, default=3.0)
     args = parser.parse_args()
     if args.threads < 1 or args.threads > 8:
         parser.error('--threads must be 1..8')
