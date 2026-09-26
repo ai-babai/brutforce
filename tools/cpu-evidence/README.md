@@ -20,8 +20,10 @@ field preserves the original visual order. No OCR text is guessed or substituted
 
 Diagnostic result: `evidence` includes before/after slug order, per-candidate
 catalog field and observed/contradicts/unknown status, OCR literals and scores,
-selected target box and crop hash, elapsed time and explicit errors. The response
-also retains the original whole-view branch and image SHA. Never write OCR/photo
+selected target box and crop hash, worker OCR time, hook elapsed time and explicit
+errors. Only an OCR family/producer anchor at score ≥0.65 and a single candidate
+grape at score ≥0.75 permit promotion; missing/ambiguous readings stay unknown.
+The response also retains the original whole-view branch and image SHA. Never write OCR/photo
 contents to common logs; raw HTTP rows are private evaluation artifacts.
 
 The inference process must not load gold. First compare paired full HTTP rows

@@ -124,8 +124,11 @@ class CPUPipeline:
                 'after': [x['slug'] for x in ranks], 'family_positions_1based':
                 [i + 1 for i in positions], 'target_box': raw['selection']['selected_box'],
                 'target_sha256': None, 'ocr_error': None, 'ocr_texts': [], 'ocr_scores': [],
-                'candidate_evidence': [], 'observations': []}
-        if not positions or raw['selection']['selected_box'] is None:
+                'worker_ocr_ms': None, 'candidate_evidence': [], 'observations': []}
+        if raw['selection']['selected_box'] is None:
+            diag['state'] = 'no_selected_target'
+            return ranks, diag, round((time.perf_counter()-started)*1000)
+        if not positions:
             return ranks, diag, round((time.perf_counter()-started)*1000)
 
         box = raw['selection']['selected_box']
@@ -159,6 +162,7 @@ class CPUPipeline:
             if not isinstance(texts, list) or not isinstance(scores, list):
                 raise ValueError('invalid OCR arrays')
             diag['ocr_texts'], diag['ocr_scores'] = texts, scores
+            diag['worker_ocr_ms'] = value.get('ocr_ms')
             ranks, matched = self.matcher.rerank(ranks, positions, texts, scores)
             diag.update(matched)
         except Exception as exc:
@@ -258,6 +262,7 @@ class CPUPipeline:
         if self.evidence_url:
             ranks, evidence, evidence_ms = self._evidence_rerank(content, raw, ranks, track)
             raw['timings_ms']['evidence_ms'] = evidence_ms
+            raw['timings_ms']['ocr_ms'] = evidence_ms if evidence['target_sha256'] else 0
             raw['timings_ms']['total_ms'] += evidence_ms
         rejected_fullframe = False
         if self.route == 'fullframe' and raw['selection']['selection_reason'] == 'fullframe_no_bottle_hypothesis':
@@ -298,6 +303,7 @@ class CPUPipeline:
             result['evidence'] = evidence
             result['ocr_error'] = evidence['ocr_error']
             result['ocr_text'] = '\n'.join(evidence['ocr_texts'])
+            result['ocr_used'] = evidence['target_sha256'] is not None
         if track == 'service':
             if ranked_slugs:
                 result['slug'] = ranked_slugs[0]
