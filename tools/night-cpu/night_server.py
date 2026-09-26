@@ -12,6 +12,7 @@ import json
 import os
 import re
 import resource
+import sys
 import threading
 import time
 import unicodedata
@@ -37,9 +38,14 @@ NONWINE_TEXT = re.compile(
 
 class CPUPipeline:
     def __init__(self, catalog: Path, index_dir: Path, threads: int, encoder: str,
-                 ocr_url: str | None = None, route: str = 'standard',
-                 ocr_policy: str = 'all'):
+                  ocr_url: str | None = None, route: str = 'standard',
+                  ocr_policy: str = 'all', evidence_url: str | None = None,
+                  evidence_cards: Path | None = None, evidence_timeout: float = 2.0):
         import torch
+        if bool(evidence_url) != bool(evidence_cards):
+            raise ValueError('evidence URL and catalog cards must be supplied together')
+        if evidence_url and (encoder != 'so400m' or route != 'onnx640' or ocr_url):
+            raise ValueError('evidence hook requires isolated SO400M onnx640 without lexical OCR')
         if route == 'fullframe' and not ocr_url:
             raise ValueError('fullframe routing requires OCR confirmation')
         if route == 'softgate' and (encoder != 'so400m' or not ocr_url):
@@ -76,7 +82,15 @@ class CPUPipeline:
         self.route = route
         self.ocr_url = ocr_url
         self.ocr_policy = ocr_policy
-        self.profile = encoder + '-' + route + ('-ocr-' + ocr_policy if ocr_url else '')
+        self.evidence_url = evidence_url
+        self.evidence_timeout = evidence_timeout
+        self.profile = encoder + '-' + route + ('-ocr-' + ocr_policy if ocr_url else '') + (
+            '-evidence-v1' if evidence_url else '')
+        if evidence_url:
+            sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'cpu-evidence'))
+            from matcher import Matcher
+            self.matcher = Matcher(json.loads(evidence_cards.read_text()),
+                                   [ref['slug'] for ref in catalog_info['references']])
         if ocr_url:
             from ranking import Lexical
             refs = catalog_info['references']
@@ -99,6 +113,58 @@ class CPUPipeline:
             return text, ocr_top(self.lexical, text, self.slugs), None, round((time.perf_counter()-started)*1000)
         except Exception as exc:
             return '', [], type(exc).__name__ + ': ' + str(exc)[:200], round((time.perf_counter()-started)*1000)
+
+    def _evidence_rerank(self, content, raw, ranks, track):
+        import hashlib
+        from PIL import Image, ImageOps
+
+        started = time.perf_counter()
+        positions = self.matcher.family_positions(ranks)
+        diag = {'state': 'not_eligible', 'before': [x['slug'] for x in ranks],
+                'after': [x['slug'] for x in ranks], 'family_positions_1based':
+                [i + 1 for i in positions], 'target_box': raw['selection']['selected_box'],
+                'target_sha256': None, 'ocr_error': None, 'ocr_texts': [], 'ocr_scores': [],
+                'candidate_evidence': [], 'observations': []}
+        if not positions or raw['selection']['selected_box'] is None:
+            return ranks, diag, round((time.perf_counter()-started)*1000)
+
+        box = raw['selection']['selected_box']
+        # An overlapping detector box may be a second physical bottle; do not
+        # assign its writing to the selected target without a separate polygon.
+        if track == 'service':
+            area = max(1, (box[2]-box[0]) * (box[3]-box[1]))
+            for other in raw['selection']['boxes']:
+                candidate = other['box']
+                if candidate == box:
+                    continue
+                intersection = max(0, min(box[2], candidate[2])-max(box[0], candidate[0])) * (
+                    max(0, min(box[3], candidate[3])-max(box[1], candidate[1])))
+                if intersection / area > .2:
+                    diag['state'] = 'target_overlaps_other_bottle'
+                    return ranks, diag, round((time.perf_counter()-started)*1000)
+        try:
+            with Image.open(io.BytesIO(content)) as source:
+                target = ImageOps.exif_transpose(source).convert('RGB').crop(box)
+            image_out = io.BytesIO()
+            target.save(image_out, 'JPEG', quality=92)
+            data = image_out.getvalue()
+            diag['target_sha256'] = hashlib.sha256(data).hexdigest()
+            request = urllib.request.Request(self.evidence_url.rstrip('/') + '/ocr',
+                data=data, method='POST', headers={'Content-Type': 'image/jpeg'})
+            with urllib.request.urlopen(request, timeout=self.evidence_timeout) as response:
+                value = json.load(response)
+            if 'error' in value:
+                raise ValueError(str(value['error'])[:200])
+            texts, scores = value['texts'], value['scores']
+            if not isinstance(texts, list) or not isinstance(scores, list):
+                raise ValueError('invalid OCR arrays')
+            diag['ocr_texts'], diag['ocr_scores'] = texts, scores
+            ranks, matched = self.matcher.rerank(ranks, positions, texts, scores)
+            diag.update(matched)
+        except Exception as exc:
+            diag['state'] = 'ocr_failed'
+            diag['ocr_error'] = type(exc).__name__ + ': ' + str(exc)[:200]
+        return ranks, diag, round((time.perf_counter()-started)*1000)
 
     def _softgate_rescue(self, raw, content):
         import numpy as np
@@ -188,6 +254,11 @@ class CPUPipeline:
                 raw['timings_ms']['ocr_ms'] = round((time.perf_counter()-started)*1000)
             ranks = rank_fuse({'whole': ranks, 'ocr': ocr_ranks})
         raw['timings_ms']['total_ms'] += raw['timings_ms']['ocr_ms']
+        evidence = None
+        if self.evidence_url:
+            ranks, evidence, evidence_ms = self._evidence_rerank(content, raw, ranks, track)
+            raw['timings_ms']['evidence_ms'] = evidence_ms
+            raw['timings_ms']['total_ms'] += evidence_ms
         rejected_fullframe = False
         if self.route == 'fullframe' and raw['selection']['selection_reason'] == 'fullframe_no_bottle_hypothesis':
             visual_set = {x['slug'] for x in raw['branches_top20']['whole']}
@@ -203,7 +274,8 @@ class CPUPipeline:
             'catalog_version': CATALOG_VERSION,
             'index_version': INDEX_VERSIONS[self.encoder],
             'model_version': MODEL_VERSIONS[self.encoder] + '-' + self.route +
-                             ('-ocr-' + self.ocr_policy if self.ocr_url else ''),
+                             ('-ocr-' + self.ocr_policy if self.ocr_url else '') +
+                             ('-evidence-v1' if self.evidence_url else ''),
             'serving_profile': self.profile,
             'ranked_slugs': ranked_slugs,
             'timings_ms': raw['timings_ms'],
@@ -222,6 +294,10 @@ class CPUPipeline:
                                         'label': raw['branches_top20']['label']}
             result['label_selection'] = raw['label_selection']
             result['label_context_box'] = raw['label_context_box']
+        if evidence is not None:
+            result['evidence'] = evidence
+            result['ocr_error'] = evidence['ocr_error']
+            result['ocr_text'] = '\n'.join(evidence['ocr_texts'])
         if track == 'service':
             if ranked_slugs:
                 result['slug'] = ranked_slugs[0]
@@ -261,7 +337,8 @@ def make_handler(base_handler, pipeline, threads: int):
                 'catalog_version': CATALOG_VERSION,
                 'index_version': INDEX_VERSIONS[self.pipeline.encoder],
                 'model_version': MODEL_VERSIONS[self.pipeline.encoder] + '-' + self.pipeline.route +
-                                 ('-ocr-' + self.pipeline.ocr_policy if self.pipeline.ocr_url else ''),
+                                 ('-ocr-' + self.pipeline.ocr_policy if self.pipeline.ocr_url else '') +
+                                 ('-evidence-v1' if self.pipeline.evidence_url else ''),
                 'serving_profile': self.pipeline.profile,
                 'device': 'cpu',
                 'threads': threads,
@@ -288,19 +365,26 @@ def main() -> None:
     parser.add_argument('--ocr-policy', choices=['all', 'rescue_only'], default='all')
     parser.add_argument('--route', choices=['standard', 'fullframe', 'owl640', 'softgate',
                                             'onnx640', 'onnx_dual', 'onnx_int8'], default='standard')
+    parser.add_argument('--evidence-url')
+    parser.add_argument('--evidence-cards', type=Path)
+    parser.add_argument('--evidence-timeout', type=float, default=2.0)
     args = parser.parse_args()
     if args.threads < 1 or args.threads > 8:
         parser.error('--threads must be 1..8')
     if args.host != '127.0.0.1':
         parser.error('CPU test service must bind 127.0.0.1')
+    if not .1 <= args.evidence_timeout <= 3:
+        parser.error('--evidence-timeout must be 0.1..3 seconds')
     os.environ.setdefault('OMP_NUM_THREADS', str(args.threads))
     os.environ.setdefault('MKL_NUM_THREADS', str(args.threads))
     pipeline = CPUPipeline(args.catalog, args.index_dir, args.threads, args.encoder,
-                           args.ocr_url, args.route, args.ocr_policy)
+                           args.ocr_url, args.route, args.ocr_policy,
+                           args.evidence_url, args.evidence_cards, args.evidence_timeout)
 
     Handler = make_handler(server.Handler, pipeline, args.threads)
     print(json.dumps({'ready': True, 'model_version': MODEL_VERSIONS[args.encoder] + '-' + args.route +
-                      ('-ocr-' + args.ocr_policy if args.ocr_url else ''),
+                      ('-ocr-' + args.ocr_policy if args.ocr_url else '') +
+                      ('-evidence-v1' if args.evidence_url else ''),
                       'profile': pipeline.profile, 'cold_load_ms': pipeline.load_ms,
                       'host': args.host, 'port': args.port}), flush=True)
     ThreadingHTTPServer((args.host, args.port), Handler).serve_forever()
