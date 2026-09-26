@@ -8,6 +8,7 @@
 |---|---|
 | Цель и запуск | [README.md](README.md) |
 | Изменение UI | [apps/web](apps/web/AGENTS.md), [Design Specs](apps/web/design-specs.md) |
+| Продолжение Sigma BDD и Sigma Front в bb | [BDD](docs/project/BB-SIGMA-BDD-ONBOARDING-2026-09-26.md), [Front](docs/project/BB-SIGMA-FRONT-ONBOARDING-2026-09-26.md) |
 | HTTP backend | [apps/api](apps/api/AGENTS.md), [API README](apps/api/README.md) |
 | Разметка тестовых фото | [Контракт feedback](contracts/photo-feedback.md), `apps/api/feedback.go`, UI-007 |
 | Контракты и конкурсный API | [contracts](contracts/README.md), [eval](contracts/eval-predict.md) |
