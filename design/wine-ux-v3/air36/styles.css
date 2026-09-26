@@ -1,13 +1,14 @@
 @import url('../air35/styles.css');
 
-/* Air 3.6: labels and icons share the same padded active area. */
-.bottom-nav{height:calc(78px + env(safe-area-inset-bottom,0px));min-height:calc(78px + env(safe-area-inset-bottom,0px));padding:8px 12px calc(8px + env(safe-area-inset-bottom,0px));align-items:stretch}
-.bottom-nav button{padding:8px 4px;line-height:14px;gap:3px;min-height:0;justify-content:center}
+/* Compact navigation: keep the whole icon-and-label target, with safe area outside the pill. */
+.bottom-nav{height:calc(62px + env(safe-area-inset-bottom,0px));min-height:calc(62px + env(safe-area-inset-bottom,0px));padding:5px 12px calc(5px + env(safe-area-inset-bottom,0px));align-items:stretch}
+.bottom-nav button{padding:4px;line-height:14px;gap:3px;min-height:0;justify-content:center}
 .bottom-nav button .icon{height:26px;width:26px;flex:none}
-.bottom-nav .nav-slider{top:8px;bottom:calc(8px + env(safe-area-inset-bottom,0px))}
+.bottom-nav .nav-slider{top:5px;bottom:calc(5px + env(safe-area-inset-bottom,0px))}
+.comparison-row .origin-thumb{justify-self:start;width:max-content;max-width:100%;gap:8px}
 .home-hero{padding-bottom:0}.home-actions{margin-top:-1px;padding-top:0;position:relative;z-index:1}
 .hero-dog{align-items:flex-end}.hero-dog .dog{display:block;object-position:bottom center}
-.camera-simple{min-height:calc(100dvh - 78px - env(safe-area-inset-bottom,0px));background:#231e1c}
+.camera-simple{min-height:calc(100dvh - 62px - env(safe-area-inset-bottom,0px));background:#231e1c}
 .camera-simple .app-top{height:64px;min-height:64px;background:linear-gradient(#211a19b3,transparent)}
 .camera-simple .capture-screen{padding:4px 24px 24px;display:flex;flex-direction:column}
 .capture-guidance{text-align:center;font:400 14px/1.5 Onest,Arial,sans-serif;color:#fff;position:relative;z-index:1;margin:8px 0 0;text-shadow:0 1px 5px #0008}
@@ -20,6 +21,6 @@
 .camera-shutter{width:88px;height:88px;padding:5px;background:transparent;border:3px solid #fff;border-radius:50%;display:grid;place-items:stretch}
 .camera-shutter span{border-radius:50%;background:#fff;display:block}
 .camera-shutter:active span{background:#ead6ce}
-@media(min-width:901px){.camera-simple{min-height:854px}}
+@media(min-width:901px){.camera-simple{min-height:870px}}
 @media(max-height:740px){.camera-simple .camera-corners{inset:128px 34px 138px}.camera-simple .photo-bottle{padding:120px 55px 145px}}
-@media(max-height:500px) and (orientation:landscape){.camera-simple .camera-controls{position:absolute;right:20px;top:64px;bottom:20px;display:flex;flex-direction:column;justify-content:center;gap:12px;padding:0}.camera-simple .capture-guidance{width:65%}.camera-simple .camera-corners{inset:100px 160px 35px 35px}.camera-simple .photo-bottle{padding:70px 180px 25px 80px}}
+@media(max-height:500px) and (orientation:landscape){.camera-open .camera-simple{height:calc(100dvh - 62px - env(safe-area-inset-bottom,0px));min-height:0}.camera-simple .camera-controls{position:absolute;right:20px;top:64px;bottom:20px;display:flex;flex-direction:column;justify-content:center;gap:12px;padding:0}.camera-simple .capture-guidance{width:65%}.camera-simple .camera-corners{inset:100px 160px 35px 35px}.camera-simple .photo-bottle{padding:70px 180px 25px 80px}}
