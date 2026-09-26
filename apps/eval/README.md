@@ -209,3 +209,7 @@ The runner sends multipart `image` with the original image extension and accepts
 ## Verification and recovery
 
 `go test ./...` checks scoring and service behavior. Check `/healthz`, download/archive contents, a known dummy submission, idempotent resend, `GET /api/runs`, and restart persistence before exposing the service. Back up `runs.jsonl` and the entire sealed suite together. The server refuses an invalid suite/hash and corrupt history. Rollback: stop the new systemd unit and remove the Caddy route; keep data files intact.
+
+### Статусы архитектур в отчётах
+
+У схем явно указывать отдельно для CPU и GPU: работающее решение, контроль эксперимента, основной/альтернативный кандидат или отклонённый вариант. Кандидат не считается внедрённым по результатам бенчмарка. Указывать дату проверки runtime; если активного GPU-сервиса нет, писать это явно. Для night.html состояние проверено 26.09.2026 01:39 МСК: TEST whole-only CPU/PyTorch 4 потока, RunPod отсутствуют; ORT6 и Roman-20 Deadline6 — кандидаты.
