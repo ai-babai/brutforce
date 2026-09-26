@@ -6,11 +6,11 @@
 <nav id="report-nav" class="report-nav" aria-label="Разделы отчёта"></nav>
 <p id="report-status" class="report-status" role="status">Загружаем результаты…</p><div id="report-sections"></div>
 <section class="panel architecture-panel"><h2 id="architecture-title">Как устроены решения</h2>
-<p>Статус проверен 26 сентября 2026, 01:39 МСК. Это снимок состояния, а не мониторинг в реальном времени. «Кандидат» означает результат эксперимента: он ещё не заменил работающий сервис.</p>
+<p>Статус проверен 26 сентября 2026, 03:17 МСК после выпуска ORT6 в TEST. Это снимок состояния, а не мониторинг в реальном времени. Экспериментальные метрики ниже относятся к ночному прогону; текущий сервис проверен отдельно.</p>
 <ul>
-<li><strong>CPU — активно в TEST:</strong> <a href="#cpu-active">RT-DETR + SigLIP2 SO400M/384, whole-only, PyTorch, 4 потока</a>.</li>
+<li><strong>CPU — активно в TEST:</strong> <a href="#cpu-active">ORT6: SO400M FP32 в ONNX Runtime, 6 потоков, OWLv2 fallback 640</a>.</li>
 <li><strong>GPU — активного сервиса нет.</strong> Экспериментальные RunPod удалены; <a href="#gpu-control">B</a> — контрольная архитектура.</li>
-<li><strong>CPU — кандидат:</strong> <a href="#cpu-candidate">ORT6: SO400M FP32 в ONNX Runtime, 6 потоков, OWLv2 fallback 640</a>.</li>
+<li><strong>CPU — предыдущий release:</strong> <a href="#cpu-previous">PyTorch SO400M whole-only, 4 потока; сохранён для отката</a>.</li>
 <li><strong>GPU — основной кандидат:</strong> <a href="#gpu-candidate">B → Roman-20 Deadline6</a>. Roman-5 — более быстрая альтернатива.</li>
 </ul><div class="architecture-grid">
 <article class="architecture-card" id="gpu-control"><p><strong>GPU · КОНТРОЛЬ, СЕЙЧАС НЕ ЗАПУЩЕН</strong></p><h3>B · исходный GPU-поиск</h3><pre>полное фото
@@ -21,21 +21,21 @@
   ├─ SO400M: этикетка   → кандидаты
   └─ PaddleOCR → текстовый поиск
   → объединение рангов → Top20</pre><p>Для retrieval-корзин на входе уже проверенный кроп. Каталог обработан заранее. B — контроль для дополнительных этапов на GPU, а не новый результат этой ночи.</p></article>
-<article class="architecture-card" id="cpu-active"><p><strong>CPU · АКТИВНО В TEST</strong></p><h3>RT-DETR + SO400M · whole-only</h3><pre>фото → RT-DETR R18: бутылки
+<article class="architecture-card" id="cpu-previous"><p><strong>CPU · ПРЕДЫДУЩИЙ RELEASE, СОХРАНЁН ДЛЯ ОТКАТА</strong></p><h3>RT-DETR + SO400M · whole-only</h3><pre>фото → RT-DETR R18: бутылки
   → SigLIP2 Base/224: выбор вина
   ├─ бутылка есть → кроп цели
   └─ бутылки нет → поиск этикетки
        ↓
   SigLIP2 SO400M/384 → один вектор
        ↓
-  сравнение с каталогом → Top20</pre><p>Работает на Sigma: lct-vision-test, CPU, PyTorch, 4 потока, один запрос одновременно. Версия rtdetr-so400m-whole-only-v1. Отдельной ветви эмбеддинга этикетки, OCR и объединения трёх ветвей здесь нет.</p></article>
-<article class="architecture-card" id="cpu-candidate"><p><strong>CPU · КАНДИДАТ, НЕ ВНЕДРЁН</strong></p><h3>ORT6 · оптимизированный whole-only</h3><pre>фото → RT-DETR → выбор вина
+  сравнение с каталогом → Top20</pre><p>До 26.09 работал на Sigma в lct-vision-test: CPU, PyTorch, 4 потока, один запрос одновременно. Версия rtdetr-so400m-whole-only-v1. Release сохранён для отката. Отдельной ветви эмбеддинга этикетки, OCR и объединения трёх ветвей здесь нет.</p></article>
+<article class="architecture-card" id="cpu-active"><p><strong>CPU · АКТИВНО В TEST С 26.09</strong></p><h3>ORT6 · оптимизированный whole-only</h3><pre>фото → RT-DETR → выбор вина
   ├─ бутылка есть → кроп цели
   └─ бутылки нет → OWLv2, размер 640
        ↓
   SO400M/384 FP32 → ONNX Runtime
        ↓                 6 потоков
-  сравнение с каталогом → Top20</pre><p>Предлагаемая замена CPU-реализации после приёмки. В эксперименте: 316/316 ответов в срок, p95 4,85 с на закреплённых корзинах и 4,96 с на фото организаторов. Это замеры кандидата, не работающего TEST.</p></article>
+  сравнение с каталогом → Top20</pre><p>Работает на Sigma как lct-vision-test, версия rtdetr-so400m-whole-only-v1-onnx640. После выпуска health ready и публичный поиск Maks вернул пять кандидатов. В предшествующем эксперименте: 316/316 ответов в срок, p95 4,85 с на закреплённых корзинах и 4,96 с на фото организаторов. Эти числа относятся к эксперименту, а не к production SLA.</p></article>
 <article class="architecture-card"><p><strong>ЭКСПЕРИМЕНТ · НЕ ВЫБРАН</strong></p><h3>DISK + LightGlue · совпадение деталей</h3><pre>B: выбранная этикетка + Top20
   → DISK: характерные точки
   → LightGlue: пары точек
@@ -69,5 +69,5 @@ Deadline6: B занял ≥6 с
        + визуальные списки B
   → объединение рангов</pre><p>Читающая модель не получает список кандидатов или правильный ответ. Текстовая ветвь может добавить в выдачу вино, пропущенное визуальным поиском. Это отдельный опыт от Qwen Reranker.</p></article>
 </div></section>
-<section class="next-panel"><h2>Воспроизведение и дальнейшие шаги</h2><p><a href="https://github.com/ai-babai/brutforce/blob/codex/eval-baskets-20260923/docs/project/EXPERIMENT-PLAN-2026-09-25-NIGHT.md">Согласованный план и критерии</a> · <a href="https://github.com/ai-babai/brutforce/blob/codex/eval-baskets-20260923/docs/project/PLAN.md">Живой план</a> · <a href="/guide.html">Онбординг агентов</a></p><p>Корзины v2 неизменны. Новые прогоны добавлены в историю. Итеративный подбор на этих же фото — исследование, не независимый закрытый тест. TEST и PROD во время экспериментов не заменяем.</p></section>
+<section class="next-panel"><h2>Воспроизведение и дальнейшие шаги</h2><p><a href="https://github.com/ai-babai/brutforce/blob/codex/eval-baskets-20260923/docs/project/EXPERIMENT-PLAN-2026-09-25-NIGHT.md">Согласованный план и критерии</a> · <a href="https://github.com/ai-babai/brutforce/blob/codex/eval-baskets-20260923/docs/project/PLAN.md">Живой план</a> · <a href="/guide.html">Онбординг агентов</a></p><p>Корзины v2 неизменны. Новые прогоны добавлены в историю. Итеративный подбор на этих же фото — исследование, не независимый закрытый тест. После завершения экспериментов ORT6 выпущен в TEST 26.09; PROD не менялся.</p></section>
 </main><footer>Исходные данные, закрытые ответы и веса хранятся отдельно от публичного отчёта.</footer><script src="next.js"></script></body></html>

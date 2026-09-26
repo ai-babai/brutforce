@@ -5,6 +5,8 @@
 Код и воспроизведение: [night-experiments](../../tools/night-experiments/README.md).
 Публичная сводка: https://cv.ops.dzap.pw/data/night.html.
 
+Статус выпуска 26.09, 03:17 МСК: проверенный CPU ORT6 переведён в Sigma TEST (`lct-vision-test`), PROD не менялся. Ночные метрики ниже остаются результатами эксперимента. См. `infra-os/runs/2026-09-26-lct-vision-ort6.md`.
+
 ## Что выбрать по уже полученным результатам
 
 **CPU:** SO400M whole-view в FP32 ONNX Runtime, 6 потоков на Sigma. Все 316 полных
