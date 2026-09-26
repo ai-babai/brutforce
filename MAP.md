@@ -12,6 +12,7 @@
 | Связь модулей, конкурсный API | [contracts](contracts/README.md), [eval](contracts/eval-predict.md) |
 | Поиск/рекомендации Романа | [Контракт](contracts/wine-services.md), [онбординг](docs/agent-guide/ROMAN-SERVICES.md) |
 | Дизайн и макеты | [Переход на v2](docs/product/design-v2-migration-plan.md), design/ |
+| Продолжение этой работы в bb / OpenCode | [Handoff](docs/project/BB-OPENCODE-HANDOFF-2026-09-26.md), [smoke-test Astra](docs/project/BB-ASTRA-DELEGATION-SMOKE-2026-09-26.md) |
 | Тестовые фото, поиск и сервисные проверки | [Eval onboarding](apps/eval/AGENTS.md), [стенд](https://cv.ops.dzap.pw/), [инструкция](https://cv.ops.dzap.pw/guide.html) |
 | Данные, эталоны, дубли и версии разметки | [Правила и навигация](docs/agent-guide/DATA-RULES.md) |
 | Проверки и история | [cases](cases/cases.json), scripts/run-fast-checks.mjs, reports/ |
