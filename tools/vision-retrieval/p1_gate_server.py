@@ -15,6 +15,8 @@ from http.server import HTTPServer
 from pathlib import Path
 
 import server
+import detector_variants
+import model
 from detector_encoder_server import RTSoVision
 from fallback_server import Pipeline as ExistingPipeline
 from label_context_v2 import VERSION as LABEL_CONTEXT_VERSION, context_box
@@ -26,6 +28,30 @@ VERSION = 'rtdetr-so400m-delayed-target-gate-p1-v1'
 MIN_BOTTLE_SCORE = .25
 MIN_LABEL_SCORE = .15
 MAX_PHYSICAL_HYPOTHESES = 2
+LOCAL_SNAPSHOTS = {}
+
+
+def use_pinned_local_snapshots(hub: Path) -> None:
+    """Avoid transformers' remote metadata lookup for already pinned weights."""
+    global LOCAL_SNAPSHOTS
+    pinned = {
+        'rtdetr': (detector_variants.RTDETR_ID, detector_variants.RTDETR_REV),
+        'base224': (model.SIGLIP_ID, model.SIGLIP_REV),
+        'so400m': MODELS['so400m384'],
+        'owlv2': (model.OWL_ID, model.OWL_REV),
+    }
+    paths = {}
+    for name, (repo, revision) in pinned.items():
+        snapshot = hub / ('models--' + repo.replace('/', '--')) / 'snapshots' / revision
+        if not snapshot.is_dir() or not (snapshot / 'model.safetensors').is_file():
+            raise FileNotFoundError(f'{name} pinned snapshot is missing: {snapshot}')
+        paths[name] = str(snapshot)
+    model.SIGLIP_ID = paths['base224']
+    model.OWL_ID = paths['owlv2']
+    detector_variants.RTDETR_ID = paths['rtdetr']
+    MODELS['so400m384'] = (paths['so400m'], pinned['so400m'][1])
+    LOCAL_SNAPSHOTS = {name: {'repo': repo, 'revision': revision, 'path': paths[name]}
+                       for name, (repo, revision) in pinned.items()}
 
 
 def physical_hypotheses(boxes: list[dict]) -> list[dict]:
@@ -181,13 +207,15 @@ class Handler(server.Handler):
                            'cold_load_ms': self.pipeline.load_ms,
                            'device': self.pipeline.device,
                            'gpu_name': self.pipeline.gpu_name,
-                           'label_crop_mode': LABEL_CONTEXT_VERSION})
+                           'label_crop_mode': LABEL_CONTEXT_VERSION,
+                           'local_model_snapshots': LOCAL_SNAPSHOTS})
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--catalog', type=Path, required=True)
     parser.add_argument('--index-dir', type=Path, required=True)
+    parser.add_argument('--hf-hub', type=Path, required=True)
     parser.add_argument('--device', default='cuda')
     parser.add_argument('--ocr-threads', type=int, default=2)
     parser.add_argument('--host', default='127.0.0.1')
@@ -198,6 +226,7 @@ def main():
             or info.get('label_crop') != LABEL_CONTEXT_VERSION
             or info.get('catalog_manifest_sha256') != hashlib.sha256(args.catalog.read_bytes()).hexdigest()):
         raise ValueError('SO400M index/crop/catalog mismatch')
+    use_pinned_local_snapshots(args.hf_hub)
     server.Vision = RTSoVision
     pipeline = Pipeline(args.catalog, args.index_dir, args.device, args.ocr_threads)
     Handler.pipeline = pipeline
