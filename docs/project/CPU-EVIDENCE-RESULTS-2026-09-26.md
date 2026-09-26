@@ -1,6 +1,6 @@
 # ML-083 · CPU evidence: независимая оценка
 
-Статус: подготовлен контроль и доверенный scorer; измерения кандидата ожидаются.
+Статус: frozen 213 кандидата измерены; organizer 103 ожидают полного sealed raw.
 Исходный commit worktree: `b3cd0ba9866c7ae7c96a5a938b99a15797cb0332`.
 Приёмка заранее зафиксирована в [PLAN](PLAN.md), строки 303–332.
 
@@ -47,6 +47,96 @@ organizer 4,964 с; 94/213 frozen дольше 3 с. Private receipt:
 Ни один из 316 ответов свежего контроля не превысил и product budget 8,5 с.
 Private receipt: `/Users/skif/ml-data/brutforce/cpu-evidence-20260926/ort6-fresh-vs-historical-private-v3.json`.
 
+## Диагностика качества исходного ORT6 (до кандидата)
+
+На 54 уникальных `exact` organizer из исправленной sealed-аннотации, с
+overlaid одним проверенным OOD, парный ORT6 даёт: correct Top-1 **39**;
+wrong Top-1, но gold в Top-5 **11**; gold на позициях 6–20 **0**;
+gold отсутствует в Top-20 **4**. Итого gold в Top-20 — **50/54**.
+Для перестановки только исходного Top-20 это *oracle-потолок* 50/54,
+если не испортить 39 правильных ответов и суметь поднять все 11;
+это не предсказанный выигрыш реализации. Именно проверяемый rerank —
+крупнейший доступный механизм, а остальные четыре случая требуют
+target/gate или расширения candidate recall после отдельного разбора.
+
+На этих же 100 уникальных кадрах исходное действие: 52 `match` и 2
+`no_match` среди 54 exact (оба `no_match` ложные); на единственном
+подтверждённом fixed-catalog OOD — `match` (ошибка). Остальные 42
+`catalog_unresolved` и 3 `ambiguous` тоже вернули `match`, но не являются
+проверенными отрицательными метками. Отдельная frozen v2 проверка даёт
+19/22 `no_match` и 0/10 `insufficient_information` по своим verified
+поднаборам; эти поднаборы нельзя смешивать с organizer denominator.
+
+В существующем визуально проверенном аудите
+`vision-retrieval-20260925/annotation/real54-error-analysis.md` описаны
+ошибка hard non-wine gate на одном из отсутствующих в Top-20 кадров и
+выбор соседней бутылки в другом. Аудит
+`absence-audit/parent-exact-errors-v1.json` дополнительно документирует
+две ложные gate-отсечки; обе сохраняют в свежем ORT6 действие `no_match`
+и отсутствие gold в Top-20. Причину четвёртого отсутствия не назначаем:
+аудиты относятся к сохранённым прежним композициям, а не являются
+разметкой внутренней причины каждого ответа ORT6. Диагностика построена
+на повторно используемом development-наборе, не holdout.
+
+## Первый кандидат `4bcc925`: sealed frozen 213
+
+Sealed candidate raw:
+`/Users/skif/ml-data/brutforce/cpu-evidence-20260926/candidate-4bcc925-p1280-v2.jsonl`,
+SHA-256 `7dc3af42384e8f94bfe7147cdaf03f321f0dd55f8b9efc6495eeeaf0cc8de4b7`.
+Все 213 ID и входных SHA прошли проверку, HTTP 200 — 213/213; единый
+`model_version`/`serving_profile`: `rtdetr-so400m-whole-only-v1-onnx640-evidence-v1` /
+`so400m-onnx640-evidence-v1`. По сравнению со свежим ORT6 нет ни одной
+перестановки или смены action/slug: service 110/141, retrieval Top-1 56/62,
+`no_match` 19/22 и `insufficient_information` 0/10 сохранились. Это
+измеренный **no-gain** frozen-части.
+
+OCR использован в 33/213 запросах (service 14, retrieval 19). Для них
+`evidence.state`: `producer_not_observed` 10, `grape_not_observed` 17,
+`family_not_observed` 6; `visual_winner_supported` 0 и `ambiguous` 0.
+У остальных 180: `not_eligible` 133, `no_selected_target` 29,
+`target_overlaps_other_bottle` 18. Из 33 OCR-вызовов 17 дали по одному
+`observation` (family 14, producer 3, grape 0), 16 — ни одного;
+`candidate_evidence` пуст во всех 33, `before == after` во всех 213.
+Наблюдений, разрешающих выбор между карточками, по этому диагностическому
+контракту **0**. Не выводим из этого недоказанную единственную причину.
+
+До административной паузы frozen p50/p95/max: ORT6
+2 484,48 / 4 348,25 / 4 840,25 мс; кандидат
+3 011,44 / 4 837,75 / 5 993,06 мс. Разница p95 +489,50 мс;
+запросов >3 с: 88→109, >8,5 с и >10 с: 0. Frozen время допустимо
+рассматривать отдельно с учётом runtime receipt. После 48 законченных
+organizer-запросов runner приостановлен 26.09.2026 в 12:04:11.556 UTC;
+следующая строка 049 затронута паузой и остаётся в исходном наборе без
+ретрая (HTTP 200, wall 177 369,12 мс). После 84 законченных organizer-запросов
+вторая пауза началась в 12:09:29.676 UTC; затронута строка 085.
+Это административные интервалы, не доказанная модельная задержка.
+Organizer latency и общий timing gate по такому прогону не
+подтверждаются, независимо от численного p95. Organizer quality и полный
+quality verdict ожидают sealed 103/103 и итоговый receipt.
+
+### H2 `4a36086`: только offline replay имеющихся OCR
+
+На доверенном Mac выполнен неизменённый `field_matcher.py` из source
+`4a36086b736933fb70b40ed96f8d02de644dad3f` с зафиксированными
+`matcher.py`/`ranking.py` от `4bcc925`, pinned 2 103 catalog cards
+(SHA-256 `5ffb93714c611efbe541028f44dff84dfc0646451c364caee979869d1548be9a`)
+и сохранёнными буквальными OCR `texts`/`scores` **только 33** frozen-запросов
+первого кандидата. Источники, входные SHA, private case-level сравнение и
+ограничения: `/Users/skif/ml-data/brutforce/cpu-evidence-20260926/h2-4a36086-frozen33-private-replay.json`
+(SHA-256 `685bc1a27533b2bd83fe676ea1be2e70f41e84863ee9a92c482581d010beea4b`).
+
+H2 eligible 33/33; `insufficient_field_evidence` 33/33, наблюдение поля grape
+1, producer 0, line 0; неоднозначное сопоставление line 14, producer 3.
+Среди 660 оценённых кандидатных позиций: supported 0, unknown 656,
+contradicts 4. Перестановок ранга 0; на **только этих 33** размеченных
+входах правильность 28→28, исправлений 0, ухудшений 0. Gold-blind разбор:
+фраза grape хотя бы одного из Top-20 встречается в нормализованных OCR
+literal при любом confidence в 1/33 кадре; при пороге ≥0,75 тоже в 1/33.
+На этих сохранённых входах снижение порога confidence само по себе не
+объясняет отсутствие grape-свидетельств; это не доказательство точности OCR.
+Для остальных 180 frozen нет сохранённого OCR: counterfactual **не измерен**.
+Replay не является полным результатом H2 по HTTP, качеству или latency.
+
 ## Парная оценка кандидата
 
 Вход: исходные 316 публичных изображений с проверкой SHA, каждый полный HTTP-ответ
@@ -63,8 +153,8 @@ source `4bcc925` (сообщение исполнителя ML-083) пересы
 worker `8129`. Сохраняет исходный matcher и пул кандидатов, передаёт
 `ranked_slugs`, `image_sha256`, версии, track и diagnostics evidence; ошибки OCR
 явные, догадок по тексту нет. Бюджет wrapper — 8,5 с минус резерв 350 мс.
-Координатор одобрил TEST diagnostic diff `4bcc925`; runtime готовит полный
-HTTP-прогон кандидата, результатов качества пока нет. У контроля прямой TEST
+Координатор одобрил TEST diagnostic diff `4bcc925`; runtime выполняет полный
+HTTP-прогон кандидата, frozen часть выше уже измерена. У контроля прямой TEST
 `8125` без `CPUQuota`, шесть потоков и `MemoryMax=7 GiB`; у кандидата есть
 дополнительные wrapper/OCR-этапы. Квоты и конкуренцию ресурсов учитываем при
 интерпретации измерений; флаг `paired` scorer не заменяет review runtime receipt.

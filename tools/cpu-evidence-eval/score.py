@@ -229,7 +229,7 @@ def main():
                  'organizer_overlay', 'baseline_frozen', 'baseline_organizer',
                  'candidate_frozen', 'candidate_organizer', 'out'):
         p.add_argument('--' + name.replace('_', '-'), type=Path, required=True)
-    p.add_argument('--timing-control', choices=('historical', 'paired'), required=True)
+    p.add_argument('--timing-control', choices=('historical', 'paired', 'contaminated'), required=True)
     args = p.parse_args()
     paths = {name: value for name, value in vars(args).items() if isinstance(value, Path) and name != 'out'}
     digests = {name: sha(path) for name, path in paths.items()}
@@ -268,7 +268,8 @@ def main():
             'frozen_retrieval_no_drop': frozen_scores['retrieval']['candidate'] >= frozen_scores['retrieval']['baseline'],
             'no_new_negative_errors': not negative_breaks and
                                       (not organizer_scores['ood_baseline'] or organizer_scores['ood_candidate']),
-            'no_new_timeout': no_new_timeouts, 'p95_within_1s': p95_within}
+            'no_new_timeout': no_new_timeouts, 'p95_within_1s': p95_within,
+            'p95_comparable': args.timing_control == 'paired'}
     report = {'schema_version': 1, 'timing_control': args.timing_control,
               'file_sha256': digests, 'frozen': frozen_scores, 'organizer': organizer_scores,
               'latency': timings, 'gate': gate,
@@ -277,6 +278,7 @@ def main():
               'organizer_unique_flips': organizer_flips,
               'limits': ['Organizer 54 exact are reused development labels, not holdout.',
                          'Historical latency cannot satisfy the paired timing gate.',
+                         'Contaminated runs retain all rows for quality and timing totals but cannot prove the full-run timing gate.',
                          'Paired flag requires independent runtime receipt review of quotas and timing scope.',
                          'Private case-level truth and flips stay outside Git and web root.']}
     flags = os.O_CREAT | os.O_EXCL | os.O_WRONLY

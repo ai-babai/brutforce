@@ -4,7 +4,7 @@ Run `score.py` **only on the trusted Mac**, after both raw HTTP runs have been
 sealed. It takes `--frozen-manifest`, `--organizer-manifest`, `--frozen-gold`,
 `--organizer-labels`, `--organizer-overlay`, `--baseline-frozen`,
 `--baseline-organizer`, `--candidate-frozen`, `--candidate-organizer`,
-`--timing-control historical|paired`, and `--out` (a new file outside Git).
+`--timing-control historical|paired|contaminated`, and `--out` (a new file outside Git).
 All arguments are required. The output is a mode-0600 private JSON containing
 each changed output and its reviewed outcome; stdout contains aggregates only.
 Never send labels, the output JSON, or the scorer to an inference node.
@@ -24,7 +24,10 @@ receipt, and match request order and 10 s deadline; set `--timing-control paired
 only after that review. The scorer cannot verify resource comparability from
 HTTP rows alone. The historical ORT6 rows are appropriate
 for a SHA/quality self-check, but `--timing-control historical` never proves the
-time gate. The scorer checks all 213 frozen and 103 organizer request IDs and
+time gate. Set `--timing-control contaminated` when a runner was paused or
+competed with app-smoke: preserve all original rows and measure quality, but
+`gate_proven` remains false even if raw p95 is below the numeric threshold.
+The scorer checks all 213 frozen and 103 organizer request IDs and
 input SHA values, HTTP status/deadlines, 141 graded service + 62 retrieval, 54
 reviewed exact unique images, negative actions and one reviewed OOD. Three
 duplicate organizer requests count once at unique-image level. The organizer
