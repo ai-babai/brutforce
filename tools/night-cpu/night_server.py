@@ -85,7 +85,7 @@ class CPUPipeline:
         self.evidence_url = evidence_url
         self.evidence_timeout = evidence_timeout
         self.profile = encoder + '-' + route + ('-ocr-' + ocr_policy if ocr_url else '') + (
-            '-evidence-v1' if evidence_url else '')
+            '-evidence-fields-v2' if evidence_url else '')
         if evidence_url:
             sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'cpu-evidence'))
             from processor import EvidenceProcessor
@@ -225,7 +225,7 @@ class CPUPipeline:
             'index_version': INDEX_VERSIONS[self.encoder],
             'model_version': MODEL_VERSIONS[self.encoder] + '-' + self.route +
                              ('-ocr-' + self.ocr_policy if self.ocr_url else '') +
-                             ('-evidence-v1' if self.evidence_url else ''),
+                             ('-evidence-fields-v2' if self.evidence_url else ''),
             'serving_profile': self.profile,
             'ranked_slugs': ranked_slugs,
             'timings_ms': raw['timings_ms'],
@@ -301,7 +301,7 @@ def make_handler(base_handler, pipeline, threads: int):
                 'index_version': INDEX_VERSIONS[self.pipeline.encoder],
                 'model_version': MODEL_VERSIONS[self.pipeline.encoder] + '-' + self.pipeline.route +
                                  ('-ocr-' + self.pipeline.ocr_policy if self.pipeline.ocr_url else '') +
-                                 ('-evidence-v1' if self.pipeline.evidence_url else ''),
+                                 ('-evidence-fields-v2' if self.pipeline.evidence_url else ''),
                 'serving_profile': self.pipeline.profile,
                 'device': 'cpu',
                 'threads': threads,
@@ -347,7 +347,7 @@ def main() -> None:
     Handler = make_handler(server.Handler, pipeline, args.threads)
     print(json.dumps({'ready': True, 'model_version': MODEL_VERSIONS[args.encoder] + '-' + args.route +
                       ('-ocr-' + args.ocr_policy if args.ocr_url else '') +
-                      ('-evidence-v1' if args.evidence_url else ''),
+                      ('-evidence-fields-v2' if args.evidence_url else ''),
                       'profile': pipeline.profile, 'cold_load_ms': pipeline.load_ms,
                       'host': args.host, 'port': args.port}), flush=True)
     ThreadingHTTPServer((args.host, args.port), Handler).serve_forever()

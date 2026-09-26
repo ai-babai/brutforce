@@ -10,21 +10,21 @@ import urllib.request
 
 from PIL import Image, ImageOps
 
-from matcher import Matcher
+from field_matcher import FieldMatcher
 
 
 class EvidenceProcessor:
     def __init__(self, cards: dict, slugs: list[str], ocr_url: str, timeout: float):
-        self.matcher = Matcher(cards, slugs)
+        self.matcher = FieldMatcher(cards, slugs)
         self.ocr_url = ocr_url
         self.timeout = timeout
 
     def rerank(self, content: bytes, selection: dict, ranks: list[dict], track: str,
                base_ms: int):
         started = time.perf_counter()
-        positions = self.matcher.family_positions(ranks)
+        positions = self.matcher.eligible_positions(ranks)
         diag = {'state': 'not_eligible', 'before': [x['slug'] for x in ranks],
-                'after': [x['slug'] for x in ranks], 'family_positions_1based':
+                'after': [x['slug'] for x in ranks], 'field_positions_1based':
                 [i + 1 for i in positions], 'target_box': selection['selected_box'],
                 'target_sha256': None, 'ocr_error': None, 'ocr_texts': [], 'ocr_scores': [],
                 'worker_ocr_ms': None, 'candidate_evidence': [], 'observations': [],

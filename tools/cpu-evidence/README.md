@@ -1,5 +1,42 @@
 # CPU evidence · ML-083
 
+## H2 field identity candidate (separate branch)
+
+This branch replaces only the identity decision in `processor.py` with
+`field_matcher.py`. The first pinned candidate at `4bcc925` remains untouched.
+The selected target crop, overlap guard, single existing ORT6 backend, OCR
+worker, response envelope and budget remain the same. OCR is attempted when
+the unchanged visual Top20 contains at least two independently verified grape
+fields; candidates need not share the visual Top1's producer or family.
+
+For every Top20 candidate, the public card supplies `winery` as producer,
+non-generic title tokens outside producer and variety as line, and a single
+grape only when both `grapes` and `title` explicitly agree. OCR readings must
+be literal, on the selected target, and score at least 0.75. Each of producer,
+line and grape is used only if the matched catalog value is unambiguous among
+the Top20. Missing catalog fields and absent or ambiguous OCR readings remain
+unknown; explicit conflicts alone create a contradiction. A candidate needs
+positive grape and producer/line evidence, and the visual winner must have an
+explicit contradiction, before a stable categorical partition (supported,
+unknown, contradicted) can change the order. This is not score fusion and never
+introduces a SKU outside the original Top20. It never changes `no_match`, target
+selection, or negative action.
+
+Prediction, to be checked by paired HTTP and independent scoring: some errors
+with correct identity at visual ranks 2–5 can become Top1 when OCR reads its
+distinguishing fields on the selected bottle. H2 cannot repair identities
+absent from Top20, failed target selection, unreadable/conflicting OCR, or
+unknown catalog metadata. This is a hypothesis, not an accuracy estimate.
+
+After H2 quality and timing are measured, a separate offline-only bounded
+experience may inspect delayed wine-gate/target hypotheses on fixed public
+images: replay existing RT-DETR/Base224/OWLv2 outputs, log rejected bottle
+boxes and gate margins without changing action, and compare the rescued target
+crop to known public visual references. That experiment requires its own plan;
+it is not implemented in this branch or used on TEST during H2.
+
+## Initial strict-family candidate (pinned at 4bcc925)
+
 Target-scoped, gold-blind identity check for the existing FP32 ORT6 whole-view
 Top20. An optional hook in `tools/night-cpu/night_server.py` runs only when the
 visual winner and another Top5 candidate have the same catalog producer and
