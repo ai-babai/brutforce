@@ -146,3 +146,54 @@ describe('Air 3.5 product UI', () => {
     expect(screen.getByText(copy)).toBeVisible();
   });
 });
+
+describe('Air 3.6 compact navigation and photo (FE-080/081)', () => {
+  it('AIR-039 keeps three labeled targets, exactly one current tab and one moving indicator', async () => {
+    const mediaDevices = navigator.mediaDevices;
+    Object.defineProperty(navigator, 'mediaDevices', {
+      configurable: true,
+      value: { getUserMedia: vi.fn(() => new Promise(() => {})) },
+    });
+    try {
+      render(<App />);
+      const nav = screen.getByRole('navigation', { name: 'Основная навигация' });
+      const tabs = ['Главная', 'Поиск', 'Сохранённое'];
+      expect([...nav.querySelectorAll('button')].map((button) => button.textContent)).toEqual(tabs);
+      expect(nav.querySelectorAll('.nav-slider')).toHaveLength(1);
+      for (const [index, name] of tabs.entries()) {
+        await userEvent.click(screen.getByRole('button', { name }));
+        expect(nav).toHaveAttribute('data-section', ['scanner', 'search', 'saved'][index]);
+        expect([...nav.querySelectorAll('button[aria-current="page"]')].map((button) => button.textContent)).toEqual([name]);
+      }
+      await userEvent.click(screen.getByRole('button', { name: 'Главная' }));
+      await userEvent.click(screen.getByRole('button', { name: /Сканировать вино/i }));
+      expect(screen.getByRole('button', { name: 'Сделать снимок' })).toBeVisible();
+      expect(screen.getByRole('button', { name: 'Выбрать из галереи' })).toBeVisible();
+    } finally {
+      Object.defineProperty(navigator, 'mediaDevices', { configurable: true, value: mediaDevices });
+    }
+  });
+
+  it.each([
+    { outcome: 'кандидаты', candidates: [candidate, { ...candidate, id: 'wine-b' }], heading: 'Нашли похожие вина' },
+    { outcome: 'ничего не найдено', candidates: [], heading: 'Ничего не найдено' },
+  ])('AIR-040 keeps one photo button and separate replacement actions: $outcome', async ({ candidates, heading }) => {
+    vi.stubGlobal('fetch', vi.fn((url) => Promise.resolve(response(
+      url === '/v1/photos' ? receipt : { demo: false, candidates },
+    ))));
+    render(<App />);
+    await upload();
+    expect(await screen.findByRole('heading', { name: heading })).toBeVisible();
+    const photoButton = screen.getByRole('button', { name: 'Открыть исходную фотографию' });
+    expect(photoButton).toContainElement(screen.getByText('Ваше фото'));
+    expect(photoButton).toContainElement(screen.getByAltText('Загруженная фотография этикетки'));
+    expect(screen.getByRole('button', { name: /Камера|Сделать новый снимок/ })).toBeVisible();
+    expect(screen.getByRole('button', { name: 'Галерея' })).toBeVisible();
+    await userEvent.click(photoButton);
+    expect(screen.getByRole('dialog', { name: 'Исходная фотография' })).toBeVisible();
+    await userEvent.click(screen.getByRole('button', { name: 'Закрыть фотографию' }));
+    expect(screen.getByRole('heading', { name: heading })).toBeVisible();
+    expect(screen.getByRole('button', { name: 'Открыть исходную фотографию' })).toBeVisible();
+    expect(vi.mocked(fetch).mock.calls.filter(([url]) => url === '/v1/search')).toHaveLength(1);
+  });
+});
