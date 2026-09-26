@@ -26,6 +26,25 @@ grape at score ≥0.75 permit promotion; missing/ambiguous readings stay unknown
 The response also retains the original whole-view branch and image SHA. Never write OCR/photo
 contents to common logs; raw HTTP rows are private evaluation artifacts.
 
+Runtime owner runs this on an isolated loopback port only after checking memory
+against the already-running TEST; the same hook can later run in the existing
+CPUPipeline without a second encoder. Use the pinned ORT6 runtime environment,
+`NIGHT_SO_ONNX_DIR`, and `PYTHONPATH` containing `tools/vision-retrieval` and
+`tools/night-cpu`:
+
+```sh
+python tools/night-cpu/night_server.py \
+  --encoder so400m --route onnx640 --threads 6 --port 8127 \
+  --catalog /srv/lct/data/vision-retrieval/20260925/detectors/catalog-audit/catalog-bundle.json \
+  --index-dir /srv/lct/data/vision-retrieval/20260925/detectors/so400m-gatev2/index \
+  --evidence-cards /srv/lct/data/vision-service/benchmarks/ml-083/cards.json \
+  --evidence-url http://127.0.0.1:8129 --evidence-timeout 2.0
+```
+
+The cards path is an example for the runtime owner to fill with a hash-verified
+copy; its presence is required. Only the OCR worker needs an OCR package; the
+matcher/hook uses existing PIL, catalog and ORT6 dependencies plus stdlib.
+
 The inference process must not load gold. First compare paired full HTTP rows
 on the pinned frozen 213 and organizer 103 inputs via the independent evaluator;
 one development photo is diagnostic, not a quality estimate. Keep the ORT6

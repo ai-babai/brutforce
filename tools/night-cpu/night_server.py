@@ -16,6 +16,7 @@ import sys
 import threading
 import time
 import unicodedata
+import urllib.error
 import urllib.request
 from http.server import ThreadingHTTPServer
 from pathlib import Path
@@ -165,6 +166,13 @@ class CPUPipeline:
             diag['worker_ocr_ms'] = value.get('ocr_ms')
             ranks, matched = self.matcher.rerank(ranks, positions, texts, scores)
             diag.update(matched)
+        except urllib.error.HTTPError as exc:
+            try:
+                worker_error = json.load(exc).get('error', '')
+            except (ValueError, OSError):
+                worker_error = ''
+            diag['state'] = 'ocr_failed'
+            diag['ocr_error'] = f'HTTP {exc.code}: {str(worker_error)[:200]}'
         except Exception as exc:
             diag['state'] = 'ocr_failed'
             diag['ocr_error'] = type(exc).__name__ + ': ' + str(exc)[:200]
@@ -301,6 +309,8 @@ class CPUPipeline:
             result['label_context_box'] = raw['label_context_box']
         if evidence is not None:
             result['evidence'] = evidence
+            result['branches_top20'] = {'whole': raw['branches_top20']['whole']}
+            result['selection_reason'] = raw['selection']['selection_reason']
             result['ocr_error'] = evidence['ocr_error']
             result['ocr_text'] = '\n'.join(evidence['ocr_texts'])
             result['ocr_used'] = evidence['target_sha256'] is not None
