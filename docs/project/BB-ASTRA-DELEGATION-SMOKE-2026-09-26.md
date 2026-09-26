@@ -4,13 +4,13 @@
 
 ## Настройка
 
-1. В bb создать локальную OpenCode-сессию с рабочей папкой `/Users/skif/.codex/worktrees/d0db/v001/infra-os` — точной входной папкой исходной Codex-сессии. Код проекта доступен отдельно по `/Users/skif/develop/brutforce-eval`.
+1. В bb создать локальную OpenCode-сессию с рабочей папкой `/Users/skif/skif-os/v001` — постоянным корнем skif-os. Код проекта доступен отдельно по `/Users/skif/develop/brutforce-eval`; исходная Codex-сессия была в отдельном worktree.
 2. Для координатора выбрать `clirelay/gpt-6-astra` (обычный, не pro), если этот вариант показан в селекторе. Провайдер уже настроен локально; в запрос ключи не вставлять.
 3. Вставить текст ниже целиком. Не просить модель «представить» делегирование: нужны реальные вызовы доступного механизма субагентов OpenCode. Если инструмента нет, это результат FAIL с причиной.
 
 ## Текст для новой сессии
 
-> Проведи короткий **read-only smoke-test** продолжения LCT BrutForce. Текущая папка `/Users/skif/.codex/worktrees/d0db/v001/infra-os`; код проекта отдельно в `/Users/skif/develop/brutforce-eval`. Ты координатор Astra. Сначала прочитай `../INDEX.md`, `../AGENTS.md`, `MAP.md`, `/Users/skif/develop/brutforce-eval/docs/project/BB-OPENCODE-HANDOFF-2026-09-26.md` и `/Users/skif/develop/brutforce-eval/docs/project/BB-ASTRA-DELEGATION-SMOKE-2026-09-26.md`.
+> Проведи короткий **read-only smoke-test** продолжения LCT BrutForce. Текущая папка `/Users/skif/skif-os/v001`; код проекта отдельно в `/Users/skif/develop/brutforce-eval`. Ты координатор Astra. Сначала прочитай `INDEX.md`, `AGENTS.md`, `infra-os/MAP.md`, `/Users/skif/develop/brutforce-eval/docs/project/BB-OPENCODE-HANDOFF-2026-09-26.md` и `/Users/skif/develop/brutforce-eval/docs/project/BB-ASTRA-DELEGATION-SMOKE-2026-09-26.md`.
 >
 > Реально запусти **двух независимых субагентов** через доступный механизм OpenCode, если можно параллельно. Задачи не пересекаются:
 >
