@@ -1,5 +1,32 @@
 # CPU evidence · ML-083
 
+## Grape phrase normalization candidate (separate branch)
+
+This is the observed text-matching defect isolated from H2 at `4a36086`.
+`grape_normalization.py` canonicalizes only complete grape phrases in public
+`cards.title`, `cards.grapes` and selected-target OCR. The source is the pinned
+2103-card public catalog (SHA-256 `5ffb93714c611efbe541028f44dff84dfc0646451c364caee979869d1548be9a`).
+Pairs below were checked catalog-wide among **single-grape** cards with the full
+English phrase in title; the pair is active only when it has supporting cards
+and zero conflicting single-grape fields:
+
+| Public title phrase → `grapes` canonical | Supports | Conflicts | Decision |
+| --- | ---: | ---: | --- |
+| Cabernet Sauvignon → Каберне Совиньон | 19 | 0 | active |
+| Cabernet Franc → Каберне Фран | 12 | 4 | neutral |
+| Merlot → Мерло | 16 | 4 | neutral |
+| Pinot Noir → Пино Нуар | 19 | 2 | neutral |
+| Chardonnay → Шардоне | 22 | 0 | active |
+| Riesling → Рислинг | 13 | 6 | neutral |
+
+No lone `Cabernet` token is a synonym of `Cabernet Sauvignon`. Multiword
+phrases may span exactly two **adjacent** OCR lines from the same selected
+target, with confidence equal to the minimum of their line scores; the
+original ≥0.75 threshold still applies. Original OCR literals and per-line
+scores remain in the response, including a newline in an adjacent-span
+observation. No labels, images or weights are stored here. This is a
+normalization ablation, not a claimed quality improvement.
+
 ## H2 field identity candidate (separate branch)
 
 This branch replaces only the identity decision in `processor.py` with

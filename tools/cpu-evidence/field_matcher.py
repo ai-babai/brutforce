@@ -5,6 +5,10 @@ from matcher import GENERIC_PRODUCER, Matcher, contains, evidence_norm
 
 
 class FieldMatcher(Matcher):
+    def ocr_lines(self, texts: list[str], scores: list[float]) -> list[tuple[str, float, str]]:
+        return [(evidence_norm(text), float(score), text) for text, score in zip(texts, scores)
+                if isinstance(text, str) and isinstance(score, (int, float)) and 0 <= score <= 1]
+
     def eligible_positions(self, ranks: list[dict]) -> list[int]:
         # No dependence on the visual winner's family, producer, or grape.
         candidates = [self.cards[item['slug']] for item in ranks]
@@ -52,8 +56,7 @@ class FieldMatcher(Matcher):
         if len(texts) != len(scores):
             info['state'] = 'ocr_invalid_output'
             return ranks, info
-        lines = [(evidence_norm(text), float(score), text) for text, score in zip(texts, scores)
-                 if isinstance(text, str) and isinstance(score, (int, float)) and 0 <= score <= 1]
+        lines = self.ocr_lines(texts, scores)
         cards = [self.cards[slug] for slug in before]
         observed = {}
         for field, threshold in (('producer', .75), ('line', .75), ('grape', .75)):

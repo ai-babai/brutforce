@@ -56,8 +56,8 @@ class Bridge:
         result['ranked_slugs'] = [item['slug'] for item in ranks]
         if track == 'service' and result['ranked_slugs']:
             result['slug'] = result['ranked_slugs'][0]
-        result['model_version'] += '-evidence-fields-v2'
-        result['serving_profile'] += '-evidence-fields-v2'
+        result['model_version'] += '-evidence-grapes-v3'
+        result['serving_profile'] += '-evidence-grapes-v3'
         result['selection_reason'] = selection['selection_reason']
         result['branches_top20'] = {'whole': selection['whole_top20']}
         result['evidence'] = evidence
@@ -95,8 +95,8 @@ def make_handler(bridge: Bridge):
                 self.respond(200, {'status': 'ready', 'busy': self.inference_lock.locked() or
                     health.get('busy', False), 'catalog_version': bridge.catalog_version,
                     'index_version': health['index_version'], 'device': 'cpu',
-                    'model_version': health['model_version'] + '-evidence-fields-v2',
-                    'serving_profile': health['serving_profile'] + '-evidence-fields-v2'})
+                    'model_version': health['model_version'] + '-evidence-grapes-v3',
+                    'serving_profile': health['serving_profile'] + '-evidence-grapes-v3'})
             except Exception as exc:
                 self.respond(503, {'error': type(exc).__name__ + ': ' + str(exc)[:200]})
 

@@ -10,12 +10,12 @@ import urllib.request
 
 from PIL import Image, ImageOps
 
-from field_matcher import FieldMatcher
+from grape_normalization import GrapeNormalizedFieldMatcher
 
 
 class EvidenceProcessor:
     def __init__(self, cards: dict, slugs: list[str], ocr_url: str, timeout: float):
-        self.matcher = FieldMatcher(cards, slugs)
+        self.matcher = GrapeNormalizedFieldMatcher(cards, slugs)
         self.ocr_url = ocr_url
         self.timeout = timeout
 
