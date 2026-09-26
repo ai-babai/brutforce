@@ -79,7 +79,7 @@ body { background: #f3f0e9; }
 #UI-001 .hero h1 { max-width: 350px; margin: 0 auto; font-size: 39px; font-weight: 500; line-height: 1.14; letter-spacing: -.025em; }
 #UI-001 .hero p { max-width: 285px; margin: 19px auto 0; color: var(--muted); font-size: 14px; line-height: 1.65; }
 #UI-001 .hero > .mascot-scene { display: flex; flex: 1 0 410px; align-items: flex-end; justify-content: center; width: 100%; height: 410px; margin: 20px 0 -10px; overflow: hidden; }
-#UI-001 .hero > .mascot-scene img { flex: none; width: auto; max-width: none; height: min(410px, calc(100vw - 20px)); object-fit: contain; object-position: center bottom; transform: none; }
+#UI-001 .hero > .mascot-scene img { flex: none; width: auto; max-width: none; height: min(380px, calc(100vw - 20px)); object-fit: contain; object-position: center bottom; transform: none; }
 #UI-001 .actions { position: relative; gap: 0; margin: 0; padding-top: 0; }
 #UI-001 .scan-button { min-height: 66px; grid-template-columns: 30px minmax(0,1fr) 30px; gap: 12px; padding: 12px 24px; border-radius: 14px; text-align: center; }
 #UI-001 .scan-button > svg:first-child, #UI-001 .scan-button > svg:last-child { width: 27px; height: 27px; padding: 0; border: 0; border-radius: 0; background: none; stroke-width: 1.3; }
