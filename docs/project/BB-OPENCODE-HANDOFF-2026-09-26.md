@@ -23,7 +23,7 @@
 | Ночная оценка моделей | `docs/project/NIGHT-EXPERIMENT-RESULTS-2026-09-25.md`, `tools/night-experiments/README.md` | `/srv/lct/data/vision-retrieval/night-20260925/` — исходные результаты, вне Git |
 | Корзины и правила оценки | `apps/eval/AGENTS.md`, `apps/eval/README.md` | `https://cv.ops.dzap.pw/`, `/srv/lct/eval-access/` (защищённый доступ) |
 | Передача Ромы | `docs/project/ROMAN-HANDOFF-2026-09-25.md` | `/srv/lct/data/roman/vino/experiment-handoff-20260925/README-FIRST.md` |
-| Текущий CPU TEST и откат | локальный infra-os: `runs/2026-09-26-lct-vision-ort6.md` | `/srv/lct/maks/vision-service/current`, `lct-vision-test.service` |
+| Текущий CPU TEST и откат | `/Users/skif/.codex/worktrees/d0db/v001/infra-os/runs/2026-09-26-lct-vision-ort6.md` (управляемый worktree; при смене checkout ищи по имени файла в infra-os) | `/srv/lct/maks/vision-service/current`, `lct-vision-test.service` |
 | Заметки агентов | `docs/agent-guide/` | `/srv/lct/notes/inbox/` — находки; `/srv/lct/notes/activity/` — активность |
 
 Срез экспериментов: [ночной отчёт](https://cv.ops.dzap.pw/data/night.html#architecture-title). Сырые фото, gold, веса и токены вне Git и публичного web-root.
