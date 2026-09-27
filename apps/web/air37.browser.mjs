@@ -10,7 +10,8 @@ const browser = await chromium.launch();
 const url = 'https://vino-svoe.ru/wines/portveyn-belyy-alushta';
 const original = { id: 'port', name: 'Портвейн белый Алушта 2021 — коллекционное вино с очень длинным полным названием',
   winery: 'Массандра', image: '/assets/concept-bottle.png', description: 'Аромат сухофруктов и орехов.',
-  sugar: 'сладкое', alcoholPercent: 17, region: ['Крым'], sourceUrl: url };
+  sugar: 'сладкое', alcoholPercent: 17, region: ['Крым'], categoryAndSweetness: 'Белое сладкое',
+  grapes: ['Белые сорта'], color: 'Золотистый', volumeL: 0.75, sourceUrl: url };
 const other = { ...original, id: 'other', name: 'Другой портвейн', year: 2021 };
 const measures = () => {
   const box = selector => document.querySelector(selector)?.getBoundingClientRect().toJSON();
@@ -22,6 +23,7 @@ const measures = () => {
       grid: s.gridTemplateColumns, safeTop: s.paddingTop };
   };
   return { shelf: box('.result-shelf'), bottle: box('.result-shelf img'), facts: box('.result-facts'),
+    valueLefts: [...document.querySelectorAll('.result-fact dd')].map(node => node.getBoundingClientRect().left),
     title: box('.result-hero h2'), hero: box('.result-hero'), top: box('#UI-007 .top'),
     back: box('#UI-007 .top button'), save: box('.save-header-action'), nav: box('.bottom-nav'),
     source: box('.result-source'), overflow: document.documentElement.scrollWidth > innerWidth,
@@ -67,11 +69,16 @@ try {
     assert.deepEqual(m.separator, { afterOverview: '0px', beforeDescription: '1px' }, `${width}: exactly one divider`);
     assert.equal(m.bottleStyle.background, 'rgba(0, 0, 0, 0)', `${width}: alpha bottle not flattened`);
     assert.equal(await page.locator('.result-winery').textContent(), 'Массандра');
-    assert.equal(await page.locator('.result-overview dd').nth(1).textContent(), 'Год не указан');
+    assert.equal(await page.locator('.result-overview dd').nth(6).textContent(), 'Год не указан');
     assert.deepEqual(await page.locator('.result-facts dt').allTextContents(), ['Сахар', 'Алкоголь', 'Регион']);
     assert.deepEqual(await page.locator('.result-facts dd').allTextContents(), ['сладкое', '17%', 'Крым']);
     assert.deepEqual(await page.locator('.result-facts svg').evaluateAll(nodes => nodes.map(node => node.classList[1])),
       ['tabler-icon-droplet', 'tabler-icon-glass-full', 'tabler-icon-map-pin']);
+    const valueAxis = m.facts.left + (width <= 350 ? 29 : 38);
+    assert.ok(m.valueLefts.every(left => Math.abs(left - valueAxis) < 1),
+      `${width}: 2A fact value axis ${valueAxis}, actual ${m.valueLefts}`);
+    assert.deepEqual(await page.locator('.result-overview dt').allTextContents(),
+      ['Сахар', 'Алкоголь', 'Категория', 'Сорт винограда', 'Регион', 'Винодельня', 'Год', 'Цвет', 'Объём']);
     assert.equal(await page.locator('.result-facts dt span').evaluateAll(nodes => nodes.every(node => getComputedStyle(node).position === 'absolute')), true);
     assert.equal(await page.locator('.result-description').evaluate(el => el.open), false);
     await page.getByText('О вкусе и сочетаниях').click();
@@ -97,7 +104,7 @@ try {
     assert.equal(await page.getByRole('button', { name: /Другой портвейн/i }).count(), 1);
     await page.getByRole('button', { name: /Другой портвейн/i }).click();
     assert.equal(await page.locator('.result-winery').textContent(), 'Массандра · 2021');
-    assert.equal(await page.locator('.result-overview dd').nth(1).textContent(), '2021');
+    assert.equal(await page.locator('.result-overview dd').nth(6).textContent(), '2021');
     await page.goBack();
     await page.getByRole('button', { name: /Портвейн белый Алушта/i }).waitFor();
     wines = [{ ...original, id: 'without', sourceUrl: undefined, description: '   ', sugar: undefined,

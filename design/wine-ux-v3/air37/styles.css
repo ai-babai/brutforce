@@ -16,7 +16,7 @@
 .shelf{display:grid;grid-template-columns:minmax(0,1fr) minmax(132px,42%);align-items:center;gap:11px;min-height:270px}
 .bottle{display:block;width:100%;height:255px;object-fit:contain}
 .hero-facts{min-width:0;display:grid;align-content:center;gap:33px;margin:0;padding:0 0 0 5px;text-align:left}
-.hero-facts div{min-width:0;display:flex;align-items:center;gap:11px}.hero-facts dt{flex:0 0 22px;width:22px;height:22px;color:var(--wine)}.hero-facts svg{display:block;width:22px;height:22px;opacity:.9}.hero-facts dd{min-width:0;margin:0;font-size:22px;line-height:1.25;letter-spacing:-.025em;overflow-wrap:anywhere;font-variant-numeric:tabular-nums}
+.hero-facts div{min-width:0;display:flex;align-items:center;justify-content:flex-start;gap:11px}.hero-facts dt{flex:0 0 22px;width:22px;height:22px;color:var(--wine)}.hero-facts svg{display:block;width:22px;height:22px;opacity:.9}.hero-facts dd{min-width:0;margin:0;font-size:22px;line-height:1.25;letter-spacing:-.025em;overflow-wrap:anywhere;font-variant-numeric:tabular-nums}
 .hero-facts .region-fact dd{font-size:18px;color:var(--muted)}.hero-facts .region-fact svg{opacity:.72}
 .visually-hidden{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 .winery{margin:14px 0 8px;color:var(--muted);font-size:13px;line-height:1.5;overflow-wrap:anywhere}
@@ -33,4 +33,4 @@ h1{font:500 clamp(33px,9vw,43px)/1.13 Playfair,Georgia,serif;letter-spacing:-.03
 .description p{margin:0 0 18px;font-size:13px;line-height:1.6}
 .nav-visual{border-top:1px solid var(--line);height:62px;display:grid;grid-template-columns:repeat(3,1fr);padding:5px 12px calc(5px + env(safe-area-inset-bottom,0px));color:var(--muted);font-size:10px}
 .nav-visual span{display:grid;place-items:center;align-content:center;gap:3px}.nav-visual svg{display:block;width:26px;height:26px}
-@media(max-width:350px){.card{padding-inline:20px}.hero{margin-inline:-20px;padding-inline:20px}.shelf{grid-template-columns:minmax(0,1fr) 132px;gap:5px}.hero-facts{padding-left:0}.hero-facts div{gap:7px}.hero-facts dt,.hero-facts svg{width:20px;height:20px}.hero-facts dt{flex-basis:20px}.hero-facts dd{font-size:19px}.hero-facts .region-fact dd{font-size:17px}}
+@media(max-width:350px){.card{padding-inline:20px}.hero{margin-inline:-20px;padding-inline:20px}.shelf{grid-template-columns:minmax(0,1fr) 132px;gap:5px}.hero-facts{padding-left:0}.hero-facts div{gap:7px}.hero-facts dt,.hero-facts svg{width:20px;height:20px}.hero-facts dt{flex-basis:22px}.hero-facts dd{font-size:19px}.hero-facts .region-fact dd{font-size:17px}}
