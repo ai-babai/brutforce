@@ -1,0 +1,28 @@
+[Unit]
+Description=LCT pinned F8 CPU vision for BrutForce TEST
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=lct
+Group=lct
+WorkingDirectory=/srv/lct/maks/vision-service/releases/cpu-f8-text-rescue-20260927
+Environment=HF_HOME=/srv/lct/data/vision-service/model-cache
+Environment=HF_HUB_DISABLE_TELEMETRY=1
+Environment=HF_HUB_OFFLINE=1
+Environment=TOKENIZERS_PARALLELISM=false
+Environment=OMP_NUM_THREADS=6
+Environment=MKL_NUM_THREADS=6
+Environment=MALLOC_ARENA_MAX=2
+Environment=PYTHONUNBUFFERED=1
+Environment=NIGHT_SO_ONNX_DIR=/srv/lct/data/vision-retrieval/night-20260925/onnx
+Environment=NIGHT_SO_ONNX_THREADS=6
+Environment=PYTHONPATH=/srv/lct/data/vision-service/benchmarks/night-20260925-cpu/ort-lib
+Environment=F0_BASE_CODE_DIR=/srv/lct/maks/vision-service/releases/cpu-ort6-20260926-1
+Environment=F8_OCR_LEXICON_SPEC=/srv/lct/maks/vision-service/releases/cpu-f8-text-rescue-20260927/spec/lexicon.json
+ExecStart=/srv/lct/maks/vision-service/venv/bin/python /srv/lct/maks/vision-service/releases/cpu-f8-text-rescue-20260927/night_server.py --catalog /srv/lct/data/vision-retrieval/20260925/detectors/catalog-audit/catalog-bundle.json --index-dir /srv/lct/data/vision-retrieval/20260925/detectors/so400m-gatev2/index --host 127.0.0.1 --port 8126 --threads 6 --encoder so400m --route onnx640
+Restart=on-failure
+RestartSec=5
+MemoryMax=7G
+NoNewPrivileges=true

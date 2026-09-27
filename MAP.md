@@ -18,7 +18,7 @@
 | Качество данных | [Кейсы](cases/data-quality.json), [выкатка и отчёты](deploy/PIPELINE.md) |
 | Проверки и история | [cases](cases/cases.json), `scripts/run-fast-checks.mjs`, reports/ |
 | Совместная работа | [RULES](docs/agent-guide/RULES.md), [BOARD](docs/agent-guide/BOARD.md) |
-| Выпуск, откат и среды | [PIPELINE](deploy/PIPELINE.md), [DATABASE](docs/agent-guide/DATABASE.md) |
+| Выпуск, TEST F8 switch и откат | [PIPELINE](deploy/PIPELINE.md), `deploy/release.py`, `deploy/lct-vision-test-f8.service`, [DATABASE](docs/agent-guide/DATABASE.md) |
 | Полномочия | [AGENTS](AGENTS.md), [подробные правила](docs/agent-guide/OPERATING-RULES.md) |
 | Обновление структуры | [GUIDE-FORMAT](docs/agent-guide/GUIDE-FORMAT.md) |
 

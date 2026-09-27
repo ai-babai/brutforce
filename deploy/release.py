@@ -103,9 +103,28 @@ def install(sha, checksum, run_id):
         if manifest['mode']=='real':
             require(checks.get('mode')=='real' and checks.get('modelVersion')==manifest['modelVersion'],
                     'CI did not attest this real model metadata')
-        require(checks.get('bddCoverageStatus', 'passed') == 'passed' and
-                checks.get('targetScope', 'all-environments') == 'all-environments',
-                'Partial BDD coverage is valid only for Maks demo, not TEST/PROD')
+        scope=checks.get('targetScope','all-environments')
+        coverage=checks.get('bddCoverageStatus','passed')
+        require((scope=='all-environments' and coverage=='passed') or
+                (scope=='test-only' and coverage=='partial' and checks.get('coverageExceptions')),
+                'Partial BDD coverage is valid only for a named TEST-only policy, not PROD')
+        if scope=='test-only':
+            policy_file=unpack/'evidence'/'fast-report-exceptions.json'
+            gate_file=unpack/'evidence'/'release-gate.json'
+            require(policy_file.is_file() and gate_file.is_file(), 'TEST-only coverage policy is missing')
+            policy=read(policy_file); gate=read(gate_file)
+            require(policy.get('schemaVersion')==1 and policy.get('targetScope')=='test-only' and
+                    digest(policy_file)==checks.get('policySHA256')==gate.get('policySHA256') and
+                    gate.get('status')=='passed' and gate.get('targetScope')==scope and
+                    gate.get('bddCoverageStatus')==coverage and
+                    gate.get('coverageExceptions')==checks.get('coverageExceptions'),
+                    'TEST-only coverage policy differs from CI evidence')
+            named={id for item in policy.get('exceptions',[]) for id in item.get('ids',[])}
+            deferred=checks['coverageExceptions']
+            require(named=={item.get('id') for item in deferred} and
+                    len(named)==len(deferred) and
+                    all(item.get('status')=='skipped' and item.get('reason') and item.get('evidence') for item in deferred),
+                    'TEST-only coverage has missing or unexpected deferred cases')
         unpack.rename(target)
     # The embedded demo remains a valid rollback candidate. Real catalog data is
     # registered separately and can bind to this same immutable app package.
@@ -192,6 +211,71 @@ def http_json(base, path, data=None):
     req=urllib.request.Request(base+path, data=body, headers={'Content-Type':'application/json'})
     with urllib.request.urlopen(req, timeout=12) as response: return json.load(response)
 
+TEST_VISION_ENV=pathlib.Path('/srv/lct/stage/vision-runtime.env')
+TEST_PHOTO=pathlib.Path('/srv/lct/data/vision-retrieval/20260924/organizer-audit/queries/real/92.6_07-09-2026_11-04-40.webp')
+TEST_PHOTO_SHA='3c1e06bc461fe048e78dd010f8d990b5387895b02126aa02e01ff8d914582dce'
+TEST_PHOTO_SLUG='aratti-kaberne-sovinon-2020-krasnoe-suhoe'
+
+def f8_runtime(target):
+    manifest=read(target/'manifest.json')
+    require(manifest.get('mode')=='real','F8 switch requires real model mode')
+    runtime=read(target/'evidence'/'f8-runtime.json')
+    require(runtime['modelVersion']==manifest['modelVersion'],'F8 model version differs from package')
+    require(runtime['externalAssets']==manifest['externalAssets'],'F8 assets differ from package')
+    proof=subprocess.check_output(['sudo','-n','/usr/local/sbin/lct-release-service','verify-test-f8'],text=True)
+    observed={path:sha for sha,path in (line.split(maxsplit=1) for line in proof.splitlines())}
+    expected={item['path']:item['sha256'] for item in runtime['externalAssets']}
+    require(observed==expected,'F8 external asset bytes differ from CI metadata')
+    for path in expected:
+        p=pathlib.Path(path)
+        require(not p.is_symlink() and p.is_file() and p.resolve()==p,'F8 asset path is missing or symlinked')
+    require(digest(TEST_PHOTO)==TEST_PHOTO_SHA,'Known-answer TEST photo bytes changed')
+    return runtime
+
+def f8_health(runtime):
+    for _ in range(90):
+        try:
+            result=http_json('http://127.0.0.1:8126','/healthz')
+            require(result.get('status')=='ready' and
+                    result.get('model_version')==runtime['modelVersion'] and
+                    result.get('catalog_version')==runtime['visionCatalogVersion'] and
+                    result.get('index_version')==runtime['visionIndexVersion'] and
+                    result.get('serving_profile')=='so400m-onnx640','F8 health metadata differs from candidate')
+            return
+        except (urllib.error.URLError,TimeoutError,RuntimeError): time.sleep(1)
+    raise RuntimeError('Pinned F8 did not become ready')
+
+def f8_photo(base,runtime):
+    boundary='brutforce-f8-test-smoke'
+    body=(f'--{boundary}\r\nContent-Disposition: form-data; name="image"; filename="control.webp"\r\n'
+          'Content-Type: image/webp\r\n\r\n').encode()+TEST_PHOTO.read_bytes()+f'\r\n--{boundary}--\r\n'.encode()
+    req=urllib.request.Request(base+'/v1/eval/predict',body,{'Content-Type':f'multipart/form-data; boundary={boundary}'})
+    with urllib.request.urlopen(req,timeout=25) as response: result=json.load(response)
+    require(result.get('slug')==TEST_PHOTO_SLUG and result.get('model_version',runtime['modelVersion'])==runtime['modelVersion'],
+            'F8 known-answer photo did not match the pinned model')
+    if base.endswith(':8103'):
+        upload=urllib.request.Request(base+'/v1/photos',body.replace(b'name="image"',b'name="photo"'),
+                                  {'Content-Type':f'multipart/form-data; boundary={boundary}'})
+        with urllib.request.urlopen(upload,timeout=25) as response: receipt=json.load(response)
+        found=http_json(base,'/v1/search',{'photoId':receipt['id']})
+        require(found.get('demo') is False and found.get('recognizedSlug')==TEST_PHOTO_SLUG and
+                found.get('modelVersion')==runtime['modelVersion'],
+                'Public API photo result did not come from pinned F8')
+
+def test_vision_env(runtime):
+    root='/srv/lct/maks/vision-service/releases/cpu-f8-text-rescue-20260927'
+    slugs=next(item for item in runtime['externalAssets'] if item['path']==root+'/organizer-slugs.json')
+    neighbors=next(item for item in runtime['externalAssets'] if item['path']==root+'/visual-neighbors.json')
+    return (f'VISION_SERVICE_URL=http://127.0.0.1:8126\n'
+            f'VISION_CATALOG_VERSION={runtime["visionCatalogVersion"]}\n'
+            f'VISION_INDEX_VERSION={runtime["visionIndexVersion"]}\n'
+            f'VISION_SLUGS_FILE={slugs["path"]}\nVISION_SLUGS_SHA256={slugs["sha256"]}\n'
+            f'RECOMMENDATION_INDEX_FILE={neighbors["path"]}\nRECOMMENDATION_INDEX_SHA256={neighbors["sha256"]}\n')
+
+def write_vision_env(text):
+    temp=TEST_VISION_ENV.with_suffix('.tmp')
+    temp.write_text(text); temp.chmod(0o600); temp.replace(TEST_VISION_ENV)
+
 def smoke(cfg, r):
     base=cfg['url']; samples=[]
     for _ in range(20):
@@ -204,6 +288,16 @@ def smoke(cfg, r):
         start=time.monotonic(); result=http_json(base,path,body); samples.append(round((time.monotonic()-start)*1000,2))
         require(result.get('candidates'), 'Catalog HTTP smoke failed')
         require(result.get('catalogVersion')==r['catalogVersion'], 'Catalog version mismatch')
+    if r['mode']=='real':
+        runtime=read(ROOT/'packages'/sha/'evidence'/'f8-runtime.json')
+        require(http_json(base,'/v1/health').get('demo') is False,'Real catalog is not active')
+        found=http_json(base,'/v1/search',{'query':'Каберне'})
+        require(found.get('demo') is False and found.get('candidates'),'Real text search failed')
+        wine=found['candidates'][0]
+        alternatives=http_json(base,'/v1/recommendations',{'wineId':wine['id'],'limit':3})
+        require(alternatives.get('demo') is False and alternatives.get('candidates'),'Real recommendations failed')
+        f8_health(runtime)
+        f8_photo(base,runtime)
     return {'status':'passed','at':stamp(),'revision':sha,'candidateId':r.get('candidateId',sha),'requestMs':samples,'note':'HTTP placement smoke; not ML quality measurement'}
 
 def placement(cfg,target,r,candidate,previous_snapshot,allow_removed,accepted_report):
@@ -248,10 +342,19 @@ def switch(envname, candidate, action='deploy'):
         validate_data_report(r['dataReport']); validate_catalog_bytes(r['dataReport'])
         require(r['validatorVersion']==digest(target/'catalog-import'),'Installed validator differs from accepted report')
     if envname=='prod':
+        require(r['gates']['ci'].get('targetScope','all-environments')=='all-environments' and
+                r['gates']['ci'].get('bddCoverageStatus','passed')=='passed',
+                'TEST-only BDD exceptions cannot be promoted to PROD')
         require(r['gates']['test']['status']=='passed' and r['gates']['browser']['status']=='passed', 'TEST gates required')
         if r.get('catalogManifestSHA256') is not None:
             require(r['gates'].get('placement',{}).get('status')=='passed','TEST placement gates required')
         require(r.get('approval',{}).get('candidateId')==candidate, 'Explicit approval for this exact candidate required')
+    runtime=None
+    vision_started=False
+    previous_vision_env=None
+    if envname=='test':
+        previous_vision_env=TEST_VISION_ENV.read_text() if TEST_VISION_ENV.exists() else None
+        if r.get('mode')=='real': runtime=f8_runtime(target)
     current=pathlib.Path(cfg['path'])/'current'; previous=str(current.resolve()) if current.is_symlink() else None
     state_path=ROOT/'environments'/f'{envname}.json'; previous_state=read(state_path) if state_path.exists() else None
     migration_files=lambda folder: {str(p.relative_to(folder/'migrations')):digest(p) for p in (folder/'migrations').rglob('*.sql')}
@@ -286,6 +389,15 @@ def switch(envname, candidate, action='deploy'):
         fresh=read(preflight); preflight.unlink(missing_ok=True)
         fresh_manifest,fresh_validator=validate_data_report(fresh)
         require(fresh_manifest==r['catalogManifestSHA256'] and fresh_validator==r['validatorVersion'],'Fresh target preflight differs from candidate')
+    if runtime:
+        command('sudo','-n','/usr/local/sbin/lct-release-service','start-test-f8')
+        vision_started=True
+        try:
+            f8_health(runtime)
+            f8_photo('http://127.0.0.1:8126',runtime)
+        except Exception:
+            command('sudo','-n','/usr/local/sbin/lct-release-service','stop-test-f8')
+            raise
     # DDL uses only the dedicated migration role, never runtime credentials.
     try:
         command(str(target/'catalog-migrate'),cwd=target, env=envfile(cfg['migrationEnv']), stdout=subprocess.DEVNULL)
@@ -295,13 +407,19 @@ def switch(envname, candidate, action='deploy'):
                     '--accepted-report',str(accepted_report),'--validator-version',r['validatorVersion'],
                     env=envfile(cfg['migrationEnv']),stdout=subprocess.DEVNULL)
     except Exception:
+        if vision_started: command('sudo','-n','/usr/local/sbin/lct-release-service','stop-test-f8')
         r['gates'][envname]={'status':'failed','at':stamp(),'summary':'Миграция не завершилась; приложение не переключали. Схему проверить отдельно.'}
         save(candidate,r); raise
-    temp=current.with_name('next'); temp.unlink(missing_ok=True); temp.symlink_to(target); temp.replace(current)
     catalog_env=pathlib.Path(cfg.get('catalogEnv',f'/srv/lct/{envname}/catalog.env'))
     previous_catalog_env=catalog_env.read_text() if catalog_env.exists() else None
-    catalog_env_tmp=catalog_env.with_suffix('.tmp'); catalog_env_tmp.write_text('CATALOG_VERSION='+r['catalogVersion']+'\n'); catalog_env_tmp.replace(catalog_env)
     try:
+        temp=current.with_name('next'); temp.unlink(missing_ok=True); temp.symlink_to(target); temp.replace(current)
+        catalog_env_tmp=catalog_env.with_suffix('.tmp'); catalog_env_tmp.write_text('CATALOG_VERSION='+r['catalogVersion']+'\n'); catalog_env_tmp.replace(catalog_env)
+        if runtime: write_vision_env(test_vision_env(runtime))
+        elif envname=='test' and action=='rollback':
+            restored=previous_state.get('previousVisionEnv') if previous_state else None
+            if restored is None: TEST_VISION_ENV.unlink(missing_ok=True)
+            else: write_vision_env(restored)
         command('sudo','-n','/usr/local/sbin/lct-release-service','restart-'+envname)
         result=smoke(cfg,r)
         placement_result=placement(cfg,target,r,candidate,snapshot,allow,accepted_report) if r.get('catalogManifestSHA256') is not None else None
@@ -314,6 +432,9 @@ def switch(envname, candidate, action='deploy'):
                     command(str(target/'catalog-import'),'--restore',str(snapshot),env=envfile(cfg['migrationEnv']),stdout=subprocess.DEVNULL)
                 temp.symlink_to(previous); temp.replace(current)
                 if previous_catalog_env is not None: catalog_env.write_text(previous_catalog_env)
+                if envname=='test':
+                    if previous_vision_env is None: TEST_VISION_ENV.unlink(missing_ok=True)
+                    else: write_vision_env(previous_vision_env)
                 command('sudo','-n','/usr/local/sbin/lct-release-service','restart-'+envname)
                 summary+=' Прежний current возвращён; проверьте доступность.'
                 if previous_state is not None: write(state_path,previous_state)
@@ -323,6 +444,8 @@ def switch(envname, candidate, action='deploy'):
                 current.unlink(missing_ok=True)
                 command('sudo','-n','/usr/local/sbin/lct-release-service','stop-'+envname)
                 summary+=' Первый неудачный выпуск остановлен.'
+            if vision_started and (not previous or auto_code_rollback):
+                command('sudo','-n','/usr/local/sbin/lct-release-service','stop-test-f8')
         except Exception:
             summary+=' Автоматический возврат тоже не завершился; требуется оператор.'
         r['gates'][envname]={'status':'failed','at':stamp(),'summary':summary}
@@ -331,9 +454,12 @@ def switch(envname, candidate, action='deploy'):
     if r.get('catalogManifestSHA256') is not None: r['gates']['placement']=placement_result
     if envname=='test':
         r['gates']['browser']={'status':'pending'}; r.pop('approval',None)
+        if action=='rollback' and r['mode']!='real' and previous_state and previous_state.get('mode')=='real':
+            command('sudo','-n','/usr/local/sbin/lct-release-service','stop-test-f8')
     r['history'].append({'action':action,'environment':envname,'at':stamp(),'previous':pathlib.Path(previous).name if previous else None})
     write(state_path,{'candidateId':candidate,'revision':sha,'catalogVersion':r['catalogVersion'],
-                      'catalogManifestSHA256':r.get('catalogManifestSHA256'),'mode':r['mode'],'modelVersion':r['modelVersion'],'at':stamp()})
+                      'catalogManifestSHA256':r.get('catalogManifestSHA256'),'mode':r['mode'],'modelVersion':r['modelVersion'],
+                      **({'previousVisionEnv':previous_vision_env} if runtime else {}),'at':stamp()})
     save(candidate,r)
 
 def safe_switch(envname,candidate,action='deploy'):

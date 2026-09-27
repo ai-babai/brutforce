@@ -38,8 +38,8 @@ export function verifyFastReport(run, revision, policy, registry) {
     if (!run.tests.some(test => test.suite === id)) throw new Error(`No test evidence for suite: ${id}`);
   if (policy?.schemaVersion !== 1 || !Array.isArray(policy.exceptions))
     throw new Error('Invalid release exception policy');
-  if (policy.exceptions.length && policy.targetScope !== 'maks-demo-only')
-    throw new Error('Coverage exceptions require Maks demo-only scope');
+  if (policy.exceptions.length && !['maks-demo-only', 'test-only'].includes(policy.targetScope))
+    throw new Error('Coverage exceptions require an explicitly limited scope');
   const exceptions = new Map();
   for (const item of policy.exceptions) {
     if (!item.reason?.trim() || !item.evidence?.trim() || !Array.isArray(item.ids) || !item.ids.length)
@@ -66,7 +66,7 @@ export function verifyFastReport(run, revision, policy, registry) {
   if ((deferred.length > 0) !== (run.status === 'partial'))
     throw new Error('Fast report status does not match deferred cases');
   return { schemaVersion: 1, status: 'passed', scope: 'required-release-checks',
-    targetScope: deferred.length ? 'maks-demo-only' : 'all-environments',
+    targetScope: deferred.length ? policy.targetScope : 'all-environments',
     revision, bddCoverageStatus: run.status, coverageExceptions: deferred };
 }
 
