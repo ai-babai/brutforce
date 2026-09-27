@@ -57,12 +57,3 @@ test('a removed required case, missing suite result or skipped test blocks the r
   const skipped = fixture(); skipped.tests[0].status = 'skipped';
   assert.throws(() => verifyFastReport(skipped, revision, policy(), registry()), /failed or was skipped/);
 });
-
-test('a browser skip is allowed only when its exact case is deferred', () => {
-  const run = fixture();
-  run.timing.suites.push({ id: 'air-browser', status: 'passed', processWallMs: 1 });
-  run.tests.push({ name: 'Chromium rendered AIR-002', suite: 'air-browser', status: 'skipped' });
-  assert.equal(verifyFastReport(run, revision, policy(), registry()).targetScope, 'maks-demo-only');
-  run.tests.push({ name: 'Chromium rendered AIR-001', suite: 'air-browser', status: 'skipped' });
-  assert.throws(() => verifyFastReport(run, revision, policy(), registry()), /failed or was skipped/);
-});

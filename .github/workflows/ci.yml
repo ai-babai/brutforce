@@ -56,10 +56,6 @@ jobs:
           GRANT USAGE ON SCHEMA public TO lct_test_maks_runtime;
           ALTER DEFAULT PRIVILEGES FOR ROLE lct_test_maks_migration IN SCHEMA public GRANT SELECT ON TABLES TO lct_test_maks_runtime;
           SQL
-      - name: Install Chromium for rendered release checks
-        run: |
-          npm --prefix apps/web ci
-          npm --prefix apps/web exec -- playwright install --with-deps chromium
       - name: Build strict release artifact
         run: RELEASE_EVIDENCE_DIR="$RUNNER_TEMP/release-evidence" deploy/build.sh "$RUNNER_TEMP/release"
       - name: Upload release archive

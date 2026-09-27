@@ -32,6 +32,8 @@ export function verifyFastReport(run, revision, policy, registry) {
     throw new Error('A required suite did not pass');
   if (!Array.isArray(run.tests) || !run.tests.length)
     throw new Error('Fast report has no test evidence');
+  if (run.tests.some(test => test.status !== 'passed'))
+    throw new Error('A test failed or was skipped');
   for (const id of ['api', 'eval', 'ui', 'database'])
     if (!run.tests.some(test => test.suite === id)) throw new Error(`No test evidence for suite: ${id}`);
   if (policy?.schemaVersion !== 1 || !Array.isArray(policy.exceptions))
@@ -61,11 +63,6 @@ export function verifyFastReport(run, revision, policy, registry) {
     deferred.push({ id: item.id, status: item.status, ...exceptions.get(item.id) });
   }
   for (const id of exceptions.keys()) if (!seen.has(id)) throw new Error(`Exception refers to an unknown case: ${id}`);
-  if (run.tests.some(test => test.status !== 'passed' && !(
-    test.status === 'skipped' && ['air-browser', 'design-browser'].includes(test.suite) &&
-    exceptions.has(test.name?.replace(/^Chromium rendered /, '')) &&
-    run.cases.find(item => item.id === test.name?.replace(/^Chromium rendered /, ''))?.status === 'skipped'
-  ))) throw new Error('A test failed or was skipped without an exact browser-case exception');
   if ((deferred.length > 0) !== (run.status === 'partial'))
     throw new Error('Fast report status does not match deferred cases');
   return { schemaVersion: 1, status: 'passed', scope: 'required-release-checks',
