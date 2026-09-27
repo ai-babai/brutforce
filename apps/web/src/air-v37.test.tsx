@@ -34,9 +34,15 @@ describe("FE-088 card behavior", () => {
     expect(facts.getByText("сладкое")).toBeVisible();
     expect(facts.getByText("17%")).toBeVisible();
     expect(facts.getByText("Крым")).toBeVisible();
-    expect(hero.querySelectorAll(".result-fact svg")).toHaveLength(0);
+    expect([...hero.querySelectorAll(".result-fact svg")].map(node => node.classList.value)).toEqual([
+      expect.stringContaining("tabler-icon-droplet"),
+      expect.stringContaining("tabler-icon-glass-full"),
+      expect.stringContaining("tabler-icon-map-pin"),
+    ]);
+    expect([...hero.querySelectorAll(".result-fact svg")].every(node => node.getAttribute("aria-hidden") === "true")).toBe(true);
     expect([...hero.querySelectorAll(".result-fact dt")].map(node => node.textContent)).toEqual(["Сахар", "Алкоголь", "Регион"]);
     expect([...hero.querySelectorAll(".result-fact dd")].map(node => node.textContent)).toEqual(["сладкое", "17%", "Крым"]);
+    expect([...hero.querySelectorAll(".result-fact dt span")].every(node => node.classList.contains("visually-hidden"))).toBe(true);
     expect(hero.querySelector(".result-winery")).toHaveTextContent(/^Массандра$/);
     expect(within(document.querySelector(".result-overview") as HTMLElement).getByText("Год не указан")).toBeVisible();
     expect(screen.getByRole("heading", { name: port.name })).toBeVisible();
@@ -64,6 +70,7 @@ describe("FE-088 card behavior", () => {
     await openCard({ ...port, region: undefined, alcoholPercent: undefined });
     expect([...document.querySelectorAll(".result-facts dt")].map(node => node.textContent)).toEqual(["Сахар"]);
     expect([...document.querySelectorAll(".result-facts dd")].map(node => node.textContent)).toEqual(["сладкое"]);
+    expect(document.querySelector(".result-facts svg.tabler-icon-droplet")).toBeInTheDocument();
   });
 
   it.each([2021, 0, undefined])("AIR-042 uses only positive structured year %s", async (year) => {

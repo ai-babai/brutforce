@@ -12,6 +12,7 @@ import {
   Play,
   X,
 } from "@phosphor-icons/react";
+import { IconDroplet, IconGlassFull, IconMapPin } from "@tabler/icons-react";
 import {
   getCatalog,
   getRecommendations,
@@ -1068,9 +1069,9 @@ export function App({
                       <CandidateImage candidate={shown} role="card" priority />
                       {(shown.sugar?.trim() || strength || region) && (
                         <dl className="result-facts" aria-label="Основные характеристики">
-                          {shown.sugar?.trim() && <div className="result-fact"><dt>Сахар</dt><dd>{shown.sugar}</dd></div>}
-                          {strength && <div className="result-fact"><dt>Алкоголь</dt><dd>{strength}</dd></div>}
-                          {region && <div className="result-fact"><dt>Регион</dt><dd>{region}</dd></div>}
+                          {shown.sugar?.trim() && <div className="result-fact"><dt><IconDroplet aria-hidden="true" /><span className="visually-hidden">Сахар</span></dt><dd>{shown.sugar}</dd></div>}
+                          {strength && <div className="result-fact"><dt><IconGlassFull aria-hidden="true" /><span className="visually-hidden">Алкоголь</span></dt><dd>{strength}</dd></div>}
+                          {region && <div className="result-fact result-fact--region"><dt><IconMapPin aria-hidden="true" /><span className="visually-hidden">Регион</span></dt><dd>{region}</dd></div>}
                         </dl>
                       )}
                     </div>

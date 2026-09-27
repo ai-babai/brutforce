@@ -70,7 +70,9 @@ try {
     assert.equal(await page.locator('.result-overview dd').nth(1).textContent(), 'Год не указан');
     assert.deepEqual(await page.locator('.result-facts dt').allTextContents(), ['Сахар', 'Алкоголь', 'Регион']);
     assert.deepEqual(await page.locator('.result-facts dd').allTextContents(), ['сладкое', '17%', 'Крым']);
-    assert.equal(await page.locator('.result-facts svg').count(), 0);
+    assert.deepEqual(await page.locator('.result-facts svg').evaluateAll(nodes => nodes.map(node => node.classList[1])),
+      ['tabler-icon-droplet', 'tabler-icon-glass-full', 'tabler-icon-map-pin']);
+    assert.equal(await page.locator('.result-facts dt span').evaluateAll(nodes => nodes.every(node => getComputedStyle(node).position === 'absolute')), true);
     assert.equal(await page.locator('.result-description').evaluate(el => el.open), false);
     await page.getByText('О вкусе и сочетаниях').click();
     assert.equal(await page.locator('.result-description').evaluate(el => el.open), true);
