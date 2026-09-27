@@ -153,3 +153,9 @@ Sigma объясняет по-русски: что случилось, что у
 изображения — в `/srv/lct/data/catalog/media/{400,800,original}/<sha>.webp`. Caddy отдаёт
 только `/media/catalog/<role>/<sha>.webp`; release/internal не являются web-root.
 Контроллер задаёт `CATALOG_VERSION` из кандидата и хранит фактическую комбинацию среды.
+
+BE-089: read-only аудит прозрачности и локальная подготовка новых версионированных
+media/manifest описаны в [catalog-alpha-be089.md](../docs/product/catalog-alpha-be089.md).
+Новые alpha WebP не устанавливаются под уже зарегистрированной версией; полный
+data gate, отдельный DB snapshot/import, HTTP и browser QA обязательны для каждой
+целевой среды. Подготовленный частичный sample не является release candidate.
