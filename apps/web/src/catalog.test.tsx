@@ -109,8 +109,7 @@ describe("BE-045 catalog display", () => {
     await user.click(screen.getByRole("button", { name: /Открыть каталог/i }));
     await user.click(await screen.findByRole("button", { name: /Каберне/i }));
     expect(screen.queryByText("Демо-карточка")).not.toBeInTheDocument();
-    await user.click(screen.getByRole("tab", { name: "Источник" }));
-    expect(await screen.findByRole("link", { name: "Открыть исходную запись" })).toHaveAttribute("href", wine.sourceUrl);
+    expect(screen.getByRole("link", { name: /Открыть на сайте «Своё Вино»/ })).toHaveAttribute("href", wine.sourceUrl);
   });
 
   it("CAT007 keeps a photo recognition reference notice alongside real provenance", async () => {
@@ -131,8 +130,7 @@ describe("BE-045 catalog display", () => {
     expect(screen.getByText("Reference")).toBeVisible();
     expect(screen.getByText("Reference-режим")).toBeVisible();
     expect(screen.queryByText(/Карточки и похожие варианты синтетические/i)).not.toBeInTheDocument();
-    await user.click(screen.getByRole("tab", { name: "Источник" }));
-    expect(screen.getByRole("link", { name: "Открыть исходную запись" })).toHaveAttribute("href", wine.sourceUrl);
+    expect(screen.getByRole("link", { name: /Открыть на сайте «Своё Вино»/ })).toHaveAttribute("href", wine.sourceUrl);
   });
 
   it("CAT001 CAT002 searches the server and appends pages beyond the initial catalog page", async () => {

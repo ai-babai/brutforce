@@ -498,9 +498,8 @@ describe("mobile behavior demo", () => {
     await userEvent.click(
       screen.getByRole("button", { name: /Каберне Совиньон/i }),
     );
-    await userEvent.click(screen.getByRole("tab", { name: "Источник" }));
-    expect(screen.getByText(/демо-каталога/i)).toBeVisible();
-    expect(screen.queryByRole("link", { name: /Открыть исходную запись/i })).not.toBeInTheDocument();
+    expect(screen.getByText("Демо-карточка")).toBeVisible();
+    expect(screen.queryByRole("link", { name: /Открыть на сайте «Своё Вино»/i })).not.toBeInTheDocument();
   });
   it("UI-008 does not send an empty manual query and keeps camera entry available", async () => {
     vi.stubGlobal("fetch", vi.fn().mockResolvedValue(response(exact)));
@@ -674,7 +673,7 @@ describe("mobile behavior demo", () => {
     expect(screen.getByRole("button", { name: /Каберне Совиньон, 2023/i })).toBeVisible();
     expect(screen.queryByRole("heading", { name: "Каберне Совиньон" })).not.toBeInTheDocument();
   });
-  it("UI-027 manual query, candidates, and correction preserve their return context", async () => {
+  it("UI-027 manual query and candidates preserve their return context", async () => {
     mock(uncertain);
     render(<App initialScenario="uncertain" />);
     await submitManual("Мерло");
@@ -685,21 +684,13 @@ describe("mobile behavior demo", () => {
     expect(
       screen.getByRole("heading", { name: "Каберне Совиньон" }),
     ).toBeVisible();
-    await userEvent.click(screen.getByRole("tab", { name: "Описание" }));
-    await userEvent.click(screen.getByRole("button", { name: /Не это вино/i }));
-    expect(
-      screen.getByRole("heading", { name: "Найдём по названию" }),
-    ).toBeVisible();
-    await userEvent.click(screen.getByRole("button", { name: "Искать" }));
-    await screen.findAllByRole("button", { name: /Каберне Совиньон|Мерло/i });
+    await userEvent.click(screen.getByRole("button", { name: "Назад" }));
     await userEvent.click(screen.getByRole("button", { name: /Мерло/i }));
     expect(screen.getByRole("heading", { name: "Мерло" })).toBeVisible();
     await userEvent.click(screen.getByRole("button", { name: "Назад" }));
     expect(screen.getAllByRole("button", { name: /Каберне Совиньон|Мерло/i })[0]).toBeVisible();
+    await userEvent.click(screen.getByRole("button", { name: "Поиск" }));
     expect(screen.getByLabelText(/Название вина/i)).toHaveValue("Мерло");
-    await userEvent.click(screen.getByRole("button", { name: "Назад" }));
-    expect(screen.getByRole("heading", { name: "Каберне Совиньон" })).toBeVisible();
-    expect(screen.getByRole("tab", { name: "Описание" })).toHaveAttribute("aria-selected", "true");
   });
   it("UI-028 distinguishes network and server failures and retries a retained receipt", async () => {
     let searches = 0;
