@@ -175,7 +175,7 @@ body { background: #f3f0e9; }
 #UI-008 .search-field { min-height: 60px; overflow: visible; border: 0; border-bottom: 1px solid #c8b8aa; border-radius: 0; background: transparent; box-shadow: none; }
 #UI-008 .search-field:focus-within { border-bottom-color: var(--wine); box-shadow: 0 1px 0 var(--wine); }
 #UI-008 .search-field input { height: 60px; padding-left: 0; color: var(--ink); font-size: 16px; }
-#UI-008 .search-field button { min-height: 44px; min-width: 44px; align-self: center; border-radius: 50%; background: transparent; color: var(--wine); }
+#UI-008 .search-field button { min-height: 48px; min-width: 48px; align-self: center; border-radius: 50%; background: transparent; color: var(--wine); }
 #UI-008 .search-field button svg { width: 25px; height: 25px; stroke-width: 1.3; }
 #UI-008 .search-field .clear-search { color: var(--muted); }
 #UI-008 .manual-empty { display: flex; flex-direction: column; min-height: 320px; }
@@ -255,7 +255,6 @@ body { background: #f3f0e9; }
 #UI-009 > p, #UI-010 > p { order: 3; }
 #UI-009 > .air-recovery-photo, #UI-010 > .air-recovery-photo { order: 4; }
 #UI-009 > .missing-actions, #UI-010 > .recovery-actions, #UI-010 > .primary { order: 5; }
-#UI-009 > .photo-feedback { order: 6; }
 #UI-009 .mascot-scene-counter, #UI-010 .mascot-scene-offline, #UI-010 .mascot-scene-server { height: 245px; min-height: 245px; margin: 30px -10px 22px; }
 #UI-009 .mascot-scene-counter img, #UI-010 .mascot-scene-offline img, #UI-010 .mascot-scene-server img { width: 100%; height: 100%; max-height: none; object-fit: contain; }
 #UI-009 .missing-actions, #UI-010 .recovery-actions { display: grid; gap: 8px; width: 100%; margin-top: auto; }
@@ -337,6 +336,14 @@ body { background: #f3f0e9; }
 @media (min-width: 380px) and (max-width: 400px) and (min-height: 800px) {
   #UI-001 .hero > .mascot-scene { flex-basis: 345px; height: 345px; margin-top: 20px; }
   #UI-001 .hero > .mascot-scene img { width: auto; height: 345px; transform: none; }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  #UI-006 .leader-list button.candidate-leader {
+    width: 100vw;
+    margin-inline: calc((100% - 100vw) / 2);
+    padding-inline: calc((100vw - 480px) / 2 + 26px);
+  }
 }
 
 /* Keep the approved width inside the wide desktop handset. */

@@ -1266,8 +1266,8 @@
     {
       "id": "AIR-043",
       "area": "web",
-      "title": "Прямой безопасный sourceUrl не смешивается с photo-feedback",
-      "source": "apps/web/src/air-v37.test.tsx; apps/web/air37.browser.mjs",
+      "title": "Прямой источник без отправки feedback и без доразметки в основном TEST-интерфейсе",
+      "source": "apps/web/src/air-v37.test.tsx; apps/web/src/photo-feedback.test.tsx; apps/web/air-release.browser.mjs",
       "spec": "design/wine-ux-v3/air37/behavior-v37.feature"
     },
     {

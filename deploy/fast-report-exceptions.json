@@ -5,8 +5,7 @@
     {
       "ids": [
         "DESIGN-001", "DESIGN-002", "DESIGN-004", "DESIGN-006", "DESIGN-008",
-        "DESIGN-009", "DESIGN-010", "DESIGN-011", "DESIGN-013", "DESIGN-014",
-        "DESIGN-015", "DESIGN-016", "DESIGN-018", "DESIGN-020", "DESIGN-022",
+        "DESIGN-009", "DESIGN-010", "DESIGN-011", "DESIGN-013", "DESIGN-022",
         "DESIGN-023", "DESIGN-025", "DESIGN-026"
       ],
       "reason": "Historical v2 CSS assertions cannot prove the active Air 3.4 styling and are superseded; their old green result would be misleading.",
@@ -28,7 +27,7 @@
       "evidence": "docs/product/reviews/air-v35-bdd-audit.md separates mocked UI proof from live vision evidence; apps/api/vision_service_test.go covers private-byte forwarding and model errors."
     },
     {
-      "ids": ["AIR-026", "AIR-027", "AIR-028", "AIR-029"],
+      "ids": ["AIR-028", "AIR-029"],
       "reason": "Visual width, movement, typography, and responsive composition require browser inspection beyond fast DOM tests.",
       "evidence": "docs/product/reviews/air-v35-implementation-qa.md records local browser geometry, computed typography, and screenshot review; reduced-motion and enlarged-text checks remain identified there."
     }

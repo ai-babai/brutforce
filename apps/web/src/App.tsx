@@ -18,11 +18,10 @@ import {
   getRecommendations,
   InvalidPhotoError,
   StaleCatalogCursorError,
-  savePhotoFeedback,
   searchWine,
   uploadPhoto,
 } from "./api";
-import type { Candidate, FeedbackDecision, FeedbackReceipt, PhotoReceipt, Scenario } from "./types";
+import type { Candidate, PhotoReceipt, Scenario } from "./types";
 import { AtlasScan } from "./AtlasIcons";
 import { InstallApp } from "./InstallApp";
 import { MascotScene, V2Logo } from "./V2Visual";
@@ -42,9 +41,8 @@ type Screen =
   | "missing"
   | "badphoto"
   | "error";
-type CandidateOrigin = "scan" | "manual" | "correction";
+type CandidateOrigin = "scan" | "manual";
 type ResultOrigin = CandidateOrigin | "catalog" | "saved";
-type SearchOrigin = "normal" | "correction";
 type ErrorKind = "network" | "server";
 type MissingReason = "no_match" | "outside_display" | "rejected";
 type RecommendationStatus = "idle" | "loading" | "ready" | "empty" | "error";
@@ -86,8 +84,6 @@ export function App({
   const [resultOrigin, setResultOrigin] = useState<ResultOrigin>("scan");
   const [candidateHasPhoto, setCandidateHasPhoto] = useState(false);
   const [resultHasPhoto, setResultHasPhoto] = useState(false);
-  const [resultFromCorrection, setResultFromCorrection] = useState(false);
-  const [searchOrigin, setSearchOrigin] = useState<SearchOrigin>("normal");
   const [errorKind, setErrorKind] = useState<ErrorKind>("server");
   const [missingReason, setMissingReason] = useState<MissingReason>("no_match");
   const [notePaused, setNotePaused] = useState(false);
@@ -103,17 +99,6 @@ export function App({
   }>({ status: "idle", candidates: [] });
   const [recommendationAttempt, setRecommendationAttempt] = useState(0);
   const [demoMode, setDemoMode] = useState(false);
-  const [feedbackToken, setFeedbackToken] = useState("");
-  const [feedbackMode, setFeedbackMode] = useState<"idle" | "correcting" | "saving" | "saved" | "error">("idle");
-  const [feedbackComment, setFeedbackComment] = useState("");
-  const [feedbackTarget, setFeedbackTarget] = useState<Candidate>();
-  const [feedbackReceipt, setFeedbackReceipt] = useState<FeedbackReceipt>();
-  const [feedbackError, setFeedbackError] = useState("");
-  const [feedbackQuery, setFeedbackQuery] = useState("");
-  const [feedbackCatalog, setFeedbackCatalog] = useState<Candidate[]>([]);
-  const [feedbackCatalogCursor, setFeedbackCatalogCursor] = useState<string>();
-  const [feedbackCatalogLoading, setFeedbackCatalogLoading] = useState(false);
-  const [feedbackCatalogError, setFeedbackCatalogError] = useState("");
   const abort = useRef<AbortController | undefined>(undefined);
   const catalogAbort = useRef<AbortController | undefined>(undefined);
   const catalogTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
@@ -140,27 +125,7 @@ export function App({
   const searchScroll = useRef(0);
   const listScroll = useRef(0);
   const candidateResultHistory = useRef(false);
-  const feedbackIdempotency = useRef("");
-  const feedbackGeneration = useRef(0);
-  const feedbackCatalogAbort = useRef<AbortController | undefined>(undefined);
   const [catalogOpen, setCatalogOpen] = useState(false);
-
-  const resetFeedback = () => {
-    feedbackGeneration.current += 1;
-    feedbackCatalogAbort.current?.abort();
-    setFeedbackToken("");
-    setFeedbackMode("idle");
-    setFeedbackComment("");
-    setFeedbackTarget(undefined);
-    setFeedbackReceipt(undefined);
-    setFeedbackError("");
-    setFeedbackQuery("");
-    setFeedbackCatalog([]);
-    setFeedbackCatalogCursor(undefined);
-    setFeedbackCatalogLoading(false);
-    setFeedbackCatalogError("");
-    feedbackIdempotency.current = "";
-  };
 
   const stopCamera = () => {
     streamRef.current?.getTracks().forEach((track) => track.stop());
@@ -185,7 +150,6 @@ export function App({
       catalogAbort.current?.abort();
       if (catalogTimer.current) clearTimeout(catalogTimer.current);
       recommendationAbort.current?.abort();
-      feedbackCatalogAbort.current?.abort();
       stopCamera();
       if (waitTimer.current) clearTimeout(waitTimer.current);
     },
@@ -312,12 +276,10 @@ export function App({
     setSelected(undefined);
     setCandidateHasPhoto(false);
     setResultHasPhoto(false);
-    setResultFromCorrection(false);
     setMissingReason("no_match");
     setSection("search");
     setPhotoFile(file);
     setReceipt(undefined);
-    resetFeedback();
     setPhoto(URL.createObjectURL(file));
     uploadThenSearch(file, scenario);
   };
@@ -388,13 +350,6 @@ export function App({
       if (controller.signal.aborted || abort.current !== controller) return;
       clearWaitTimer(controller);
       setDemoMode(data.demo);
-      setFeedbackToken(data.feedbackToken ?? "");
-      setFeedbackMode("idle");
-      setFeedbackComment("");
-      setFeedbackTarget(undefined);
-      setFeedbackReceipt(undefined);
-      setFeedbackError("");
-      feedbackIdempotency.current = "";
       const list = data.candidates;
       setCandidates(list);
       if (!list.length) {
@@ -404,7 +359,7 @@ export function App({
         setScreen("missing");
         return;
       }
-      setCandidateOrigin(q ? searchOrigin === "correction" ? "correction" : "manual" : "scan");
+      setCandidateOrigin(q ? "manual" : "scan");
       setCandidateHasPhoto(Boolean(knownReceipt));
       setScreen("candidates");
     } catch (e) {
@@ -446,7 +401,6 @@ export function App({
     setSelected(undefined);
     setCandidateHasPhoto(false);
     setResultHasPhoto(false);
-    setResultFromCorrection(false);
     setMissingReason("no_match");
     lastRequest.current = { scenario, hasPhoto: false };
   };
@@ -493,7 +447,6 @@ export function App({
   const openSearch = () => {
     leaveWork();
     setSection("search");
-    setSearchOrigin("normal");
     setPhoto(undefined);
     setPhotoFile(undefined);
     setReceipt(undefined);
@@ -512,7 +465,6 @@ export function App({
   const openSearchFromNav = () => {
     leaveWork();
     setSection("search");
-    setSearchOrigin("normal");
     setScreen("search");
   };
   const back = () => {
@@ -544,23 +496,12 @@ export function App({
       0.9,
     );
   };
-  const discardRetainedPhoto = () => {
-    setExpandedPhoto(false);
-    setPhoto(undefined);
-    setPhotoFile(undefined);
-    setReceipt(undefined);
-    setCandidates([]);
-    setSelected(undefined);
-    resetFeedback();
-    lastRequest.current = { scenario, hasPhoto: false };
-  };
   const choose = (c: Candidate) => {
     listScroll.current = contentRef.current?.scrollTop ?? 0;
     window.history.pushState({ ...window.history.state, brutforceCandidateResult: true }, "");
     candidateResultHistory.current = true;
     setSelected(c);
-    if (candidateOrigin !== "correction") setResultOrigin(candidateOrigin);
-    setResultFromCorrection(candidateOrigin === "correction");
+    setResultOrigin(candidateOrigin);
     setResultHasPhoto(candidateHasPhoto);
     setScreen("result");
   };
@@ -573,7 +514,6 @@ export function App({
     setCandidates([]);
     setResultOrigin("catalog");
     setResultHasPhoto(false);
-    setResultFromCorrection(false);
     setScreen("result");
   };
   const chooseSaved = (c: Candidate) => {
@@ -584,24 +524,15 @@ export function App({
     setCandidates([]);
     setResultOrigin("saved");
     setResultHasPhoto(false);
-    setResultFromCorrection(false);
     setScreen("result");
   };
   const chooseRecommendation = (c: Candidate) => {
     setSelected(c);
     setResultHasPhoto(false);
-    setResultFromCorrection(false);
   };
   const backFromCandidates = () => {
-    if (candidateOrigin === "correction") {
-      setSection("search");
-      setSearchOrigin("correction");
-      setScreen("search");
-      return;
-    }
     if (candidateOrigin === "manual") {
       setSection("search");
-      setSearchOrigin("normal");
       setScreen("search");
       return;
     }
@@ -621,11 +552,6 @@ export function App({
         setCandidateHasPhoto(resultHasPhoto);
         setScreen("candidates");
       }
-      return;
-    }
-    if (resultFromCorrection) {
-      setCandidateOrigin("correction");
-      setScreen("candidates");
       return;
     }
     if (resultOrigin === "manual") {
@@ -767,58 +693,6 @@ export function App({
   const updateCatalogQuery = (nextQuery: string) => scheduleCatalogSearch(nextQuery);
   const submitCatalogSearch = () => requestCatalogNow();
   const shown = selected;
-  const newIdempotencyKey = () => {
-    const bytes = new Uint8Array(16);
-    crypto.getRandomValues(bytes);
-    return Array.from(bytes, value => value.toString(16).padStart(2, "0")).join("");
-  };
-  const submitFeedback = async (decision: FeedbackDecision, displayed?: Candidate) => {
-    if (!feedbackToken || feedbackMode === "saving" || feedbackMode === "saved") return;
-    if (decision === "correct" && !feedbackTarget) {
-      setFeedbackError("Выберите правильное вино из каталога.");
-      return;
-    }
-    if (!feedbackIdempotency.current) feedbackIdempotency.current = newIdempotencyKey();
-    const generation = feedbackGeneration.current;
-    setFeedbackMode("saving");
-    setFeedbackError("");
-    try {
-      const saved = await savePhotoFeedback({
-        feedbackToken,
-        idempotencyKey: feedbackIdempotency.current,
-        decision,
-        ...(displayed ? { displayedWineId: displayed.id } : {}),
-        ...(decision === "correct" ? { correctWineId: feedbackTarget?.id } : {}),
-        ...(feedbackComment.trim() ? { comment: feedbackComment.trim() } : {}),
-      });
-      if (generation !== feedbackGeneration.current) return;
-      setFeedbackReceipt(saved);
-      setFeedbackMode("saved");
-    } catch (error) {
-      if (generation !== feedbackGeneration.current) return;
-      setFeedbackError((error as Error).message);
-      setFeedbackMode("error");
-    }
-  };
-  const loadFeedbackCatalog = async (append = false) => {
-    feedbackCatalogAbort.current?.abort();
-    const controller = new AbortController();
-    feedbackCatalogAbort.current = controller;
-    const generation = feedbackGeneration.current;
-    setFeedbackCatalogLoading(true);
-    setFeedbackCatalogError("");
-    try {
-      const data = await getCatalog({ limit: 12, cursor: append ? feedbackCatalogCursor : undefined, q: feedbackQuery.trim(), signal: controller.signal });
-      if (controller.signal.aborted || generation !== feedbackGeneration.current || feedbackCatalogAbort.current !== controller) return;
-      setFeedbackCatalog(current => append ? [...current, ...data.candidates] : data.candidates);
-      setFeedbackCatalogCursor(data.nextCursor);
-    } catch (error) {
-      if ((error as Error).name === "AbortError" || generation !== feedbackGeneration.current) return;
-      setFeedbackCatalogError("Не удалось загрузить каталог.");
-    } finally {
-      if (!controller.signal.aborted && generation === feedbackGeneration.current && feedbackCatalogAbort.current === controller) setFeedbackCatalogLoading(false);
-    }
-  };
   const persistSaved = (next: Candidate[], success: string) => {
     try {
       localStorage.setItem(savedKey, JSON.stringify(next));
@@ -1101,47 +975,6 @@ export function App({
                     <summary>О вкусе и сочетаниях</summary>
                     <p>{shown.description}</p>
                   </details>}
-                  {resultHasPhoto && feedbackToken && (
-                    <section className="photo-feedback" aria-labelledby="photo-feedback-title">
-                      <h3 id="photo-feedback-title">Разметить мою фотографию</h3>
-                      <p>Подтвердите результат или укажите правильную позицию. Ответ сохранится отдельно для проверки и последующего дообучения.</p>
-                      {feedbackMode === "saved" ? (
-                        <div className="feedback-success" role="status">
-                          <Check />
-                          <span><b>Разметка сохранена</b><small>Квитанция {feedbackReceipt?.feedbackId.slice(0, 8)}</small></span>
-                        </div>
-                      ) : <>
-                        <label htmlFor="feedback-comment">Комментарий — необязательно</label>
-                        <textarea id="feedback-comment" maxLength={2000} disabled={feedbackMode === "saving"} value={feedbackComment} onChange={event => { setFeedbackComment(event.target.value); if (feedbackMode === "error") feedbackIdempotency.current = ""; }} placeholder="Например: другой год, редизайн этикетки…" />
-                        <div className="feedback-actions">
-                          <button className="primary" disabled={feedbackMode === "saving"} onClick={() => submitFeedback("confirm", shown)}>
-                            {feedbackMode === "saving" ? "Сохраняем…" : "Подтвердить"}
-                          </button>
-                          <button className="secondary" disabled={feedbackMode === "saving"} onClick={() => { setFeedbackMode("correcting"); setFeedbackError(""); feedbackIdempotency.current = ""; if (!feedbackCatalog.length) void loadFeedbackCatalog(); }}>
-                            Нет, это другое вино
-                          </button>
-                        </div>
-                        {(feedbackMode === "correcting" || feedbackTarget) && (
-                          <div className="feedback-correction">
-                            <label htmlFor="feedback-wine-search">Какое это вино?</label>
-                            <div className="search-field">
-                              <input id="feedback-wine-search" value={feedbackQuery} onChange={event => setFeedbackQuery(event.target.value)} placeholder="Название или винодельня" />
-                              <button aria-label="Найти правильное вино" onClick={() => { setFeedbackTarget(undefined); feedbackIdempotency.current = ""; void loadFeedbackCatalog(); }}><MagnifyingGlass /></button>
-                            </div>
-                            {feedbackTarget && <div className="feedback-target"><span><small>Выбрано</small><b>{feedbackTarget.name}</b><small>{feedbackTarget.winery}</small></span><button className="text-button" onClick={() => { setFeedbackTarget(undefined); feedbackIdempotency.current = ""; }}>Изменить</button></div>}
-                            {!feedbackTarget && <div className="feedback-catalog" aria-label="Результаты поиска правильного вина">
-                              {feedbackCatalog.map(wine => <button key={wine.id} onClick={() => { setFeedbackTarget(wine); setFeedbackError(""); feedbackIdempotency.current = ""; }}><CandidateImage candidate={wine} role="card" /><span><b>{wine.name}</b><small>{wine.winery}</small></span></button>)}
-                            </div>}
-                            {feedbackCatalogCursor && !feedbackTarget && <button className="text-button" disabled={feedbackCatalogLoading} onClick={() => void loadFeedbackCatalog(true)}>Показать ещё</button>}
-                            {feedbackCatalogLoading && <p role="status">Загружаем каталог…</p>}
-                            {feedbackCatalogError && <p role="alert">{feedbackCatalogError}</p>}
-                            <button className="primary" disabled={!feedbackTarget || feedbackMode === "saving"} onClick={() => submitFeedback("correct", shown)}>Сохранить исправление</button>
-                          </div>
-                        )}
-                        {feedbackError && <p className="feedback-error" role="alert">{feedbackError}</p>}
-                      </>}
-                    </section>
-                  )}
                   <section className="recommendations" aria-labelledby="recommendations-title">
                     <h3 id="recommendations-title">Вам также может подойти</h3>
                     {recommendations.status === "loading" && (
@@ -1313,44 +1146,6 @@ export function App({
                   : "Сервис не нашёл подходящего совпадения."}</p>
               {photo && lastRequest.current.hasPhoto && (
                 <RecoveryPhoto photo={photo} onExpand={() => setExpandedPhoto(true)} onCamera={newCapture} onGallery={() => galleryRef.current?.click()} />
-              )}
-              {photo && lastRequest.current.hasPhoto && feedbackToken && (
-                <section className="photo-feedback" aria-labelledby="missing-feedback-title">
-                  <h3 id="missing-feedback-title">Разметить мою фотографию</h3>
-                  {feedbackMode === "saved" ? (
-                    <div className="feedback-success" role="status">
-                      <Check />
-                      <span><b>Разметка сохранена</b><small>Квитанция {feedbackReceipt?.feedbackId.slice(0, 8)}</small></span>
-                    </div>
-                  ) : <>
-                    <p>Если вино есть в каталоге, укажите правильную карточку.</p>
-                    <label htmlFor="missing-feedback-comment">Комментарий — необязательно</label>
-                    <textarea id="missing-feedback-comment" maxLength={2000} disabled={feedbackMode === "saving"} value={feedbackComment} onChange={event => { setFeedbackComment(event.target.value); if (feedbackMode === "error") feedbackIdempotency.current = ""; }} placeholder="Например: модель не распознала новый дизайн…" />
-                    {feedbackMode !== "correcting" && !feedbackTarget && (
-                      <button className="secondary" onClick={() => { setFeedbackMode("correcting"); setFeedbackError(""); feedbackIdempotency.current = ""; if (!feedbackCatalog.length) void loadFeedbackCatalog(); }}>
-                        Указать правильное вино
-                      </button>
-                    )}
-                    {(feedbackMode === "correcting" || feedbackTarget) && (
-                      <div className="feedback-correction">
-                        <label htmlFor="missing-feedback-wine-search">Какое это вино?</label>
-                        <div className="catalog-search feedback-search">
-                          <input id="missing-feedback-wine-search" value={feedbackQuery} onChange={event => setFeedbackQuery(event.target.value)} placeholder="Название или винодельня" />
-                          <button aria-label="Найти правильное вино" onClick={() => { setFeedbackTarget(undefined); feedbackIdempotency.current = ""; void loadFeedbackCatalog(); }}><MagnifyingGlass /></button>
-                        </div>
-                        {feedbackTarget && <div className="feedback-target"><span><small>Выбрано</small><b>{feedbackTarget.name}</b><small>{feedbackTarget.winery}</small></span><button className="text-button" onClick={() => { setFeedbackTarget(undefined); feedbackIdempotency.current = ""; }}>Изменить</button></div>}
-                        {!feedbackTarget && <div className="feedback-catalog" aria-label="Результаты поиска правильного вина">
-                          {feedbackCatalog.map(wine => <button key={wine.id} onClick={() => { setFeedbackTarget(wine); setFeedbackError(""); feedbackIdempotency.current = ""; }}><CandidateImage candidate={wine} role="card" /><span><b>{wine.name}</b><small>{wine.winery}</small></span></button>)}
-                        </div>}
-                        {feedbackCatalogCursor && !feedbackTarget && <button className="text-button" disabled={feedbackCatalogLoading} onClick={() => void loadFeedbackCatalog(true)}>Показать ещё</button>}
-                        {feedbackCatalogLoading && <p role="status">Загружаем каталог…</p>}
-                        {feedbackCatalogError && <p role="alert">{feedbackCatalogError}</p>}
-                        <button className="primary" disabled={!feedbackTarget || feedbackMode === "saving"} onClick={() => submitFeedback("correct")}>Сохранить разметку</button>
-                      </div>
-                    )}
-                    {feedbackError && <p className="feedback-error" role="alert">{feedbackError}</p>}
-                  </>}
-                </section>
               )}
               <MascotScene scene="counter" />
               {lastRequest.current.hasPhoto ? (

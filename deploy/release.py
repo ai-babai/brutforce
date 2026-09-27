@@ -360,12 +360,12 @@ def main(args):
             require(r['gates']['test']['status']=='passed','HTTP smoke required')
             require(datetime.datetime.fromisoformat(result['at'].replace('Z','+00:00')) >= datetime.datetime.fromisoformat(r['gates']['test']['at']), 'Browser evidence predates this deployment')
             if result['status']=='passed':
-                expected={'release revision','desktop text search, card, recommendations','mobile text search, upload, card, recommendations'} if r.get('catalogManifestSHA256') is None else {
-                  'release revision','active catalog version and bounded first page',
-                  'desktop real catalog, pagination, search, image and source',
-                  'mobile real catalog, pagination, search, image and source',
-                  'narrow real catalog, pagination, search, image and source',
-                  'real catalog upload does not invent model results'}
+                expected={'release revision','desktop text search, card, recommendations','mobile demo text search, photo upload, card, recommendations'} if r.get('catalogManifestSHA256') is None else {
+                    'release revision','active catalog version and bounded first page',
+                    'desktop real catalog, pagination, search, image and source',
+                    'mobile real catalog, pagination, search, image and source',
+                    'narrow real catalog, pagination, search, image and source',
+                    'real photo upload, recognition, card and recommendations'}
                 require(expected <= {c['name'] for c in result.get('checks',[]) if c['status']=='passed'}, 'Incomplete browser evidence')
                 require(result.get('observedRevision')==sha,'Browser observed another release')
                 require(result.get('catalogVersion')==r['catalogVersion'],'Browser observed another catalog version')
