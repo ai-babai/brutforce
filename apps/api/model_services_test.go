@@ -138,7 +138,7 @@ func TestSVC005PhotoSearchForwardsPrivateBytes(t *testing.T) {
 	}
 }
 
-func TestSVC005ConfiguredSearchWorksWithImportedCatalog(t *testing.T) {
+func TestSVC005RealCatalogTextSearchUsesActualCatalog(t *testing.T) {
 	catalog := displayCatalog{version: "real-v1", items: []wine{{ID: "real-wine", Slug: "real-wine", Name: "Real wine"}}}
 	upstream := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
@@ -156,7 +156,7 @@ func TestSVC005ConfiguredSearchWorksWithImportedCatalog(t *testing.T) {
 	}})
 	rec := request(t, h, http.MethodPost, "/v1/search", `{"query":"real"}`)
 	response := decodeResponse(t, rec)
-	if rec.Code != http.StatusOK || response.CatalogVersion != "real-v1" || response.ModelVersion != "real-search-v1" || response.SelectedID != "real-wine" {
+	if rec.Code != http.StatusOK || response.CatalogVersion != "real-v1" || response.Demo || len(response.Candidates) != 1 || response.Candidates[0].ID != "real-wine" || response.ModelVersion != "" {
 		t.Fatalf("response=%d %+v body=%s", rec.Code, response, rec.Body.String())
 	}
 }

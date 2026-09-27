@@ -47,6 +47,7 @@ type searchResponse struct {
 	RecognizedSlug            string    `json:"recognizedSlug,omitempty"`
 	CatalogVersion            string    `json:"catalogVersion,omitempty"`
 	RecognitionCatalogVersion string    `json:"recognitionCatalogVersion,omitempty"`
+	IndexVersion              string    `json:"indexVersion,omitempty"`
 	NextCursor                string    `json:"nextCursor,omitempty"`
 	ModelVersion              string    `json:"modelVersion,omitempty"`
 	FeedbackToken             string    `json:"feedbackToken,omitempty"`
@@ -83,6 +84,12 @@ func main() {
 	services := configuredModelServices()
 	if services.vision != nil && services.vision.configErr != nil {
 		log.Fatal("vision service configuration is invalid")
+	}
+	if services.visualIndex != nil && services.visualIndex.configErr != nil {
+		log.Fatal("visual similarity index configuration is invalid")
+	}
+	if services.vision != nil && services.visualIndex != nil && services.visualIndex.IndexVersion != services.vision.indexVersion {
+		log.Fatal("visual similarity index does not match configured vision index")
 	}
 	log.Printf("demo API listening on %s", address)
 	server := &http.Server{
@@ -124,7 +131,7 @@ func newHandlerWithCatalogAndServices(webRoot string, recognizer Recognizer, cat
 	mux.HandleFunc("/api/docs/", docsHandler)
 	mux.HandleFunc("/api/openapi.json", openAPIHandler)
 	mux.HandleFunc("/api/schema/demo-search.schema.json", demoSearchSchemaHandler)
-	mux.HandleFunc("/v1/health", healthHandler)
+	mux.HandleFunc("/v1/health", healthHandler(catalog))
 	mux.HandleFunc("/v2/catalog", catalogHandler(catalog))
 	mux.HandleFunc("/v2/catalog/", catalogItemHandler(catalog))
 	mux.HandleFunc("/v1/photos", uploadHandler(store))
@@ -196,12 +203,19 @@ func catalogItemHandler(catalog catalogReader) http.HandlerFunc {
 	}
 }
 
-func healthHandler(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodGet {
-		writeError(w, http.StatusMethodNotAllowed, "method_not_allowed", "use GET")
-		return
+func healthHandler(catalog catalogReader) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodGet {
+			writeError(w, http.StatusMethodNotAllowed, "method_not_allowed", "use GET")
+			return
+		}
+		info, err := catalogInfoFor(r.Context(), catalog)
+		if err != nil {
+			writeError(w, http.StatusServiceUnavailable, "catalog_unavailable", "catalog is temporarily unavailable")
+			return
+		}
+		writeJSON(w, http.StatusOK, map[string]bool{"ok": true, "demo": info.Demo})
 	}
-	writeJSON(w, http.StatusOK, map[string]bool{"ok": true, "demo": true})
 }
 
 func searchHandler(store *photoStore, catalog catalogReader, services modelServices) http.HandlerFunc {
@@ -225,6 +239,21 @@ func searchHandlerWithFeedback(store *photoStore, feedback *feedbackStore, catal
 			return
 		}
 		if !info.Demo {
+			if request.Query != nil {
+				candidates, err := catalog.Search(r.Context(), request.Query)
+				if err != nil {
+					writeError(w, http.StatusServiceUnavailable, "catalog_unavailable", "catalog is temporarily unavailable")
+					return
+				}
+				if len(candidates) > 5 {
+					candidates = candidates[:5]
+				}
+				if candidates == nil {
+					candidates = []wine{}
+				}
+				writeJSON(w, http.StatusOK, searchResponse{Demo: false, Candidates: candidates, CatalogVersion: info.Version})
+				return
+			}
 			if request.PhotoID != nil && services.vision != nil {
 				response, status, code, message := configuredVisionSearch(r, store, catalog, *request.PhotoID, services.vision)
 				if status != 0 {
@@ -237,19 +266,7 @@ func searchHandlerWithFeedback(store *photoStore, feedback *feedbackStore, catal
 				writeJSON(w, http.StatusOK, response)
 				return
 			}
-			if request.Query != nil && services.search == nil {
-				candidates, err := catalog.Search(r.Context(), request.Query)
-				if err != nil {
-					writeError(w, http.StatusServiceUnavailable, "catalog_unavailable", "catalog is temporarily unavailable")
-					return
-				}
-				if len(candidates) > 5 {
-					candidates = candidates[:5]
-				}
-				writeJSON(w, http.StatusOK, searchResponse{Demo: false, Candidates: candidates, CatalogVersion: info.Version})
-				return
-			}
-			if request.PhotoID != nil && services.search == nil {
+			if request.PhotoID != nil && services.vision == nil {
 				writeError(w, http.StatusServiceUnavailable, "recognition_unavailable", "image recognition is not configured")
 				return
 			}
@@ -370,17 +387,9 @@ func recommendationsHandler(catalog catalogReader, services modelServices) http.
 			writeError(w, http.StatusMethodNotAllowed, "method_not_allowed", "use POST")
 			return
 		}
-		if services.recommendations == nil {
-			writeError(w, http.StatusServiceUnavailable, "recommendations_unavailable", "recommendation service is not configured")
-			return
-		}
 		info, err := catalogInfoFor(r.Context(), catalog)
 		if err != nil {
 			writeError(w, http.StatusServiceUnavailable, "catalog_unavailable", "catalog is temporarily unavailable")
-			return
-		}
-		if !info.Demo {
-			writeError(w, http.StatusServiceUnavailable, "recommendations_unavailable", "reference recommendations are unavailable for the imported catalog")
 			return
 		}
 		var req recommendationsRequest
@@ -401,7 +410,24 @@ func recommendationsHandler(catalog catalogReader, services modelServices) http.
 			}
 		}
 		if !found {
-			writeError(w, http.StatusNotFound, "wine_not_found", "wineId is not in the demo catalog")
+			writeError(w, http.StatusNotFound, "wine_not_found", "wineId is not in the catalog")
+			return
+		}
+		if !info.Demo {
+			if services.visualIndex == nil {
+				writeError(w, http.StatusServiceUnavailable, "recommendations_unavailable", "visual similarity index is not configured")
+				return
+			}
+			response, status, code, message := visualRecommendations(info, known, req, services.visualIndex)
+			if status != 0 {
+				writeError(w, status, code, message)
+				return
+			}
+			writeJSON(w, http.StatusOK, response)
+			return
+		}
+		if services.recommendations == nil {
+			writeError(w, http.StatusServiceUnavailable, "recommendations_unavailable", "recommendation service is not configured")
 			return
 		}
 		response, status, code, message := configuredRecommendations(r, catalog, req, services.recommendations)
