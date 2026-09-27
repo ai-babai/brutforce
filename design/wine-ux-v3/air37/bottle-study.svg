@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 340" role="img" aria-labelledby="title">
+  <title id="title">Схематичная бутылка для проверки компоновки; не фото вина из каталога</title>
+  <defs>
+    <linearGradient id="glass"><stop stop-color="#42331e"/><stop offset=".26" stop-color="#7d6332"/><stop offset=".55" stop-color="#604925"/><stop offset="1" stop-color="#37281a"/></linearGradient>
+  </defs>
+  <ellipse cx="90" cy="328" rx="50" ry="7" fill="#59462e" opacity=".14"/>
+  <path d="M75 8h30v67c0 17 32 29 32 58v178q0 14-13 14H56q-13 0-13-14V133c0-29 32-41 32-58Z" fill="url(#glass)" stroke="#35271d" stroke-width="2"/>
+  <path d="M75 11h30v50H75z" fill="#773b32"/><path d="M78 20h24M78 32h24M78 44h24" stroke="#b98866" opacity=".5"/>
+  <path d="M58 143c0-25 26-31 26-67v-9" fill="none" stroke="#fff3d6" stroke-width="5" opacity=".15"/>
+  <path d="M49 179h82v109H49z" fill="#f1e7cc" stroke="#c8b994"/>
+  <path d="M54 185h72v97H54z" fill="none" stroke="#a58d6c"/>
+  <text x="90" y="209" text-anchor="middle" font-family="Georgia,serif" font-size="11" fill="#6c322f">МАССАНДРА</text>
+  <path d="M64 220h52" stroke="#9a7a55"/>
+  <text x="90" y="239" text-anchor="middle" font-family="Georgia,serif" font-size="10" fill="#4c3527">ПОРТВЕЙН</text>
+  <text x="90" y="255" text-anchor="middle" font-family="Georgia,serif" font-size="12" fill="#4c3527">АЛУШТА</text>
+  <text x="90" y="274" text-anchor="middle" font-family="sans-serif" font-size="6" fill="#7c6754">КОМПОНОВОЧНЫЙ МАКЕТ</text>
+</svg>
