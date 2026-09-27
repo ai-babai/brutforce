@@ -29,7 +29,7 @@ Air camera at 320×640, 430×932, and 844×390: serif heading «Наведите
 - `UI-004`: local original photo, upload/search progress, long-wait copy, cancellation.
 - `UI-005` is a behavior case, not a separate screen: cancel returns to a clean UI-001 without photo/receipt/continuation; late responses do not reopen the path.
 - `UI-006`: original-photo comparison and ranked candidates.
-- `UI-007`: wine identity, correction, overview, description, and source.
+- `UI-007`: wine identity, immediate overview, optional closed description and direct source link; see Air 3.7 below.
 - `UI-008`: manual search.
 - `UI-009`: a successful empty photo search offers manual search, camera and gallery as distinct actions. A text search keeps its editable query. Human rejection of candidates has its own recovery state. Neither state invents a cause or wine card.
 - `UI-010`: upload/search/contract error and retry.
@@ -44,9 +44,13 @@ Air camera at 320×640, 430×932, and 844×390: serif heading «Наведите
 
 ### Photo candidates · SR-001
 
-`UI-006` preserves photo-search order from the backend. Every nonempty response, including a singleton with `selectedId`, shows a list until the user selects a row. The first row is marked as leader without a numeric confidence claim. Ranked text search and recommendations keep the same leader rule; unfiltered catalog and saved wines do not. Each row is one accessible target with the full name and known year. Compact facts come only from structured winery, name, year, type, sugar and strength; missing values are omitted without guessing from description. The full card retains its description, source, tabs, correction, save and recommendations. A missing or broken image has an accessible placeholder. At 320/360/390/430 px and 200% text, rows wrap inside the viewport. Air uses one list surface with dividers and a soft leader gradient; the white tiles and burgundy outline in FE-057 are historical.
+`UI-006` preserves photo-search order from the backend. Every nonempty response, including a singleton with `selectedId`, shows a list until the user selects a row. The first row is marked as leader without a numeric confidence claim. Ranked text search and recommendations keep the same leader rule; unfiltered catalog and saved wines do not. Each row is one accessible target with the full name and known year. Compact facts come only from structured winery, name, year, type, sugar and strength; missing values are omitted without guessing from description. The full card retains its save and recommendations; Air 3.7 specifies the rest below. A missing or broken image has an accessible placeholder. At 320/360/390/430 px and 200% text, rows wrap inside the viewport. Air uses one list surface with dividers and a soft leader gradient; the white tiles and burgundy outline in FE-057 are historical.
 
-The client makes no quality or probability claims. The source tab identifies the current catalog content as prototype data.
+The client makes no quality or probability claims. A demo/reference label reflects its actual response, independently of a catalog source URL.
+
+### Air 3.7 · FE-088 · UI-007
+
+The [observable scenarios](../../design/wine-ux-v3/air37/behavior-v37.feature) supersede the former card tabs and correction row. The bottle occupies the left shelf column; only structured sugar, valid alcohol and nonempty region appear as unboxed Onest term/value pairs to its right, without icons. A positive integer `year` appears beside the winery on one line when space permits, otherwise the winery has no separator; the overview retains «Год не указан». Never infer year from the title. A safe http(s) `sourceUrl` produces a directly clickable «Открыть на сайте «Своё Вино» ↗» link in a new isolated tab; no URL means no link. Photo-feedback remains its own action only when the photo search supplies its token. Overview rows are immediate. A nonempty description alone produces a closed «О вкусе и сочетаниях» disclosure after the summary. Back leads to the originating list, where another candidate can be chosen. Tests: `src/air-v37.test.tsx`, `node air37.browser.mjs` from `apps/web`; mocked transport checks UI and layout, not ML or physical camera.
 
 Completed upload receipts are reused for retry. If cancellation races with an upload before its receipt reaches the browser, a retry can upload the file again because the API currently has no idempotency key.
 

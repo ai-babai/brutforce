@@ -77,9 +77,6 @@ export function App({
   const [saved, setSaved] = useState<Candidate[]>([]);
   const [storageNotice, setStorageNotice] = useState("");
   const [selected, setSelected] = useState<Candidate>();
-  const [tab, setTab] = useState<"overview" | "description" | "source">(
-    "overview",
-  );
   const [query, setQuery] = useState("");
   const [permissionDenied] = useState(simulatePermissionDenied);
   const [expandedPhoto, setExpandedPhoto] = useState(false);
@@ -146,15 +143,6 @@ export function App({
   const feedbackGeneration = useRef(0);
   const feedbackCatalogAbort = useRef<AbortController | undefined>(undefined);
   const [catalogOpen, setCatalogOpen] = useState(false);
-  const correctionResult = useRef<
-    {
-      wine: Candidate;
-      origin: ResultOrigin;
-      hasPhoto: boolean;
-      tab: "overview" | "description" | "source";
-      section: "scanner" | "search" | "saved";
-    } | undefined
-  >(undefined);
 
   const resetFeedback = () => {
     feedbackGeneration.current += 1;
@@ -573,7 +561,6 @@ export function App({
     if (candidateOrigin !== "correction") setResultOrigin(candidateOrigin);
     setResultFromCorrection(candidateOrigin === "correction");
     setResultHasPhoto(candidateHasPhoto);
-    setTab("overview");
     setScreen("result");
   };
   const chooseCatalog = (c: Candidate) => {
@@ -586,7 +573,6 @@ export function App({
     setResultOrigin("catalog");
     setResultHasPhoto(false);
     setResultFromCorrection(false);
-    setTab("overview");
     setScreen("result");
   };
   const chooseSaved = (c: Candidate) => {
@@ -598,42 +584,12 @@ export function App({
     setResultOrigin("saved");
     setResultHasPhoto(false);
     setResultFromCorrection(false);
-    setTab("overview");
     setScreen("result");
   };
   const chooseRecommendation = (c: Candidate) => {
     setSelected(c);
     setResultHasPhoto(false);
     setResultFromCorrection(false);
-    setTab("overview");
-  };
-  const rememberCorrection = () => {
-    if (selected)
-      correctionResult.current = {
-        wine: selected,
-        origin: resultOrigin,
-        hasPhoto: resultHasPhoto,
-        tab,
-        section,
-      };
-  };
-  const restoreCorrection = () => {
-    const snapshot = correctionResult.current;
-    if (!snapshot) return false;
-    setSelected(snapshot.wine);
-    setResultOrigin(snapshot.origin);
-    setResultHasPhoto(snapshot.hasPhoto);
-    setTab(snapshot.tab);
-    setSection(snapshot.section);
-    setResultFromCorrection(false);
-    setScreen("result");
-    return true;
-  };
-  const openManualCorrection = () => {
-    leaveWork();
-    setSection("search");
-    setSearchOrigin("correction");
-    setScreen("search");
   };
   const backFromCandidates = () => {
     if (candidateOrigin === "correction") {
@@ -644,7 +600,7 @@ export function App({
     }
     if (candidateOrigin === "manual") {
       setSection("search");
-      setSearchOrigin(correctionResult.current ? "correction" : "normal");
+      setSearchOrigin("normal");
       setScreen("search");
       return;
     }
@@ -708,11 +664,6 @@ export function App({
     return () => window.removeEventListener("popstate", onPopState);
   }, [candidateOrigin, resultHasPhoto, resultOrigin, screen]);
   const backFromSearch = () => {
-    if (searchOrigin === "correction") {
-      invalidateCatalogWork();
-      catalogComposing.current = false;
-      if (restoreCorrection()) return;
-    }
     back();
   };
   useEffect(() => {
@@ -1090,6 +1041,9 @@ export function App({
             shown &&
             (() => {
               const isSaved = saved.some((item) => item.id === shown.id);
+              const sourceUrl = safeSourceUrl(shown.sourceUrl);
+              const strength = alcoholLabel(shown);
+              const region = shown.region?.filter((value) => value.trim()).join(", ");
               return (
                 <Page id="UI-007">
                   <Top
@@ -1110,13 +1064,20 @@ export function App({
                     }
                   />
                   <div className="result-hero">
-                    <CandidateImage candidate={shown} role="card" priority />
-                    <div>
-                      {(resultOrigin === "catalog" ? catalogDemo : demoMode) && <span className="demo-label"><Check />{resultOrigin === "catalog" ? "Демо-карточка" : "Reference"}</span>}
-                      <small>{shown.winery}</small>
-                      <h2>{shown.name}</h2>
-                      <p>{displayYear(shown.year)}</p>
+                    <div className="result-shelf">
+                      <CandidateImage candidate={shown} role="card" priority />
+                      {(shown.sugar?.trim() || strength || region) && (
+                        <dl className="result-facts" aria-label="Основные характеристики">
+                          {shown.sugar?.trim() && <div className="result-fact"><dt>Сахар</dt><dd>{shown.sugar}</dd></div>}
+                          {strength && <div className="result-fact"><dt>Алкоголь</dt><dd>{strength}</dd></div>}
+                          {region && <div className="result-fact"><dt>Регион</dt><dd>{region}</dd></div>}
+                        </dl>
+                      )}
                     </div>
+                    {(resultOrigin === "catalog" ? catalogDemo : demoMode) && <span className="demo-label"><Check />{resultOrigin === "catalog" ? "Демо-карточка" : "Reference"}</span>}
+                    <p className="result-winery">{shown.winery}{hasYear(shown.year) && <>{shown.winery && " · "}{shown.year}</>}</p>
+                    <h2>{shown.name}</h2>
+                    {sourceUrl && <a className="result-source" href={sourceUrl} target="_blank" rel="noopener noreferrer" aria-label="Открыть на сайте «Своё Вино» в новой вкладке">Открыть на сайте «Своё Вино» <span aria-hidden="true">↗</span></a>}
                   </div>
                   {storageNotice && (
                     <p className="storage-notice" role="status">
@@ -1124,7 +1085,22 @@ export function App({
                     </p>
                   )}
                   {demoMode && <DemoDisclosure />}
-                  {resultHasPhoto && feedbackToken ? (
+                  <dl className="result-overview">
+                    <div><dt>Винодельня</dt><dd>{shown.winery}</dd></div>
+                    <div><dt>Год</dt><dd>{displayYear(shown.year)}</dd></div>
+                    {region && <div><dt>Регион</dt><dd>{region}</dd></div>}
+                    {shown.grapes?.length ? <div><dt>Сорт винограда</dt><dd>{shown.grapes.join(", ")}</dd></div> : null}
+                    {shown.categoryAndSweetness ? <div><dt>Категория</dt><dd>{shown.categoryAndSweetness}</dd></div> : null}
+                    {shown.color ? <div><dt>Цвет</dt><dd>{shown.color}</dd></div> : null}
+                    {shown.sugar?.trim() ? <div><dt>Сахар</dt><dd>{shown.sugar}</dd></div> : null}
+                    {strength && <div><dt>Алкоголь</dt><dd>{strength}</dd></div>}
+                    {isPositiveFinite(shown.volumeL) ? <div><dt>Объём</dt><dd>{shown.volumeL} л</dd></div> : null}
+                  </dl>
+                  {shown.description.trim() && <details className="result-description" key={shown.id}>
+                    <summary>О вкусе и сочетаниях</summary>
+                    <p>{shown.description}</p>
+                  </details>}
+                  {resultHasPhoto && feedbackToken && (
                     <section className="photo-feedback" aria-labelledby="photo-feedback-title">
                       <h3 id="photo-feedback-title">Разметить мою фотографию</h3>
                       <p>Подтвердите результат или укажите правильную позицию. Ответ сохранится отдельно для проверки и последующего дообучения.</p>
@@ -1164,75 +1140,6 @@ export function App({
                         {feedbackError && <p className="feedback-error" role="alert">{feedbackError}</p>}
                       </>}
                     </section>
-                  ) : <button
-                    className="correction"
-                    onClick={() => {
-                      rememberCorrection();
-                      if (
-                        candidates.length &&
-                        resultOrigin !== "catalog" &&
-                        resultOrigin !== "saved"
-                      ) {
-                        discardCandidateResultHistory();
-                        setCandidateOrigin("correction");
-                        setCandidateHasPhoto(resultHasPhoto);
-                        setScreen("candidates");
-                      } else {
-                        discardCandidateResultHistory();
-                        openManualCorrection();
-                      }
-                    }}
-                  >
-                    Не это вино? Исправить
-                  </button>}
-                  <div className="tabs" role="tablist">
-                    {(["overview", "description", "source"] as const).map(
-                      (t, i) => (
-                        <button
-                          key={t}
-                          role="tab"
-                          aria-selected={tab === t}
-                          onClick={() => setTab(t)}
-                        >
-                          {["Обзор", "Описание", "Источник"][i]}
-                        </button>
-                      ),
-                    )}
-                  </div>
-                  {tab === "overview" && (
-                    <dl>
-                      <div>
-                        <dt>Винодельня</dt>
-                        <dd>{shown.winery}</dd>
-                      </div>
-                      <div>
-                        <dt>Год</dt>
-                        <dd>{displayYear(shown.year)}</dd>
-                      </div>
-                      {shown.region?.length ? <div><dt>Регион</dt><dd>{shown.region.join(", ")}</dd></div> : null}
-                      {shown.grapes?.length ? <div><dt>Сорт винограда</dt><dd>{shown.grapes.join(", ")}</dd></div> : null}
-                      {shown.categoryAndSweetness ? <div><dt>Категория</dt><dd>{shown.categoryAndSweetness}</dd></div> : null}
-                      {shown.color ? <div><dt>Цвет</dt><dd>{shown.color}</dd></div> : null}
-                      {shown.sugar ? <div><dt>Сахар</dt><dd>{shown.sugar}</dd></div> : null}
-                      {alcoholLabel(shown) ? <div><dt>Алкоголь</dt><dd>{alcoholLabel(shown)}</dd></div> : null}
-                      {isPositiveFinite(shown.volumeL) ? <div><dt>Объём</dt><dd>{shown.volumeL} л</dd></div> : null}
-                    </dl>
-                  )}
-                  {tab === "description" && (
-                    <div className="tab-copy">
-                      <h3>Описание вина</h3>
-                      <p>{shown.description}</p>
-                    </div>
-                  )}
-                  {tab === "source" && (
-                    <div className="tab-copy">
-                      <h3>Источник</h3>
-                      {shown.sourceUrl ? <>
-                        <p>{shown.sourceSnapshotDate ? `Снимок источника: ${shown.sourceSnapshotDate}.` : "Исходная запись каталога."}</p>
-                        <a href={shown.sourceUrl} target="_blank" rel="noreferrer">Открыть исходную запись</a>
-                      </> : <p>Эта карточка создана для демо-каталога.</p>}
-                      {shown.ratings?.length ? <ul className="ratings">{shown.ratings.map((rating, index) => <li key={`${rating.kind}-${index}`}>{rating.kind}: {rating.source_text}</li>)}</ul> : null}
-                    </div>
                   )}
                   <section className="recommendations" aria-labelledby="recommendations-title">
                     <h3 id="recommendations-title">Вам также может подойти</h3>
@@ -1666,7 +1573,7 @@ function CandidateImage({ candidate, role = "thumbnail", priority = false, size 
     <img
       src={image}
       srcSet={srcSet}
-      sizes={role === "card" ? "(min-width: 1024px) 180px, 44vw" : size}
+      sizes={role === "card" ? "(min-width: 1024px) 230px, 52vw" : size}
       width={preferred?.width}
       height={preferred?.height}
       loading={priority ? "eager" : "lazy"}
@@ -1782,7 +1689,17 @@ function ProductFooter() {
   );
 }
 function displayYear(year?: number) {
-  return year && year > 0 ? String(year) : "Год не указан";
+  return hasYear(year) ? String(year) : "Год не указан";
+}
+function hasYear(year?: number): year is number {
+  return typeof year === "number" && Number.isInteger(year) && year > 0;
+}
+function safeSourceUrl(value?: string) {
+  if (!value || value !== value.trim() || /[\u0000-\u001f\u007f]/.test(value)) return undefined;
+  try {
+    const url = new URL(value);
+    return ["https:", "http:"].includes(url.protocol) && url.hostname && !url.username && !url.password ? value : undefined;
+  } catch { return undefined; }
 }
 function isPositiveFinite(value: number | undefined): value is number {
   return typeof value === "number" && Number.isFinite(value) && value > 0;

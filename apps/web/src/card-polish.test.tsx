@@ -39,12 +39,11 @@ async function openCard(wine = longWine) {
 
 describe("FE-057 revised wine-card contract", () => {
   it("DESIGN-023 keeps the warm app palette while using white for the revised hero and result tiles", () => {
-    const css = readFileSync("src/v2.css", "utf8");
-    expect(css).toContain("--paper:#fefdfa");
-    expect(css).toMatch(/#UI-007\s*\.result-hero\s*\{[^}]*min-height:\s*254px[^}]*background:\s*#fff/);
-    expect(css).toMatch(/#UI-007\s*\.result-hero>img[^}]*height:\s*216px[^}]*object-fit:\s*contain/);
-    expect(css).toMatch(/\.candidate-list\s+button[^}]*background:\s*#fff/);
-    expect(css).toMatch(/\.candidate-list\s+img[^}]*background:\s*#fff/);
+    const css = readFileSync("src/air.css", "utf8");
+    expect(css).toMatch(/--paper:\s*#fefdfa/);
+    expect(css).toMatch(/#UI-007\s*\.result-hero\s*\{[^}]*background:\s*radial-gradient/);
+    expect(css).toMatch(/#UI-007\s*\.result-shelf\s*>\s*img[^}]*height:\s*255px[^}]*object-fit:\s*contain/);
+    expect(css).toMatch(/\.candidate-list\s+button[^}]*background:\s*transparent/);
     expect(css).not.toMatch(/mix-blend-mode:\s*multiply/);
   });
 
@@ -65,7 +64,7 @@ describe("FE-057 revised wine-card contract", () => {
     expect(screen.getByRole("heading", { name: longName })).toBeVisible();
     expect(hero).not.toHaveClass("result-hero-long");
     const image = hero.querySelector("img")!;
-    expect(image).toHaveAttribute("sizes", "(min-width: 1024px) 180px, 44vw");
+    expect(image).toHaveAttribute("sizes", "(min-width: 1024px) 230px, 52vw");
     fireEvent.error(image);
     expect(screen.getByRole("img", { name: `Фото ${longName} недоступно` })).toBeVisible();
   });

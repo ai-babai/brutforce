@@ -321,7 +321,7 @@ describe("catalog navigation and saved wines", () => {
     expect(screen.getByRole("button", { name: /Каберне Совиньон/i })).toBeVisible();
   });
 
-  it("a saved card correction cannot reuse candidates from an older search", async () => {
+  it("a saved card Back returns to saved wines, not candidates from an older search", async () => {
     localStorage.setItem("wine-demo-saved-v1", JSON.stringify([cabernet]));
     vi.stubGlobal("fetch", vi.fn().mockResolvedValue(response(catalog)));
     render(<App />);
@@ -331,9 +331,8 @@ describe("catalog navigation and saved wines", () => {
     await screen.findByRole("button", { name: /Мерло/i });
     await userEvent.click(screen.getByRole("button", { name: "Сохранённое" }));
     await userEvent.click(screen.getByRole("button", { name: /Каберне Совиньон/i }));
-    await userEvent.click(screen.getByRole("button", { name: /Не это вино/i }));
-    expect(screen.getByRole("heading", { name: "Найдём по названию" })).toBeVisible();
     await userEvent.click(screen.getByRole("button", { name: "Назад" }));
-    expect(screen.getByRole("heading", { name: "Каберне Совиньон" })).toBeVisible();
+    expect(screen.getByRole("button", { name: /Каберне Совиньон/i })).toBeVisible();
+    expect(screen.queryByRole("heading", { name: "Найдём по названию" })).not.toBeInTheDocument();
   });
 });
