@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Air 3.7 · карточка вина · FE-088</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="../air/icons.js" defer></script>
+  <script src="prototype.js" defer></script>
+</head>
+<body>
+  <!-- Переключатель существует только на этой странице дизайн-макета. -->
+  <div class="study-controls" role="group" aria-label="Демонстрационные состояния года">
+    <button type="button" data-year="off" aria-pressed="true">Без года</button>
+    <button type="button" data-year="on" aria-pressed="false">С годом · пример</button>
+  </div>
+  <p class="study-note" hidden>2021 — условный год для проверки переноса. У этой карточки год не указан.</p>
+  <div class="phone">
+    <header class="app-top">
+      <span class="top-icon" data-icon="back" aria-hidden="true"></span>
+      <span>Карточка вина</span>
+      <span class="save-visual">Сохранить</span>
+    </header>
+    <main class="card">
+      <article aria-labelledby="wine-title">
+        <section class="hero">
+          <div class="shelf">
+            <img class="bottle" src="bottle-study.svg" width="180" height="340" alt="Схематичная бутылка для проверки компоновки, не фото вина">
+            <dl class="hero-facts" aria-label="Кратко о вине">
+              <div><dt>Сладость</dt><dd>сладкое</dd></div>
+              <div><dt>Крепость</dt><dd>17%</dd></div>
+              <div><dt>Регион</dt><dd>Крым</dd></div>
+            </dl>
+          </div>
+          <p class="winery">Массандра<span class="sample-year" hidden><span aria-hidden="true"> · </span>2021</span></p>
+          <h1 id="wine-title">Портвейн белый Алушта</h1>
+          <a class="source-link" href="https://vino-svoe.ru/wines/massandra-portveyn-belyy-alushta-belye-sorta-vinograda-beloe-sladkoe-17" target="_blank" rel="noopener noreferrer" aria-label="Открыть на сайте «Своё Вино» (новая вкладка)">Открыть на сайте «Своё Вино» <span data-icon="external" aria-hidden="true"></span></a>
+        </section>
+        <dl class="overview">
+          <div><dt>Сахар</dt><dd>сладкое</dd></div>
+          <div><dt>Алкоголь</dt><dd>17%</dd></div>
+          <div><dt>Категория</dt><dd>Белое сладкое</dd></div>
+          <div><dt>Сорт винограда</dt><dd>Белые сорта винограда</dd></div>
+          <div><dt>Регион</dt><dd>Крым</dd></div>
+          <div><dt>Винодельня</dt><dd>Массандра</dd></div>
+          <div><dt>Год</dt><dd class="overview-year">Год не указан</dd></div>
+          <div><dt>Цвет</dt><dd>Золотистый, янтарный</dd></div>
+        </dl>
+        <details class="description">
+          <summary>О вкусе и сочетаниях</summary>
+          <p>Аромат тёплый, с нотами сухофруктов, ванили и лёгкой пряности; вкус гармоничный, с ореховыми оттенками и приятной сладостью. Хорошо к фруктовым десертам, орехам, мягким сырам.</p>
+        </details>
+      </article>
+    </main>
+    <div class="nav-visual" aria-hidden="true"><span><i data-icon="home"></i>Главная</span><span><i data-icon="search"></i>Поиск</span><span><i data-icon="bookmark"></i>Сохранённое</span></div>
+  </div>
+</body>
+</html>

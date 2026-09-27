@@ -1,0 +1,35 @@
+@font-face{font-family:Onest;src:url('../assets/onest-0.woff2') format('woff2');font-weight:400;font-display:swap}
+@font-face{font-family:Onest;src:url('../assets/onest-1.woff2') format('woff2');font-weight:500;font-display:swap}
+@font-face{font-family:Playfair;src:url('../assets/PlayfairDisplay-VariableFont_wght.woff2') format('woff2');font-weight:400 900;font-display:swap}
+:root{--paper:#fefdfa;--ink:#2c2a28;--muted:#746a65;--wine:#8f3d42;--line:#ece5de;font-family:Onest,Arial,sans-serif;color:var(--ink);background:#eee9e2}
+*{box-sizing:border-box}body{margin:0}button{font:inherit}
+.study-controls{width:min(100%,430px);margin:auto;padding:12px 16px;display:flex;justify-content:center;gap:10px}
+.study-controls button{min-height:44px;padding:0 12px;border:1px solid #d5c8bb;border-radius:8px;background:transparent;color:#504946;font-size:12px;cursor:pointer}
+.study-controls button[aria-pressed="true"]{background:#fff;color:var(--wine);border-color:#ae8484}
+.study-note{max-width:430px;margin:0 auto;padding:0 16px 10px;color:#675d58;text-align:center;font-size:11px}
+.study-note[hidden],.sample-year[hidden]{display:none}
+.phone{width:min(100%,430px);min-height:100dvh;margin:auto;background:var(--paper);box-shadow:0 12px 44px #3d332312}
+.app-top{height:76px;display:grid;grid-template-columns:48px minmax(0,1fr) 92px;align-items:center;padding:12px 16px;color:#685d56;font-size:13px;text-align:center}
+.top-icon{width:44px;height:44px;display:grid;place-items:center}.top-icon svg{width:22px;height:22px}
+.save-visual{display:grid;place-items:center;height:48px;color:var(--wine);font-size:11px}
+.card{padding:0 26px 26px}.hero{margin:0 -26px;padding:0 26px 11px;text-align:center;background:radial-gradient(ellipse at 41% 35%,#f6ecde99,transparent 70%)}
+.shelf{display:grid;grid-template-columns:minmax(0,1fr) minmax(132px,42%);align-items:center;gap:11px;min-height:270px}
+.bottle{display:block;width:100%;height:255px;object-fit:contain}
+.hero-facts{min-width:0;display:grid;align-content:center;gap:30px;margin:0;padding:0 0 0 5px;text-align:left}
+.hero-facts div{min-width:0}.hero-facts dt{color:var(--muted);font-size:11px;line-height:1.4}.hero-facts dd{margin:2px 0 0;font-size:22px;line-height:1.25;letter-spacing:-.025em;overflow-wrap:anywhere;font-variant-numeric:tabular-nums}
+.hero-facts div:last-child dd{font-size:18px;color:var(--muted)}
+.winery{margin:14px 0 8px;color:var(--muted);font-size:13px;line-height:1.5;overflow-wrap:anywhere}
+h1{font:500 clamp(33px,9vw,43px)/1.13 Playfair,Georgia,serif;letter-spacing:-.035em;margin:0 auto;max-width:360px;overflow-wrap:anywhere}
+.source-link{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:44px;margin-top:9px;color:var(--wine);font-size:13px;font-weight:500;line-height:1.4;text-decoration:underline;text-underline-offset:4px;text-decoration-thickness:1px}
+.source-link svg{width:16px;height:16px;flex:none}
+.source-link:focus-visible,summary:focus-visible,.study-controls button:focus-visible{outline:3px solid var(--wine);outline-offset:3px;border-radius:3px}
+.overview{margin:19px 0 0}.overview div{min-height:56px;display:flex;align-items:center;justify-content:space-between;gap:14px;padding:13px 0;font-size:13px}
+.overview div:not(:last-child){border-bottom:1px solid var(--line)}
+.overview dt{color:var(--muted);flex:0 0 auto}.overview dd{margin:0;text-align:right;overflow-wrap:anywhere}
+.description{margin-top:18px;border-top:1px solid var(--line);color:var(--muted)}
+.description summary{min-height:55px;display:flex;align-items:center;justify-content:space-between;gap:12px;cursor:pointer;color:var(--ink);font-size:14px;list-style:none}
+.description summary::-webkit-details-marker{display:none}.description summary::after{content:'+';font-size:20px;font-weight:400;color:var(--wine)}.description[open] summary::after{content:'−'}
+.description p{margin:0 0 18px;font-size:13px;line-height:1.6}
+.nav-visual{border-top:1px solid var(--line);height:62px;display:grid;grid-template-columns:repeat(3,1fr);padding:5px 12px calc(5px + env(safe-area-inset-bottom,0px));color:var(--muted);font-size:10px}
+.nav-visual span{display:grid;place-items:center;align-content:center;gap:3px}.nav-visual svg{display:block;width:26px;height:26px}
+@media(max-width:350px){.card{padding-inline:20px}.hero{margin-inline:-20px;padding-inline:20px}.shelf{grid-template-columns:minmax(0,1fr) 132px;gap:5px}.hero-facts{padding-left:0}.hero-facts dd{font-size:19px}.hero-facts div:last-child dd{font-size:17px}}
