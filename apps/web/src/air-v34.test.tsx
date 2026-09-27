@@ -228,7 +228,7 @@ describe("Air 3.4 photo journey", () => {
     expect(row).not.toHaveTextContent(/Год не указан|Цена|Рейтинг|%/i);
     await userEvent.click(row);
     expect(screen.getByRole("heading", { name: unknown.name })).toBeVisible();
-    await userEvent.click(screen.getByRole("tab", { name: "Описание" }));
+    await userEvent.click(screen.getByText("О вкусе и сочетаниях"));
     expect(screen.getByText("Настоящее описание")).toBeVisible();
   });
 

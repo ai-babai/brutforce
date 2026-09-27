@@ -131,27 +131,35 @@ body { background: #f3f0e9; }
 #UI-006 .candidate-list + .secondary { margin-top: 15px; }
 #UI-006 > .text-button { margin-top: 0; }
 
-/* Full product card: a bottle on the page, with every information section retained. */
-#UI-007.page { padding-top: max(15px,env(safe-area-inset-top)); }
-#UI-007 .top { margin-bottom: 14px; }
+/* FE-088: shelf facts and card copy use the same local Onest face. */
+#UI-007.page { padding-top: max(15px,calc(8px + var(--safe-area-top,env(safe-area-inset-top,0px)))); font-family: Onest,sans-serif; }
+#UI-007 .top { margin-bottom: 13px; }
 #UI-007 .top .save-header-action { color: var(--wine); font-weight: 500; }
-#UI-007 .result-hero { display: flex; flex-direction: column; justify-content: center; gap: 0; min-height: 0; margin: 0 -26px; padding: 0 26px 24px; background: radial-gradient(ellipse at 50% 37%,#f6ecde99,transparent 65%); }
-#UI-007 .result-hero > img, #UI-007 .result-hero > .missing-image { display: block; width: 100%; height: 255px; min-height: 255px; margin: 0 auto; background: transparent; object-fit: contain; }
-#UI-007 .result-hero > div:last-child { width: 100%; gap: 5px; padding: 20px 0 0; text-align: center; }
-#UI-007 .result-hero small { color: var(--muted); font-size: 12px; font-weight: 400; }
-#UI-007 .result-hero h2 { margin: 5px 0 0; font-size: 34px; font-weight: 500; line-height: 1.15; }
-#UI-007 .result-hero p { color: var(--muted); font-size: 12px; }
+#UI-007 .result-hero { display: flex; flex-direction: column; align-items: center; min-height: 0; margin: 0 -26px; padding: 0 26px 11px; text-align: center; background: radial-gradient(ellipse at 41% 35%,#f6ecde99,transparent 70%); }
+#UI-007 .result-shelf { display: grid; grid-template-columns: minmax(0,1fr) minmax(132px,42%); align-items: center; gap: 11px; width: 100%; min-height: 270px; }
+#UI-007 .result-shelf > img, #UI-007 .result-shelf > .missing-image { display: block; width: 100%; height: 255px; min-height: 255px; margin: 0; background: transparent; object-fit: contain; }
+#UI-007 .result-facts { display: grid; align-content: center; gap: 33px; min-width: 0; padding-left: 5px; text-align: left; }
+#UI-007 .result-fact { display: flex; align-items: center; gap: 11px; min-width: 0; font-size: 22px; line-height: 1.25; letter-spacing: -.025em; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+#UI-007 .result-fact svg { flex: 0 0 22px; width: 22px; height: 22px; color: var(--wine); stroke-width: 1.6; }
+#UI-007 .result-fact:last-child:not(:first-child) { color: var(--muted); font-size: 18px; }
+#UI-007 .result-fact:last-child:not(:first-child) svg { opacity: .72; }
 #UI-007 .demo-label { justify-content: center; font-size: 9px; }
-#UI-007 .correction { align-self: center; width: 100%; margin: 0 0 6px; color: #895c54; font-size: 12px; font-weight: 400; }
-#UI-007 .tabs { margin-top: 2px; border-bottom-color: var(--line); }
-#UI-007 .tabs button { min-height: 48px; color: var(--muted); font-size: 12px; font-weight: 400; }
-#UI-007 .tabs button[aria-selected="true"] { color: var(--wine); font-weight: 500; }
-#UI-007 dl { margin: 9px 0; }
-#UI-007 dl div { padding: 13px 0; border-color: var(--line); font-size: 12px; }
-#UI-007 dt { color: var(--muted); }
-#UI-007 .tab-copy { padding-top: 11px; }
+#UI-007 .result-winery { width: 100%; margin: 14px 0 8px; color: var(--muted); font-size: 13px; line-height: 1.4; overflow-wrap: anywhere; }
+#UI-007 .result-hero h2 { width: 100%; max-width: 380px; margin: 0; font-family: Onest,sans-serif; font-size: clamp(29px,8vw,40px); font-weight: 500; line-height: 1.13; letter-spacing: -.035em; overflow-wrap: anywhere; }
+#UI-007 .result-source { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; margin-top: 9px; color: var(--wine); font-size: 13px; font-weight: 500; text-decoration: underline; text-underline-offset: 4px; overflow-wrap: anywhere; }
+#UI-007 .result-source span { margin-left: 7px; font-size: 17px; text-decoration: none; }
+#UI-007 .result-source:focus-visible { outline: 2px solid var(--wine); outline-offset: 3px; }
+#UI-007 .result-overview { margin: 19px 0 0; }
+#UI-007 .result-overview div { display: flex; align-items: center; min-height: 56px; gap: 14px; padding: 13px 0; border-bottom: 1px solid var(--line); font-size: 13px; }
+#UI-007 .result-overview dt { flex: 0 0 auto; color: var(--muted); }
+#UI-007 .result-overview dd { min-width: 0; overflow-wrap: anywhere; }
+#UI-007 .result-description { color: var(--muted); }
+#UI-007 .result-description summary { display: flex; align-items: center; justify-content: space-between; min-height: 55px; color: var(--ink); font-size: 14px; cursor: pointer; }
+#UI-007 .result-description summary::after { content: "+"; color: var(--wine); font-size: 20px; font-weight: 300; }
+#UI-007 .result-description[open] summary::after { content: "−"; }
+#UI-007 .result-description p { margin: 0 0 18px; font-size: 13px; line-height: 1.6; white-space: pre-line; overflow-wrap: anywhere; }
 #UI-007 .recommendations { margin-top: 24px; padding-top: 20px; border-color: var(--line); }
-#UI-007 .recommendations h3 { font-weight: 500; }
+#UI-007 .recommendations h3 { font-family: Onest,sans-serif; font-weight: 500; }
 #UI-007 .recommendation-list button { min-height: 112px; padding: 10px 0; }
 #UI-007 .recommendation-list button.candidate-leader { min-height: 136px; }
 #UI-007 .recommendation-list img, #UI-007 .recommendation-list .missing-image { width: 56px; height: 98px; min-height: 98px; }
@@ -282,6 +290,13 @@ body { background: #f3f0e9; }
   #UI-004 .air-waiting-discovery { grid-template-columns: 110px minmax(0,1fr); gap: 13px; }
   #UI-004 .air-waiting-photo, #UI-004 .air-waiting-photo .photo { width: 110px; height: 130px; min-height: 130px; }
   #UI-004 .air-wine-note p { min-height: 138px; font-size: 18px; }
+}
+@media (max-width: 350px) {
+  #UI-007 .result-shelf { grid-template-columns: minmax(0,1fr) 132px; gap: 5px; }
+  #UI-007 .result-facts { padding-left: 0; }
+  #UI-007 .result-fact { gap: 7px; font-size: 19px; }
+  #UI-007 .result-fact:last-child:not(:first-child) { font-size: 17px; }
+  #UI-007 .result-fact svg { flex-basis: 20px; width: 20px; height: 20px; }
 }
 
 @media (max-height: 850px) {

@@ -603,7 +603,7 @@ describe("FE-052 live catalog search", () => {
     expect(catalogCalls(fetchMock)).toHaveLength(2);
   });
 
-  it("CAT017 restores a correction result and cancels both queued and active catalog work on Back", async () => {
+  it("CAT017 cancels both queued and active catalog work when leaving search after returning from a card", async () => {
     vi.useFakeTimers();
     const correction = deferred<ReturnType<typeof response>>();
     const fetchMock = vi.fn((url: string) =>
@@ -618,16 +618,16 @@ describe("FE-052 live catalog search", () => {
     await advance(250);
     await act(async () => { await Promise.resolve(); });
     fireEvent.click(screen.getByText("Каберне").closest("button")!);
-    fireEvent.click(screen.getByRole("button", { name: "Не это вино? Исправить" }));
+    fireEvent.click(screen.getByRole("button", { name: "Назад" }));
     const correctionInput = screen.getByLabelText(/Название вина/i) as HTMLInputElement;
     correctionInput.focus();
     fireEvent.change(correctionInput, { target: { value: "М" } });
     fireEvent.click(screen.getByRole("button", { name: /Назад/i }));
     await advance(300);
     expect(catalogCalls(fetchMock)).toHaveLength(1);
-    expect(screen.getByRole("heading", { name: "Каберне" })).toBeVisible();
+    expect(screen.getByRole("heading", { name: "Какое вино перед вами?" })).toBeVisible();
 
-    fireEvent.click(screen.getByRole("button", { name: "Не это вино? Исправить" }));
+    fireEvent.click(screen.getByRole("button", { name: "Поиск" }));
     const activeInput = screen.getByLabelText(/Название вина/i) as HTMLInputElement;
     activeInput.focus();
     fireEvent.change(activeInput, { target: { value: "Ме" } });
@@ -636,7 +636,7 @@ describe("FE-052 live catalog search", () => {
     fireEvent.click(screen.getByRole("button", { name: /Назад/i }));
     expect(signal.aborted).toBe(true);
     await act(async () => { correction.resolve(response(page([merlot]))); await Promise.resolve(); });
-    expect(screen.getByRole("heading", { name: "Каберне" })).toBeVisible();
+    expect(screen.getByRole("heading", { name: "Какое вино перед вами?" })).toBeVisible();
   });
 
   it("CAT020 runs the same live search from the home and bottom-navigation entries", async () => {

@@ -1248,6 +1248,41 @@
       "title": "Исходное фото и подпись образуют одну кнопку",
       "source": "design/wine-ux-v3/air36/behavior-v36.feature",
       "spec": "docs/product/behavior-spec.md#air-36-compact--fe-080081"
+    },
+    {
+      "id": "AIR-041",
+      "area": "web",
+      "title": "Бутылка слева; только известные лёгкие свойства справа",
+      "source": "apps/web/src/air-v37.test.tsx; apps/web/air37.browser.mjs",
+      "spec": "design/wine-ux-v3/air37/behavior-v37.feature"
+    },
+    {
+      "id": "AIR-042",
+      "area": "web",
+      "title": "Структурированный год рядом с винодельней; неизвестный год только в обзоре",
+      "source": "apps/web/src/air-v37.test.tsx; apps/web/air37.browser.mjs",
+      "spec": "design/wine-ux-v3/air37/behavior-v37.feature"
+    },
+    {
+      "id": "AIR-043",
+      "area": "web",
+      "title": "Прямой безопасный sourceUrl не смешивается с photo-feedback",
+      "source": "apps/web/src/air-v37.test.tsx; apps/web/air37.browser.mjs",
+      "spec": "design/wine-ux-v3/air37/behavior-v37.feature"
+    },
+    {
+      "id": "AIR-044",
+      "area": "web",
+      "title": "Обзор сразу; описание только в закрытом раскрытии",
+      "source": "apps/web/src/air-v37.test.tsx; apps/web/air37.browser.mjs",
+      "spec": "design/wine-ux-v3/air37/behavior-v37.feature"
+    },
+    {
+      "id": "AIR-045",
+      "area": "web",
+      "title": "Back, кандидаты, сохранение, рекомендации и адаптивность сохранены",
+      "source": "apps/web/src/air-v37.test.tsx; apps/web/air37.browser.mjs",
+      "spec": "design/wine-ux-v3/air37/behavior-v37.feature"
     }
   ]
 }
