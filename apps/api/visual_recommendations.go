@@ -81,8 +81,20 @@ func configuredRecommendationIndex() *recommendationIndex {
 }
 
 func visualRecommendations(info catalogInfo, known []wine, req recommendationsRequest, index *recommendationIndex) (searchResponse, int, string, string) {
-	if index.configErr != nil || index.CatalogVersion != info.Version {
+	if index.configErr != nil {
 		return searchResponse{}, 503, "recommendations_unavailable", "visual similarity index is unavailable for this catalog"
+	}
+	if index.CatalogVersion != info.Version {
+		// The reviewed alpha release changes only display media. Its 2038 exact
+		// IDs retain the same frozen SO400M vectors and nearest-neighbor order.
+		if info.Version != "svoe-20260927-alpha-2035-v1" || index.CatalogVersion != "svoe-20260922-v2" || len(index.Neighbors) != len(known) {
+			return searchResponse{}, 503, "recommendations_unavailable", "visual similarity index is unavailable for this catalog"
+		}
+		for _, item := range known {
+			if _, ok := index.Neighbors[item.ID]; !ok {
+				return searchResponse{}, 503, "recommendations_unavailable", "visual similarity index is unavailable for this catalog"
+			}
+		}
 	}
 	neighbors, ok := index.Neighbors[req.WineID]
 	if !ok {

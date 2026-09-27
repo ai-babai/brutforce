@@ -351,6 +351,17 @@ func scanWines(rows pgx.Rows, version string) ([]wine, error) {
 				return nil, errCatalogUnavailable
 			}
 		}
+		// Three alpha cards retain opaque legacy photos pending independent image
+		// identity/rights review. Show the existing honest missing-photo state.
+		if version == "svoe-20260927-alpha-2035-v1" {
+			switch item.ID {
+			case "agrolayn-mountain-eagle-traminer-traminer-beloe-suhoe-12",
+				"soyuz-vino-soyuz-vino-shardone-suhoe-beloe-11",
+				"vibes-vermentino-viognier-barrel-fermented-2022":
+				item.Image = ""
+				item.ImageVariants = nil
+			}
+		}
 		item.Image = catalogAssetURL(version, item.Image)
 		for i := range item.ImageVariants {
 			item.ImageVariants[i].Path = catalogAssetURL(version, item.ImageVariants[i].Path)
