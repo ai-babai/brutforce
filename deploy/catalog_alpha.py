@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
-"""Prepare an immutable catalog-release-1 alpha overlay from reviewed local originals.
+"""Prepare an immutable catalog-release-1 alpha overlay from reviewed local images.
 
 Selections are private JSONL: {id, path, sha256, source_ref}. No network or ML
-inference is performed here. Without --write the command only checks inputs.
+inference is performed here; generated images carry model/weights/input source_ref.
+Without --write the command only checks inputs.
 """
 import argparse
 import hashlib
@@ -160,8 +161,15 @@ def prepare(root, base_version, base_sha, version, selection_file, source_root, 
                            "old_master": old["path"], "new_master": original["path"]})
     catalog = json.loads(safe_file(base, "catalog.json").read_bytes())
     catalog["catalog_version"] = version
+    generated = any(item["source_ref"].startswith("model:") for item in provenance)
+    description = (
+        "This overlay includes locally generated alpha from source images. Model source_ref records the "
+        "model revision, weights SHA256 and input SHA256; those rows are inferred masks, not verified "
+        "upstream transparency. See each row's source_ref for its origin. "
+        if generated else "Reviewed upstream originals; no opaque source was composited. "
+    )
     prep = safe_file(base, "PREPARATION.md").read_text() + (
-        "\n## Alpha overlay\n\nReviewed upstream originals; no opaque source was composited. "
+        "\n## Alpha overlay\n\n" + description +
         "Unselected wines keep their previous media. Inspect full coverage before promotion.\n\n"
         f"Base: {base_version}; source selection SHA256: {sha(selection_file)}. "
         f"Generator SHA256: {sha(Path(__file__))}; Python: {sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}; "
