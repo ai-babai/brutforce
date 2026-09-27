@@ -26,6 +26,7 @@ stage=$(mktemp -d "$parent/.brutforce-release.XXXXXX")
 cleanup() { rm -rf "$stage"; }
 trap cleanup EXIT
 mkdir -p "$stage/package/evidence" "$stage/package/web" "$stage/package/migrations"
+cp "$root/deploy/f8-runtime.json" "$stage/package/evidence/f8-runtime.json"
 evidence_dir=${RELEASE_EVIDENCE_DIR:-"$stage/package/evidence"}
 mkdir -p "$evidence_dir"
 
@@ -52,13 +53,13 @@ cp -R apps/api/migrations/. "$stage/package/migrations/"
 printf '%s\n' "$revision" > "$stage/package/REVISION"
 node -e '
 const fs=require("fs"), path=require("path");
-const [web,revision]=process.argv.slice(1);
-fs.writeFileSync(path.join(web,"release.json"),JSON.stringify({revision,mode:"reference",modelVersion:"reference-demo-v1",catalogState:"/v2/catalog"},null,2)+"\n");
-' "$stage/package/web" "$revision"
+const [web,revision,spec]=process.argv.slice(1),runtime=JSON.parse(fs.readFileSync(spec));
+fs.writeFileSync(path.join(web,"release.json"),JSON.stringify({revision,mode:runtime.mode,modelVersion:runtime.modelVersion,catalogState:"/v2/catalog"},null,2)+"\n");
+' "$stage/package/web" "$revision" "$stage/package/evidence/f8-runtime.json"
 
 node -e '
 const fs=require("fs"), crypto=require("crypto"), path=require("path");
-const [dir,revision]=process.argv.slice(1);
+const [dir,revision]=process.argv.slice(1),runtime=JSON.parse(fs.readFileSync(path.join(dir,"evidence/f8-runtime.json")));
 function walk(folder){return fs.readdirSync(folder,{withFileTypes:true}).flatMap(e=>{
  const p=path.join(folder,e.name); return e.isDirectory()?walk(p):[p];
 });}
@@ -67,8 +68,8 @@ const files=walk(dir).filter(p=>path.basename(p)!=="manifest.json").sort().map(p
  sha256:crypto.createHash("sha256").update(fs.readFileSync(p)).digest("hex")
 }));
 fs.writeFileSync(path.join(dir,"manifest.json"),JSON.stringify({
- schemaVersion:1, revision, mode:"reference", catalogVersion:"demo-v1",
- modelVersion:"reference-demo-v1", synthetic:true,
+ schemaVersion:1, revision, mode:runtime.mode, catalogVersion:"demo-v1",
+ modelVersion:runtime.modelVersion, synthetic:true, externalAssets:runtime.externalAssets,
  builtAt:new Date().toISOString(), files
 },null,2)+"\n");
 ' "$stage/package" "$revision"

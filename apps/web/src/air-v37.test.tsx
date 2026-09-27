@@ -125,7 +125,7 @@ describe("FE-088 card behavior", () => {
     expect(screen.queryByRole("link", { name: /Своё Вино/i })).not.toBeInTheDocument();
   });
 
-  it("AIR-043 keeps photo-feedback distinct from a real source link", async () => {
+  it("AIR-043 keeps a real source link when annotation controls are unavailable", async () => {
     const receipt = { id: "0123456789abcdef0123456789abcdef", createdAt: "2026-09-27T00:00:00Z", bytes: 5, mime: "image/jpeg", width: 2, height: 2 };
     const fetchMock = vi.fn((url: string) => Promise.resolve(response(url === "/v1/photos" ? receipt
       : url === "/v1/search" ? { demo: false, candidates: [port], feedbackToken: "11111111111111111111111111111111" }
@@ -137,8 +137,8 @@ describe("FE-088 card behavior", () => {
     await userEvent.upload(screen.getByLabelText(/Загрузить фотографию этикетки/i), new File(["photo"], "wine.jpg", { type: "image/jpeg" }));
     await userEvent.click(await screen.findByRole("button", { name: /Портвейн белый Алушта/i }));
     expect(screen.getByRole("link", { name: /Открыть на сайте «Своё Вино»/i })).toHaveAttribute("href", sourceUrl);
-    expect(screen.getByRole("heading", { name: "Разметить мою фотографию" })).toBeVisible();
-    expect(screen.getByRole("button", { name: "Нет, это другое вино" })).toBeVisible();
+    expect(screen.queryByRole("heading", { name: "Разметить мою фотографию" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Нет, это другое вино" })).not.toBeInTheDocument();
     expect(fetchMock.mock.calls.some(([url]) => url === "/v1/feedback")).toBe(false);
   });
 

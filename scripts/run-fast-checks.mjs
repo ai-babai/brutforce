@@ -165,6 +165,9 @@ let webReport;try{webReport=JSON.parse(await readFile(webFile,'utf8'));}catch{we
 const dbEvidence=await loadDbEvidence();
 
 const found=mergeCases(goCases(go.out),goCases(evaluation.out),dbEvidence.usable?dbEvidence.found:new Map(),webCases(webReport,web.code));
+// The single component assertion covers only a subset of the revised AIR-043.
+// Optional Chromium diagnostics do not silently upgrade fast BDD coverage.
+if(found.get('AIR-043')?.status==='passed')found.set('AIR-043',{status:'skipped',reason:'Full source-link, popup and recovery branches are not covered by the fast suite.'});
 const goDetail=goTests(go.out),evalDetail=goTests(evaluation.out),webDetail=webTests(webReport);
 // These v2-only CSS assertions still run as regression tests, but their green
 // result cannot certify the active Air cascade loaded after v2.css.

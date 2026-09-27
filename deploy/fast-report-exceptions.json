@@ -31,6 +31,11 @@
       "ids": ["AIR-026", "AIR-027", "AIR-028", "AIR-029"],
       "reason": "Visual width, movement, typography, and responsive composition require browser inspection beyond fast DOM tests.",
       "evidence": "docs/product/reviews/air-v35-implementation-qa.md records local browser geometry, computed typography, and screenshot review; reduced-motion and enlarged-text checks remain identified there."
+    },
+    {
+      "ids": ["AIR-043"],
+      "reason": "Vitest covers only part of the revised source-link/no-annotation scenario; full token, popup, unsafe saved URL and recovery branches are not certified by the fast run.",
+      "evidence": "design/wine-ux-v3/air37/behavior-v37.feature records the full scenario; apps/web/air-release.browser.mjs is an optional diagnostic, not a required CI check."
     }
   ]
 }

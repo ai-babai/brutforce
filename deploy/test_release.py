@@ -109,6 +109,17 @@ class ReleaseSafetyTests(unittest.TestCase):
         with self.assertRaisesRegex(RuntimeError, "Partial BDD coverage"):
             self.install_bytes(data)
 
+    def test_real_package_rejects_missing_pinned_external_assets(self):
+        model = "rtdetr-so400m-whole-only-v1-f8-text-confirmed-v1-onnx640"
+        files = self.valid_files({"status": "passed", "revision": SHA,
+                                  "mode": "real", "modelVersion": model,
+                                  "bddCoverageStatus": "passed", "targetScope": "all-environments"})
+        manifest = json.loads(files["manifest.json"])
+        manifest.update(mode="real", modelVersion=model)
+        files["manifest.json"] = json.dumps(manifest).encode()
+        with self.assertRaisesRegex(RuntimeError, "Real release lacks pinned F8 runtime assets"):
+            self.install_bytes(self.archive(files))
+
     def test_production_requires_explicit_approval_after_other_gates(self):
         target = release.ROOT / "packages" / SHA
         manifest = self.installed_target(target)

@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { mkdir, writeFile } from 'node:fs/promises';
+import { mkdir, stat, writeFile } from 'node:fs/promises';
 import { checkCardPolish } from './card-polish-check.mjs';
 import { createRequire } from 'node:module';
 import { dirname, resolve } from 'node:path';
@@ -15,6 +15,9 @@ const password = process.env.TEST_HTTP_PASSWORD;
 const expectedRevision = process.env.EXPECTED_REVISION;
 const expectedCandidate = process.env.EXPECTED_CANDIDATE_ID || expectedRevision;
 const expectedCatalog = process.env.EXPECTED_CATALOG_VERSION;
+// An explicitly approved, independently identified wine photo (never a UI asset).
+const photoSample = process.env.SMOKE_PHOTO_SAMPLE;
+const photoSlug = process.env.SMOKE_PHOTO_EXPECTED_SLUG;
 const checks = [];
 const evidence = [];
 const actionTimeout = 15_000;
@@ -86,34 +89,132 @@ try {
   };
   const visible = (locator, description) => locator.waitFor({ state: 'visible', timeout: 10_000 })
     .catch(() => { throw new Error(`${description} is not visible`); });
-  const recommendationsReady = async (page) => {
-    const list = page.locator('.recommendation-list');
-    await visible(list.getByRole('button').first(), 'loaded recommendation cards');
-    if (await list.getByRole('button', {name: /Каберне Совиньон/i}).count())
-      throw new Error('Recommendation repeats the source wine');
-    if (await page.getByText('Подбираем рекомендации', {exact:true}).isVisible())
-      throw new Error('Recommendations still loading');
+  let realRecommendationsObserved = 0;
+  const feedbackCalls = (page) => {
+    const calls = [];
+    page.on('request', request => {
+      if (new URL(request.url()).pathname === '/v1/feedback') calls.push(request.method());
+    });
+    return async () => {
+      if (calls.length) throw new Error(`web sent photo feedback: ${calls.join(', ')}`);
+      if (await page.locator('.correction, .photo-feedback, .feedback-correction').count())
+        throw new Error('web exposed photo feedback controls');
+    };
   };
+  const requireWinePhoto = async (realCatalog = true) => {
+    if (!photoSample || realCatalog && !photoSlug)
+      throw new Error(`BLOCKED: supply an explicitly approved local wine photo via SMOKE_PHOTO_SAMPLE${realCatalog ? ' and its independently verified catalog slug via SMOKE_PHOTO_EXPECTED_SLUG' : ''}; no verified smoke sample was provided`);
+    if (resolve(photoSample) === resolve(root, 'apps/web/public/assets/app-192.png'))
+      throw new Error('BLOCKED: app icon is not a photograph of a catalog wine');
+    const file = await stat(photoSample).catch(() => null);
+    if (!file?.isFile() || !file.size) throw new Error('BLOCKED: approved wine photo sample is missing or empty');
+    return file;
+  };
+  const checkCard = async (page, context, wine, label, demo) => {
+    await visible(page.getByRole('heading', {name:wine.name, exact:true}), `${label} title`);
+    const shelf = page.locator('.result-shelf');
+    const photo = shelf.locator('img');
+    await visible(photo, `${label} bottle`);
+    await photo.evaluate(image => image.decode());
+    const image = await photo.evaluate(el => ({src:el.currentSrc, fit:getComputedStyle(el).objectFit, srcset:el.srcset}));
+    if (image.fit !== 'contain') throw new Error(`${label} bottle must fit inside shelf`);
+    if (!demo) {
+      const validPaths = wine.imageVariants?.map(v => new URL(v.path, baseURL).href) ?? [];
+      if (!validPaths.includes(image.src) || !image.srcset) throw new Error(`${label} image differs from accepted catalog variants`);
+    }
+    const layout = await page.locator('#UI-007').evaluate(el => {
+      const rect = selector => el.querySelector(selector)?.getBoundingClientRect();
+      const bottle = rect('.result-shelf img'), facts = rect('.result-facts'), hero = rect('.result-hero');
+      const title = el.querySelector('.result-hero h2');
+      return {bottleRight:bottle.right, factsLeft:facts?.left, shelfRight:rect('.result-shelf').right,
+        heroLeft:hero.left, heroRight:hero.right, overflow:document.documentElement.scrollWidth > innerWidth + 1,
+        clipped:title.scrollWidth > title.clientWidth + 1,
+        controls:[...el.querySelectorAll('.top button')].map(button => button.getBoundingClientRect().width),
+        navHeight:document.querySelector('.bottom-nav')?.getBoundingClientRect().height};
+    });
+    if (layout.factsLeft !== undefined && layout.bottleRight >= layout.factsLeft ||
+      layout.shelfRight > page.viewportSize().width + 1 || layout.heroLeft < -1 ||
+      layout.heroRight > page.viewportSize().width + 1 || layout.overflow || layout.clipped ||
+      layout.controls.some(width => width < 44) || Math.abs(layout.navHeight - 62) > 1)
+      throw new Error(`${label} Air 3.7 shelf/header geometry: ${JSON.stringify(layout)}`);
+    if (wine.sugar || wine.region?.length || wine.alcoholPercent || wine.alcoholMinPercent || wine.alcoholMaxPercent)
+      await visible(shelf.locator('.result-facts'), `${label} shelf facts`);
+    await visible(page.locator('.result-overview'), `${label} overview`);
+    if (wine.description.trim()) {
+      const description = page.locator('.result-description');
+      if (await description.evaluate(el => el.open)) throw new Error(`${label} description must start collapsed`);
+      await description.locator('summary').click();
+      await visible(description.locator('p'), `${label} expanded description`);
+    }
+    if (await page.locator('#UI-007 .tabs, #UI-007 .correction, #UI-007 .photo-feedback').count())
+      throw new Error(`${label} reintroduced tabs or web feedback`);
+    const source = page.locator('.result-source');
+    if (wine.sourceUrl) {
+      await visible(source, `${label} direct source`);
+      const attributes = await source.evaluate(el => ({href:el.getAttribute('href'), target:el.target, rel:el.rel}));
+      if (attributes.href !== wine.sourceUrl || attributes.target !== '_blank' ||
+        !attributes.rel.split(/\s+/).includes('noopener') || !attributes.rel.split(/\s+/).includes('noreferrer'))
+        throw new Error(`${label} direct source URL/target/rel differs from catalog`);
+      // Only navigation semantics are under test; no dependency on the third-party site's uptime.
+      await context.route(wine.sourceUrl, route => route.fulfill({contentType:'text/html', body:'Source navigation'}));
+      const [popup] = await Promise.all([page.waitForEvent('popup'), source.click()]);
+      await popup.waitForURL(wine.sourceUrl);
+      await popup.close();
+    } else if (await source.count()) throw new Error(`${label} invented a source link`);
+    if (demo) {
+      await visible(page.locator('.demo-label'), `${label} demo marker`);
+    } else if (await page.locator('.demo-label').count()) throw new Error(`${label} real card labelled synthetic`);
+  };
+  const recommendationsReady = async (page, pending, source, label) => {
+    const response = await bounded(pending, `${label} recommendations`);
+    if (!response.ok()) throw new Error(`${label} recommendations returned HTTP ${response.status()}`);
+    const data = await response.json();
+    if (!Array.isArray(data.candidates) || data.candidates.some(item => item.id === source.id) ||
+      (data.catalogVersion && data.catalogVersion !== catalogVersion))
+      throw new Error(`${label} recommendations are invalid, stale or repeat source wine`);
+    if (!data.candidates.length) {
+      if (source.slug === undefined) throw new Error(`${label} synthetic catalog returned no recommendations`);
+      await visible(page.getByText('Пока нет рекомендаций для этой карточки.', {exact:true}), `${label} honest empty recommendations`);
+      return;
+    }
+    if (source.slug !== undefined) realRecommendationsObserved++;
+    const list = page.locator('.recommendation-list > button');
+    await visible(list.first(), `${label} loaded recommendations`);
+    await page.waitForFunction(n => document.querySelectorAll('.recommendation-list > button').length === n, data.candidates.length);
+    for (const [index, item] of data.candidates.entries())
+      if (!(await list.nth(index).innerText()).includes(item.name)) throw new Error(`${label} recommendations differ from API order`);
+    if (await page.getByText('Подбираем рекомендации', {exact:true}).isVisible())
+      throw new Error(`${label} recommendations still loading`);
+  };
+  const recommendationResponse = (page, wine) => page.waitForResponse(response =>
+    new URL(response.url()).pathname === '/v1/recommendations' &&
+    response.request().postDataJSON()?.wineId === wine.id, {timeout:apiTimeout});
   const polishMetrics = await checkCardPolish({ browser, contextOptions, baseURL, capture, check, sample: catalog.candidates[0] });
   await writeFile(resolve(outputDir, 'card-polish-metrics.json'), JSON.stringify(polishMetrics, null, 2));
   const textFlow = async (viewport, prefix) => {
     const context = await browser.newContext({ viewport, ...contextOptions });
     const page = configurePage(await context.newPage());
+    const noFeedback = feedbackCalls(page);
     await page.goto(baseURL, { waitUntil: 'networkidle' });
     await page.getByRole('button', { name: /По названию/i }).click();
     await page.getByLabel(/Название вина/i).fill('Каберне');
     await page.getByRole('button', { name: 'Искать' }).click();
     await visible(page.locator('.candidate-list > button').first(), `${prefix} inline text list`);
     await capture(page, `${prefix}-text-results`);
-    await page.getByRole('button', { name: /Каберне Совиньон/i }).first().click();
-    await visible(page.getByRole('heading', { name: 'Каберне Совиньон' }), `${prefix} text card`);
-    await page.getByRole('tab', {name:'Источник', exact:true}).click();
-    await visible(page.getByText('Эта карточка создана для демо-каталога.', {exact:true}), `${prefix} demo source disclosure`);
-    await page.getByRole('tab', {name:'Обзор', exact:true}).click();
+    const card = page.getByRole('button', { name: /Каберне Совиньон/i }).first();
+    const lookup = await context.request.get(`${baseURL}/v2/catalog`, {params:{q:'Каберне'}, timeout:apiTimeout});
+    if (!lookup.ok()) throw new Error(`${prefix} Cabernet lookup returned HTTP ${lookup.status()}`);
+    const label = await card.getAttribute('aria-label');
+    const chosen = (await lookup.json()).candidates.find(item => label === item.name || label.startsWith(`${item.name},`));
+    if (!chosen) throw new Error(`${prefix} Cabernet record missing from catalog`);
+    const pending = recommendationResponse(page, chosen);
+    await card.click();
+    await checkCard(page, context, chosen, `${prefix} text card`, true);
     await visible(page.getByRole('heading', { name: /Вам также может подойти/i }), `${prefix} recommendations`);
-    await recommendationsReady(page);
+    await recommendationsReady(page, pending, chosen, `${prefix} text card`);
+    await noFeedback();
     await capture(page, `${prefix}-text-card-recommendations`);
-    return { context, page };
+    return { context, page, noFeedback };
   };
   await check('CAT015 CAT017 CAT020 mobile live search keeps input and clears to catalog', async () => {
     const context = await browser.newContext({viewport:{width:390,height:844}, ...contextOptions});
@@ -129,7 +230,7 @@ try {
             const r=el.getBoundingClientRect(); return {top:r.top-box.top,bottom:r.bottom-box.top,width:r.width,height:r.height};
           })};
         });
-        if (geometry.height > 64 || geometry.controls.some(c => c.top > 5 || c.bottom > geometry.height + 1))
+        if (geometry.height > 64 || geometry.controls.some(c => c.top < -1 || c.bottom > geometry.height + 1))
           throw new Error('search input/clear/submit must share one row: '+JSON.stringify(geometry));
         if (geometry.controls.slice(1).some(c => c.width < 44 || c.height < 44))
           throw new Error('search button tap target is smaller than 44px');
@@ -304,7 +405,9 @@ try {
     for (const [name, width, height, dpr] of [['desktop', 1440, 900, 1], ['mobile', 390, 844, 2], ['narrow', 320, 740, 3]]) {
       await check(`${name} real catalog, pagination, search, image and source`, async () => {
         const context = await browser.newContext({viewport:{width,height}, deviceScaleFactor:dpr, ...contextOptions});
+        try {
         const page = configurePage(await context.newPage());
+        const noFeedback = feedbackCalls(page);
         await page.goto(baseURL, {waitUntil:'networkidle'});
         await page.getByRole('button', {name:/По названию/i}).click();
         await page.getByRole('button', {name:'Открыть каталог', exact:true}).click();
@@ -321,60 +424,98 @@ try {
         const first = page.locator('.candidate-list > button').first();
         await visible(first, 'catalog search result');
         if (!(await first.innerText()).includes(chosen.name)) throw new Error('UI did not display current search response');
+        if (!chosen.sourceUrl) throw new Error('real catalog card has no direct source URL');
+        const pending = recommendationResponse(page, chosen);
         await first.click();
-        await visible(page.getByRole('heading', {name:chosen.name, exact:true}), 'real wine detail');
-        const photo = page.locator('.result-hero > img');
-        await visible(photo, 'real wine photo');
-        await photo.evaluate(image => image.decode());
-        const image = await photo.evaluate(el => ({src:el.currentSrc, fit:getComputedStyle(el).objectFit, srcset:el.srcset}));
-        const validPaths = chosen.imageVariants.map(v => new URL(v.path, baseURL).href);
-        if (!validPaths.includes(image.src) || image.fit !== 'contain' || !image.srcset)
-          throw new Error('image selection or contain contract failed');
-        if (await page.locator('.demo-label').count()) throw new Error('real card is labelled synthetic');
-        if (await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1)) throw new Error('horizontal overflow');
-        await page.getByRole('tab', {name:'Источник', exact:true}).click();
-        if (await page.getByRole('link', {name:'Открыть исходную запись'}).getAttribute('href') !== chosen.sourceUrl)
-          throw new Error('source link differs from accepted catalog');
-        await visible(page.getByText('Не удалось загрузить рекомендации.', {exact:true}), 'unavailable reference recommendations');
+        await checkCard(page, context, chosen, `${name} real card`, false);
+        await visible(page.getByRole('heading', {name:/Вам также может подойти/i}), 'real recommendations');
+        await recommendationsReady(page, pending, chosen, `${name} real card`);
+        await noFeedback();
         await capture(page, `${name}-real-card-source`);
-        await context.close();
+        } finally { await context.close(); }
       });
     }
-    await check('real catalog upload does not invent model results', async () => {
+    if (!realRecommendationsObserved) throw new Error('No real catalog wine produced working non-empty recommendations');
+    await check('real photo upload, recognition, card and recommendations', async () => {
+      const file = await requireWinePhoto();
+      const detail = await releaseContext.request.get(`${baseURL}/v2/catalog/${encodeURIComponent(photoSlug)}`, {timeout:apiTimeout});
+      if (!detail.ok()) throw new Error(`BLOCKED: expected photo slug ${photoSlug} is not in the active display catalog (HTTP ${detail.status()})`);
+      const known = await detail.json();
+      if (known.demo || !known.candidate?.id || known.canonicalId !== photoSlug ||
+        known.candidate.slug !== photoSlug || known.catalogVersion !== catalogVersion)
+        throw new Error('BLOCKED: expected photo slug is not a canonical real catalog card');
       const context = await browser.newContext({viewport:{width:390,height:844}, ...contextOptions});
+      try {
       const page = configurePage(await context.newPage());
+      const noFeedback = feedbackCalls(page);
       await page.goto(baseURL, {waitUntil:'networkidle'});
-      const searchResponse = page.waitForResponse(r => new URL(r.url()).pathname === '/v1/search');
-      await page.getByLabel(/Загрузить фотографию этикетки/i).setInputFiles(resolve(root, 'apps/web/public/assets/app-192.png'));
+      const uploadResponse = page.waitForResponse(r => new URL(r.url()).pathname === '/v1/photos');
+      const searchResponse = page.waitForResponse(r => new URL(r.url()).pathname === '/v1/search', {timeout:35_000});
+      await page.getByLabel(/Загрузить фотографию этикетки/i).setInputFiles(photoSample);
+      const upload = await bounded(uploadResponse, 'real photo upload');
+      if (upload.status() !== 201) throw new Error(`photo upload returned HTTP ${upload.status()}, expected 201`);
+      const receipt = await upload.json();
+      if (!/^[a-f0-9]{32}$/.test(receipt.id) || receipt.bytes !== file.size)
+        throw new Error('uploaded private photo receipt does not match sample bytes');
       const response = await searchResponse;
-      if (response.status() !== 503) throw new Error(`reference model returned HTTP ${response.status()}, expected 503`);
-      const requestData = response.request().postDataJSON();
-      const apiResponse = await context.request.post(`${baseURL}/v1/search`, {data:requestData, timeout:apiTimeout});
-      if (apiResponse.status() !== 503) throw new Error(`repeated reference request returned HTTP ${apiResponse.status()}, expected 503`);
-      const data = await bounded(apiResponse.json(), 'recognition error JSON');
-      if (data.error?.code !== 'recognition_unavailable') throw new Error('reference model must return recognition_unavailable');
-      await visible(page.getByRole('heading', {name:'Сервис временно недоступен',exact:true}), 'honest unavailable model state');
-      await capture(page, 'mobile-model-unavailable');
-      await context.close();
+      if (response.status() !== 200) throw new Error(`photo recognition returned HTTP ${response.status()}, expected 200`);
+      if (response.request().postDataJSON()?.photoId !== receipt.id)
+        throw new Error('recognition did not use the uploaded private photo receipt');
+      const data = await bounded(response.json(), 'recognition JSON');
+      if (data.demo !== false || data.catalogVersion !== catalogVersion || data.recognizedSlug !== photoSlug ||
+        data.candidates?.[0]?.id !== known.candidate.id || data.candidates[0].sourceUrl !== known.candidate.sourceUrl)
+        throw new Error('photo recognition did not return the verified wine in the active real catalog');
+      const cards = page.locator('#UI-006 .candidate-list > button');
+      await visible(cards.first(), 'real photo recognition candidates');
+      if (!(await cards.first().innerText()).includes(known.candidate.name))
+        throw new Error('photo UI first candidate differs from recognition response');
+      if (await page.getByRole('note', {name:'Reference-режим'}).count())
+        throw new Error('real photo recognition labelled as reference demo');
+      await capture(page, 'mobile-real-photo-results');
+      const pending = recommendationResponse(page, known.candidate);
+      await cards.first().click();
+      await checkCard(page, context, known.candidate, 'mobile recognized wine', false);
+      await recommendationsReady(page, pending, known.candidate, 'mobile recognized wine');
+      await noFeedback();
+      await capture(page, 'mobile-real-photo-card');
+      } finally { await context.close(); }
     });
   } else {
   await check('desktop text search, card, recommendations', async () => {
     const { context } = await textFlow({ width: 1440, height: 900 }, 'desktop');
     await context.close();
   });
-  await check('mobile text search, upload, card, recommendations', async () => {
-    const { context, page } = await textFlow({ width: 390, height: 844 }, 'mobile');
-    await page.getByRole('button', { name: /Сканировать ещё/i }).click();
-    await page.getByLabel(/Загрузить фотографию этикетки/i).setInputFiles(resolve(root, 'apps/web/public/assets/app-192.png'));
-    await visible(page.getByRole('heading', { name: /Есть несколько похожих этикеток/i }), 'mobile photo list');
-    await visible(page.getByRole('note', {name:'Reference-режим'}), 'mobile photo demo disclosure');
-    await capture(page, 'mobile-photo-results');
-    await page.getByRole('button', { name: /Каберне Совиньон/i }).first().click();
-    await visible(page.getByRole('heading', { name: 'Каберне Совиньон' }), 'mobile photo card');
-    await visible(page.getByRole('heading', { name: /Вам также может подойти/i }), 'mobile photo recommendations');
-    await recommendationsReady(page);
-    await capture(page, 'mobile-photo-card-recommendations');
-    await context.close();
+  await check('mobile demo text search, photo upload, card, recommendations', async () => {
+    const { context, page, noFeedback } = await textFlow({ width: 390, height: 844 }, 'mobile');
+    try {
+      const file = await requireWinePhoto(false);
+      await page.getByRole('button', { name: /Сканировать ещё/i }).click();
+      const uploadResponse = page.waitForResponse(r => new URL(r.url()).pathname === '/v1/photos');
+      const searchResponse = page.waitForResponse(r => new URL(r.url()).pathname === '/v1/search', {timeout:35_000});
+      await page.getByLabel(/Загрузить фотографию этикетки/i).setInputFiles(photoSample);
+      const upload = await bounded(uploadResponse, 'demo photo upload');
+      if (upload.status() !== 201) throw new Error(`demo photo upload returned HTTP ${upload.status()}, expected 201`);
+      const receipt = await upload.json();
+      if (!/^[a-f0-9]{32}$/.test(receipt.id) || receipt.bytes !== file.size)
+        throw new Error('demo photo receipt does not match sample bytes');
+      const response = await bounded(searchResponse, 'demo photo search');
+      if (!response.ok() || response.request().postDataJSON()?.photoId !== receipt.id)
+        throw new Error(`demo photo search did not use receipt successfully (HTTP ${response.status()})`);
+      const data = await response.json();
+      if (data.demo !== true || !data.candidates?.length || data.catalogVersion && data.catalogVersion !== catalogVersion)
+        throw new Error('demo photo response has no marked synthetic candidates from active catalog');
+      const first = page.locator('#UI-006 .candidate-list > button').first();
+      await visible(first, 'mobile demo photo list');
+      if (!(await first.innerText()).includes(data.candidates[0].name)) throw new Error('demo photo UI order differs from API');
+      await visible(page.getByRole('note', {name:'Reference-режим'}), 'mobile photo demo disclosure');
+      await capture(page, 'mobile-photo-results');
+      const pending = recommendationResponse(page, data.candidates[0]);
+      await first.click();
+      await checkCard(page, context, data.candidates[0], 'mobile demo photo card', true);
+      await recommendationsReady(page, pending, data.candidates[0], 'mobile demo photo card');
+      await noFeedback();
+      await capture(page, 'mobile-photo-card-recommendations');
+    } finally { await context.close(); }
   });
   }
   await writeFile(resolve(outputDir, 'result.json'), `${JSON.stringify(result('passed'))}\n`);

@@ -78,6 +78,18 @@ def install(sha, checksum, run_id):
         require(manifest['revision']==sha and (unpack/'REVISION').read_text().strip()==sha, 'Revision mismatch')
         require(manifest.get('mode') in ('reference','real'), 'Unsupported model mode')
         require(isinstance(manifest.get('modelVersion'),str) and manifest['modelVersion'], 'Missing model version')
+        if manifest['mode']=='real':
+            require((unpack/'evidence'/'f8-runtime.json').is_file(), 'Real release lacks pinned F8 runtime assets')
+            runtime=read(unpack/'evidence'/'f8-runtime.json')
+            require(runtime.get('mode')=='real' and runtime.get('modelVersion')==manifest['modelVersion'] and
+                    runtime.get('externalAssets')==manifest.get('externalAssets') and
+                    len(runtime['externalAssets'])==6, 'Real release lacks pinned F8 runtime assets')
+            require(all(bool(re.fullmatch(r'[a-f0-9]{64}', asset.get('sha256',''))) and
+                        pathlib.PurePosixPath(asset.get('path','')).is_absolute()
+                        for asset in runtime['externalAssets']), 'Invalid external F8 asset digest or path')
+            release=read(unpack/'web'/'release.json')
+            require(release.get('revision')==sha and release.get('mode')==manifest['mode'] and
+                    release.get('modelVersion')==manifest['modelVersion'], 'Web release metadata differs from package')
         names=[f['path'] for f in manifest['files']]
         actual={str(p.relative_to(unpack)) for p in unpack.rglob('*') if p.is_file() and p!=unpack/'manifest.json'}
         require(len(names)==len(set(names)) and set(names)==actual,'Manifest must cover every file exactly once')
@@ -88,6 +100,9 @@ def install(sha, checksum, run_id):
             require(digest(unpack/p)==f['sha256'], 'Package file checksum mismatch')
         checks=read(unpack/'evidence'/'checks.json')
         require(checks['status']=='passed' and checks['revision']==sha, 'Required CI checks did not pass')
+        if manifest['mode']=='real':
+            require(checks.get('mode')=='real' and checks.get('modelVersion')==manifest['modelVersion'],
+                    'CI did not attest this real model metadata')
         require(checks.get('bddCoverageStatus', 'passed') == 'passed' and
                 checks.get('targetScope', 'all-environments') == 'all-environments',
                 'Partial BDD coverage is valid only for Maks demo, not TEST/PROD')
@@ -360,12 +375,12 @@ def main(args):
             require(r['gates']['test']['status']=='passed','HTTP smoke required')
             require(datetime.datetime.fromisoformat(result['at'].replace('Z','+00:00')) >= datetime.datetime.fromisoformat(r['gates']['test']['at']), 'Browser evidence predates this deployment')
             if result['status']=='passed':
-                expected={'release revision','desktop text search, card, recommendations','mobile text search, upload, card, recommendations'} if r.get('catalogManifestSHA256') is None else {
-                  'release revision','active catalog version and bounded first page',
-                  'desktop real catalog, pagination, search, image and source',
-                  'mobile real catalog, pagination, search, image and source',
-                  'narrow real catalog, pagination, search, image and source',
-                  'real catalog upload does not invent model results'}
+                expected={'release revision','desktop text search, card, recommendations','mobile demo text search, photo upload, card, recommendations'} if r.get('catalogManifestSHA256') is None else {
+                    'release revision','active catalog version and bounded first page',
+                    'desktop real catalog, pagination, search, image and source',
+                    'mobile real catalog, pagination, search, image and source',
+                    'narrow real catalog, pagination, search, image and source',
+                    'real photo upload, recognition, card and recommendations'}
                 require(expected <= {c['name'] for c in result.get('checks',[]) if c['status']=='passed'}, 'Incomplete browser evidence')
                 require(result.get('observedRevision')==sha,'Browser observed another release')
                 require(result.get('catalogVersion')==r['catalogVersion'],'Browser observed another catalog version')
