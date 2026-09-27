@@ -70,27 +70,10 @@ file('/srv/lct/releases/public/index.html',(BASE/'releases.html').read_text(),0o
 file('/srv/lct/releases/public/app.js',(BASE/'releases.js').read_text(),0o640,'lct-release')
 file('/srv/lct/releases/public/style.css',(BASE/'releases.css').read_text(),0o640,'lct-release')
 file('/usr/local/bin/lct-release','#!/bin/sh\nexec /usr/bin/python3 /usr/local/lib/lct-release/release.py "$@"\n',0o755)
-file('/usr/local/sbin/lct-release-service',r'''#!/bin/sh
-set -eu
-case "${1-}" in
- restart-test|restart-prod)
-  zone=${1#restart-}
-  systemctl restart "brutforce-$zone-reference.service" "brutforce-$zone.service"
-  systemctl enable "brutforce-$zone-reference.service" "brutforce-$zone.service" >/dev/null ;;
- stop-test|stop-prod)
-  zone=${1#stop-}; systemctl stop "brutforce-$zone.service" "brutforce-$zone-reference.service" ;;
- backup-prod)
-  stamp=$(date -u +%Y%m%dT%H%M%SZ)
-  dir=/srv/lct/data/backups/postgres
-  umask 077
-  runuser -u postgres -- pg_dump -Fc lct_prod > "$dir/lct_prod-$stamp.dump.partial"
-  pg_restore --list "$dir/lct_prod-$stamp.dump.partial" >/dev/null
-  mv "$dir/lct_prod-$stamp.dump.partial" "$dir/lct_prod-$stamp.dump" ;;
- publish-prod)
-  python3 /usr/local/lib/lct-release/publish-prod.py ;;
- *) exit 2 ;;
-esac
-''',0o755)
+file('/usr/local/sbin/lct-release-service',(BASE/'lct-release-service.sh').read_text(),0o755)
+file('/etc/systemd/system/lct-vision-test-f8.service',(BASE/'lct-vision-test-f8.service').read_text())
+file('/etc/systemd/system/brutforce-test.service.d/99-f8-release.conf',
+     '[Service]\nEnvironmentFile=-/srv/lct/stage/vision-runtime.env\n')
 file('/usr/local/lib/lct-release/publish-prod.py',r'''from pathlib import Path
 import subprocess
 p=Path('/etc/caddy/sites-enabled/lct-previews.caddy')

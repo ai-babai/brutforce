@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "targetScope": "maks-demo-only",
+  "targetScope": "test-only",
   "exceptions": [
     {
       "ids": [
@@ -9,32 +9,32 @@
         "DESIGN-015", "DESIGN-016", "DESIGN-018", "DESIGN-020", "DESIGN-022",
         "DESIGN-023", "DESIGN-025", "DESIGN-026"
       ],
-      "reason": "Historical v2 CSS assertions cannot prove the active Air 3.4 styling and are superseded; their old green result would be misleading.",
+      "reason": "Slow optional Chromium visual checks: historical v2 CSS assertions cannot prove the active Air styling; their old green result would be misleading.",
       "evidence": "docs/product/reviews/air-v34-implementation-qa.md records independent local browser review of the Air screens and viewport geometry. The old v2 cases remain visible as skipped until replaced or retired."
     },
     {
       "ids": ["AIR-021"],
-      "reason": "Keyboard focus and accessible touch behavior across narrow screens and enlarged text require a real-device or browser accessibility review; jsdom would not establish them.",
+      "reason": "Slow optional browser accessibility check: keyboard focus and accessible touch behavior across narrow screens and enlarged text cannot be established by jsdom.",
       "evidence": "docs/product/reviews/air-v34-implementation-qa.md records independent browser review of responsive screens. Keyboard and enlarged-text verification remain open for human review."
     },
     {
       "ids": ["AIR-024"],
-      "reason": "Camera viewport height and non-overlap with the browser chrome require browser geometry measurements rather than a simulated DOM assertion.",
+      "reason": "Slow optional Chromium geometry check: camera viewport height and non-overlap with browser chrome cannot be established by a simulated DOM assertion.",
       "evidence": "docs/product/reviews/air-v35-implementation-qa.md records local Air 3.5 browser measurements at 320×640, 430×932, and 844×390. Physical-device MediaStream behavior still needs live verification."
     },
     {
       "ids": ["AIR-025"],
-      "reason": "Unit tests cover upload, receipt, search, and recovery, but the complete real-photo path through the Maks vision service needs a deployed smoke test.",
+      "reason": "Real-photo path requires mandatory deployed TEST smoke after the F8 switch; it cannot pass in CI against a synthetic reference engine.",
       "evidence": "docs/product/reviews/air-v35-bdd-audit.md separates mocked UI proof from live vision evidence; apps/api/vision_service_test.go covers private-byte forwarding and model errors."
     },
     {
       "ids": ["AIR-026", "AIR-027", "AIR-028", "AIR-029"],
-      "reason": "Visual width, movement, typography, and responsive composition require browser inspection beyond fast DOM tests.",
+      "reason": "Slow optional Chromium visual checks: width, movement, typography, and responsive composition require browser inspection beyond fast DOM tests.",
       "evidence": "docs/product/reviews/air-v35-implementation-qa.md records local browser geometry, computed typography, and screenshot review; reduced-motion and enlarged-text checks remain identified there."
     },
     {
       "ids": ["AIR-043"],
-      "reason": "Vitest covers only part of the revised source-link/no-annotation scenario; full token, popup, unsafe saved URL and recovery branches are not certified by the fast run.",
+      "reason": "Slow optional Chromium diagnostic: Vitest covers only part of the source-link/no-annotation scenario; full token, popup, unsafe saved URL and recovery branches are not certified by the fast run.",
       "evidence": "design/wine-ux-v3/air37/behavior-v37.feature records the full scenario; apps/web/air-release.browser.mjs is an optional diagnostic, not a required CI check."
     }
   ]
