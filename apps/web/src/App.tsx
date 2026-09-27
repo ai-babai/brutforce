@@ -1087,14 +1087,14 @@ export function App({
                   )}
                   {demoMode && <DemoDisclosure />}
                   <dl className="result-overview">
-                    <div><dt>Винодельня</dt><dd>{shown.winery}</dd></div>
-                    <div><dt>Год</dt><dd>{displayYear(shown.year)}</dd></div>
-                    {region && <div><dt>Регион</dt><dd>{region}</dd></div>}
-                    {shown.grapes?.length ? <div><dt>Сорт винограда</dt><dd>{shown.grapes.join(", ")}</dd></div> : null}
-                    {shown.categoryAndSweetness ? <div><dt>Категория</dt><dd>{shown.categoryAndSweetness}</dd></div> : null}
-                    {shown.color ? <div><dt>Цвет</dt><dd>{shown.color}</dd></div> : null}
                     {shown.sugar?.trim() ? <div><dt>Сахар</dt><dd>{shown.sugar}</dd></div> : null}
                     {strength && <div><dt>Алкоголь</dt><dd>{strength}</dd></div>}
+                    {shown.categoryAndSweetness ? <div><dt>Категория</dt><dd>{shown.categoryAndSweetness}</dd></div> : null}
+                    {shown.grapes?.length ? <div><dt>Сорт винограда</dt><dd>{shown.grapes.join(", ")}</dd></div> : null}
+                    {region && <div><dt>Регион</dt><dd>{region}</dd></div>}
+                    <div><dt>Винодельня</dt><dd>{shown.winery}</dd></div>
+                    <div><dt>Год</dt><dd>{displayYear(shown.year)}</dd></div>
+                    {shown.color ? <div><dt>Цвет</dt><dd>{shown.color}</dd></div> : null}
                     {isPositiveFinite(shown.volumeL) ? <div><dt>Объём</dt><dd>{shown.volumeL} л</dd></div> : null}
                   </dl>
                   {shown.description.trim() && <details className="result-description" key={shown.id}>

@@ -43,6 +43,9 @@ describe("FE-088 card behavior", () => {
     expect([...hero.querySelectorAll(".result-fact dt")].map(node => node.textContent)).toEqual(["Сахар", "Алкоголь", "Регион"]);
     expect([...hero.querySelectorAll(".result-fact dd")].map(node => node.textContent)).toEqual(["сладкое", "17%", "Крым"]);
     expect([...hero.querySelectorAll(".result-fact dt span")].every(node => node.classList.contains("visually-hidden"))).toBe(true);
+    expect([...document.querySelectorAll(".result-overview dt")].map(node => node.textContent)).toEqual([
+      "Сахар", "Алкоголь", "Регион", "Винодельня", "Год",
+    ]);
     expect(hero.querySelector(".result-winery")).toHaveTextContent(/^Массандра$/);
     expect(within(document.querySelector(".result-overview") as HTMLElement).getByText("Год не указан")).toBeVisible();
     expect(screen.getByRole("heading", { name: port.name })).toBeVisible();
@@ -64,6 +67,14 @@ describe("FE-088 card behavior", () => {
     expect(image).toHaveAttribute("srcset", expect.stringContaining("/media/catalog/original/original.webp 1200w"));
     fireEvent.error(image);
     expect(screen.getByRole("img", { name: `Фото ${media.name} недоступно` })).toBeVisible();
+  });
+
+  it("AIR-044 keeps the agreed 2A overview order when every field is available", async () => {
+    await openCard({ ...port, categoryAndSweetness: "Белое сладкое", grapes: ["Белые сорта"],
+      color: "Золотистый", volumeL: 0.75 });
+    expect([...document.querySelectorAll(".result-overview dt")].map(node => node.textContent)).toEqual([
+      "Сахар", "Алкоголь", "Категория", "Сорт винограда", "Регион", "Винодельня", "Год", "Цвет", "Объём",
+    ]);
   });
 
   it("AIR-041 renders only the one available sugar fact", async () => {
