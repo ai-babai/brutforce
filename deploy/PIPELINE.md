@@ -154,8 +154,9 @@ Sigma объясняет по-русски: что случилось, что у
 только `/media/catalog/<role>/<sha>.webp`; release/internal не являются web-root.
 Контроллер задаёт `CATALOG_VERSION` из кандидата и хранит фактическую комбинацию среды.
 
-BE-089: read-only аудит прозрачности и локальная подготовка новых версионированных
-media/manifest описаны в [catalog-alpha-be089.md](../docs/product/catalog-alpha-be089.md).
+BE-089: аудит, подготовка и demo-only выпуск `svoe-20260927-alpha-2035-v1`
+описаны в [catalog-alpha-be089.md](../docs/product/catalog-alpha-be089.md).
+В `lct_maks` установлен новый manifest; `lct_shared` остался на прежней версии.
 Новые alpha WebP не устанавливаются под уже зарегистрированной версией; полный
 data gate, отдельный DB snapshot/import, HTTP и browser QA обязательны для каждой
 целевой среды. Подготовленный частичный sample не является release candidate.

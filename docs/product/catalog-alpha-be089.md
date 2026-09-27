@@ -1,14 +1,17 @@
-# BE-089 · Прозрачные бутылки: аудит и локальный этап
+# BE-089 · Прозрачные бутылки: аудит и demo-выпуск
 
 Состояние на 27.09.2026; [поручение #89](https://github.com/ai-babai/brutforce/issues/89).
-Это измерения неизменённого каталога и локальная проба, не выпуск всех 2038 карточек.
+Ниже — исходный аудит, локальная подготовка и выпуск версии
+`svoe-20260927-alpha-2035-v1` только на demo Макса.
 
-## Точный источник и контуры
+## Точный источник и контуры до выпуска
 
 - `lct_maks` (demo) и `lct_shared` (TEST) — **две** PostgreSQL БД: в обеих
-  `catalog_state.version=svoe-20260922-v2`, 2038 `catalog_items`, 2035 различных
+  было `catalog_state.version=svoe-20260922-v2`, 2038 `catalog_items`, 2035 различных
   значений `image`, 3 aliases. `catalog_versions.package_sha256` в обеих:
   `badee4d2772083de0861927850d4008ae01c22df058df21facd2fbd559cac927`.
+  После выпуска demo перешёл на `svoe-20260927-alpha-2035-v1`, а TEST
+  сохранил `svoe-20260922-v2`.
 - `lct_prod`: `catalog_items`/`catalog_state` отсутствуют; подготовленная PROD-БД
   не равна запущенному приложению. Общий immutable media root:
   `/srv/lct/data/catalog/media/{400,800,original}/<sha256>.webp`.
@@ -100,8 +103,8 @@ DQ001–008, DQ011 **passed**, без доступа к БД. Report SHA256
 Независимый vision review координатора смог прочитать только пару `qa-00`:
 бутылка/этикетка целы, белого прямоугольника/ореола не обнаружено. Остальные
 пять пар технически не прочитались — визуальная приёмка **не пройдена**.
-Это подготовка alpha, а не оценка модельной маски. Browser QA по новому
-полному выпуску ещё не выполнялась.
+Это подготовка alpha, а не оценка модельной маски. Позднейший browser QA
+полного выпуска указан отдельно ниже.
 
 Измерено на Mac: 10 кодирований 1000px WebP за 21,61 с; полный dry-run
 24 разных размеров — 63,21 с (2,63 с/ID, один worker). Получение 24 исходников
@@ -116,13 +119,109 @@ BRIA `RMBG-1.4` и `RMBG-2.0`: карточки моделей
 [1.4](https://huggingface.co/briaai/RMBG-1.4) и
 [2.0](https://huggingface.co/briaai/RMBG-2.0) проверены 27.09.2026:
 gated, разрешены для non-commercial use; коммерческое требует соглашения.
-Нет подтверждения лицензии для этого применения; веса **не скачаны**,
-revision/weight SHA отсутствуют и не должны выдумываться. Для 102 RGB, одного псевдо-alpha и пяти
-непривязанных найти совместимую локальную модель/исходник и проверить маски
-на стекле, пробке, контуре и надписях на двух фонах до публикации.
+Нет подтверждения лицензии для этого применения; веса BRIA **не скачаны**.
 
-Выпуск: новая версия manifest, полный DQ001–008/DQ011, отдельный snapshot и
-атомарный импорт в **каждую** целевую БД по
-[PIPELINE](../../deploy/PIPELINE.md), DB/HTTP gates и browser QA.
-PROD только по утверждённому точному кандидату. Частичную 24-ID версию
-в демо/TEST/PROD не устанавливать.
+## Массовый локальный staging, 27.09.2026
+
+После отдельного разрешения подготовлены 1930 архивных alpha и ещё 4
+совпавших по SHA originals из сохранённых raw snapshots (без сетевых запросов
+к сайту). Их selection SHA256:
+`38298cdd6805641f00ce99b52cd9dcf3180feac17500c051a0ddcbdbcadd1fdb`;
+исходники суммарно 132 246 938 Б. Один worker, 20 возобновляемых партий
+по 100 (последняя 34), ~95 мин. Итоговый immutable release
+`svoe-20260927-alpha-1934-v1`, manifest SHA256
+`0bea34db3526afcdd0c3c8545c774acc6938b6706b3c7ac9f66ba18367849af6`:
+2038 строк, 1934 обновлённых карточки, 5793 уникальных новых файла
+(130 591 180 Б), 6105 прежних media не заменены. Локальный
+`catalog-import --dry-run` с полным 2038-ID baseline прошёл
+DQ001–008 и DQ011; report SHA256
+`01bb0f3fbcfb1ae94505bbc69fba3cfb6afc8cb0ba722b115431184dbad6e110`.
+
+Для оставшихся источников использована официальная
+[BiRefNet](https://huggingface.co/ZhengPeng7/BiRefNet) по
+[MIT-лицензии автора](https://github.com/ZhengPeng7/BiRefNet/blob/ebcc0bc8ec7fe919cec829f2dea656b3078acddc/LICENSE)
+(проверено 27.09.2026): HF revision
+`e2bf8e4460fc8fa32bba5ea4d94b3233d367b0e4`, GitHub license commit
+`ebcc0bc8ec7fe919cec829f2dea656b3078acddc`. Локальный файл
+`model.safetensors` — 444 473 596 Б, SHA256
+`9ab37426bf4de0567af6b5d21b16151357149139362e6e8992021b8ce356a154`.
+Веса, Python/MPS environment, dataset и результаты находятся только в
+`/Users/skif/ml-data/brutforce/background-removal/{weights,cache,datasets,temp}`.
+Проба пяти разных фото (включая 3992×5976 и псевдо-alpha) при размере
+модели 1024×1024 занимала 0,93–4,26 с на фото: peak RSS 2,24 GiB,
+MPS driver allocated 5,43 GiB; даже консервативная сумма <12 GiB.
+
+После просмотра композитов на светлом/тёмном фоне обработаны 102
+локальных исходника: 101 маска прошла проверку SHA, прозрачных углов и
+контуров на шести обзорных листах; исходник
+`soyuz-vino-soyuz-vino-shardone-suhoe-beloe-11` обрезан в нижних углах
+(alpha маски там 232/251), исключён. Ещё две карточки не подменялись:
+`agrolayn-mountain-eagle-traminer-traminer-beloe-suhoe-12` — нет точной
+идентичности найденному альтернативному файлу;
+`vibes-vermentino-viognier-barrel-fermented-2022` — сохранённый source-page
+photo подписан как Silvaner, совпадение с SKU не доказано. В `source_ref`
+каждой модельной маски сохранены ревизия BiRefNet, SHA весов и SHA входа;
+маска явно обозначена как inference, а не upstream alpha.
+
+Отдельный immutable release поверх 1934 originals:
+`svoe-20260927-alpha-2035-v1`, manifest SHA256
+`d88c4454a46802490ee2f69e32d2fb28fd8816d23a6d4d554356697632f845ef`.
+Из 2038 canonical изменены ровно 2035 (1934 originals + 101 model masks),
+три перечисленные карточки сохраняют старые media. По сравнению с базой
+добавлены 6096 media (146 115 418 Б), из них model overlay 303 файла
+(15 524 238 Б). Дедупликация обошлась без перезаписи прежних ключей.
+Локальный полный `catalog-import --dry-run` с baseline прошёл
+DQ001–008 и DQ011; report SHA256
+`fa3569510c49f7e1ebe4b4a53750bed221a23946a026504d8a0e65c22ebb2152`.
+Общий локальный staging ~806 МиБ (включая base media и промежуточные
+immutable releases), dataset ~163 МиБ. Это техническая проверка целостности
+и выборочный visual review до установки на demo.
+
+В установленном неизменяемом `PREPARATION.md` последовательная история:
+20 alpha-блоков для 1934 upstream originals и 5 inferred-блоков для 101
+маски. Фраза «Reviewed upstream originals» относится к первым 20 блокам;
+последующие блоки прямо называют модельные изображения inferred и указывают
+в `source_ref` ревизию модели, SHA весов и входа. Исторический пакет под
+указанным manifest SHA не редактировался; генератор исправлен для новых
+выпусков, в том числе для смешанного selection.
+
+## Установка и проверка demo, 27.09.2026
+
+- После сверки manifest и новых media на сервере установлены 6096 новых файлов
+  с правами доступа только на них; прежние 6105 файлов общего media root
+  не менялись. Финальный серверный dry-run DQ001–008/DQ011 — `passed`:
+  `/srv/lct/backups/catalog/maks/be089-alpha-2035-20260927-final-dq.json`,
+  SHA256 `c84136aefb41852e866790c603afd97004ff707ed58655f0c500d5e45c163dc2`.
+- Перед атомарным импортом в `lct_maks` сохранены PostgreSQL dump
+  `/srv/lct/backups/catalog/maks/be089-alpha-2035-20260927-before.dump`
+  (SHA256 `ac2f262dafaae1404a59cfb8a9aadc7ca3feecef465e710beeef0c14e73bccef0`)
+  и JSON snapshot `.../be089-alpha-2035-20260927-before.json`
+  (SHA256 `e23027777dd59c088a365eb27c4958768a260526604481cee7619979204987c3`).
+  После импорта DQ009 — `passed`:
+  `/srv/lct/maks/catalog-be089-staging/demo-post-import-dq.json`,
+  SHA256 `4226f7e0ffabbdf16a8336396a4bcb8ce1d7d95d8511884e4db5a6b18deae88d`.
+- Demo-only приложение выпущено из успешного CI main run `36346389887`, Git
+  `b4db2c6aad092a845f91084bac5519c2f3b8e105`, архив SHA256
+  `b0ad564aa7a9366ca3b7c79114661b731415cecc21856b945a34c93df5c08321`.
+  Публичные `/release.json`, `/v1/health`, `/v2/catalog` отвечают; режим
+  модели `reference`, качество распознавания не проверялось. TEST/PROD
+  не переключались, TEST-БД осталась на прежней версии.
+- Публичный HTTP/media gate (DQ010-проверки вручную): у трёх обновлённых
+  карточек и всех трёх исключений сверены API-мастер и все 3 media-роли —
+  200, WebP, заявленный размер, SHA256, immutable cache. Пути
+  `/media/catalog/internal/...`, `/media/catalog/manifest.json` и
+  `/media/catalog/PREPARATION.md` возвращают 404. Произвольный URL
+  `/data/catalog/releases/.../manifest.json` возвращает SPA HTML (200),
+  **не** байты manifest: этот маршрут не является доступом к данным выпуска.
+- Выборочный browser QA на публичном demo: поиск «Массандра Кагор Гурзуф»
+  и «Массандра Портвейн белый Алушта» показывает новые изображения; у кагора
+  карточка загрузила новый original. Поиск «Брют Розовое Золотая Балка»
+  открыл карточку с модельной маской. Три исключения — Mountain Eagle
+  Traminer, Vibes Vermentino-Viognier 2022, Союз-Вино Шардоне Сухое —
+  находятся поиском и открывают карточки с прежними media. Изображения в
+  этих карточках декодируются браузером. Это выборка, не визуальная приёмка
+  каждой из 2035 бутылок. Блок рекомендаций возвращал 503 на проверенных
+  карточках — отдельное наблюдение, не успех media или поиска по фото.
+
+Дальнейшее продвижение в TEST/PROD требует отдельного точного кандидата,
+собственных data/DB/HTTP gates и разрешения по [PIPELINE](../../deploy/PIPELINE.md).
