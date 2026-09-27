@@ -99,9 +99,10 @@ cp "$policy_file" "$evidence_dir/fast-report-exceptions.json"
 
 node -e '
 const fs=require("fs");
-const [out,report,gatePath,revision,goVersion,nodeVersion]=process.argv.slice(1);
+const [out,report,gatePath,revision,goVersion,nodeVersion,spec]=process.argv.slice(1);
 const run=JSON.parse(fs.readFileSync(report,"utf8"));
 const gate=JSON.parse(fs.readFileSync(gatePath,"utf8"));
+const runtime=JSON.parse(fs.readFileSync(spec,"utf8"));
 fs.writeFileSync(out, JSON.stringify({
   schemaVersion: 1,
   revision,
@@ -111,10 +112,11 @@ fs.writeFileSync(out, JSON.stringify({
   bddCoverageStatus: gate.bddCoverageStatus,
   coverageExceptions: gate.coverageExceptions,
   policySHA256: gate.policySHA256,
-  mode: "reference",
+  mode: runtime.mode,
   catalogVersion: "demo-v1",
-  modelVersion: "reference-demo-v1",
+  modelVersion: runtime.modelVersion,
   synthetic: true,
+  runtimeProof: "external assets and live vision health must be verified on the target before switching; CI did not load model weights",
   commands: ["python3 -m unittest discover -s deploy -p test_*.py", "node --test deploy/verify-fast-report.test.mjs", "npm --prefix apps/web ci", "go build ./cmd/reference-engine + roman-conformance against localhost", "go test -tags=integration -count=1 -json -run ^TestDB000 . && go test -tags=integration -count=1 -json -run ^Test(DB00[1-5]|CAT009|CAT014) .", "node scripts/run-fast-checks.mjs", "node deploy/verify-fast-report.mjs"],
   versions: {go: goVersion, node: nodeVersion},
   databaseEvidence: run.databaseEvidence,
@@ -122,6 +124,6 @@ fs.writeFileSync(out, JSON.stringify({
   releaseGate: "release-gate.json",
   coveragePolicy: "fast-report-exceptions.json"
 }, null, 2)+"\n");
-' "$checks_file" "$report_file" "$gate_file" "$revision" "$go_version" "$node_version"
+' "$checks_file" "$report_file" "$gate_file" "$revision" "$go_version" "$node_version" "$root/deploy/f8-runtime.json"
 
 echo "strict release checks passed: $checks_file"

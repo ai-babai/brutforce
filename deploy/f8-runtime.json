@@ -1,0 +1,33 @@
+{
+  "mode": "real",
+  "modelVersion": "rtdetr-so400m-whole-only-v1-f8-text-confirmed-v1-onnx640",
+  "visionCandidateId": "F8-CPU-text-confirmed-rescue-P4-diagnostic-v1",
+  "visionCatalogVersion": "organizer-catalog-20260919",
+  "visionIndexVersion": "so400m384-owlv2-v2-crops-reference-gated-20260925",
+  "externalAssets": [
+    {
+      "path": "/srv/lct/maks/vision-service/releases/cpu-f8-text-rescue-20260927/night_server.py",
+      "sha256": "c82ce1d3671f539a811b0afa46c58395e4675969bd3b8e1aedce8ff2b7585887"
+    },
+    {
+      "path": "/srv/lct/maks/vision-service/releases/cpu-ort6-20260926-1/night_server.py",
+      "sha256": "bc9684760dc9dae4c376e1de988420546f343a7b8366039a227cd32a8c044eef"
+    },
+    {
+      "path": "/srv/lct/maks/vision-service/releases/cpu-f8-text-rescue-20260927/spec/lexicon.json",
+      "sha256": "1cbf9d3436e2e58b116ef030557b070f260176aa6e2a4beae919c567852b4204"
+    },
+    {
+      "path": "/srv/lct/maks/vision-service/releases/cpu-f8-text-rescue-20260927/organizer-slugs.json",
+      "sha256": "b0d1ce3d493bdae9307e1d83138049638d9cee52b2f203dca85d67f67e516dfd"
+    },
+    {
+      "path": "/srv/lct/maks/vision-service/releases/cpu-f8-text-rescue-20260927/visual-neighbors.json",
+      "sha256": "9d44f8f1e755fa8ecc206f2d91e3fdda3a9c6d805a270cc56646bb359d3ed7a6"
+    },
+    {
+      "path": "/srv/lct/data/vision-retrieval/20260925/detectors/so400m-gatev2/index/index.npz",
+      "sha256": "10e1adcf4f3d52cbaf115bb30417f28281c9c76dfb832a4d927f4c676d6d3341"
+    }
+  ]
+}
