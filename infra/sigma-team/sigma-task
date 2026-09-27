@@ -1,0 +1,4 @@
+#!/usr/bin/python3
+from sigma_task import main
+
+main()

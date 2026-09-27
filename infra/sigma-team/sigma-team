@@ -1,0 +1,73 @@
+#!/usr/bin/python3
+import argparse
+import json
+import time
+
+from engine import Engine
+from github_api import GitHub
+from state_store import StateStore
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--config", default="/etc/sigma-hermes/team.json")
+    sub = parser.add_subparsers(dest="action", required=True)
+    sub.add_parser("poll")
+    sub.add_parser("serve")
+    control = sub.add_parser("control")
+    control.add_argument("command", choices=["pause", "resume", "status"])
+    configure = sub.add_parser("configure")
+    configure.add_argument("key", choices=["default_executor", "poll_interval"])
+    configure.add_argument("value")
+    retry = sub.add_parser("authorize-retry")
+    retry.add_argument("issue", type=int)
+    retry.add_argument("--requested-by", type=int, required=True)
+    retry.add_argument("--reason", required=True)
+    cancel = sub.add_parser("cancel")
+    cancel.add_argument("issue", type=int)
+    cancel.add_argument("--requested-by", type=int, required=True)
+    cancel.add_argument("--reason", required=True)
+    args = parser.parse_args()
+    with open(args.config) as src:
+        config = json.load(src)
+    store = StateStore(config.get("state_root", "/srv/agents/sigma/team"))
+    if args.action == "cancel":
+        request = store.request_cancel(args.issue, args.requested_by, args.reason)
+        print(json.dumps(request, ensure_ascii=False, indent=2))
+        return
+    if args.action in {"control", "configure", "authorize-retry"}:
+        with store.locked() as state:
+            if args.action == "control":
+                if args.command == "pause": state["paused"] = True
+                if args.command == "resume": state["paused"] = False
+            elif args.action == "configure":
+                settings = state.setdefault("settings", {})
+                if args.key == "default_executor":
+                    if args.value not in {"opencode", "codex"}: raise SystemExit("executor must be opencode or codex")
+                    settings[args.key] = args.value
+                else:
+                    interval = int(args.value)
+                    if not 30 <= interval <= 900: raise SystemExit("poll_interval must be 30..900 seconds")
+                    settings[args.key] = interval
+            elif args.action == "authorize-retry":
+                authorization = Engine.authorize_retry(state, args.issue, args.requested_by, args.reason)
+                print(json.dumps(authorization, ensure_ascii=False, indent=2))
+                return
+            print(json.dumps(state, ensure_ascii=False, indent=2))
+        return
+    engine = Engine(GitHub(), store, config)
+    if args.action == "poll":
+        print(engine.poll())
+        return
+    while True:
+        try:
+            print(engine.poll(), flush=True)
+        except Exception as exc:
+            print("POLL_ERROR " + type(exc).__name__, flush=True)
+        with store.locked() as state:
+            interval = state.get("settings", {}).get("poll_interval", config.get("poll_interval", 60))
+        time.sleep(max(30, min(900, int(interval))))
+
+
+if __name__ == "__main__":
+    main()
