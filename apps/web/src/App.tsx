@@ -12,7 +12,6 @@ import {
   Play,
   X,
 } from "@phosphor-icons/react";
-import { IconDroplet, IconGlassFull, IconMapPin } from "@tabler/icons-react";
 import {
   getCatalog,
   getRecommendations,
@@ -1068,11 +1067,11 @@ export function App({
                     <div className="result-shelf">
                       <CandidateImage candidate={shown} role="card" priority />
                       {(shown.sugar?.trim() || strength || region) && (
-                        <div className="result-facts" aria-label="Основные характеристики">
-                          {shown.sugar?.trim() && <div className="result-fact"><IconDroplet aria-hidden="true" /><span>{shown.sugar}</span></div>}
-                          {strength && <div className="result-fact"><IconGlassFull aria-hidden="true" /><span>{strength}</span></div>}
-                          {region && <div className="result-fact"><IconMapPin aria-hidden="true" /><span>{region}</span></div>}
-                        </div>
+                        <dl className="result-facts" aria-label="Основные характеристики">
+                          {shown.sugar?.trim() && <div className="result-fact"><dt>Сахар</dt><dd>{shown.sugar}</dd></div>}
+                          {strength && <div className="result-fact"><dt>Алкоголь</dt><dd>{strength}</dd></div>}
+                          {region && <div className="result-fact"><dt>Регион</dt><dd>{region}</dd></div>}
+                        </dl>
                       )}
                     </div>
                     {(resultOrigin === "catalog" ? catalogDemo : demoMode) && <span className="demo-label"><Check />{resultOrigin === "catalog" ? "Демо-карточка" : "Reference"}</span>}
@@ -1696,10 +1695,10 @@ function hasYear(year?: number): year is number {
   return typeof year === "number" && Number.isInteger(year) && year > 0;
 }
 function safeSourceUrl(value?: string) {
-  if (!value) return undefined;
+  if (!value || value !== value.trim() || /[\u0000-\u001f\u007f]/.test(value)) return undefined;
   try {
     const url = new URL(value);
-    return ["https:", "http:"].includes(url.protocol) && url.hostname && !url.username && !url.password ? url.href : undefined;
+    return ["https:", "http:"].includes(url.protocol) && url.hostname && !url.username && !url.password ? value : undefined;
   } catch { return undefined; }
 }
 function isPositiveFinite(value: number | undefined): value is number {

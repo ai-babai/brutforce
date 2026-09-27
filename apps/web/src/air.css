@@ -138,11 +138,11 @@ body { background: #f3f0e9; }
 #UI-007 .result-hero { display: flex; flex-direction: column; align-items: center; min-height: 0; margin: 0 -26px; padding: 0 26px 11px; text-align: center; background: radial-gradient(ellipse at 41% 35%,#f6ecde99,transparent 70%); }
 #UI-007 .result-shelf { display: grid; grid-template-columns: minmax(0,1fr) minmax(132px,42%); align-items: center; gap: 11px; width: 100%; min-height: 270px; }
 #UI-007 .result-shelf > img, #UI-007 .result-shelf > .missing-image { display: block; width: 100%; height: 255px; min-height: 255px; margin: 0; background: transparent; object-fit: contain; }
-#UI-007 .result-facts { display: grid; align-content: center; gap: 33px; min-width: 0; padding-left: 5px; text-align: left; }
-#UI-007 .result-fact { display: flex; align-items: center; gap: 11px; min-width: 0; font-size: 22px; line-height: 1.25; letter-spacing: -.025em; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
-#UI-007 .result-fact svg { flex: 0 0 22px; width: 22px; height: 22px; color: var(--wine); stroke-width: 1.6; }
-#UI-007 .result-fact:last-child:not(:first-child) { color: var(--muted); font-size: 18px; }
-#UI-007 .result-fact:last-child:not(:first-child) svg { opacity: .72; }
+#UI-007 .result-facts { display: grid; align-content: center; gap: 30px; min-width: 0; margin: 0; padding-left: 5px; text-align: left; }
+#UI-007 .result-fact { display: block; min-width: 0; padding: 0; border: 0; overflow-wrap: anywhere; }
+#UI-007 .result-fact dt { color: var(--muted); font-size: 11px; line-height: 1.4; }
+#UI-007 .result-fact dd { margin: 2px 0 0; color: var(--ink); text-align: left; font-size: 22px; line-height: 1.25; letter-spacing: -.025em; font-variant-numeric: tabular-nums; }
+#UI-007 .result-fact:last-child:not(:first-child) dd { color: var(--muted); font-size: 18px; }
 #UI-007 .demo-label { justify-content: center; font-size: 9px; }
 #UI-007 .result-winery { width: 100%; margin: 14px 0 8px; color: var(--muted); font-size: 13px; line-height: 1.4; overflow-wrap: anywhere; }
 #UI-007 .result-hero h2 { width: 100%; max-width: 380px; margin: 0; font-family: Onest,sans-serif; font-size: clamp(29px,8vw,40px); font-weight: 500; line-height: 1.13; letter-spacing: -.035em; overflow-wrap: anywhere; }
@@ -150,10 +150,11 @@ body { background: #f3f0e9; }
 #UI-007 .result-source span { margin-left: 7px; font-size: 17px; text-decoration: none; }
 #UI-007 .result-source:focus-visible { outline: 2px solid var(--wine); outline-offset: 3px; }
 #UI-007 .result-overview { margin: 19px 0 0; }
-#UI-007 .result-overview div { display: flex; align-items: center; min-height: 56px; gap: 14px; padding: 13px 0; border-bottom: 1px solid var(--line); font-size: 13px; }
+#UI-007 .result-overview div { display: flex; align-items: center; min-height: 56px; gap: 14px; padding: 13px 0; border-bottom: 0; font-size: 13px; }
+#UI-007 .result-overview div:not(:last-child) { border-bottom: 1px solid var(--line); }
 #UI-007 .result-overview dt { flex: 0 0 auto; color: var(--muted); }
 #UI-007 .result-overview dd { min-width: 0; overflow-wrap: anywhere; }
-#UI-007 .result-description { color: var(--muted); }
+#UI-007 .result-description { margin-top: 18px; border-top: 1px solid var(--line); color: var(--muted); }
 #UI-007 .result-description summary { display: flex; align-items: center; justify-content: space-between; min-height: 55px; color: var(--ink); font-size: 14px; cursor: pointer; }
 #UI-007 .result-description summary::after { content: "+"; color: var(--wine); font-size: 20px; font-weight: 300; }
 #UI-007 .result-description[open] summary::after { content: "−"; }
@@ -294,9 +295,12 @@ body { background: #f3f0e9; }
 @media (max-width: 350px) {
   #UI-007 .result-shelf { grid-template-columns: minmax(0,1fr) 132px; gap: 5px; }
   #UI-007 .result-facts { padding-left: 0; }
-  #UI-007 .result-fact { gap: 7px; font-size: 19px; }
-  #UI-007 .result-fact:last-child:not(:first-child) { font-size: 17px; }
-  #UI-007 .result-fact svg { flex-basis: 20px; width: 20px; height: 20px; }
+  #UI-007 .result-fact dd { font-size: 19px; }
+  #UI-007 .result-fact:last-child:not(:first-child) dd { font-size: 17px; }
+}
+@media (min-width: 351px) and (max-width: 390px) {
+  #UI-007.page { padding-left: 26px; padding-right: 26px; }
+  #UI-007 .result-hero { margin-left: -26px; margin-right: -26px; padding-left: 26px; padding-right: 26px; }
 }
 
 @media (max-height: 850px) {

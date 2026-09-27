@@ -28,7 +28,9 @@ const measures = () => {
     titleClipped: document.querySelector('.result-hero h2').scrollWidth > document.querySelector('.result-hero h2').clientWidth,
     font: styles('.result-fact'), heading: styles('.result-hero h2'), fact: styles('.result-fact'),
     bottleStyle: styles('.result-shelf img'),
-    overview: styles('.result-overview'), description: styles('.result-description') };
+    overview: styles('.result-overview'), description: styles('.result-description'),
+    separator: { afterOverview: getComputedStyle(document.querySelector('.result-overview div:last-child')).borderBottomWidth,
+      beforeDescription: getComputedStyle(document.querySelector('.result-description')).borderTopWidth } };
 };
 
 try {
@@ -44,6 +46,7 @@ try {
     await page.goto('http://127.0.0.1:5191/');
     await page.getByRole('button', { name: /По названию/i }).click();
     await page.getByRole('button', { name: /Открыть каталог/i }).click();
+    await page.mouse.move(0, 0);
     const listSurface = await page.locator('.candidate-list img').first().evaluate(el => ({
       background: getComputedStyle(el).backgroundColor,
       imageFit: getComputedStyle(el).objectFit,
@@ -61,10 +64,13 @@ try {
     assert.match(m.font.family, /Onest/); assert.match(m.heading.family, /Onest/);
     assert.equal(m.fact.background, 'rgba(0, 0, 0, 0)', `${width}: facts have no badge`);
     assert.equal(m.fact.border, '0px', `${width}: facts have no border`);
+    assert.deepEqual(m.separator, { afterOverview: '0px', beforeDescription: '1px' }, `${width}: exactly one divider`);
     assert.equal(m.bottleStyle.background, 'rgba(0, 0, 0, 0)', `${width}: alpha bottle not flattened`);
     assert.equal(await page.locator('.result-winery').textContent(), 'Массандра');
     assert.equal(await page.locator('.result-overview dd').nth(1).textContent(), 'Год не указан');
-    assert.equal(await page.locator('.result-facts').innerText(), 'сладкое\n17%\nКрым');
+    assert.deepEqual(await page.locator('.result-facts dt').allTextContents(), ['Сахар', 'Алкоголь', 'Регион']);
+    assert.deepEqual(await page.locator('.result-facts dd').allTextContents(), ['сладкое', '17%', 'Крым']);
+    assert.equal(await page.locator('.result-facts svg').count(), 0);
     assert.equal(await page.locator('.result-description').evaluate(el => el.open), false);
     await page.getByText('О вкусе и сочетаниях').click();
     assert.equal(await page.locator('.result-description').evaluate(el => el.open), true);
@@ -76,6 +82,13 @@ try {
     assert.equal(popup.url(), url);
     await popup.close();
     assert.equal(feedbackCalls, 0, `${width}: source click cannot submit feedback`);
+    await page.addStyleTag({ content: '#UI-007 .result-hero h2{font-size:64px}#UI-007 .result-fact dd{font-size:36px}#UI-007 .result-winery,#UI-007 .result-source{font-size:26px}#UI-007 .result-description summary{font-size:28px}' });
+    const enlarged = await page.evaluate(() => ({ overflow: document.documentElement.scrollWidth > innerWidth,
+      clipped: document.querySelector('.result-hero h2').scrollWidth > document.querySelector('.result-hero h2').clientWidth,
+      back: document.querySelector('#UI-007 .top button').getBoundingClientRect().width,
+      save: document.querySelector('.save-header-action').getBoundingClientRect().width }));
+    assert.ok(!enlarged.overflow && !enlarged.clipped && enlarged.back >= 44 && enlarged.save >= 44,
+      `${width}: enlarged text remains readable and actions reachable ${JSON.stringify(enlarged)}`);
     await page.getByRole('button', { name: 'Сохранить вино' }).click();
     assert.equal(await page.getByRole('button', { name: 'Удалить из сохранённых' }).count(), 1);
     await page.getByRole('button', { name: 'Назад' }).click();

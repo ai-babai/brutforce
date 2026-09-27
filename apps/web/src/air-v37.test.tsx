@@ -34,8 +34,9 @@ describe("FE-088 card behavior", () => {
     expect(facts.getByText("сладкое")).toBeVisible();
     expect(facts.getByText("17%")).toBeVisible();
     expect(facts.getByText("Крым")).toBeVisible();
-    expect(hero.querySelectorAll(".result-fact svg")).toHaveLength(3);
-    expect(hero.querySelector(".result-fact svg")?.textContent).not.toContain("%");
+    expect(hero.querySelectorAll(".result-fact svg")).toHaveLength(0);
+    expect([...hero.querySelectorAll(".result-fact dt")].map(node => node.textContent)).toEqual(["Сахар", "Алкоголь", "Регион"]);
+    expect([...hero.querySelectorAll(".result-fact dd")].map(node => node.textContent)).toEqual(["сладкое", "17%", "Крым"]);
     expect(hero.querySelector(".result-winery")).toHaveTextContent(/^Массандра$/);
     expect(within(document.querySelector(".result-overview") as HTMLElement).getByText("Год не указан")).toBeVisible();
     expect(screen.getByRole("heading", { name: port.name })).toBeVisible();
@@ -57,6 +58,12 @@ describe("FE-088 card behavior", () => {
     expect(image).toHaveAttribute("srcset", expect.stringContaining("/media/catalog/original/original.webp 1200w"));
     fireEvent.error(image);
     expect(screen.getByRole("img", { name: `Фото ${media.name} недоступно` })).toBeVisible();
+  });
+
+  it("AIR-041 renders only the one available sugar fact", async () => {
+    await openCard({ ...port, region: undefined, alcoholPercent: undefined });
+    expect([...document.querySelectorAll(".result-facts dt")].map(node => node.textContent)).toEqual(["Сахар"]);
+    expect([...document.querySelectorAll(".result-facts dd")].map(node => node.textContent)).toEqual(["сладкое"]);
   });
 
   it.each([2021, 0, undefined])("AIR-042 uses only positive structured year %s", async (year) => {
@@ -126,6 +133,24 @@ describe("FE-088 card behavior", () => {
     await userEvent.click(screen.getByRole("button", { name: /Другое вино/i }));
     expect(screen.getByRole("heading", { name: "Другое вино" })).toBeVisible();
     fireEvent.popState(window);
+    expect(screen.getByRole("button", { name: /Портвейн белый Алушта/i })).toBeVisible();
+  });
+
+  it("AIR-045 recommendations remain available after saving a card", async () => {
+    const recommended = { ...port, id: "recommendation", name: "Рекомендуемый портвейн", year: 2022 };
+    vi.stubGlobal("fetch", vi.fn((url: string) => Promise.resolve(response(
+      url.startsWith("/v2/catalog") ? page([port])
+        : url.startsWith("/v1/recommendations") ? { demo: false, candidates: [recommended] }
+          : { demo: false, candidates: [] },
+    ))));
+    render(<App />);
+    await userEvent.click(screen.getByRole("button", { name: /По названию/i }));
+    await userEvent.click(screen.getByRole("button", { name: /Открыть каталог/i }));
+    await userEvent.click(await screen.findByRole("button", { name: /Портвейн белый Алушта/i }));
+    await userEvent.click(screen.getByRole("button", { name: "Сохранить вино" }));
+    await userEvent.click(await screen.findByRole("button", { name: /Рекомендуемый портвейн/i }));
+    expect(screen.getByRole("heading", { name: "Рекомендуемый портвейн" })).toBeVisible();
+    await userEvent.click(screen.getByRole("button", { name: "Назад" }));
     expect(screen.getByRole("button", { name: /Портвейн белый Алушта/i })).toBeVisible();
   });
 });
