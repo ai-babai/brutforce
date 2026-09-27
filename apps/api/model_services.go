@@ -33,6 +33,7 @@ type modelServices struct {
 	search          *modelClient
 	recommendations *modelClient
 	vision          *visionClient
+	visualIndex     *recommendationIndex
 }
 
 type modelClient struct {
@@ -56,7 +57,7 @@ func configuredModelServices() modelServices {
 		}
 		return &modelClient{baseURL: strings.TrimRight(raw, "/"), catalogVersion: version, client: noRedirectHTTPClient()}
 	}
-	return modelServices{search: newClient(os.Getenv("SEARCH_SERVICE_URL")), recommendations: newClient(os.Getenv("RECOMMENDATION_SERVICE_URL")), vision: configuredVisionClient()}
+	return modelServices{search: newClient(os.Getenv("SEARCH_SERVICE_URL")), recommendations: newClient(os.Getenv("RECOMMENDATION_SERVICE_URL")), vision: configuredVisionClient(), visualIndex: configuredRecommendationIndex()}
 }
 
 func noRedirectHTTPClient() *http.Client {

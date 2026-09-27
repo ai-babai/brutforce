@@ -68,6 +68,11 @@ is optional; when supplied, it must be an existing private upload receipt.
 With a real display catalog and configured vision service, that receipt sends
 the stored original to ranked image recognition. The synthetic local mode
 keeps the receipt-gated demo behavior.
+For imported catalog versions, text search takes priority over `photoId` and
+uses the catalog even when `SEARCH_SERVICE_URL` points to the synthetic engine.
+`POST /v1/recommendations` reads the SHA-pinned offline SO400M visual-neighbor
+map from `RECOMMENDATION_INDEX_FILE` / `RECOMMENDATION_INDEX_SHA256` for real
+cards. These alternatives are visual, not taste-based or personalized.
 
 Successful responses have this shape:
 
