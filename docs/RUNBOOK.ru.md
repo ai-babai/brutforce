@@ -2,13 +2,13 @@
 
 Этот документ — операционная памятка команды по закреплённому комплекту и серверным выпускам. Внешнему читателю для первого запуска нужен [самостоятельный маршрут](SELF-HOST.ru.md) (минимальный режим без данных, Docker и полный профиль). [English entry](RUNBOOK.en.md) и [выпуск/откат PROD](../deploy/PIPELINE.md) — отдельные ссылки.
 
-Скрипты и SHA-манифест 50 файлов есть в репозитории. Передача внешних assets и запуск на чистом Linux ожидают проверки.
+Python-код CPU-сервиса, скрипты и SHA-манифест 32 файлов данных есть в репозитории. Передача внешних assets и запуск на чистом Linux ожидают проверки.
 
 ## Предварительные условия
 
 - Локальное синтетическое демо: Go 1.23, Node.js 22, npm; любая поддерживаемая ими ОС. Без базы и весов. Храните реальные фото в непубличной папке.
 - Реальный F8 CPU: Linux x86-64, Docker Engine и Compose v2, Python 3.11+, `curl`, `openssl`, память для модели и индекса. Минимальный объём памяти на чистом Linux не установлен. Перед оценкой дождитесь readiness: прежняя проба холодной загрузки заняла 15,453 с.
-- Внешние assets: код F8 с parent imports, веса и детектор, SO400M и препроцессинг, OCR-лексикон, индекс и metadata, slug allowlist, mapping витрины, media каталога и отдельный индекс рекомендаций. [f8-runtime.json](../deploy/f8-runtime.json) фиксирует лишь часть связки.
+- Внешние assets: веса детектора и SO400M, препроцессинг, индекс и metadata, slug allowlist, mapping витрины, media каталога и отдельный индекс рекомендаций. Код F8, parent imports и OCR-лексикон — в [apps/vision](../apps/vision/README.md). [f8-runtime.json](../deploy/f8-runtime.json) фиксирует лишь часть серверной связки.
 
 ## Локальное демо без ML
 
@@ -25,11 +25,11 @@ cd ../web && npm test && npm run build
 
 ## Полный CPU-профиль F8
 
-Попросите Максима Попкова (`ai-babai`) или Романа (`@MisterMolox`) передать через согласованный канал четыре части: F8 bundle, пакет каталога, media каталога и **точный файл** индекса рекомендаций. Веса, код F8 и данные отсутствуют в clone. Локальный bundle у Repro прошёл сверку 50/50 SHA; это пока не канал передачи эксперту. Сверьте выданный F8 bundle с [50 SHA](../deploy/assets/f8-cpu.sha256), а остальные части — с закреплёнными версиями и хешами через `preflight`. При отсутствии exact recommendation index прекратите настройку: visual-neighbors в F8 bundle не подходят.
+Попросите Максима Попкова (`ai-babai`) или Романа (`@MisterMolox`) передать через согласованный канал четыре части **данных**: F8 bundle (веса, индексы, metadata), пакет каталога, media каталога и **точный файл** индекса рекомендаций. Код F8 находится в clone в `apps/vision/`. Исторический локальный bundle Repro прошёл сверку 50/50 SHA вместе с кодом; после разделения проверяйте данные по [32 SHA](../deploy/assets/f8-cpu.sha256), остальное — через `preflight`. Частный комплект для переноса [подготовлен локально](ASSET-TRANSFER.ru.md), публичный URL и независимый clean-Linux прогон не подтверждены. Visual-neighbors в F8 bundle не заменяют индекс рекомендаций.
 
 Инструменты уже в Git: [экспорт и проверка bundle](../scripts/asset-bundle.py), [Compose](../deploy/compose.yaml), [пример env](../deploy/docker.env.example), [CLI запуска](../scripts/docker-local.sh). Не заменяйте недостающие assets похожими файлами.
 
-Если bundle ещё нужно собрать, оператор задаёт вне Git JSON-карту семи групп `overlay`, `parent`, `onnx`, `index`, `catalog`, `models`, `ocr`. Значения — каталоги-источники. `export` сверяет каждый файл с SHA-манифестом, собирает bundle и проверяет его снова. Для готового bundle достаточно `verify`:
+Если bundle ещё нужно собрать, оператор задаёт вне Git JSON-карту шести групп `overlay`, `onnx`, `index`, `catalog`, `models`, `ocr`. Значения — каталоги-источники данных. `export` сверяет каждый файл с SHA-манифестом, собирает bundle без Python-кода и проверяет его снова. Для готового bundle достаточно `verify`:
 
 ```sh
 python3 scripts/asset-bundle.py export --sources /absolute/path/to/operator-sources.json --out /absolute/path/to/new-f8-bundle
@@ -48,7 +48,7 @@ mkdir -p "$DATA_ROOT"
 DATA_ROOT=$(realpath "$DATA_ROOT")
 ```
 
-Под этим корнем должны быть разные `f8-bundle/` (50 файлов), `catalog-package/` (с `manifest.json`), `catalog-media/`, `recommendations/index.json` (один точный файл) и `secrets/` (два файла паролей). Реальное расположение может отличаться; перенесите в `.env.local` развёрнутые абсолютные пути, а не литерал `$DATA_ROOT`.
+Под этим корнем должны быть разные `f8-bundle/` (32 файла данных), `catalog-package/` (с `manifest.json`), `catalog-media/`, `recommendations/index.json` (один точный файл) и `secrets/` (два файла паролей). Реальное расположение может отличаться; перенесите в `.env.local` развёрнутые абсолютные пути, а не литерал `$DATA_ROOT`.
 
 После получения и размещения частей выполните из корня клона на Linux x86-64:
 
@@ -64,7 +64,7 @@ DATA_ROOT=$(realpath "$DATA_ROOT")
 
    Подставьте развернутый абсолютный путь этого каталога **вне клона** в `SECRETS_DIR` (не литерал `$HOME`). Не печатайте значения и не помещайте их в аргументы команд, Docker layers или Actions artifacts. Не запускайте этот блок повторно на сохранённой БД: пароли перестанут совпадать с созданной ролью.
 2. При первой настройке `cp deploy/docker.env.example deploy/.env.local`. Впишите абсолютные пути: `ASSET_DIR` → `f8-bundle/`, `CATALOG_PACKAGE_DIR` → `catalog-package/`, `CATALOG_MEDIA_DIR` → `catalog-media/`, `RECOMMENDATION_INDEX_FILE` → `recommendations/index.json` (**файл**), `SECRETS_DIR` → `secrets/`. Все пять путей начинаются с развёрнутого `$DATA_ROOT`. Сохраните закреплённые `CATALOG_VERSION` и `RECOMMENDATION_INDEX_SHA256`, пока владелец не выдаст согласованный комплект. `.env.local` исключён из Git; пароли хранятся только в файлах из шага 1.
-3. Выполните команды ниже. `preflight` проверяет 50 SHA, каталожный manifest, файл рекомендаций, секреты и Compose. `up` строит образы, мигрирует локальную БД, импортирует каталог и ждёт healthy vision/web. `smoke` проверяет HTTP health/catalog.
+3. Выполните команды ниже. `preflight` проверяет 32 SHA данных, каталожный manifest, файл рекомендаций, секреты и Compose. `up` строит образы из кода репозитория, мигрирует локальную БД, импортирует каталог и ждёт healthy vision/web. `smoke` проверяет HTTP health/catalog.
 
 ```sh
 sh scripts/docker-local.sh preflight
@@ -76,7 +76,7 @@ sh scripts/docker-local.sh smoke
 
 Для остановки выполните `sh scripts/docker-local.sh stop`. Команда `sh scripts/docker-local.sh down` удаляет контейнеры и сеть **без `-v`**: БД, uploads, feedback и snapshots остаются в volumes. Повторный `up` использует их снова. Для смены версии каталога заранее подготовьте миграцию и восстановление; `docker compose down -v` удалит сохранённые данные.
 
-Синтаксис скриптов и `docker compose config` проверены. Repro собрал оба linux/amd64-образа на OrbStack; исправление web-сборки вошло в приватный `main` через PR #105. Catalog/media прошли dry-run DQ001–008, DQ011 требует baseline; импорт не выполнялся. Exact index рекомендаций пока не передан, поэтому полный Compose не запускался. Чистый Linux и known-answer через Compose остаются открытыми. Tesseract 5.3 в образе не равен серверному 5.5: OCR parity ожидает проверки. Работающий [PROD](https://app.dzap.pw) запущен через systemd.
+На Mac/OrbStack оба linux/amd64-образа собраны после переноса Python-кода в Git; распакованный комплект прошёл preflight, полный Compose запустил vision и импорт 2 038 карточек на пустой БД, health/catalog smoke пройден. Для нового каталога база создаётся без демонстрационного seed, а DQ011 сравнивает с явным пустым снимком. Чистый Linux и known-answer по фото остаются открытыми. Tesseract в образе может отличаться от серверного 5.5: OCR parity ожидает проверки. Работающий [PROD](https://app.dzap.pw) запущен отдельно через systemd.
 
 Контрольный конкурсный запрос к **уже работающему реальному** API с разрешённым локальным фото (не использовать в демо без F8):
 

@@ -712,6 +712,16 @@ func export(ctx context.Context, db snapshotQuerier) (Snapshot, error) {
 		FROM catalog_state s JOIN catalog_versions v ON v.version=s.version
 		WHERE s.singleton`).Scan(&s.Version, &s.ManifestSHA256)
 	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			var count int
+			if err := db.QueryRowContext(ctx, "SELECT COUNT(*) FROM catalog_items").Scan(&count); err != nil {
+				return s, err
+			}
+			if count == 0 {
+				s.Wines = []catalogmodel.Wine{}
+				return s, nil
+			}
+		}
 		return s, err
 	}
 	rows, err := db.QueryContext(ctx, "SELECT id,slug,name,winery,year,image,description,metadata FROM catalog_items ORDER BY display_order")

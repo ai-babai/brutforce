@@ -38,6 +38,12 @@ func Seed(ctx context.Context, db *sql.DB, dir string) error {
 	return err
 }
 func Migrate(ctx context.Context, url, dir string) error {
+	return migrate(ctx, url, dir, true)
+}
+func MigrateSchema(ctx context.Context, url, dir string) error {
+	return migrate(ctx, url, dir, false)
+}
+func migrate(ctx context.Context, url, dir string, seed bool) error {
 	db, err := Open(url)
 	if err != nil {
 		return err
@@ -49,5 +55,8 @@ func Migrate(ctx context.Context, url, dir string) error {
 	if err = goose.UpContext(ctx, db, dir); err != nil {
 		return err
 	}
-	return Seed(ctx, db, dir)
+	if seed {
+		return Seed(ctx, db, dir)
+	}
+	return nil
 }

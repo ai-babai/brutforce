@@ -4,6 +4,8 @@
 !apps/api/**
 !apps/web/
 !apps/web/**
+!apps/vision/
+!apps/vision/**
 !scripts/
 !scripts/docker-web-proxy.go
 !scripts/docker-bootstrap.go

@@ -3,6 +3,34 @@
 set -eu
 root=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
 envfile=${DOCKER_ENV_FILE:-"$root/deploy/.env.local"}
+if [ "${1:-}" = init ]; then
+  data_root=${2:-"$HOME/brutforce-local"}
+  test -d "$data_root/f8-bundle" && test -d "$data_root/catalog-package" &&
+    test -d "$data_root/catalog-media" && test -f "$data_root/recommendations/index.json" || {
+      echo 'Extract the data archives into DATA_ROOT before init' >&2; exit 1;
+    }
+  data_root=$(CDPATH= cd -- "$data_root" && pwd -P)
+  test ! -e "$envfile" || { echo "Environment file already exists: $envfile" >&2; exit 1; }
+  (umask 077
+    mkdir -p "$data_root/secrets"
+    chmod 700 "$data_root/secrets"
+    for name in db_password app_password; do
+      test -e "$data_root/secrets/$name" || openssl rand -hex 32 > "$data_root/secrets/$name"
+    done
+    while IFS= read -r line; do
+      case $line in
+        ASSET_DIR=*) printf 'ASSET_DIR=%s/f8-bundle\n' "$data_root" ;;
+        CATALOG_PACKAGE_DIR=*) printf 'CATALOG_PACKAGE_DIR=%s/catalog-package\n' "$data_root" ;;
+        CATALOG_MEDIA_DIR=*) printf 'CATALOG_MEDIA_DIR=%s/catalog-media\n' "$data_root" ;;
+        RECOMMENDATION_INDEX_FILE=*) printf 'RECOMMENDATION_INDEX_FILE=%s/recommendations/index.json\n' "$data_root" ;;
+        SECRETS_DIR=*) printf 'SECRETS_DIR=%s/secrets\n' "$data_root" ;;
+        *) printf '%s\n' "$line" ;;
+      esac
+    done < "$root/deploy/docker.env.example" > "$envfile"
+  )
+  echo "Local configuration written to $envfile"
+  exit 0
+fi
 test -f "$envfile" || { echo 'Set DOCKER_ENV_FILE to a private copy of deploy/docker.env.example' >&2; exit 1; }
 set -a
 . "$envfile"
@@ -41,5 +69,5 @@ case ${1:-} in
     ;;
   stop) compose stop ;;
   down) compose down ;; # no -v: DB, uploads, feedback and snapshots survive
-  *) echo 'usage: scripts/docker-local.sh preflight|up|smoke|stop|down' >&2; exit 64 ;;
+  *) echo 'usage: scripts/docker-local.sh init [DATA_ROOT]|preflight|up|smoke|stop|down' >&2; exit 64 ;;
 esac

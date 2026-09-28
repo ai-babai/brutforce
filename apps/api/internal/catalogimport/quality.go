@@ -108,7 +108,7 @@ func applyRemovalComparison(r *QualityReport, wines []catalogmodel.Wine, previou
 	}
 	c := &r.Cases[caseIndex]
 	c.Failures = nil
-	if len(previous.Wines) == 0 {
+	if previous.Wines == nil {
 		c.Status, c.Summary, r.Status = "needs_baseline", "previous accepted snapshot is required for removal comparison", "failed"
 		return
 	}
@@ -171,7 +171,7 @@ func ReadSnapshot(path string) (Snapshot, error) {
 	if err = json.Unmarshal(raw, &s); err != nil {
 		return s, err
 	}
-	if len(s.Wines) == 0 {
+	if s.Wines == nil {
 		return s, errors.New("snapshot has no wines")
 	}
 	return s, nil

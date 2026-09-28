@@ -8,11 +8,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends libgomp1 tesser
     useradd -u 10002 -g 10002 -M -s /usr/sbin/nologin vision
 COPY --from=wheels /install/ /usr/local/
 COPY scripts/docker-vision-bridge.py /usr/local/bin/docker-vision-bridge.py
+COPY apps/vision/ /app/vision/
 ENV HF_HOME=/assets/models HF_HUB_OFFLINE=1 HF_HUB_DISABLE_TELEMETRY=1 \
     TRANSFORMERS_OFFLINE=1 TOKENIZERS_PARALLELISM=false PYTHONDONTWRITEBYTECODE=1 \
     OMP_NUM_THREADS=6 MKL_NUM_THREADS=6 MALLOC_ARENA_MAX=2 PYTHONUNBUFFERED=1 \
     NIGHT_SO_ONNX_DIR=/assets/onnx NIGHT_SO_ONNX_THREADS=6 \
-    F0_BASE_CODE_DIR=/assets/parent F8_OCR_LEXICON_SPEC=/assets/overlay/spec/lexicon.json \
+    F0_BASE_CODE_DIR=/app/vision/parent F8_OCR_LEXICON_SPEC=/app/vision/overlay/spec/lexicon.json \
     TESSDATA_PREFIX=/assets/ocr
 COPY scripts/docker-vision-health.py /usr/local/bin/docker-vision-health.py
 USER 10002:10002
