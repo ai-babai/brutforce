@@ -15,6 +15,7 @@ Built for the **Digital Transformation Leaders 2026** challenge from **Rosselkho
 - [Quick start](#quick-start)
 - [Supply your data](#supply-your-data)
 - [Call the contest API](#call-the-contest-api)
+- [Recognition model](#recognition-model)
 - [Architecture at a glance](#architecture-at-a-glance)
 - [Interface](#interface)
 - [Research and development checks](#research-and-development-checks)
@@ -59,19 +60,32 @@ For a local full-stack installation, replace the URL with `http://127.0.0.1:8097
 
 The **application** follows a different flow: `POST /v1/photos` stores the image and returns an `id`; `POST /v1/search` with JSON `{"photoId":"returned-id"}` returns candidates for the UI. Name search uses `GET /v2/catalog?q=...`. See the [interactive API docs](https://app.dzap.pw/api/docs) and the [application boundary](apps/api/README.md#boundary-and-contract).
 
+## Recognition model
+
+**CPU F8 · label detection → visual retrieval → answer verification.** This is image retrieval, not wine-description generation: it returns ranked `slug` identifiers from the organizer catalog.
+
+**01 / Locate the label.** RT-DETR and OWLv2 help select a bottle or label region. The service also handles frames where that region cannot be isolated unambiguously.
+
+**02 / Retrieve candidates.** SigLIP2 SO400M encodes the image into visual features, which are compared with a pinned index of reference entries. Model weights and the index live outside Git.
+
+**03 / Verify the `slug`.** An allowlist of organizer identifiers, text confirmation, and OCR help resolve ambiguous cases. If an exact match cannot be established, the API reports that outcome instead of presenting a similar wine as exact.
+
+**Recommendations are separate.** A v3 index suggests related *display cards* using text, attributes, and winery. It neither recognizes the photo nor proves those wines match its label. See the [CPU service](apps/vision/README.md), [external asset inventory](deploy/assets/INVENTORY.md), and [retrieval architecture](ARCHITECTURE.md#модель-и-поиск).
+
 ## Architecture at a glance
 
 ```mermaid
 flowchart LR
-    web["Browser · React"] --> api["Go API"]
-    contest["Contest client · image"] --> api
-    api -->|cards and name search| catalog[(PostgreSQL · display catalog)]
-    api -->|photo search| vision["CPU vision · model and index"]
-    vision -->|slug| api
-    api -->|similar cards| recommendations[(Recommendation index)]
+    web["Mobile web · React"] -->|photo → photoId → search| api["Go API · contract boundary"]
+    contest["Contest client · image"] -->|eval/predict| api
+    api -->|image bytes| vision["CPU F8 · detection + SO400M + OCR"]
+    vision <-->|reference lookup| visual[("Visual index · organizer slugs")]
+    vision -->|ranked slugs| api
+    api -->|name search and existing card| catalog[("PostgreSQL · display catalog")]
+    api -->|related cards| recommendations[("Separate recommendation index v3")]
 ```
 
-The app uses `/v1/photos` followed by `/v1/search` with a `photoId`. A recognized organizer slug without a matching display card is not replaced by an unrelated wine. CPU serving source is in [apps/vision/](apps/vision/README.md). See the [full architecture](ARCHITECTURE.md).
+The contest API can return a verified organizer `slug` without a display card. The app uses `/v1/photos` → `/v1/search` and displays only existing cards; a missing card is never replaced with an unrelated wine. Name search reads PostgreSQL without the model, while recommendations use their own index. See the [full architecture and photo flow](ARCHITECTURE.md).
 
 ## Interface
 
@@ -118,5 +132,5 @@ During agent-assisted development, we captured API and UI-state behavior as scen
 
 - [Live app](https://app.dzap.pw) · [repository](https://github.com/ai-babai/brutforce) · [documentation](docs/README.md) · [verification results](docs/SOLUTION.md).
 - The contest artwork and RSHB mark come from the participant-provided “ЛЦТ2026 Шаблон презентации” template; the team mark uses the previously favored concept 01, and the Svoe Vino logo comes from the app. The mascot home screen is from an app design review; search and card captures are from the BrutForce mobile demo.
-- The repository is currently private; cloning requires access. A presentation URL is not confirmed.
+- The repository is public to read and clone; a code-reuse license has not been agreed separately. A presentation URL is not confirmed.
 - Weights and data are outside Git. Public access does not establish redistribution rights. Full Compose health/catalog checks passed on Mac/OrbStack with linux/amd64 containers; clean-Linux and known-photo checks remain outstanding.
