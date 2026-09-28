@@ -33,8 +33,8 @@ distinct PostgreSQL `id`; it never constructs a card from model text.
 Contest prediction returns only the first organizer-verified slug. It does
 not require a display card: the competition catalog and the app's imported
 display catalog have different versions and coverage. A deliberate
-abstention returns HTTP 200 with its action and no slug, which the organizer
-script records as null. Upstream transport/validation/catalog failures return
+abstention returns HTTP 200 with its action and an empty slug, which the
+organizer script records as null. Upstream transport/validation/catalog failures return
 non-200 errors, not a successful abstention. The original organizer script
 must receive an explicit endpoint because its default port may belong to
 another service on Sigma.

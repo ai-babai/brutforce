@@ -86,6 +86,8 @@ curl --fail-with-body --max-time 10 -F "image=@/path/to/approved-sample.jpg" htt
 
 Ожидается HTTP 200/201 и JSON с непустым `slug`, равным известному ответу для фото. Один ответ подтверждает этот случай, общая accuracy требует отдельного набора. В приложении `POST /v1/photos` принимает поле `photo`, а `POST /v1/search` — JSON с `photoId`; [контракт](../contracts/vision-serving.md). Личные фото не передают в PR и логи.
 
+При подтверждённом отсутствии совпадения или недостаточной информации конкурсный API возвращает HTTP 200 с `{"slug":"","action":"no_match"}` либо `action: "insufficient_information"`. Оригинальный скрипт записывает такой пустой slug как `null`; это не успешное распознавание. Если slug организаторов существует, но карточки нет в каталоге витрины, конкурсный API сохраняет этот slug, а приложение честно показывает «Карточка пока недоступна». Технические ошибки не превращаются в пустой slug.
+
 ## Обновление, PROD и откат
 
 Доступны TEST <https://test.ops.dzap.pw> и [PROD](https://app.dzap.pw): app `d26afa3`, candidate `b0428147…`, CPU F8, выпуск 28 сентября 2026. Назначенный оператор сверяет release archive, каталог, модель, mapping, индекс рекомендаций и policy по [PIPELINE](../deploy/PIPELINE.md). Данные, uploads и credentials PROD отделены от TEST.

@@ -854,6 +854,7 @@ export function App({
                   ? "Проверяем похожие записи в каталоге."
                   : "Сверяем снимок с винами в каталоге."}
               </p>
+              <div className="air-search-progress" aria-hidden="true"><span /></div>
               <MascotScene scene="walk" />
               <div className="air-waiting-discovery">
               {photo && lastRequest.current.hasPhoto && (
