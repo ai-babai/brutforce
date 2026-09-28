@@ -163,6 +163,7 @@ body { background: #f3f0e9; }
 #UI-007 .result-description p { margin: 0 0 18px; font-size: 13px; line-height: 1.6; white-space: pre-line; overflow-wrap: anywhere; }
 #UI-007 .recommendations { margin-top: 24px; padding-top: 20px; border-color: var(--line); }
 #UI-007 .recommendations h3 { font-family: Onest,sans-serif; font-weight: 500; }
+#UI-007 .recommendation-list { grid-auto-rows: 1fr; }
 #UI-007 .recommendation-list button,
 #UI-007 .recommendation-list button.candidate-leader {
   grid-template-columns: 62px minmax(0,1fr) 20px;
