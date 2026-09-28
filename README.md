@@ -4,7 +4,7 @@
 
 **Авторы проекта:** Максим Попков ([Telegram @skifmax](https://t.me/skifmax)) и Роман Карандашов ([GitHub MisterMolox](https://github.com/MisterMolox)). [English](README.en.md).
 
-[Попробовать приложение](https://app.dzap.pw) · [Запустить самостоятельно](docs/SELF-HOST.ru.md) · [Как устроено решение](ARCHITECTURE.md) · [Результаты и ограничения](docs/SOLUTION.md)
+[Попробовать приложение](https://app.dzap.pw) · [Запустить самостоятельно](docs/SELF-HOST.ru.md) · [Скачать данные](https://disk.yandex.ru/d/dHAXDPcitS-ZJQ) · [Архитектура](ARCHITECTURE.md) · [Результаты и ограничения](docs/SOLUTION.md)
 
 ## Что можно запустить
 
@@ -23,35 +23,25 @@ docker compose -f deploy/compose.demo.yaml up --build -d --wait
 
 Откройте <http://127.0.0.1:8097/>. Это демонстрация интерфейса и поиска по восьми пробным карточкам, **без распознавания этикетки**. Остановка: `docker compose -f deploy/compose.demo.yaml down`. [Запуск без Docker](docs/SELF-HOST.ru.md#минимальный-режим-без-docker) и [полный запуск с данными](docs/SELF-HOST.ru.md#полный-режим-с-docker) описаны отдельно.
 
-Код CPU-распознавания находится в [apps/vision/](apps/vision/README.md). Для полного режима отдельно нужны веса, визуальный индекс и список допустимых slug, каталог с изображениями и индекс рекомендаций. **Данные и веса не входят в Git.** Публичной ссылки на полный комплект пока нет; проверка SHA позволяет проверить полученные архивы, но не скачать их. Полный Compose с этим комплектом запущен и прошёл проверки готовности на Mac/OrbStack (linux/amd64); отдельный прогон на чистом Linux с известным фото ещё нужен — [подробности](docs/SELF-HOST.ru.md#состояние-полного-комплекта).
+**Полный режим:** [скачайте все 14 файлов комплекта](https://disk.yandex.ru/d/dHAXDPcitS-ZJQ), проверьте SHA-256 и распакуйте архив весов из шести частей [по инструкции](docs/ASSET-TRANSFER.ru.md#как-восстановить-на-linux). Затем из корня клона:
 
-## Карта модулей и данных
-
-```text
-brutforce/                          РЕПОЗИТОРИЙ: код, без тяжёлых данных
-|-- apps/web/                        Мобильный интерфейс (React/TypeScript)
-|-- apps/api/                        Go API: фото, поиск, карточки, рекомендации
-|   `-- migrations/                  Схема PostgreSQL для каталога витрины
-|-- apps/vision/                     Python CPU: детектор, энкодер, OCR, ранжирование
-|   |-- overlay/, parent/            Закреплённые модули сервиса
-|   `-- overlay/spec/lexicon.json    Правила OCR-подтверждения
-|-- deploy/compose.demo.yaml         Демо: API + интерфейс, без модели и БД
-|-- deploy/compose.yaml              Полный режим: web, vision, migrate, postgres
-|-- scripts/docker-local.sh          Проверка и запуск полного Compose
-`-- contracts/                       Форматы запросов, ответов и данных
-
-~/brutforce-local/                   ДАННЫЕ: отдельно от Git, для полного режима
-|-- f8-bundle/                        ДАННЫЕ распознавания и каталог организаторов
-|   |-- onnx/, models/hub/, ocr/      Веса, processor и языки OCR
-|   |-- index/index.npz              Векторы эталонных фото (НЕ картинки витрины)
-|   |-- catalog/catalog-bundle.json  Slug и метаданные эталонов организаторов
-|   `-- overlay/organizer-slugs.json Допустимые slug для Go API
-|-- catalog-package/                 2 038 карточек витрины, manifest, aliases
-|-- catalog-media/{400,800,original}/ WebP для карточек приложения
-|-- recommendations/index.json       Похожие карточки по тексту/атрибутам, НЕ ML-векторы
-`-- secrets/                          Локальные пароли БД и приложения (создать самим)
+```sh
+sh scripts/docker-local.sh init "$HOME/brutforce-local"
+sh scripts/docker-local.sh up
+sh scripts/docker-local.sh smoke
 ```
 
-После получения и распаковки комплекта данных команда `sh scripts/docker-local.sh init "$HOME/brutforce-local"` создаёт локальную конфигурацию и пароли; `sh scripts/docker-local.sh up` запускает полный профиль. [Как распаковать и проверить данные](docs/ASSET-TRANSFER.ru.md) · [требования и остановка](docs/SELF-HOST.ru.md#полный-режим-с-docker) · [полная схема запросов](ARCHITECTURE.md). Организатор отправляет `POST /v1/eval/predict` с multipart-полем `image` и получает один `{"slug":"..."}`. Приложение загружает фото через `/v1/photos` и ищет по `photoId` через `/v1/search`.
+`up` уже выполняет `preflight`. Код CPU-распознавания — в [apps/vision/](apps/vision/README.md), а веса, индекс, каталог и изображения — только во внешнем комплекте. Публичный доступ к файлам не означает разрешения распространять модели, каталог и фотографии. [Требования и ограничения полного запуска](docs/SELF-HOST.ru.md#полный-режим-с-docker).
+
+## Краткая архитектура
+
+```text
+Браузер (React) --> Go API --> PostgreSQL (карточки каталога)
+                         |----> Python CPU (модель + индекс эталонов) --> slug
+                         `----> индекс рекомендаций (отдельно от модели)
+Конкурсный клиент --> POST /v1/eval/predict --> Go API --> проверенный slug
+```
+
+Организатор отправляет multipart-поле `image` и получает `{"slug":"..."}`. Приложение загружает фото через `/v1/photos` и ищет по `photoId` через `/v1/search`; если у slug нет карточки витрины, чужое вино не подставляется. [Полная схема](ARCHITECTURE.md) · [Состав внешних данных](docs/SELF-HOST.ru.md#данные-для-полного-режима).
 
 **Материалы для оценки:** [репозиторий ai-babai/brutforce](https://github.com/ai-babai/brutforce), [документация](docs/README.md), [работающий прототип](https://app.dzap.pw). Ссылка на презентацию пока не подтверждена. Разрешение на распространение данных и весов проверяется отдельно.
