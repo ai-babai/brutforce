@@ -11,6 +11,8 @@
 !scripts/docker-migrate.sh
 !scripts/docker-vision-bridge.py
 !scripts/docker-vision-health.py
+!scripts/report-results.mjs
+!scripts/report-results.d.mts
 !deploy/
 !deploy/assets/
 !deploy/assets/vision-requirements.txt
