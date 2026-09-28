@@ -1,0 +1,25 @@
+name: brutforce-demo
+
+services:
+  app:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile.web
+    image: brutforce-web:local
+    command: ["/usr/local/bin/api"]
+    environment:
+      ADDRESS: 0.0.0.0:8097
+      WEB_ROOT: /app/web
+      UPLOAD_DIR: /app/uploads
+    volumes:
+      - uploads:/app/uploads
+    ports:
+      - "127.0.0.1:8097:8097"
+    healthcheck:
+      test: ["CMD", "/usr/local/bin/web-proxy", "--healthcheck-demo"]
+      interval: 5s
+      timeout: 4s
+      retries: 12
+
+volumes:
+  uploads:

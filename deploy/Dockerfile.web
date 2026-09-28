@@ -21,7 +21,7 @@ RUN CGO_ENABLED=0 go build -trimpath -o /out/web-proxy ./scripts/docker-web-prox
 
 FROM debian:bookworm-slim@sha256:3783cc01769c7b2b1b83a5c5ad96c815348e28ed7da68e2e3687004faa906251
 RUN groupadd -g 10001 brutforce && useradd -u 10001 -g 10001 -M -s /usr/sbin/nologin brutforce && \
-    mkdir -p /app/web /app/migrations && chown -R brutforce:brutforce /app
+    mkdir -p /app/web /app/migrations /app/uploads && chown -R brutforce:brutforce /app
 COPY --from=backend /out/ /usr/local/bin/
 COPY --from=backend /src/apps/api/migrations/ /app/migrations/
 COPY --from=frontend /src/apps/web/dist/ /app/web/
