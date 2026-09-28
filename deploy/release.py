@@ -284,8 +284,10 @@ def target_config(envname, cfg):
                                                                   '/srv/lct/data/prod/photos')),
                 'PROD unit or private uploads/feedback paths are not ready')
         route=pathlib.Path('/etc/caddy/sites-enabled/lct-previews.caddy').read_text()
-        require('root * /srv/lct/prod/public' in route and 'reverse_proxy 127.0.0.1:8104' not in route,
-                'First PROD needs the original Caddy placeholder for reversible publish')
+        published=(pathlib.Path(cfg['path'])/'current').is_symlink()
+        require((route.count('reverse_proxy 127.0.0.1:8104')==1 if published else
+                 'root * /srv/lct/prod/public' in route and 'reverse_proxy 127.0.0.1:8104' not in route),
+                'PROD Caddy route differs from the current release state')
 
 def verified_recommendations(state, runtime, r=None):
     require(state.get('appCandidateId') and state.get('catalogVersion') and state.get('sha256'),
@@ -573,10 +575,30 @@ def switch(envname, candidate, action='deploy'):
                 'Explicit fast-prod-v1 approval for this exact bundle required')
     runtime=None
     vision_started=False
-    previous_vision_env=None
     vision_env=pathlib.Path(cfg.get('visionRuntimeEnv',f'/srv/lct/{"stage" if envname=="test" else "prod"}/vision-runtime.env'))
     previous_vision_env=vision_env.read_text() if vision_env.exists() else None
     if r.get('mode')=='real': runtime=f8_runtime(target)
+    current=pathlib.Path(cfg['path'])/'current'; previous=str(current.resolve()) if current.is_symlink() else None
+    state_path=ROOT/'environments'/f'{envname}.json'; previous_state=read(state_path) if state_path.exists() else None
+    migration_files=lambda folder: {str(p.relative_to(folder/'migrations')):digest(p) for p in (folder/'migrations').rglob('*.sql')}
+    prod_state_path=ROOT/'environments'/'prod.json'
+    prod_state=read(prod_state_path) if prod_state_path.exists() else None
+    shared_f8=envname=='test' and prod_state is not None and prod_state.get('mode')=='real'
+    code_only=bool(previous and previous_state and previous_state.get('catalogManifestSHA256')==r.get('catalogManifestSHA256')
+                   and previous_state.get('catalogVersion')==r.get('catalogVersion') and
+                   migration_files(pathlib.Path(previous))==migration_files(target))
+    if shared_f8 or (envname=='prod' and previous):
+        pinned=prod_state
+        require(pinned is not None and pinned.get('mode')=='real' and r['mode']=='real' and
+                code_only and previous_state.get('candidateId') and
+                pathlib.Path(previous).name==previous_state['revision'] and
+                pinned.get('modelVersion')==r['modelVersion'] and
+                pinned.get('catalogVersion')==r['catalogVersion'] and
+                pinned.get('catalogManifestSHA256')==r.get('catalogManifestSHA256'),
+                'Live shared F8 allows only a code-only release with unchanged catalog, model and migrations')
+        pinned_runtime=read(ROOT/'packages'/pinned['revision']/'evidence'/'f8-runtime.json')
+        require(runtime==pinned_runtime, 'Live shared F8 assets or index differ from pinned PROD')
+        f8_health(runtime)
     recommendations=None
     if envname=='test' and runtime:
         state_path_rec=ROOT/'environments'/'test-recommendations.json'
@@ -594,17 +616,13 @@ def switch(envname, candidate, action='deploy'):
         recommendations=recommendation_receipt(candidate,r,runtime)
         require(approval.get('recommendationSHA256')==recommendations['sha256'] and
                 approval.get('modelVersion')==r['modelVersion'], 'Recommendation asset differs from approved bundle')
-        require(previous_vision_env is None, 'First PROD has an unexpected existing vision env')
+        require((previous_vision_env==test_vision_env(runtime,recommendations)) if previous else
+                previous_vision_env is None, 'PROD vision env differs from pinned shared F8')
         f8_health(runtime,cfg.get('visionURL','http://127.0.0.1:8126'))
         f8_photo(cfg.get('visionURL','http://127.0.0.1:8126'),runtime)
-    else:
-        prod=ROOT/'environments'/'prod.json'
-        require(not prod.exists() or read(prod).get('mode')!='real',
-                'Pinned shared PROD F8 forbids TEST deployments that can stop or change it')
-    current=pathlib.Path(cfg['path'])/'current'; previous=str(current.resolve()) if current.is_symlink() else None
-    if envname=='prod': require(previous is None, 'fast-prod-v1 supports first PROD rollout only')
-    state_path=ROOT/'environments'/f'{envname}.json'; previous_state=read(state_path) if state_path.exists() else None
-    migration_files=lambda folder: {str(p.relative_to(folder/'migrations')):digest(p) for p in (folder/'migrations').rglob('*.sql')}
+    if shared_f8:
+        require(previous_vision_env==test_vision_env(runtime,recommendations),
+                'TEST vision env differs from pinned shared F8')
     if action=='rollback' and previous:
         require(migration_files(pathlib.Path(previous))==migration_files(target), 'Schema differs; operator must establish compatible rollback')
     if envname=='prod': command('sudo','-n','/usr/local/sbin/lct-release-service','backup-prod')
@@ -636,7 +654,7 @@ def switch(envname, candidate, action='deploy'):
         fresh=read(preflight); preflight.unlink(missing_ok=True)
         fresh_manifest,fresh_validator=validate_data_report(fresh)
         require(fresh_manifest==r['catalogManifestSHA256'] and fresh_validator==r['validatorVersion'],'Fresh target preflight differs from candidate')
-    if runtime and envname=='test':
+    if runtime and envname=='test' and not shared_f8:
         command('sudo','-n','/usr/local/sbin/lct-release-service','start-test-f8')
         vision_started=True
         try:
@@ -647,8 +665,9 @@ def switch(envname, candidate, action='deploy'):
             raise
     # DDL uses only the dedicated migration role, never runtime credentials.
     try:
-        command(str(target/'catalog-migrate'),cwd=target, env=envfile(cfg['migrationEnv']), stdout=subprocess.DEVNULL)
-        if r.get('catalogManifestSHA256') is not None:
+        if not code_only:
+            command(str(target/'catalog-migrate'),cwd=target, env=envfile(cfg['migrationEnv']), stdout=subprocess.DEVNULL)
+        if r.get('catalogManifestSHA256') is not None and not code_only:
             command(str(target/'catalog-import'),'--package',r['catalogPackage'],'--media-root',r['catalogMediaRoot'],
                     '--version',r['catalogVersion'],'--snapshot-out',str(snapshot)+'.pre-import',
                     '--accepted-report',str(accepted_report),'--validator-version',r['validatorVersion'],
@@ -675,16 +694,16 @@ def switch(envname, candidate, action='deploy'):
         command('sudo','-n','/usr/local/sbin/lct-release-service','restart-'+envname)
         result=smoke(cfg,r,envname)
         if envname=='prod':
-            command('sudo','-n','/usr/local/sbin/lct-release-service','publish-prod')
+            if not previous: command('sudo','-n','/usr/local/sbin/lct-release-service','publish-prod')
             smoke({**cfg,'url':cfg['publicURL']},r,envname)
         placement_result=placement(cfg,target,r,candidate,snapshot,allow,accepted_report) if r.get('catalogManifestSHA256') is not None else None
     except Exception:
         summary='Проверка после выкатки не прошла.'
         try:
-            if envname=='prod':
+            if envname=='prod' and not previous:
                 command('sudo','-n','/usr/local/sbin/lct-release-service','unpublish-prod')
             if previous and auto_code_rollback:
-                if snapshot is not None:
+                if snapshot is not None and not code_only:
                     command(str(target/'catalog-import'),'--restore',str(snapshot),env=envfile(cfg['migrationEnv']),stdout=subprocess.DEVNULL)
                 temp.symlink_to(previous); temp.replace(current)
                 if previous_catalog_env is not None: catalog_env.write_text(previous_catalog_env)
