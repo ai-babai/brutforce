@@ -1,6 +1,6 @@
 # BrutForce
 
-Team repository for the **LCT 2026** competition. Given a Russian wine-label photo, we look up an existing catalog card. Team members: Maxim Popkov (`ai-babai`) and Roman (`@MisterMolox`). [Русский README](README.md).
+Team repository for the **LCT 2026** competition. Given a Russian wine-label photo, we look up an existing catalog card. Project authors: Maxim Popkov (`ai-babai`) and Roman (`@MisterMolox`). [Русский README](README.md).
 
 [Prototype](https://app.dzap.pw) · [Run with the model](#run-with-the-model) · [Local demo](#quick-start) · [Results and limitations](docs/SOLUTION.md)
 

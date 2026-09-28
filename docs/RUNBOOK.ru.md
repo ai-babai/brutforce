@@ -25,7 +25,7 @@ cd ../web && npm test && npm run build
 
 ## Полный CPU-профиль F8
 
-Попросите Максима Попкова (`ai-babai`) или Романа (`@MisterMolox`) передать через согласованный канал четыре части: F8 bundle, пакет каталога, media каталога и **точный файл** индекса рекомендаций. Веса, код F8 и данные отсутствуют в clone. Локальный bundle у Repro прошёл сверку 50/50 SHA; это пока не канал передачи эксперту. Сверьте выданные вам файлы с [50 SHA](../deploy/assets/f8-cpu.sha256) и закреплёнными версиями. При отсутствии exact recommendation index прекратите настройку: visual-neighbors в F8 bundle не подходят.
+Попросите Максима Попкова (`ai-babai`) или Романа (`@MisterMolox`) передать через согласованный канал четыре части: F8 bundle, пакет каталога, media каталога и **точный файл** индекса рекомендаций. Веса, код F8 и данные отсутствуют в clone. Локальный bundle у Repro прошёл сверку 50/50 SHA; это пока не канал передачи эксперту. Сверьте выданный F8 bundle с [50 SHA](../deploy/assets/f8-cpu.sha256), а остальные части — с закреплёнными версиями и хешами через `preflight`. При отсутствии exact recommendation index прекратите настройку: visual-neighbors в F8 bundle не подходят.
 
 Инструменты уже в Git: [экспорт и проверка bundle](../scripts/asset-bundle.py), [Compose](../deploy/compose.yaml), [пример env](../deploy/docker.env.example), [CLI запуска](../scripts/docker-local.sh). Не заменяйте недостающие assets похожими файлами.
 
@@ -40,7 +40,15 @@ python3 scripts/asset-bundle.py verify /absolute/path/to/new-f8-bundle
 
 [Каталожный пакет](../contracts/catalog-display.md), media и индекс рекомендаций передаются отдельно от bundle. Действующий TEST/PROD индекс рекомендаций имеет SHA `f05f16c7790782ec3c1b50047bba4e29f1d906217f63846c217d5516e6ef8e7f`: он опирается на текст витрины и атрибуты винодельни. Visual-neighbors в F8 bundle не заменяют его.
 
-После получения четырёх частей разместите их **вне клона**. Переносимый пример Linux-каталога: `DATA_ROOT="$HOME/brutforce-local"`; `mkdir -p "$DATA_ROOT"`; `DATA_ROOT=$(realpath "$DATA_ROOT")`. Под этим корнем должны быть разные `f8-bundle/` (50 файлов), `catalog-package/` (с `manifest.json`), `catalog-media/`, `recommendations/index.json` (один точный файл) и `secrets/` (два файла паролей). Реальное расположение может отличаться; перенесите в `.env.local` развёрнутые абсолютные пути, а не литерал `$DATA_ROOT`.
+После получения четырёх частей разместите их **вне клона**. Пример каталога на Linux (выполните в терминале запуска):
+
+```sh
+DATA_ROOT="$HOME/brutforce-local"
+mkdir -p "$DATA_ROOT"
+DATA_ROOT=$(realpath "$DATA_ROOT")
+```
+
+Под этим корнем должны быть разные `f8-bundle/` (50 файлов), `catalog-package/` (с `manifest.json`), `catalog-media/`, `recommendations/index.json` (один точный файл) и `secrets/` (два файла паролей). Реальное расположение может отличаться; перенесите в `.env.local` развёрнутые абсолютные пути, а не литерал `$DATA_ROOT`.
 
 После получения и размещения частей выполните из корня клона на Linux x86-64:
 
@@ -48,10 +56,10 @@ python3 scripts/asset-bundle.py verify /absolute/path/to/new-f8-bundle
 
    ```sh
    umask 077
-   mkdir -p "$HOME/brutforce-local/secrets"
-   chmod 0700 "$HOME/brutforce-local/secrets"
-   openssl rand -hex 32 > "$HOME/brutforce-local/secrets/db_password"
-   openssl rand -hex 32 > "$HOME/brutforce-local/secrets/app_password"
+   mkdir -p "$DATA_ROOT/secrets"
+   chmod 0700 "$DATA_ROOT/secrets"
+   openssl rand -hex 32 > "$DATA_ROOT/secrets/db_password"
+   openssl rand -hex 32 > "$DATA_ROOT/secrets/app_password"
    ```
 
    Подставьте развернутый абсолютный путь этого каталога **вне клона** в `SECRETS_DIR` (не литерал `$HOME`). Не печатайте значения и не помещайте их в аргументы команд, Docker layers или Actions artifacts. Не запускайте этот блок повторно на сохранённой БД: пароли перестанут совпадать с созданной ролью.
@@ -68,7 +76,7 @@ sh scripts/docker-local.sh smoke
 
 Для остановки выполните `sh scripts/docker-local.sh stop`. Команда `sh scripts/docker-local.sh down` удаляет контейнеры и сеть **без `-v`**: БД, uploads, feedback и snapshots остаются в volumes. Повторный `up` использует их снова. Для смены версии каталога заранее подготовьте миграцию и восстановление; `docker compose down -v` удалит сохранённые данные.
 
-Синтаксис скриптов и `docker compose config` проверены. Repro собрал оба linux/amd64-образа на OrbStack в отдельной patch-ветке; в `main` ещё есть TS blocker. Catalog/media прошли dry-run DQ001–008, DQ011 требует baseline; импорт не выполнялся. Exact index рекомендаций пока не передан, поэтому полный Compose не запускался. Чистый Linux и known-answer через Compose остаются открытыми. Tesseract 5.3 в образе не равен серверному 5.5: OCR parity ожидает проверки. Работающий [PROD](https://app.dzap.pw) запущен через systemd.
+Синтаксис скриптов и `docker compose config` проверены. Repro собрал оба linux/amd64-образа на OrbStack; исправление web-сборки вошло в приватный `main` через PR #105. Catalog/media прошли dry-run DQ001–008, DQ011 требует baseline; импорт не выполнялся. Exact index рекомендаций пока не передан, поэтому полный Compose не запускался. Чистый Linux и known-answer через Compose остаются открытыми. Tesseract 5.3 в образе не равен серверному 5.5: OCR parity ожидает проверки. Работающий [PROD](https://app.dzap.pw) запущен через systemd.
 
 Контрольный конкурсный запрос к **уже работающему реальному** API с разрешённым локальным фото (не использовать в демо без F8):
 
