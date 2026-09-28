@@ -1,0 +1,105 @@
+name: brutforce-local
+
+services:
+  postgres:
+    image: postgres:18.6-bookworm@sha256:3725f4e2499eef5134592b3b4ab79a543ed7f8e533b05b5b637af926630f6650
+    environment:
+      POSTGRES_DB: brutforce
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD_FILE: /run/secrets/db_password
+    secrets: [db_password, app_password]
+    volumes:
+      - db-data:/var/lib/postgresql
+      - ../scripts/docker-db-init.sh:/docker-entrypoint-initdb.d/10-app-role.sh:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d brutforce"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+    restart: unless-stopped
+
+  migrate:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile.web
+    image: brutforce-web:local
+    user: "0:0"
+    command: ["/usr/local/bin/bootstrap"]
+    depends_on:
+      postgres: {condition: service_healthy}
+    secrets: [db_password]
+    environment:
+      CATALOG_VERSION: ${CATALOG_VERSION:?Set approved display catalog version}
+    volumes:
+      - ${CATALOG_PACKAGE_DIR:?Set catalog package directory}:/catalog-package:ro
+      - ${CATALOG_MEDIA_DIR:?Set catalog media directory}:/catalog-media:ro
+      - catalog-snapshots:/snapshots
+      - uploads:/data/uploads
+      - feedback:/data/feedback
+    restart: "no"
+
+  vision:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile.vision
+    image: brutforce-vision:local
+    volumes:
+      - ${ASSET_DIR:?Set verified F8 bundle directory}:/assets:ro
+    read_only: true
+    tmpfs: [/tmp]
+    environment:
+      PYTHONPATH: /usr/local/lib/python3.12/site-packages
+    cpus: 6
+    mem_limit: 7g
+    healthcheck:
+      test: ["CMD", "python", "/usr/local/bin/docker-vision-health.py"]
+      start_period: 120s
+      interval: 10s
+      timeout: 4s
+      retries: 6
+    restart: unless-stopped
+
+  web:
+    image: brutforce-web:local
+    depends_on:
+      migrate: {condition: service_completed_successfully}
+      vision: {condition: service_healthy}
+    secrets: [app_password]
+    environment:
+      CATALOG_VERSION: ${CATALOG_VERSION:?Set approved display catalog version}
+      CATALOG_MEDIA_DIR: /catalog-media
+      VISION_SERVICE_URL: http://vision:8127
+      VISION_CATALOG_VERSION: organizer-catalog-20260919
+      VISION_INDEX_VERSION: so400m384-owlv2-v2-crops-reference-gated-20260925
+      VISION_SLUGS_FILE: /assets/overlay/organizer-slugs.json
+      VISION_SLUGS_SHA256: b0d1ce3d493bdae9307e1d83138049638d9cee52b2f203dca85d67f67e516dfd
+      RECOMMENDATION_INDEX_FILE: /recommendations/index.json
+      RECOMMENDATION_INDEX_SHA256: ${RECOMMENDATION_INDEX_SHA256:?Set verified active recommendation SHA}
+      FEEDBACK_CAMPAIGN_ID: ${FEEDBACK_CAMPAIGN_ID:-local}
+    volumes:
+      - uploads:/data/uploads
+      - feedback:/data/feedback
+      - ${ASSET_DIR:?Set verified F8 bundle directory}:/assets:ro
+      - ${CATALOG_MEDIA_DIR:?Set catalog media directory}:/catalog-media:ro
+      - ${RECOMMENDATION_INDEX_FILE:?Set approved recommendation index path}:/recommendations/index.json:ro
+    read_only: true
+    ports: ["127.0.0.1:8097:8097"]
+    healthcheck:
+      test: ["CMD", "/usr/local/bin/web-proxy", "--healthcheck"]
+      start_period: 15s
+      interval: 10s
+      timeout: 6s
+      retries: 6
+    restart: unless-stopped
+
+volumes:
+  db-data:
+  uploads:
+  feedback:
+  catalog-snapshots:
+
+secrets:
+  db_password:
+    file: ${SECRETS_DIR:?Set private secrets directory}/db_password
+  app_password:
+    file: ${SECRETS_DIR:?Set private secrets directory}/app_password

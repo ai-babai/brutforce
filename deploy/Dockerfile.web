@@ -1,0 +1,32 @@
+FROM node:22.19.0-bookworm-slim@sha256:4a4884e8a44826194dff92ba316264f392056cbe243dcc9fd3551e71cea02b90 AS frontend
+WORKDIR /src/apps/web
+COPY apps/web/package*.json ./
+RUN npm ci --ignore-scripts
+COPY apps/web ./
+RUN npm run build
+
+FROM golang:1.23.12-bookworm@sha256:167053a2bb901972bf2c1611f8f52c44d5fe7e762e5cab213708d82c421614db AS backend
+WORKDIR /src/apps/api
+COPY apps/api/go.mod apps/api/go.sum ./
+RUN go mod download
+COPY apps/api ./
+RUN CGO_ENABLED=0 go build -trimpath -buildvcs=false -o /out/api . && \
+    CGO_ENABLED=0 go build -trimpath -buildvcs=false -o /out/catalog-migrate ./cmd/catalog-migrate && \
+    CGO_ENABLED=0 go build -trimpath -buildvcs=false -o /out/catalog-import ./cmd/catalog-import
+WORKDIR /src
+COPY scripts/docker-web-proxy.go scripts/docker-bootstrap.go ./scripts/
+RUN CGO_ENABLED=0 go build -trimpath -o /out/web-proxy ./scripts/docker-web-proxy.go && \
+    CGO_ENABLED=0 go build -trimpath -o /out/bootstrap ./scripts/docker-bootstrap.go
+
+FROM debian:bookworm-slim@sha256:3783cc01769c7b2b1b83a5c5ad96c815348e28ed7da68e2e3687004faa906251
+RUN groupadd -g 10001 brutforce && useradd -u 10001 -g 10001 -M -s /usr/sbin/nologin brutforce && \
+    mkdir -p /app/web /app/migrations && chown -R brutforce:brutforce /app
+COPY --from=backend /out/ /usr/local/bin/
+COPY --from=backend /src/apps/api/migrations/ /app/migrations/
+COPY --from=frontend /src/apps/web/dist/ /app/web/
+COPY scripts/docker-web-start.sh scripts/docker-migrate.sh /usr/local/bin/
+RUN chmod 0555 /usr/local/bin/docker-web-start.sh /usr/local/bin/docker-migrate.sh
+WORKDIR /app
+USER 10001:10001
+EXPOSE 8097
+CMD ["/usr/local/bin/docker-web-start.sh"]
