@@ -4,7 +4,7 @@
 
 ## Какое решение действует
 
-- В TEST: Go API и F8 CPU с закреплёнными `modelVersion`, `visionCatalogVersion` и `visionIndexVersion` из manifest. Приложение TEST: `d26afa3`, candidate `b0428147` по свежему handoff; отдельные recommendation/data overrides следует сверить с серверным release record. PROD пока заглушка.
+- В TEST: Go API и F8 CPU с закреплёнными `modelVersion`, `visionCatalogVersion` и `visionIndexVersion` из manifest. Приложение TEST: `d26afa3`, candidate `b0428147` по свежему handoff; display catalog `svoe-20260927-alpha-2035-v1` (manifest `d88c4454…`) и recommendation override (`f05f16c7…`) сообщены мастером отдельно. Полные SHA и effective-связку сверять с серверным release record. PROD пока заглушка.
 - F8 использует детектор/gate, визуальное SO400M-представление и версионированный поиск; текстовое подтверждение и OCR rescue помогают при визуальной неоднозначности. [Схема и границы](../ARCHITECTURE.md). Ответ конкурсного API — только допустимый organizer slug. Продуктовая карточка появляется только при проверенном отображении этого slug в display-каталог.
 - GPU-кандидат исследован отдельно, но GPU-сервис не объявляется доступным runtime этого TEST; fallback-routing и его метрики требуют самостоятельного свидетельства. Синтетический reference-режим предназначен для разработки UI/API и не измеряет качество F8.
 
