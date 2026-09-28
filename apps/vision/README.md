@@ -23,3 +23,20 @@ For offline visual-index rebuilding use `scripts/build-visual-index.py` with
 `--code-root apps/vision` and independently obtained original organizer
 reference photos and SO400M PyTorch weights. The ready-made index works
 without the original reference photos. See [the transfer guide](../../docs/ASSET-TRANSFER.ru.md).
+
+## Automatic A2 release
+
+`a2_server.py` wraps the same SHA-pinned F8 without changing its source. One
+CPU model serves baseline on loopback 8126 and A2 on 8127, with one shared
+nonblocking inference lock. Both health and inference report their actual
+model/profile; A2 appends `-a2-auto-v1`. The Docker bridge above still starts
+the baseline F8; this new entrypoint is the staged Sigma release path.
+
+A2 first runs service. Only `standalone_label_no_bottle` with `owlv2_label*`
+source and finite numeric score >= 0.15 triggers retrieval on the same whole
+input. Nonempty retrieval Top1 replaces service; empty/error retains service.
+No gold IDs, supplied crops, new OCR or refusal thresholds participate.
+The internal response adds `a2` eligibility/reroute/error booleans for acceptance;
+Go ignores diagnostics. Private image bytes and labels are not logged.
+
+See [release/rollback procedure](../../deploy/PIPELINE.md#p0--automatic-a2).

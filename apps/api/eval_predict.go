@@ -4,8 +4,10 @@ import (
 	"bytes"
 	"context"
 	"errors"
+	"golang.org/x/image/draw"
 	_ "golang.org/x/image/webp"
 	"image"
+	"image/jpeg"
 	"io"
 	"mime"
 	"net/http"
@@ -18,7 +20,9 @@ const (
 	maxEvalImageBytes       = 10 << 20
 	maxEvalMultipartBytes   = maxEvalImageBytes + (1 << 20)
 	maxEvalImagePixels      = 25_000_000
+	maxEvalSourcePixels     = 50_000_000
 	maxEvalImageDimension   = 12_000
+	maxEvalResizedSide      = 4_000
 	defaultEvalConcurrency  = 4
 	evalRecognitionDeadline = 9 * time.Second
 )
@@ -169,12 +173,32 @@ func decodeEvalImage(w http.ResponseWriter, r *http.Request) (image.Image, []byt
 		return nil, nil, errors.New("multipart field image is required")
 	}
 	config, format, err := image.DecodeConfig(bytes.NewReader(data))
-	if err != nil || config.Width <= 0 || config.Height <= 0 || config.Width > maxEvalImageDimension || config.Height > maxEvalImageDimension || int64(config.Width) > maxEvalImagePixels/int64(config.Height) {
+	if err != nil || config.Width <= 0 || config.Height <= 0 || config.Width > maxEvalImageDimension || config.Height > maxEvalImageDimension || int64(config.Width) > maxEvalSourcePixels/int64(config.Height) {
 		return nil, nil, errors.New("image must be a decodable JPEG, PNG, GIF, or WebP image within the allowed pixel limit")
 	}
 	decoded, decodedFormat, err := image.Decode(bytes.NewReader(data))
 	if err != nil || decodedFormat != format || decoded.Bounds().Dx() != config.Width || decoded.Bounds().Dy() != config.Height {
 		return nil, nil, errors.New("image must be fully decodable")
+	}
+	if int64(config.Width) > maxEvalImagePixels/int64(config.Height) {
+		// Originals above the serving limit are bounded before forwarding. Small
+		// images still use their exact validated bytes as before.
+		longest := config.Width
+		if config.Height > longest {
+			longest = config.Height
+		}
+		width := config.Width * maxEvalResizedSide / longest
+		height := config.Height * maxEvalResizedSide / longest
+		resized := image.NewRGBA(image.Rect(0, 0, width, height))
+		draw.ApproxBiLinear.Scale(resized, resized.Bounds(), decoded, decoded.Bounds(), draw.Over, nil)
+		var normalized bytes.Buffer
+		if err := jpeg.Encode(&normalized, resized, &jpeg.Options{Quality: 88}); err != nil {
+			return nil, nil, errors.New("image normalization failed")
+		}
+		if normalized.Len() > maxEvalImageBytes {
+			return nil, nil, errors.New("normalized image exceeds the serving byte limit")
+		}
+		return resized, normalized.Bytes(), nil
 	}
 	return decoded, data, nil
 }

@@ -4,7 +4,9 @@ The Go API uses one ranked image result for both `POST /v1/eval/predict` and
 photo `POST /v1/search`. Configure `VISION_SERVICE_URL` as an internal HTTP(S)
 origin. Its serving process accepts `POST /v1/eval/predict?track=service` with
 one multipart file field named `image` and returns JSON. The Go boundary sends
-the validated original bytes with an 18-second upstream ceiling. The app route
+the validated image bytes with an 18-second upstream ceiling. Contest ingress
+normalizes originals above 25 MP as specified in [eval-predict.md](eval-predict.md).
+The app route
 uses that ceiling inside the HTTP server's 30-second write timeout; the separate
 20-second read timeout still bounds the incoming request body. The complete
 app `/v1/search` route has a 25-second processing budget, leaving time around
@@ -72,3 +74,11 @@ organizer-only, and four display-only. Three of the organizer-only slugs
 resolve through approved aliases; the other 66 have no display card or
 approved alias in this package. The reasons for their absence are unknown.
 These counts describe this pinned pair, not a rule for future catalogs.
+
+The automatic A2 runtime uses model/profile suffix `-a2-auto-v1`; its data
+versions and organizer allowlist remain pinned to F8. It runs whole-input
+retrieval only after service detects a standalone label without a bottle,
+with `owlv2_label*` source and finite numeric score >= 0.15. A retrieval error
+or empty rank preserves service. Internal `a2` diagnostic booleans are ignored
+by Go. Baseline and A2 endpoints share a CPU model and busy lock, but each
+environment selects its own endpoint; see [pipeline](../deploy/PIPELINE.md#p0--automatic-a2).

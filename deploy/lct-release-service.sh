@@ -16,7 +16,15 @@ case "${1-}" in
      /srv/lct/maks/vision-service/releases/cpu-f8-text-rescue-20260927/organizer-slugs.json \
      /srv/lct/maks/vision-service/releases/cpu-f8-text-rescue-20260927/visual-neighbors.json \
      /srv/lct/data/vision-retrieval/20260925/detectors/so400m-gatev2/index/index.npz ;;
- start-test-f8) systemctl start lct-vision-test-f8.service ;;
+  verify-test-a2)
+    sha256sum \
+      /srv/lct/maks/vision-service/releases/cpu-f8-a2-auto-20260928/a2_server.py \
+      /srv/lct/maks/vision-service/releases/cpu-ort6-20260926-1/night_server.py \
+      /srv/lct/maks/vision-service/releases/cpu-f8-text-rescue-20260927/spec/lexicon.json \
+      /srv/lct/maks/vision-service/releases/cpu-f8-text-rescue-20260927/organizer-slugs.json \
+      /srv/lct/maks/vision-service/releases/cpu-f8-text-rescue-20260927/visual-neighbors.json \
+      /srv/lct/data/vision-retrieval/20260925/detectors/so400m-gatev2/index/index.npz ;;
+  start-test-f8) systemctl start lct-vision-test-f8.service ;;
  stop-test-f8) systemctl stop lct-vision-test-f8.service ;;
  backup-prod)
    stamp=$(date -u +%Y%m%dT%H%M%SZ)

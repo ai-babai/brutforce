@@ -12,9 +12,12 @@ contract and from private demo-photo storage.
 `POST /v1/eval/predict` accepts `multipart/form-data` with exactly one file
 part named `image`. The filename and declared part MIME type are not trusted.
 The server reads at most 10 MiB, recognizes JPEG, PNG, GIF, and WebP from the
-decoder, then checks a maximum 12,000-pixel side and 25,000,000 pixels before
-fully decoding the image. The image is held only for the request and is never
-written to `UPLOAD_DIR` or exposed through an HTTP route.
+decoder, then checks a maximum 12,000-pixel side and 50,000,000 source pixels
+before fully decoding the image. Images above 25,000,000 pixels are
+proportionally resized to a maximum 4,000-pixel side and JPEG-encoded at quality
+88 before forwarding to the recognizer. Smaller images retain their validated
+original bytes. The image is held only for the request and is never written to
+`UPLOAD_DIR` or exposed through an HTTP route.
 
 The request context has a nine-second deadline from handler entry. A recognizer
 must stop its own work when that context is cancelled; the HTTP boundary does
@@ -65,8 +68,8 @@ type Recognizer interface {
 
 Injected recognizers receive a fully decoded bounded image and must respect
 the supplied context. The configured HTTP adapter additionally implements
-`EncodedRecognizer`, so it forwards the validated original bytes to the
-serving process without encoding the decoded image again. The model and index
+`EncodedRecognizer`, so it forwards the validated original bytes for images
+within 25 MP and bounded normalized bytes for larger inputs. The model and index
 run in that separate process; the Go adapter pins their response versions and
 the organizer slug allowlist.
 
@@ -80,7 +83,7 @@ the organizer slug allowlist.
 | EVAL-004 | Wrong method or unknown `/v1/eval/...` route | JSON 405 or 404 |
 | EVAL-005 | Valid image and no configured recognizer | JSON 503 `recognition_unavailable`, never a slug |
 | EVAL-006 | Caller cancels while recognizing | Recognizer receives cancellation and response is 408 |
-| EVAL-007 | Truncated, oversized, or oversized-dimension image | HTTP 400 before recognition |
+| EVAL-007 | Truncated, over-50-MP, or oversized-dimension image | HTTP 400 before recognition; 25–50 MP is normalized |
 | EVAL-008 | Repeated valid requests with `UPLOAD_DIR` configured | All succeed without demo rate limiting or saved files |
 | EVAL-009 | Recognition slot is occupied | A second request gets 429 and the slot releases afterward |
 

@@ -248,13 +248,32 @@ TEST_PHOTO=pathlib.Path('/srv/lct/data/vision-retrieval/20260924/organizer-audit
 TEST_PHOTO_SHA='3c1e06bc461fe048e78dd010f8d990b5387895b02126aa02e01ff8d914582dce'
 TEST_PHOTO_SLUG='aratti-kaberne-sovinon-2020-krasnoe-suhoe'
 
+F8_MODEL='rtdetr-so400m-whole-only-v1-f8-text-confirmed-v1-onnx640'
+A2_MODEL=F8_MODEL+'-a2-auto-v1'
+
+def vision_url(runtime):
+    require(runtime['modelVersion'] in (F8_MODEL,A2_MODEL),'Unsupported pinned vision runtime')
+    return 'http://127.0.0.1:'+('8127' if runtime['modelVersion']==A2_MODEL else '8126')
+
+def compatible_vision(before, after):
+    if before==after: return True
+    if {before['modelVersion'],after['modelVersion']}!={F8_MODEL,A2_MODEL}: return False
+    # The one permitted model transition changes only the A2 entrypoint/policy.
+    # Both independently verified endpoints remain live for TEST-first and rollback.
+    ignored={'modelVersion','visionCandidateId','externalAssets'}
+    return ({k:v for k,v in before.items() if k not in ignored}==
+            {k:v for k,v in after.items() if k not in ignored} and
+            before['externalAssets'][1:]==after['externalAssets'][1:])
+
 def f8_runtime(target):
     manifest=read(target/'manifest.json')
     require(manifest.get('mode')=='real','F8 switch requires real model mode')
     runtime=read(target/'evidence'/'f8-runtime.json')
     require(runtime['modelVersion']==manifest['modelVersion'],'F8 model version differs from package')
     require(runtime['externalAssets']==manifest['externalAssets'],'F8 assets differ from package')
-    proof=subprocess.check_output(['sudo','-n','/usr/local/sbin/lct-release-service','verify-test-f8'],text=True)
+    vision_url(runtime)
+    verb='verify-test-a2' if runtime['modelVersion']==A2_MODEL else 'verify-test-f8'
+    proof=subprocess.check_output(['sudo','-n','/usr/local/sbin/lct-release-service',verb],text=True)
     observed={path:sha for sha,path in (line.split(maxsplit=1) for line in proof.splitlines())}
     expected={item['path']:item['sha256'] for item in runtime['externalAssets']}
     require(observed==expected,'F8 external asset bytes differ from CI metadata')
@@ -351,7 +370,8 @@ def recommendation_receipt(candidate, r, runtime):
     require_recommendation_pin(state,r)
     return state
 
-def f8_health(runtime, base='http://127.0.0.1:8126'):
+def f8_health(runtime, base=None):
+    base=base or vision_url(runtime)
     for _ in range(90):
         try:
             result=http_json(base,'/healthz')
@@ -359,7 +379,8 @@ def f8_health(runtime, base='http://127.0.0.1:8126'):
                     result.get('model_version')==runtime['modelVersion'] and
                     result.get('catalog_version')==runtime['visionCatalogVersion'] and
                     result.get('index_version')==runtime['visionIndexVersion'] and
-                    result.get('serving_profile')=='so400m-onnx640','F8 health metadata differs from candidate')
+                    result.get('serving_profile')==('so400m-onnx640'+('-a2-auto-v1' if runtime['modelVersion']==A2_MODEL else '')),
+                    'F8 health metadata differs from candidate')
             return
         except (urllib.error.URLError,TimeoutError): time.sleep(1)
     raise RuntimeError('Pinned F8 did not become ready')
@@ -395,7 +416,7 @@ def test_vision_env(runtime, recommendations=None):
     slugs=next(item for item in runtime['externalAssets'] if item['path']==root+'/organizer-slugs.json')
     neighbors=next(item for item in runtime['externalAssets'] if item['path']==root+'/visual-neighbors.json')
     rec_path,rec_sha=(recommendations['file'],recommendations['sha256']) if recommendations else (neighbors['path'],neighbors['sha256'])
-    return (f'VISION_SERVICE_URL=http://127.0.0.1:8126\n'
+    return (f'VISION_SERVICE_URL={vision_url(runtime)}\n'
             f'VISION_CATALOG_VERSION={runtime["visionCatalogVersion"]}\n'
             f'VISION_INDEX_VERSION={runtime["visionIndexVersion"]}\n'
             f'VISION_SLUGS_FILE={slugs["path"]}\nVISION_SLUGS_SHA256={slugs["sha256"]}\n'
@@ -514,7 +535,7 @@ def smoke(cfg, r, envname='test'):
             rec=read(ROOT/'environments'/'prod-recommendations.json')
             require(alternatives.get('modelVersion')==rec['modelVersion'] and
                     alternatives.get('catalogVersion')==r['catalogVersion'], 'PROD recommendation version differs from approval')
-        f8_health(runtime,cfg.get('visionURL','http://127.0.0.1:8126'))
+        f8_health(runtime)
         f8_photo(base,runtime,product=True)
     return {'status':'passed','at':stamp(),'revision':sha,'candidateId':r.get('candidateId',sha),'requestMs':samples,'note':'HTTP placement smoke; not ML quality measurement'}
 
@@ -592,12 +613,12 @@ def switch(envname, candidate, action='deploy'):
         require(pinned is not None and pinned.get('mode')=='real' and r['mode']=='real' and
                 code_only and previous_state.get('candidateId') and
                 pathlib.Path(previous).name==previous_state['revision'] and
-                pinned.get('modelVersion')==r['modelVersion'] and
                 pinned.get('catalogVersion')==r['catalogVersion'] and
                 pinned.get('catalogManifestSHA256')==r.get('catalogManifestSHA256'),
-                'Live shared F8 allows only a code-only release with unchanged catalog, model and migrations')
-        pinned_runtime=read(ROOT/'packages'/pinned['revision']/'evidence'/'f8-runtime.json')
-        require(runtime==pinned_runtime, 'Live shared F8 assets or index differ from pinned PROD')
+                'Live shared F8 requires unchanged catalog and migrations')
+        pinned_runtime=f8_runtime(ROOT/'packages'/pinned['revision'])
+        require(compatible_vision(pinned_runtime,runtime), 'Vision transition is not the pinned F8/A2 pair')
+        f8_health(pinned_runtime)
         f8_health(runtime)
     recommendations=None
     if envname=='test' and runtime:
@@ -616,12 +637,15 @@ def switch(envname, candidate, action='deploy'):
         recommendations=recommendation_receipt(candidate,r,runtime)
         require(approval.get('recommendationSHA256')==recommendations['sha256'] and
                 approval.get('modelVersion')==r['modelVersion'], 'Recommendation asset differs from approved bundle')
-        require((previous_vision_env==test_vision_env(runtime,recommendations)) if previous else
+        previous_runtime=read(pathlib.Path(previous)/'evidence'/'f8-runtime.json') if previous else None
+        require((previous_vision_env==test_vision_env(previous_runtime,recommendations)) if previous else
                 previous_vision_env is None, 'PROD vision env differs from pinned shared F8')
-        f8_health(runtime,cfg.get('visionURL','http://127.0.0.1:8126'))
-        f8_photo(cfg.get('visionURL','http://127.0.0.1:8126'),runtime)
+        f8_health(runtime)
+        f8_photo(vision_url(runtime),runtime)
     if shared_f8:
-        require(previous_vision_env==test_vision_env(runtime,recommendations),
+        previous_runtime=read(pathlib.Path(previous)/'evidence'/'f8-runtime.json')
+        require(compatible_vision(previous_runtime,runtime) and
+                previous_vision_env==test_vision_env(previous_runtime,recommendations),
                 'TEST vision env differs from pinned shared F8')
     if action=='rollback' and previous:
         require(migration_files(pathlib.Path(previous))==migration_files(target), 'Schema differs; operator must establish compatible rollback')
@@ -659,7 +683,7 @@ def switch(envname, candidate, action='deploy'):
         vision_started=True
         try:
             f8_health(runtime)
-            f8_photo('http://127.0.0.1:8126',runtime)
+            f8_photo(vision_url(runtime),runtime)
         except Exception:
             command('sudo','-n','/usr/local/sbin/lct-release-service','stop-test-f8')
             raise

@@ -222,6 +222,56 @@ root-owned backup, проверить diff нового `deploy/release.py` из
 затем установить только controller с прежними владельцем и правами. Не менять
 `lct-release-service.sh`, PROD Caddy или systemd unit ради code-only switch.
 
+## P0 + automatic A2
+
+Кандидат включает bounded ingress P0 (до 50 Мп; больше 25 Мп → JPEG88, сторона
+до 4 000) и замороженный automatic A2. На повторно используемом Mac CPU наборе
+595 original ID / 577 graded: current440 → P0441 → P0+A2442 timely exact,
+fixed2/broken0. A2 сработал9/595, изменил один slug; label crops44→45/62.
+Это development/regression результат, не hidden holdout или Sigma latency.
+Установку подтверждает controller receipt, не наличие этих исходников в main.
+
+`apps/vision/a2_server.py` держит один pinned F8 и общий inference lock:
+baseline8126 (прежняя modelVersion), A2 8127 (суффикс `-a2-auto-v1`).
+F8 source проверяется wrapper по SHA; остальные parent imports проверяет F8.
+Первый external asset нового `f8-runtime.json` — SHA wrapper; остальные пять
+assets прежние. Controller разрешает только точную пару F8↔A2 с неизменными
+data/index/catalog/migrations, сверяет bytes обоих runtime и оба health.
+До первого switch оператор устанавливает эти endpoints; controller не пытается
+поднимать вторую тяжёлую модель. `vision-runtime.env` выбирает8126 или8127
+по modelVersion кандидата. TEST переключается раньше PROD.
+
+Операторский infra-шаг после принятого main CI:
+
+1. Сверить installed controller/helper SHA с preflight, сохранить root-owned
+   backup controller/helper и исходной конфигурации F8 unit. Убедиться, что8127
+   свободен и F8 не занят. Сохранить current candidate/archive/env обеих сред.
+2. Установить immutable `a2_server.py` в
+   `/srv/lct/maks/vision-service/releases/cpu-f8-a2-auto-20260928/`, helper и
+   controller из принятого main; drop-in `lct-f8-a2.conf` для существующего
+   `lct-vision-test-f8.service`. Секреты/общий Caddy не менять, bootstrap не запускать.
+3. Один управляемый restart F8 нужен для двух входов. Пока идёт cold load,
+   распознавание кратковременно недоступно; API/catalog остаются запущены.
+   Проверить baseline8126 и A2 8127 metadata, known photo, память, отсутствие OOM.
+   Если запуск не прошёл — убрать только новый drop-in и вернуть прежний F8 unit.
+4. Установить immutable app artifact успешного main CI, зарегистрировать
+   прежний exact data manifest, deploy-test нового candidateId. Проверить
+   original oversized, все девять A2 hits и negative/ordinary controls через
+   настоящий TEST HTTP; не подменять это ручным `track=retrieval`.
+5. С теми же SHA данных, рекомендаций и модели записать существующее согласие
+   человека на этот выпуск и promote того же candidateId после TEST gate.
+
+Автоматический возврат после failed smoke восстанавливает прежние current и
+vision env; обе модели-маршрута остаются доступны в одном процессе. Ручной
+rollback PROD: сначала вернуть **прежний PROD candidate на TEST**, получить
+его успешный gate и повторно записать разрешение на откат, затем
+`rollback PREVIOUS_PROD_CANDIDATE prod`. После этого вернуть отдельный прежний
+TEST candidate при необходимости. Оба направления F8↔A2 разрешены по тем же
+byte/data/schema gates; не убирать baseline8126, пока нужен прежний rollback.
+Полный infra-откат к старому entrypoint — только после возврата обоих API на8126;
+controller/helper backup восстановить с прежними владельцем/правами. Архивы,
+записи, данные, фото и backups не удалять.
+
 ## Структура и обслуживание
 
 `/srv/lct/releases/packages/<SHA>` — пакеты; `records/<candidateId>.json` — журнал

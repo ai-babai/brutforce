@@ -1,13 +1,13 @@
 {
   "mode": "real",
-  "modelVersion": "rtdetr-so400m-whole-only-v1-f8-text-confirmed-v1-onnx640",
-  "visionCandidateId": "F8-CPU-text-confirmed-rescue-P4-diagnostic-v1",
+  "modelVersion": "rtdetr-so400m-whole-only-v1-f8-text-confirmed-v1-onnx640-a2-auto-v1",
+  "visionCandidateId": "F8-CPU-A2-auto-v1",
   "visionCatalogVersion": "organizer-catalog-20260919",
   "visionIndexVersion": "so400m384-owlv2-v2-crops-reference-gated-20260925",
   "externalAssets": [
     {
-      "path": "/srv/lct/maks/vision-service/releases/cpu-f8-text-rescue-20260927/night_server.py",
-      "sha256": "c82ce1d3671f539a811b0afa46c58395e4675969bd3b8e1aedce8ff2b7585887"
+      "path": "/srv/lct/maks/vision-service/releases/cpu-f8-a2-auto-20260928/a2_server.py",
+      "sha256": "3d6a5d674b1d8e25369c70fb4707a2e1eb8e23bd69842fef32e9c0b9efafd452"
     },
     {
       "path": "/srv/lct/maks/vision-service/releases/cpu-ort6-20260926-1/night_server.py",
