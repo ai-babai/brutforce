@@ -1,8 +1,12 @@
 # BrutForce — Russian wine-label scanner
 
-![Digital Transformation Leaders 2026: Rosselkhozbank's Svoe Vino challenge and a wine-bottle outline](docs/product/readme-lct-2026.png)
+<p align="center">
+  <img src="docs/product/readme-lct-2026.png" width="960" alt="Digital Transformation Leaders 2026: RSHB, the BrutForce team, and the Svoe Vino platform">
+</p>
 
 Built for the **Digital Transformation Leaders 2026** challenge from **Rosselkhozbank (RSHB)** for the Svoe Vino platform. The task is to identify an exact Russian wine catalog entry from a label photo and show its card on a phone. The system combines image retrieval, a catalog and a mobile web application; it does not label an unrelated card as an exact match.
+
+**Two APIs:** organizer-required testing uses [`POST https://app.dzap.pw/v1/eval/predict`](https://app.dzap.pw/v1/eval/predict) (photo in `image`, response with `slug`); in-app search uses [`POST /v1/photos`](https://app.dzap.pw/v1/photos) (`photo`) → [`POST /v1/search`](https://app.dzap.pw/v1/search) (`photoId`, candidates for the UI). These are separate contracts; the organizer request is shown below.
 
 **Project authors:** Maxim Popkov ([Telegram @skifmax](https://t.me/skifmax)) and Roman Karandashov ([GitHub MisterMolox](https://github.com/MisterMolox)). [Русский README](README.md).
 
@@ -13,6 +17,7 @@ Built for the **Digital Transformation Leaders 2026** challenge from **Rosselkho
 - [Call the contest API](#call-the-contest-api)
 - [Architecture at a glance](#architecture-at-a-glance)
 - [Interface](#interface)
+- [Research and development checks](#research-and-development-checks)
 - [Links and limits](#links-and-limits)
 
 ## Quick start
@@ -42,15 +47,17 @@ Keep the extracted bundle **outside Git**, with `f8-bundle/`, `catalog-package/`
 
 ## Call the contest API
 
-After starting the full stack, send your label photo as exactly one multipart field named `image`:
+For the running service, send a label photo to **`https://app.dzap.pw/v1/eval/predict`** as exactly one multipart field named `image`:
 
 ```sh
 curl --fail-with-body --max-time 10 \
   -F 'image=@/path/to/your-label.jpg' \
-  http://127.0.0.1:8097/v1/eval/predict
+  https://app.dzap.pw/v1/eval/predict
 ```
 
-A confirmed match returns HTTP 200 with `{"slug":"catalog-slug"}`. For `no_match` or `insufficient_information`, HTTP 200 carries `action` instead of a slug; technical errors use another status, and the data-free demo returns 503. No team token is needed locally. This endpoint accepts `image`, **not** the application's `/v1/photos` field `photo`. See the [request and response contract](contracts/eval-predict.md).
+For a local full-stack installation, replace the URL with `http://127.0.0.1:8097/v1/eval/predict`. A confirmed match returns HTTP 200 with `{"slug":"catalog-slug"}`. For `no_match` or `insufficient_information`, HTTP 200 carries `action` instead of a slug; technical errors use another status, and the data-free demo returns 503. No team token is needed locally. This endpoint accepts `image`, **not** the application's `/v1/photos` field `photo`. See the [request and response contract](contracts/eval-predict.md).
+
+The **application** follows a different flow: `POST /v1/photos` stores the image and returns an `id`; `POST /v1/search` with JSON `{"photoId":"returned-id"}` returns candidates for the UI. Name search uses `GET /v2/catalog?q=...`. See the [interactive API docs](https://app.dzap.pw/api/docs) and the [application boundary](apps/api/README.md#boundary-and-contract).
 
 ## Architecture at a glance
 
@@ -69,16 +76,36 @@ The app uses `/v1/photos` followed by `/v1/search` with a `photoId`. A recognize
 ## Interface
 
 <p align="center">
-  <img src="design/wine-ux-v3/air35/review/home-430.png" width="220" alt="Home screen: the detective-dog mascot holds a wine bottle beside the scan action">
+  <img src="design/wine-ux-v3/air35/review/home-430.png" width="220" alt="Home screen: the sommelier mascot holds a wine bottle beside the scan action">
   <img src="docs/product/readme-catalog-search.png" width="220" alt="Search the catalog by wine name">
   <img src="docs/product/readme-wine-card.png" width="220" alt="Wine detail card">
 </p>
 
-The home screen with the detective-dog mascot, catalog name search, and a wine card. These screens show the interface, not measured label-recognition quality.
+The home screen with the sommelier mascot, catalog name search, and a wine card. These screens show the interface, not measured label-recognition quality.
+
+## Research and development checks
+
+**Dataset and test baskets.** To research label-based retrieval, we assembled an SKU-linked image bank and separate test baskets for comparing approaches. [Roman's experiments journal](https://reps.roman.dzap.pw/#experiments) lists protocols and top-1/top-3/top-5 results on validation and test sets; the [coverage map](https://reps.roman.dzap.pw/#coverage) shows candidate groups and gaps in confirmed captures by SKU. Downloaded candidates are not automatically verified independent references. Results from individual experiments are not the contest accuracy of the deployed service.
+
+<p align="center">
+  <a href="docs/product/readme-research-experiments.jpg"><img src="docs/product/readme-research-experiments.jpg" width="440" alt="Experiments journal with protocols and top-1, top-3, top-5 metrics"></a>
+  <a href="docs/product/readme-research-coverage.jpg"><img src="docs/product/readme-research-coverage.jpg" width="440" alt="SKU coverage map with candidate groups and gaps in confirmed captures"></a>
+</p>
+
+**UX research.** The [reference atlas](https://reps.maks.dzap.pw/view#references) compares wine-app screens and user journeys; the [scenarios and prototype](https://reps.maks.dzap.pw/view#flows) show the proposed mobile-web design. The capture below is a research prototype using fictional data, not a functioning scanner.
+
+**BDD coverage.** During agent-assisted development, we captured the expected API and UI-state behavior as scenarios and checked them across revisions to catch regressions. The [behavior map](https://reps.maks.dzap.pw/behavior/) shows scenario statuses and run history. These fast checks use a stub recognizer and do not measure photo-search quality.
+
+<p align="center">
+  <a href="docs/product/readme-ux-atlas.jpg"><img src="docs/product/readme-ux-atlas.jpg" width="440" alt="UX atlas: label-to-wine-card journey and clickable prototype"></a>
+  <a href="docs/product/readme-behavior-bdd.jpg"><img src="docs/product/readme-behavior-bdd.jpg" width="440" alt="Behavior map: BDD scenario statuses for API and UI across revisions"></a>
+</p>
+
+Screenshots are snapshots; follow the linked reports for the latest data and details.
 
 ## Links and limits
 
 - [Live app](https://app.dzap.pw) · [repository](https://github.com/ai-babai/brutforce) · [documentation](docs/README.md) · [verification results](docs/SOLUTION.md).
-- The contest artwork and RSHB logo come from the participant-provided “ЛЦТ2026 Шаблон презентации” template; the team added the bottle outline. The mascot home screen is from an app design review; search and card captures are from the BrutForce mobile demo.
+- The contest artwork and RSHB mark come from the participant-provided “ЛЦТ2026 Шаблон презентации” template; the team mark uses the previously favored concept 01, and the Svoe Vino logo comes from the app. The mascot home screen is from an app design review; search and card captures are from the BrutForce mobile demo.
 - The repository is currently private; cloning requires access. A presentation URL is not confirmed.
 - Weights and data are outside Git. Public access does not establish redistribution rights. Full Compose health/catalog checks passed on Mac/OrbStack with linux/amd64 containers; clean-Linux and known-photo checks remain outstanding.
