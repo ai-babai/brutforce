@@ -4,9 +4,14 @@
   <img src="docs/product/readme-lct-2026.png" width="960" alt="Digital Transformation Leaders 2026: RSHB, the BrutForce team, and the Svoe Vino platform">
 </p>
 
-Built for the **Digital Transformation Leaders 2026** challenge from **Rosselkhozbank (RSHB)** for the Svoe Vino platform. The task is to identify an exact Russian wine catalog entry from a label photo and show its card on a phone. The system combines image retrieval, a catalog and a mobile web application; it does not label an unrelated card as an exact match.
+BrutForce was built for the **Digital Transformation Leaders 2026** challenge from **Rosselkhozbank (RSHB)** for the Svoe Vino platform. The task is to find the exact Russian wine catalog entry from a label photo and open its card on a phone. Image recognition, catalog search, and a mobile web app work together. If the matching display card is missing, the app reports that outcome without substituting another wine.
 
-**Two APIs:** organizer-required testing uses [`POST https://app.dzap.pw/v1/eval/predict`](https://app.dzap.pw/v1/eval/predict) (photo in `image`, response with `slug`); in-app search uses [`POST /v1/photos`](https://app.dzap.pw/v1/photos) (`photo`) → [`POST /v1/search`](https://app.dzap.pw/v1/search) (`photoId`, candidates for the UI). These are separate contracts; the organizer request is shown below.
+The two photo-search paths have different APIs:
+
+- **Organizer testing:** [`POST /v1/eval/predict`](https://app.dzap.pw/v1/eval/predict) receives the photo in `image` and returns a `slug` on a match.
+- **In-app search:** [`POST /v1/photos`](https://app.dzap.pw/v1/photos) receives `photo`; [`POST /v1/search`](https://app.dzap.pw/v1/search) then accepts the `photoId` and returns candidates for the UI.
+
+An organizer request example follows below.
 
 **Project authors:** Maxim Popkov ([Telegram @skifmax](https://t.me/skifmax)) and Roman Karandashov ([GitHub MisterMolox](https://github.com/MisterMolox)). [Русский README](README.md).
 
@@ -38,17 +43,19 @@ sh scripts/docker-local.sh up
 sh scripts/docker-local.sh smoke
 ```
 
-`init` creates local configuration and passwords; `up` checks the data and starts the full Compose stack. Open <http://127.0.0.1:8097/>. Stop it with `sh scripts/docker-local.sh stop` (volumes persist).
+`init` creates local configuration and passwords. `up` checks the data and starts the full Compose stack. Open <http://127.0.0.1:8097/>. To stop: `sh scripts/docker-local.sh stop`; volumes persist.
 
-For a UI-only demo after cloning, run `docker compose -f deploy/compose.demo.yaml up --build -d --wait`. It has eight sample cards but **no recognition: the contest API returns 503**. See the [other launch options](docs/SELF-HOST.ru.md).
+For a UI-only demo, run `docker compose -f deploy/compose.demo.yaml up --build -d --wait` after cloning. This mode has eight sample cards; the contest API returns HTTP 503. See the [other launch options](docs/SELF-HOST.ru.md).
 
 ## Supply your data
 
-Keep the extracted bundle **outside Git**, with `f8-bundle/`, `catalog-package/`, `catalog-media/`, and `recommendations/index.json` under the same data root. To use another absolute path, pass it to the **first** `sh scripts/docker-local.sh init /absolute/path/to/data`. `up` checks pinned versions and SHA-256. Arbitrary new wine catalogs or reference-photo folders cannot be swapped in directly: the visual index, allowed slugs, display package, and hashes must agree. See the [data layout](docs/SELF-HOST.ru.md#данные-для-полного-режима) and [index rebuild limits](docs/ASSET-TRANSFER.ru.md#как-заново-построить-индексы). Send your **test photos** in the API request below, rather than copying them into the model directory.
+Keep the extracted bundle **outside Git**, with `f8-bundle/`, `catalog-package/`, `catalog-media/`, and `recommendations/index.json` under the same data root. For another location, pass its absolute path to the **first** `sh scripts/docker-local.sh init /absolute/path/to/data`. This connects the directories and creates local secrets; `up` checks pinned versions and SHA-256.
+
+A new wine catalog or set of reference photos requires matching visual-index data, allowed slugs, display package, and hashes. See the [data layout](docs/SELF-HOST.ru.md#данные-для-полного-режима) and [index rebuild limits](docs/ASSET-TRANSFER.ru.md#как-заново-построить-индексы). Send your **test photos** with the API request below; the model directory holds the pinned bundle.
 
 ## Call the contest API
 
-For the running service, send a label photo to **`https://app.dzap.pw/v1/eval/predict`** as exactly one multipart field named `image`:
+To try the running service, send a label photo to [`https://app.dzap.pw/v1/eval/predict`](https://app.dzap.pw/v1/eval/predict) in one multipart field named `image`:
 
 ```sh
 curl --fail-with-body --max-time 10 \
@@ -56,9 +63,15 @@ curl --fail-with-body --max-time 10 \
   https://app.dzap.pw/v1/eval/predict
 ```
 
-For a local full-stack installation, replace the URL with `http://127.0.0.1:8097/v1/eval/predict`. A confirmed match returns HTTP 200 with `{"slug":"catalog-slug"}`. For `no_match` or `insufficient_information`, HTTP 200 carries `action` instead of a slug; technical errors use another status, and the data-free demo returns 503. No team token is needed locally. This endpoint accepts `image`, **not** the application's `/v1/photos` field `photo`. See the [request and response contract](contracts/eval-predict.md).
+For a local full-stack installation, use `http://127.0.0.1:8097/v1/eval/predict`. Responses depend on the outcome:
 
-The **application** follows a different flow: `POST /v1/photos` stores the image and returns an `id`; `POST /v1/search` with JSON `{"photoId":"returned-id"}` returns candidates for the UI. Name search uses `GET /v2/catalog?q=...`. See the [interactive API docs](https://app.dzap.pw/api/docs) and the [application boundary](apps/api/README.md#boundary-and-contract).
+- **Match:** HTTP 200 with `{"slug":"catalog-slug"}`.
+- **No confirmed match:** HTTP 200 with `action` set to `no_match` or `insufficient_information`, and no `slug`.
+- **Technical failure:** a different HTTP status. The model-free demo returns 503.
+
+The local API needs no team token. The contest request uses `image`; the app's photo upload uses `photo`. See the [request and response contract](contracts/eval-predict.md).
+
+In the app, `POST /v1/photos` stores the image and returns an `id`. Then `POST /v1/search` with JSON `{"photoId":"returned-id"}` returns candidates for the UI. Name search uses `GET /v2/catalog?q=...`. See the [interactive API docs](https://app.dzap.pw/api/docs) and the [application boundary](apps/api/README.md#boundary-and-contract).
 
 ## Recognition model
 
@@ -89,7 +102,9 @@ flowchart LR
     api -->|related cards| recommendations[("Separate recommendation index v3")]
 ```
 
-The contest API can return a verified organizer `slug` without a display card. The app uses `/v1/photos` → `/v1/search` and displays only existing cards; a missing card is never replaced with an unrelated wine. Name search reads PostgreSQL without the model, while recommendations use their own index. See the [full architecture and photo flow](ARCHITECTURE.md).
+The contest API returns a verified organizer `slug` regardless of display-card availability. The app maps it to an existing card; if the card is missing, search reports `outside_display_catalog` and leaves the result without a replacement wine. Name search reads PostgreSQL without calling the model; recommendations read a separate index.
+
+[Full architecture and photo flow](ARCHITECTURE.md)
 
 ## Interface
 
@@ -99,18 +114,18 @@ The contest API can return a verified organizer `slug` without a display card. T
   <img src="docs/product/readme-wine-card.png" width="220" alt="Wine detail card">
 </p>
 
-The home screen with the sommelier mascot, catalog name search, and a wine card. These screens show the interface, not measured label-recognition quality.
+The home screen with the sommelier mascot, catalog name search, and a wine card. These captures show interface screens. Evaluating recognition quality requires photos with known answers.
 
 ## Research and development checks
 
 ### Dataset and test baskets
 
-To research label-based retrieval, we assembled an SKU-linked image bank and separate test baskets for comparing approaches.
+To compare label-retrieval approaches, we assembled an image bank linked to SKUs and separate test baskets.
 
 - [Roman's experiments journal](https://reps.roman.dzap.pw/#experiments) — protocols and top-1/top-3/top-5 results on validation and test sets.
 - [Coverage map](https://reps.roman.dzap.pw/#coverage) — candidate groups and gaps in confirmed captures by SKU.
 
-> A downloaded candidate is not yet a verified independent reference. Experimental metrics are not the contest accuracy of the deployed service.
+> Downloaded candidates still need verification as independent references. The journal reports experiment results; contest accuracy of the deployed service remains unknown.
 
 <p align="center">
   <a href="docs/product/readme-research-experiments.jpg"><img src="docs/product/readme-research-experiments.jpg" width="440" alt="Experiments journal with protocols and top-1, top-3, top-5 metrics"></a>
@@ -119,11 +134,11 @@ To research label-based retrieval, we assembled an SKU-linked image bank and sep
 
 ### UX research
 
-The [reference atlas](https://reps.maks.dzap.pw/view#references) compares wine-app screens and user journeys. The [scenarios and prototype](https://reps.maks.dzap.pw/view#flows) show the proposed mobile-web design. The capture below is a prototype using fictional data, not a functioning scanner.
+The [reference atlas](https://reps.maks.dzap.pw/view#references) compares wine-app screens and user journeys. The [scenarios and prototype](https://reps.maks.dzap.pw/view#flows) show the proposed mobile-web design. The capture shows a prototype with fictional data; photo search is available in the [live app](https://app.dzap.pw).
 
 ### Behavior checks (BDD)
 
-During agent-assisted development, we captured API and UI-state behavior as scenarios to catch regressions across revisions. The [behavior map](https://reps.maks.dzap.pw/behavior/) shows scenario statuses and run history. These fast checks use a stub recognizer and do not measure photo-search quality.
+During agent-assisted development, we recorded scenarios for the API and UI states to catch regressions between revisions. The [behavior map](https://reps.maks.dzap.pw/behavior/) shows scenario statuses and run history. Fast checks use a stub recognizer; photo-search quality requires a separate evaluation.
 
 <p align="center">
   <a href="docs/product/readme-ux-atlas.jpg"><img src="docs/product/readme-ux-atlas.jpg" width="440" alt="UX atlas: label-to-wine-card journey and clickable prototype"></a>
@@ -135,6 +150,8 @@ During agent-assisted development, we captured API and UI-state behavior as scen
 ## Links and limits
 
 - [Live app](https://app.dzap.pw) · [repository](https://github.com/ai-babai/brutforce) · [documentation](docs/README.md) · [verification results](docs/SOLUTION.md).
-- The contest artwork and RSHB mark come from the participant-provided “ЛЦТ2026 Шаблон презентации” template; the team mark uses the previously favored concept 01, and the Svoe Vino logo comes from the app. The mascot home screen is from an app design review; search and card captures are from the BrutForce mobile demo.
+- The contest artwork and RSHB mark come from the participant-provided “ЛЦТ2026 Шаблон презентации” template. The team mark uses concept 01 from an earlier set; the Svoe Vino logo comes from the app.
+- The mascot home capture comes from an app design review; search and card captures come from the BrutForce mobile demo.
 - The repository is public to read and clone; a code-reuse license has not been agreed separately. A presentation URL is not confirmed.
-- Weights and data are outside Git. Public access does not establish redistribution rights. Full Compose health/catalog checks passed on Mac/OrbStack with linux/amd64 containers; clean-Linux and known-photo checks remain outstanding.
+- Weights and data live outside Git. Public access to the bundle does not establish rights to redistribute models, the catalog, or photos.
+- The full Compose health/catalog checks passed on Mac/OrbStack with linux/amd64 containers; clean-Linux and known-photo checks remain outstanding.
