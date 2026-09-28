@@ -1,18 +1,20 @@
 # Локальный комплект данных BrutForce · 28.09.2026
 
-Это инструкция к **частной передаче** текущего набора данных, а не публичная
-лицензия на изображения, каталоги или производные файлы. Архивы создаются
-вне Git. Перед тем как делиться ссылкой, владелец должен определить круг
-получателей и права на распространение каталога/фотографий/моделей.
-Пароли, пользовательские загрузки, gold и фотографии конкурсных запросов
-в комплект не включены.
+Комплект доступен в [папке Яндекс Диска](https://disk.yandex.ru/d/dHAXDPcitS-ZJQ).
+Скачайте **все 14 файлов** в одну директорию, сохранив имена: пять обычных
+архивов из таблицы, шесть частей архива весов, `README.ru.md`,
+`02-recognition-weights.tar.sha256` и `SHA256SUMS`. Цельного
+`02-recognition-weights.tar` в папке нет. Публичный доступ к файлам не
+устанавливает права на распространение моделей, каталога и фотографий.
+Архивы создаются вне Git; пароли, пользовательские загрузки, gold и фото
+конкурсных запросов в комплект не включены.
 
-## Что лежит рядом с этим README
+## Что находится в комплекте
 
 | Архив | Назначение после распаковки |
 |---|---|
 | `01-recognition-data.tar.gz` | `f8-bundle/overlay`, `catalog`, `index`, `ocr`: slug организаторов, OCR-данные и **готовый визуальный индекс**; без Python-кода |
-| `02-recognition-weights.tar` | `f8-bundle/onnx` и `models/hub`: ONNX и закреплённые веса детектора/энкодеров |
+| `02-recognition-weights.tar.part-000` … `005` | Шесть частей одного tar-архива: `f8-bundle/onnx` и `models/hub`, ONNX и закреплённые веса детектора/энкодеров |
 | `03-display-catalog.tar.gz` | `catalog-package`: 2 038 карточек витрины и release manifest |
 | `04-display-media.tar` | `catalog-media`: ровно 12 201 WebP, перечисленных в manifest (три размера) |
 | `05-text-recommendations.tar.gz` | `recommendations/index.json`: отдельная таблица 2 038 наборов похожих карточек, **не** визуальный индекс |
@@ -38,7 +40,9 @@ brutforce/apps/vision/                КОД CPU-СЕРВИСА (из Git, не 
 `-- secrets/                          Пароли создаются отдельно; их нет в архиве
 ```
 
-`SHA256SUMS` содержит SHA-256 архивов и этого README. Внешний набор содержит
+`SHA256SUMS` содержит SHA-256 остальных 13 скачиваемых файлов;
+`02-recognition-weights.tar.sha256` — SHA-256 потока цельного архива весов.
+Внешний набор содержит
 32 зафиксированных файла данных; проверка их отдельных SHA находится в
 `deploy/assets/f8-cpu.sha256` **репозитория**. Python-код и OCR-правила находятся
 в `apps/vision/` репозитория и собираются в Docker-образ. Эталонных фотографий организаторов для
@@ -48,15 +52,25 @@ brutforce/apps/vision/                КОД CPU-СЕРВИСА (из Git, не 
 ## Как восстановить на Linux
 
 Нужен отдельный клон **репозитория BrutForce** (код не лежит в
-архиве). На машине с Python 3.11+, GNU `sha256sum` и `tar`, в каталоге с
-шестью архивами:
+архиве). На Linux-машине с Python 3.11+, GNU `sha256sum` и `tar`,
+из каталога со всеми 14 файлами:
 
 ```sh
 sha256sum -c SHA256SUMS
+cat 02-recognition-weights.tar.part-??? | sha256sum -c 02-recognition-weights.tar.sha256
 DATA_ROOT="$HOME/brutforce-local"
 mkdir -p "$DATA_ROOT"
-for archive in 0[1-6]-*.tar*; do tar -xf "$archive" -C "$DATA_ROOT"; done
+tar -xf 01-recognition-data.tar.gz -C "$DATA_ROOT"
+cat 02-recognition-weights.tar.part-??? | tar -xf - -C "$DATA_ROOT"
+for archive in 03-display-catalog.tar.gz 04-display-media.tar \
+               05-text-recommendations.tar.gz 06-visual-index-inputs.tar.gz; do
+  tar -xf "$archive" -C "$DATA_ROOT"
+done
 ```
+
+Части весов читаются по порядку и распаковываются потоком, без временной
+копии цельного tar. Не запускайте распаковку по `*.tar*`: части не являются
+отдельными архивами. Если `SHA256SUMS` не проходит, не распаковывайте файлы.
 
 Затем из корня клона репозитория в том же терминале:
 
@@ -77,7 +91,6 @@ sha256sum "$DATA_ROOT/catalog-package/manifest.json"
 
 ```sh
 sh scripts/docker-local.sh init "$DATA_ROOT"
-sh scripts/docker-local.sh preflight
 sh scripts/docker-local.sh up
 sh scripts/docker-local.sh smoke
 ```
@@ -85,7 +98,8 @@ sh scripts/docker-local.sh smoke
 `init` создаёт локальные пароли и файл `deploy/.env.local` с путями к
 распакованным данным, не перезаписывая уже созданную конфигурацию. Для этого
 закреплённого комплекта версии и SHA из `deploy/docker.env.example` менять не
-нужно. Откройте <http://127.0.0.1:8097/>.
+нужно. `up` включает `preflight` с проверкой SHA и Compose-конфигурации.
+Откройте <http://127.0.0.1:8097/>.
 
 Полная инструкция по требованиям хоста, проверке известного фото и ручному
 режиму — `docs/SELF-HOST.ru.md` в репозитории. Полный Compose с распакованным
