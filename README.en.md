@@ -1,8 +1,8 @@
 # BrutForce — Russian wine-label scanner
 
-![Digital Transformation Leaders 2026: artwork from the contest presentation template](docs/product/readme-lct-2026.png)
+![Digital Transformation Leaders 2026: Rosselkhozbank's Svoe Vino challenge and a wine-bottle outline](docs/product/readme-lct-2026.png)
 
-Built for the **Digital Transformation Leaders 2026** challenge from the Svoe Vino platform. The task is to identify an exact Russian wine catalog entry from a label photo and show its card on a phone. The system combines image retrieval, a catalog and a mobile web application; it does not label an unrelated card as an exact match.
+Built for the **Digital Transformation Leaders 2026** challenge from **Rosselkhozbank (RSHB)** for the Svoe Vino platform. The task is to identify an exact Russian wine catalog entry from a label photo and show its card on a phone. The system combines image retrieval, a catalog and a mobile web application; it does not label an unrelated card as an exact match.
 
 **Project authors:** Maxim Popkov ([Telegram @skifmax](https://t.me/skifmax)) and Roman Karandashov ([GitHub MisterMolox](https://github.com/MisterMolox)). [Русский README](README.md).
 
@@ -69,15 +69,16 @@ The app uses `/v1/photos` followed by `/v1/search` with a `photoId`. A recognize
 ## Interface
 
 <p align="center">
-  <img src="docs/product/readme-catalog-search.png" width="260" alt="Mobile demo: search the catalog by name">
-  <img src="docs/product/readme-wine-card.png" width="260" alt="Mobile demo: wine detail card">
+  <img src="design/wine-ux-v3/air35/review/home-430.png" width="220" alt="Home screen: the detective-dog mascot holds a wine bottle beside the scan action">
+  <img src="docs/product/readme-catalog-search.png" width="220" alt="Search the catalog by wine name">
+  <img src="docs/product/readme-wine-card.png" width="220" alt="Wine detail card">
 </p>
 
-Catalog name search and a wine card in the mobile demo. These screens show the interface, not measured label-recognition quality.
+The home screen with the detective-dog mascot, catalog name search, and a wine card. These screens show the interface, not measured label-recognition quality.
 
 ## Links and limits
 
 - [Live app](https://app.dzap.pw) · [repository](https://github.com/ai-babai/brutforce) · [documentation](docs/README.md) · [verification results](docs/SOLUTION.md).
-- The contest artwork is cropped from the participant-provided “ЛЦТ2026 Шаблон презентации” template; the UI captures are from the BrutForce mobile demo.
+- The contest artwork and RSHB logo come from the participant-provided “ЛЦТ2026 Шаблон презентации” template; the team added the bottle outline. The mascot home screen is from an app design review; search and card captures are from the BrutForce mobile demo.
 - The repository is currently private; cloning requires access. A presentation URL is not confirmed.
 - Weights and data are outside Git. Public access does not establish redistribution rights. Full Compose health/catalog checks passed on Mac/OrbStack with linux/amd64 containers; clean-Linux and known-photo checks remain outstanding.
