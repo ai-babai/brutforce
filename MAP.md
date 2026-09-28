@@ -23,6 +23,7 @@
 | Права и публичность | [Граница прав](docs/SOLUTION.md#презентация-и-права), приватный аудит раскрытия у владельца |
 | Совместная работа | [RULES](docs/agent-guide/RULES.md), [BOARD](docs/agent-guide/BOARD.md) |
 | Выпуск, общий TEST/PROD F8 и повторный code-only switch | [PIPELINE](deploy/PIPELINE.md), [fast-prod-v1](deploy/fast-prod-v1.json), `deploy/release.py`, [DATABASE](docs/agent-guide/DATABASE.md) |
+| P0 + automatic A2, поэтапный switch и откат | [Pipeline](deploy/PIPELINE.md#p0--automatic-a2), [CPU wrapper](apps/vision/README.md#automatic-a2-release) |
 | Полномочия | [AGENTS](AGENTS.md), [подробные правила](docs/agent-guide/OPERATING-RULES.md) |
 | Обновление структуры | [GUIDE-FORMAT](docs/agent-guide/GUIDE-FORMAT.md) |
 
