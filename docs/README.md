@@ -1,8 +1,8 @@
 # Документация
 
-Текущий маршрут: [архитектура](../ARCHITECTURE.md) → [решение и измерения](SOLUTION.md)
-→ [CPU и локальный запуск](RUNBOOK.ru.md) ([English entry](RUNBOOK.en.md)).
-TEST и [PROD](https://app.dzap.pw) — CPU F8 (выпуск 28.09.2026). [Карта](../MAP.md), [контракты](../contracts/README.md).
+Ищете работающий прототип и четыре ссылки сдачи? Начните с [README](../README.md). Затем откройте [результаты и ограничения](SOLUTION.md) и [архитектуру](../ARCHITECTURE.md).
+
+Для запуска и остановки служит один [runbook](RUNBOOK.ru.md) с [английским входом](RUNBOOK.en.md). Контракты API — в [contracts](../contracts/README.md). TEST и [PROD](https://app.dzap.pw) используют CPU F8 (выпуск 28 сентября 2026).
 
 - [Вход для нового участника](agent-guide/AGENTS.md) — правила, локальная памятка, повторный вход и заметки занятости.
 - [Проверка пакета тремя независимыми Terra](reviews/2026-09-16-onboarding/README.md) — результаты, найденный пробел и ограничения проверки.
