@@ -42,7 +42,7 @@
   БД: [DATABASE.md](docs/agent-guide/DATABASE.md).
 - Docker CPU F8: [RUNBOOK.ru.md](docs/RUNBOOK.ru.md#полный-cpu-профиль-f8)
   и [Compose](deploy/compose.yaml); assets вне Git, clean-Linux parity pending.
-- Публичный вход: [README](README.md), [English](README.en.md),
+- Вход в документацию: [README](README.md), [English](README.en.md),
   [архитектура](ARCHITECTURE.md), [решение/метрики](docs/SOLUTION.md),
   [runbook](docs/RUNBOOK.ru.md).
 - Серверные пути: [SERVER.md](docs/agent-guide/SERVER.md).

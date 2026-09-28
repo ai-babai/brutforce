@@ -32,7 +32,7 @@ python3 scripts/asset-bundle.py export --sources /private/operator-sources.json 
 python3 scripts/asset-bundle.py verify /private/new-f8-bundle
 ```
 
-`export` откажется перезаписать существующий `--out`. Каталог `models` в карте указывает на root HF hub, а bundle содержит `models/hub/…`; имена исходных каталогов зависят от владельца assets и не хранятся здесь. Bundle расположен вне репозитория, как и [каталожный пакет](../contracts/catalog-display.md), отдельные media и файл рекомендаций SHA `f05f16c7790782ec3c1b50047bba4e29f1d906217f63846c217d5516e6ef8e7f`.
+`export` откажется перезаписать существующий `--out`. Каталог `models` в карте указывает на root HF hub, а bundle содержит `models/hub/…`; имена исходных каталогов зависят от владельца assets и не хранятся здесь. Bundle расположен вне репозитория, как и [каталожный пакет](../contracts/catalog-display.md), отдельные media и файл рекомендаций SHA `f05f16c7790782ec3c1b50047bba4e29f1d906217f63846c217d5516e6ef8e7f`. Действующий TEST/PROD override использует текст витрины, атрибуты и винодельню; visual-neighbors внутри F8 bundle не является его заменой.
 
 Из **корня клона** на Linux x86-64, после получения именно этих четырёх внешних частей:
 

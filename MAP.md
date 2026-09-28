@@ -8,7 +8,7 @@
 |---|---|
 | Цель и запуск | [README.md](README.md) |
 | English entry | [README.en.md](README.en.md), [runbook EN](docs/RUNBOOK.en.md) |
-| Эксперт: live TEST, метрики, презентация | [Результаты и статус](docs/SOLUTION.md), [архитектура](ARCHITECTURE.md) |
+| Эксперт: live PROD/TEST, метрики, презентация | [Результаты и статус](docs/SOLUTION.md), [архитектура](ARCHITECTURE.md) |
 | Разработчик: реальный CPU и быстрые проверки | [Runbook](docs/RUNBOOK.ru.md), [каталог](apps/api/README.md) |
 | Локальный Docker CPU F8 | [Пошаговый runbook](docs/RUNBOOK.ru.md#полный-cpu-профиль-f8), [Compose](deploy/compose.yaml), [50 SHA assets](deploy/assets/f8-cpu.sha256), [операторский CLI](scripts/docker-local.sh) |
 | Изменение UI | [apps/web](apps/web/AGENTS.md), [Design Specs](apps/web/design-specs.md) |
@@ -28,4 +28,5 @@
 | Обновление структуры | [GUIDE-FORMAT](docs/agent-guide/GUIDE-FORMAT.md) |
 
 TEST и [PROD](https://app.dzap.pw): приложение `d26afa3` / candidate `b0428147…` (28.09.2026), общий CPU F8; HTTPS и реальный HTTP smoke пройдены.
+Документы впервые вошли в приватный `main` на `b451ecd` (PR #103); текущий docs SHA может быть новее и не является ревизией развёрнутого приложения.
 Папка, manifest или подготовленная среда не означают работающий выпуск.

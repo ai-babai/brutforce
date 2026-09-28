@@ -4,7 +4,7 @@
 
 [Try the live app](https://app.dzap.pw) · [Quick start](#quick-start) · [Docker CPU F8](#docker-with-real-f8-cpu) · [Architecture](ARCHITECTURE.md) · [Results](docs/SOLUTION.md) · [Presentation: pending](docs/SOLUTION.md#презентация-и-права) · [Agent guide](AGENTS.md)
 
-As of 28 September 2026, [app.dzap.pw](https://app.dzap.pw) runs F8 CPU (app `d26afa3`, candidate `b0428147…`, catalog `svoe-20260927-alpha-2035-v1`, recommendations SHA `f05f16c7…`). Public HTTPS, a real photo, and the product HTTP flow passed smoke checks. Browser UI/device-camera review, a rights-cleared screenshot, and a presentation URL remain pending.
+As of 28 September 2026, [app.dzap.pw](https://app.dzap.pw) runs F8 CPU (deployed app `d26afa3`, candidate `b0428147…`, catalog `svoe-20260927-alpha-2035-v1`, recommendations SHA `f05f16c7…`). Documentation first entered private `main` at `b451ecd`; its current Git revision may be newer and is distinct from the deployed app. HTTPS, a real photo, and the product HTTP flow passed smoke checks. Browser UI/device-camera review, a rights-cleared screenshot, and a presentation URL remain pending.
 
 ## For reviewers
 
@@ -51,4 +51,4 @@ React UI → Go API ──→ PostgreSQL display catalog
 
 PROD smoke on `d26afa3` returned 3/3 nonempty slugs in 4.595 / 4.354 / 3.079 seconds; the first known answer matched. This does **not** establish official-gold accuracy or p95. See [results](docs/SOLUTION.md) for the distinct DEV comparison. Alternatives are not exact matches or taste predictions; live recommendations use the pinned display-text/attributes/winery index.
 
-[Project map](MAP.md) · [API contracts](contracts/README.md) · [Release pipeline](deploy/PIPELINE.md). No team code license has yet been agreed; third-party images, catalog data and model weights require separate permission.
+[Project map](MAP.md) · [API contracts](contracts/README.md) · [Release pipeline](deploy/PIPELINE.md). The repository remains **PRIVATE**; the owner's access does not establish reviewer access. No team code license has yet been agreed; third-party images, catalog data and model weights require separate permission.
