@@ -58,7 +58,7 @@ unit/drop-in/helper и controller не запускать `bootstrap.py` цел�
 совместимом TEST deploy контроллер сверяет bytes, ID активного display-каталога
 и версии, затем переносит receipt на новый appCandidateId. При несовместимости
 switch останавливается до изменения `current` и env. Для следующих real TEST
-и первого PROD обязателен exact cleaned SHA `f05f16c7790782ec3c1b50047bba4e29f1d906217f63846c217d5516e6ef8e7f`;
+и следующего PROD обязателен актуальный v3 SHA `3f6f3f767faf5301ce38d7fb2b1c345feac937db143979702c5aabd049969dfb`;
 отсутствующий receipt не даёт fallback на базовые visual-neighbors F8.
 
 ## Проверки и артефакт
@@ -223,6 +223,13 @@ root-owned backup, проверить diff нового `deploy/release.py` из
 `lct-release-service.sh`, PROD Caddy или systemd unit ради code-only switch.
 
 ## P0 + automatic A2
+
+При preflight обнаружен параллельно установленный recommendation v3:
+`display-text-attributes-winery-review-v3`, SHA `3f6f3f767faf5301ce38d7fb2b1c345feac937db143979702c5aabd049969dfb`.
+Он сохраняется. Исходник live controller до интеграции A2 имел SHA
+`f660cae0c9300301bc00f4f0c514437ec25b6f0a401c9e9f43d0880b719140e1`;
+его PROD recommendation command и двусторонняя публикация receipt перенесены
+без изменения политики. A2 не повторяет data switch и не возвращает v2.
 
 Кандидат включает bounded ingress P0 (до 50 Мп; больше 25 Мп → JPEG88, сторона
 до 4 000) и замороженный automatic A2. На повторно используемом Mac CPU наборе

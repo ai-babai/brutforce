@@ -7,9 +7,9 @@ PROD_POLICY = pathlib.Path(__file__).with_name('fast-prod-v1.json')
 RECOMMENDATION_PIN = {
     'catalogVersion':'svoe-20260927-alpha-2035-v1',
     'catalogManifestSHA256':'d88c4454a46802490ee2f69e32d2fb28fd8816d23a6d4d554356697632f845ef',
-    'sha256':'f05f16c7790782ec3c1b50047bba4e29f1d906217f63846c217d5516e6ef8e7f',
+    'sha256':'3f6f3f767faf5301ce38d7fb2b1c345feac937db143979702c5aabd049969dfb',
     'indexVersion':'so400m384-owlv2-v2-crops-reference-gated-20260925',
-    'modelVersion':'display-text-attributes-winery-review-v2',
+    'modelVersion':'display-text-attributes-winery-review-v3',
 }
 
 def require(ok, message):
@@ -44,11 +44,12 @@ def publish():
         current=pathlib.Path(cfg['path'])/'current'
         state=ROOT/'environments'/f'{name}.json'
         envs[name] = read(state) if state.exists() else ({'revision':current.resolve().name} if current.is_symlink() else None)
-    recommendation_state=ROOT/'environments'/'test-recommendations.json'
-    if recommendation_state.exists() and envs.get('test'):
-        extra=read(recommendation_state)
-        if extra['appCandidateId']==envs['test'].get('candidateId'):
-            envs['test']['recommendations']=extra
+    for name in ('test','prod'):
+        recommendation_state=ROOT/'environments'/f'{name}-recommendations.json'
+        if recommendation_state.exists() and envs.get(name):
+            extra=read(recommendation_state)
+            if extra['appCandidateId']==envs[name].get('candidateId'):
+                envs[name]['recommendations']=extra
     def public_record(r):
         out={k:v for k,v in r.items() if k not in ('dataReport','manifest')}
         if 'data' in out.get('gates',{}):
@@ -478,8 +479,9 @@ def switch_test_recommendations(wanted):
     updated='\n'.join('RECOMMENDATION_INDEX_FILE='+str(path) if line.startswith('RECOMMENDATION_INDEX_FILE=')
                       else 'RECOMMENDATION_INDEX_SHA256='+wanted if line.startswith('RECOMMENDATION_INDEX_SHA256=')
                       else line for line in before.splitlines())+'\n'
-    probe='a-gordienko-m-nikolaev-sira-nuvo-krasnoe-suhoe-115'
-    expected=index['neighbors'][probe][0]['id']
+    probes=('a-gordienko-m-nikolaev-sira-nuvo-krasnoe-suhoe-115',
+            'massandra-massandra-heres-oreadna-aligote-beloe-suhoe-16')
+    require(all(index['neighbors'].get(probe) for probe in probes), 'Recommendation smoke probe has no neighbor')
     try:
         write_vision_env(updated)
         command('sudo','-n','/usr/local/sbin/lct-release-service','restart-test')
@@ -492,11 +494,12 @@ def switch_test_recommendations(wanted):
         catalog=http_json(base,'/v2/catalog?limit=1')
         require(catalog.get('catalogVersion')==state['catalogVersion'] and catalog.get('candidates'),
                 'Active TEST catalog changed during recommendation switch')
-        result=http_json(base,'/v1/recommendations',{'wineId':probe,'limit':1})
-        require(result.get('catalogVersion')==state['catalogVersion'] and
-                result.get('modelVersion')==index['modelVersion'] and
-                [x['id'] for x in result.get('candidates',[])]==[expected],
-                'New recommendation index failed live smoke')
+        for probe in probes:
+            result=http_json(base,'/v1/recommendations',{'wineId':probe,'limit':1})
+            require(result.get('catalogVersion')==state['catalogVersion'] and
+                    result.get('modelVersion')==index['modelVersion'] and
+                    [x['id'] for x in result.get('candidates',[])]==[index['neighbors'][probe][0]['id']],
+                    'New recommendation index failed live smoke')
         require(http_json(base,'/v1/health').get('demo') is False and
                 http_json(base,'/release.json')['revision']==state['revision'],
                 'App health or revision changed during recommendation switch')
@@ -509,6 +512,85 @@ def switch_test_recommendations(wanted):
         'file':str(path),'sha256':wanted,'modelVersion':index['modelVersion'],
         'indexVersion':index['indexVersion'],'previousFile':previous['RECOMMENDATION_INDEX_FILE'],
         'previousSHA256':previous['RECOMMENDATION_INDEX_SHA256'],'at':stamp()})
+    publish()
+
+def switch_prod_recommendations(wanted, actor, reference):
+    """Switch only the approved PROD recommendation bytes; never touch F8 or the catalog."""
+    require(wanted==RECOMMENDATION_PIN['sha256'], 'PROD requires the exact pinned recommendation index')
+    require(actor=='maks' and 3<=len(reference)<=500, 'PROD data switch needs Maks acceptance reference')
+    cfg=read(CONFIG)['environments']['prod']
+    target_config('prod',cfg)
+    state_path=ROOT/'environments'/'prod.json'
+    receipt_path=ROOT/'environments'/'prod-recommendations.json'
+    require(state_path.is_file() and receipt_path.is_file(), 'Active PROD release and recommendation receipt required')
+    state=read(state_path)
+    release=load(state['candidateId'])
+    target=ROOT/'packages'/state['revision']
+    current=pathlib.Path(cfg['path'])/'current'
+    require(state.get('mode')=='real' and state.get('revision')==release['revision'] and
+            current.is_symlink() and current.resolve()==target.resolve() and
+            release['gates']['prod']['status']=='passed', 'PROD release identity or gate differs')
+    runtime=f8_runtime(target)
+    require(state.get('modelVersion')==runtime['modelVersion'] and
+            state.get('catalogVersion')==release['catalogVersion'] and
+            state.get('catalogManifestSHA256')==release['catalogManifestSHA256'],
+            'PROD model or display catalog differs from the pinned release')
+    previous=read(receipt_path)
+    require(previous.get('appCandidateId')==state['candidateId'] and
+            previous.get('sha256')==state.get('recommendationSHA256') and
+            previous.get('sha256')!=wanted, 'PROD recommendation receipt is stale or already switched')
+    _,old_index=verified_recommendations(previous,runtime,release)
+    new_receipt={'appCandidateId':state['candidateId'],'catalogVersion':state['catalogVersion'],
+                 'file':str(ROOT/'recommendations'/f'{wanted}.json'),'sha256':wanted,
+                 'indexVersion':RECOMMENDATION_PIN['indexVersion'],
+                 'modelVersion':RECOMMENDATION_PIN['modelVersion']}
+    _,index=verified_recommendations(new_receipt,runtime,release)
+    require_recommendation_pin(new_receipt,release)
+    sherry='massandra-massandra-heres-oreadna-aligote-beloe-suhoe-16'
+    require({k for k in index['neighbors'] if index['neighbors'][k]!=old_index['neighbors'][k]}=={sherry} and
+            not old_index['neighbors'][sherry] and len(index['neighbors'][sherry])>=3,
+            'PROD recommendation diff must change only the approved Sherry source')
+    vision_env=pathlib.Path(cfg.get('visionRuntimeEnv','/srv/lct/prod/vision-runtime.env'))
+    before=vision_env.read_text()
+    require(before==test_vision_env(runtime,previous), 'PROD vision env differs from pinned current receipt')
+    base=cfg['url']
+    require(http_json(base,'/release.json')['revision']==state['revision'] and
+            http_json(base,'/v1/health').get('demo') is False, 'PROD application changed or is not healthy')
+    f8_health(runtime)
+    updated=test_vision_env(runtime,new_receipt)
+    try:
+        temp=vision_env.with_suffix('.tmp'); temp.write_text(updated); temp.chmod(0o600); temp.replace(vision_env)
+        command('sudo','-n','/usr/local/sbin/lct-release-service','restart-prod')
+        for _ in range(20):
+            try:
+                if http_json(base,'/v1/health').get('ok'): break
+            except Exception: pass
+            time.sleep(.5)
+        else: raise RuntimeError('PROD API did not become ready')
+        for url in (base,cfg['publicURL']):
+            require(http_json(url,'/release.json')['revision']==state['revision'] and
+                    http_json(url,'/v1/health').get('demo') is False and
+                    http_json(url,'/v2/catalog?limit=1').get('catalogVersion')==state['catalogVersion'],
+                    'PROD code, health or catalog changed during recommendation switch')
+            for source in (sherry,'a-gordienko-m-nikolaev-sira-nuvo-krasnoe-suhoe-115'):
+                result=http_json(url,'/v1/recommendations',{'wineId':source,'limit':3})
+                expected=[row['id'] for row in index['neighbors'][source][:3]]
+                require(result.get('catalogVersion')==state['catalogVersion'] and
+                        result.get('modelVersion')==index['modelVersion'] and
+                        [row['id'] for row in result.get('candidates',[])]==expected,
+                        'PROD recommendation identity or Sherry smoke differs from approved index')
+        f8_health(runtime)
+    except Exception:
+        temp=vision_env.with_suffix('.tmp'); temp.write_text(before); temp.chmod(0o600); temp.replace(vision_env)
+        command('sudo','-n','/usr/local/sbin/lct-release-service','restart-prod')
+        raise
+    new_receipt.update({'previousFile':previous['file'],'previousSHA256':previous['sha256'],
+                        'actor':actor,'reference':reference,
+                        'recordedBy':os.environ.get('SUDO_USER',os.environ.get('USER','unknown')),'at':stamp()})
+    write(receipt_path,new_receipt)
+    state['recommendationSHA256']=wanted
+    state['recommendationModelVersion']=index['modelVersion']
+    write(state_path,state)
     publish()
 
 def smoke(cfg, r, envname='test'):
@@ -786,9 +868,10 @@ def safe_switch(envname,candidate,action='deploy'):
         save(cid,r); raise
 
 def main(args):
-    arity={'status':1,'install':4,'register-data':2,'deploy-test':2,'promote':2,'rollback':3,'browser-result':2,'approve':4,'recommendations-test':2}
+    arity={'status':1,'install':4,'register-data':2,'deploy-test':2,'promote':2,'rollback':3,'browser-result':2,'approve':4,'recommendations-test':2,'recommendations-prod':4}
     require(bool(args) and args[0] in arity and len(args)==arity[args[0]],'Invalid command or argument count')
-    require(not ('SSH_ORIGINAL_COMMAND' in os.environ and args[0]=='approve'), 'SSH deploy key cannot approve production')
+    require(not ('SSH_ORIGINAL_COMMAND' in os.environ and args[0] in ('approve','recommendations-prod')),
+            'SSH deploy key cannot approve or switch PROD recommendations')
     ROOT.mkdir(exist_ok=True)
     with (ROOT/'controller.lock').open('w') as lock:
         fcntl.flock(lock, fcntl.LOCK_EX|fcntl.LOCK_NB)
@@ -797,6 +880,7 @@ def main(args):
             publish(); print((ROOT/'public'/'status.json').read_text()); return
         token=args[1]; require(bool(re.fullmatch('[a-f0-9]{40}|[a-f0-9]{64}',token)),'Invalid revision or candidate ID')
         if cmd=='recommendations-test': switch_test_recommendations(sha256(token))
+        elif cmd=='recommendations-prod': switch_prod_recommendations(sha256(token),args[2],args[3])
         elif cmd=='install': install(revision(token),args[2],args[3])
         elif cmd=='register-data': register_data(revision(token)); return
         elif cmd=='deploy-test': safe_switch('test',token)
@@ -844,7 +928,7 @@ def main(args):
                            'recordedBy':os.environ.get('SUDO_USER',os.environ.get('USER','unknown')),
                            'at':stamp(),**extra}; save(candidate,r)
         else: raise RuntimeError('Unknown command')
-        print(json.dumps({'ok':True,'command':cmd,'candidateId':token}))
+        print(json.dumps({'ok':True,'command':cmd,**({'recommendationSHA256':token} if cmd=='recommendations-prod' else {'candidateId':token})}))
 
 if __name__=='__main__':
     try:
