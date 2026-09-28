@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "policyId": "fast-prod-v1",
+  "targetScope": "prod",
+  "deferredCases": {
+    "DESIGN-001": {"class": "superseded", "basis": "v2 palette replaced by active Air styling"},
+    "DESIGN-002": {"class": "superseded", "basis": "v2 scanner icon dimensions replaced by Air"},
+    "DESIGN-004": {"class": "deferred", "basis": "viewport geometry requires an affected-UI review"},
+    "DESIGN-006": {"class": "deferred", "basis": "v2 heading geometry changed; active Air heading layout remains to be reviewed on desktop and narrow screens"},
+    "DESIGN-008": {"class": "deferred", "basis": "live dark camera video remains required in Air; physical MediaStream pending"},
+    "DESIGN-009": {"class": "required-live", "basis": "candidate selection and correct card identity require a PROD-origin UI check"},
+    "DESIGN-010": {"class": "deferred", "basis": "camera height needs viewport or physical-device review"},
+    "DESIGN-011": {"class": "deferred", "basis": "short-screen shutter reachability needs viewport review"},
+    "DESIGN-013": {"class": "superseded", "basis": "v2 scanner geometry replaced by Air"},
+    "DESIGN-014": {"class": "deferred", "basis": "v2 Home hint removed; Camera hint remains and needs viewport review"},
+    "DESIGN-015": {"class": "deferred", "basis": "v2 phone-frame prescription changed; current desktop framing and breakpoint behavior still need review"},
+    "DESIGN-016": {"class": "deferred", "basis": "v2 phone-frame geometry changed; camera and shutter fit on active desktop layout still need review"},
+    "DESIGN-018": {"class": "deferred", "basis": "v2 footer removed; active aria-current navigation remains to be checked on target origin"},
+    "DESIGN-020": {"class": "deferred", "basis": "active Air text-search legibility requires origin review when UI changes"},
+    "DESIGN-022": {"class": "deferred", "basis": "v2 palette changed; active header, selected state and mascot composition still need review"},
+    "DESIGN-023": {"class": "deferred", "basis": "hero and leader geometry requires review when card UI changes"},
+    "DESIGN-025": {"class": "deferred", "basis": "hero columns and full title require review when card UI changes"},
+    "DESIGN-026": {"class": "deferred", "basis": "photo tile dimensions and accessibility require review when UI changes"},
+    "AIR-021": {"class": "deferred", "basis": "keyboard, enlarged-text and adaptive layout need separate accessibility review"},
+    "AIR-024": {"class": "deferred", "basis": "physical MediaStream and viewport geometry not proven by jsdom"},
+    "AIR-025": {"class": "required-live", "basis": "real upload, recognized slug and matching card must be observed at PROD"},
+    "AIR-026": {"class": "deferred", "basis": "photo-result leader width needs UI review on change"},
+    "AIR-027": {"class": "deferred", "basis": "active tab backdrop needs UI review on change"},
+    "AIR-028": {"class": "deferred", "basis": "typography needs UI review on change"},
+    "AIR-029": {"class": "deferred", "basis": "home composition needs UI review on change"},
+    "AIR-043": {"class": "required-live", "basis": "source link and no-feedback behavior need targeted PROD-origin UI review"}
+  }
+}

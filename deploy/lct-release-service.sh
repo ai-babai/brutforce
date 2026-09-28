@@ -25,6 +25,7 @@ case "${1-}" in
    runuser -u postgres -- pg_dump -Fc lct_prod > "$dir/lct_prod-$stamp.dump.partial"
    pg_restore --list "$dir/lct_prod-$stamp.dump.partial" >/dev/null
    mv "$dir/lct_prod-$stamp.dump.partial" "$dir/lct_prod-$stamp.dump" ;;
- publish-prod) python3 /usr/local/lib/lct-release/publish-prod.py ;;
+  publish-prod) python3 /usr/local/lib/lct-release/publish-prod.py ;;
+  unpublish-prod) python3 /usr/local/lib/lct-release/unpublish-prod.py ;;
  *) exit 2 ;;
 esac

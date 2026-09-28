@@ -1,8 +1,16 @@
 #!/usr/bin/env python3
 """Small native release controller. Installed read-only; runs as lct-release."""
-import datetime, fcntl, hashlib, json, os, pathlib, re, shlex, subprocess, sys, tarfile, tempfile, time, urllib.error, urllib.request
+import datetime, fcntl, hashlib, json, math, os, pathlib, re, shlex, subprocess, sys, tarfile, tempfile, time, urllib.error, urllib.request
 ROOT = pathlib.Path('/srv/lct/releases')
 CONFIG = pathlib.Path('/etc/lct-release/config.json')
+PROD_POLICY = pathlib.Path(__file__).with_name('fast-prod-v1.json')
+RECOMMENDATION_PIN = {
+    'catalogVersion':'svoe-20260927-alpha-2035-v1',
+    'catalogManifestSHA256':'d88c4454a46802490ee2f69e32d2fb28fd8816d23a6d4d554356697632f845ef',
+    'sha256':'f05f16c7790782ec3c1b50047bba4e29f1d906217f63846c217d5516e6ef8e7f',
+    'indexVersion':'so400m384-owlv2-v2-crops-reference-gated-20260925',
+    'modelVersion':'display-text-attributes-winery-review-v2',
+}
 
 def require(ok, message):
     if not ok: raise RuntimeError(message)
@@ -36,6 +44,11 @@ def publish():
         current=pathlib.Path(cfg['path'])/'current'
         state=ROOT/'environments'/f'{name}.json'
         envs[name] = read(state) if state.exists() else ({'revision':current.resolve().name} if current.is_symlink() else None)
+    recommendation_state=ROOT/'environments'/'test-recommendations.json'
+    if recommendation_state.exists() and envs.get('test'):
+        extra=read(recommendation_state)
+        if extra['appCandidateId']==envs['test'].get('candidateId'):
+            envs['test']['recommendations']=extra
     def public_record(r):
         out={k:v for k,v in r.items() if k not in ('dataReport','manifest')}
         if 'data' in out.get('gates',{}):
@@ -206,10 +219,29 @@ def register_data(sha):
        'browser':{'status':'pending'},'placement':{'status':'pending'}},'history':[]}
     save(cid,r); print(json.dumps({'ok':True,'command':'register-data','candidateId':cid,'reused':False}))
 
-def http_json(base, path, data=None):
+def http_json(base, path, data=None, timeout=12):
     body=None if data is None else json.dumps(data).encode()
     req=urllib.request.Request(base+path, data=body, headers={'Content-Type':'application/json'})
-    with urllib.request.urlopen(req, timeout=12) as response: return json.load(response)
+    with urllib.request.urlopen(req, timeout=timeout) as response: return json.load(response)
+
+def fast_prod_policy(r):
+    policy=read(PROD_POLICY)
+    require(policy.get('schemaVersion')==1 and policy.get('policyId')=='fast-prod-v1' and
+            policy.get('targetScope')=='prod', 'Wrong PROD release policy')
+    named=policy.get('deferredCases')
+    deferred=r['gates']['ci'].get('coverageExceptions',[])
+    require(isinstance(named,dict) and len(named)==26 and len(deferred)==len(named) and
+            {item.get('id') for item in deferred}==set(named) and
+            all(item.get('status')=='skipped' for item in deferred) and
+            all(item.get('class') in ('superseded','deferred','required-live') and item.get('basis')
+                for item in named.values()), 'PROD policy does not classify exact skipped cases')
+    require(r['gates']['ci'].get('status')=='passed' and
+            r['gates']['ci'].get('bddCoverageStatus')=='partial' and
+            r['gates']['ci'].get('targetScope')=='test-only', 'CI evidence is incompatible with fast-prod-v1')
+    require(r.get('catalogVersion')==RECOMMENDATION_PIN['catalogVersion'] and
+            r.get('catalogManifestSHA256')==RECOMMENDATION_PIN['catalogManifestSHA256'],
+            'fast-prod-v1 requires the pinned alpha display catalog')
+    return digest(PROD_POLICY)
 
 TEST_VISION_ENV=pathlib.Path('/srv/lct/stage/vision-runtime.env')
 TEST_PHOTO=pathlib.Path('/srv/lct/data/vision-retrieval/20260924/organizer-audit/queries/real/92.6_07-09-2026_11-04-40.webp')
@@ -232,51 +264,231 @@ def f8_runtime(target):
     require(digest(TEST_PHOTO)==TEST_PHOTO_SHA,'Known-answer TEST photo bytes changed')
     return runtime
 
-def f8_health(runtime):
+def target_config(envname, cfg):
+    require(envname in ('test','prod') and cfg.get('path')==('/srv/lct/stage' if envname=='test' else '/srv/lct/prod') and
+            cfg.get('url')==('http://127.0.0.1:8103' if envname=='test' else 'http://127.0.0.1:8104') and
+            cfg.get('migrationEnv')==f'/etc/lct-release/{envname}-migration.env',
+            'Target environment wiring differs from expected TEST/PROD isolation')
+    if envname=='prod':
+        require(cfg.get('visionRuntimeEnv','/srv/lct/prod/vision-runtime.env')=='/srv/lct/prod/vision-runtime.env' and
+                cfg.get('visionURL','http://127.0.0.1:8126')=='http://127.0.0.1:8126' and
+                cfg.get('publicURL')=='https://app.dzap.pw' and
+                cfg.get('catalogEnv','/srv/lct/prod/catalog.env')=='/srv/lct/prod/catalog.env',
+                'PROD vision wiring differs from pinned shared CPU')
+        unit=subprocess.check_output(['systemctl','show','brutforce-prod.service','-p','EnvironmentFiles'],text=True)
+        require(all(x in unit for x in ('/etc/lct-release/prod-runtime.env',
+                                       '/srv/lct/prod/catalog.env','/srv/lct/prod/vision-runtime.env')) and
+                pathlib.Path('/srv/lct/data/prod/feedback').is_dir() and
+                pathlib.Path('/srv/lct/data/prod/photos').is_dir() and
+                all(os.access(path,os.W_OK|os.X_OK) for path in ('/srv/lct/data/prod/feedback',
+                                                                  '/srv/lct/data/prod/photos')),
+                'PROD unit or private uploads/feedback paths are not ready')
+        route=pathlib.Path('/etc/caddy/sites-enabled/lct-previews.caddy').read_text()
+        require('root * /srv/lct/prod/public' in route and 'reverse_proxy 127.0.0.1:8104' not in route,
+                'First PROD needs the original Caddy placeholder for reversible publish')
+
+def verified_recommendations(state, runtime, r=None):
+    require(state.get('appCandidateId') and state.get('catalogVersion') and state.get('sha256'),
+            'Recommendation override has no complete TEST receipt')
+    wanted=sha256(state['sha256'])
+    path=ROOT/'recommendations'/f'{wanted}.json'
+    require(state.get('file')==str(path) and path.is_file() and not path.is_symlink() and
+            path.stat().st_size<=16*1024*1024 and path.stat().st_mode & 0o222==0 and
+            digest(path)==wanted, 'Recommendation asset changed or is not immutable')
+    index=read(path)
+    require(set(index)=={'catalogVersion','indexVersion','modelVersion','neighbors'} and
+            index['catalogVersion']==state['catalogVersion'] and
+            index['indexVersion']==runtime['visionIndexVersion'] and
+            index['modelVersion']==state['modelVersion'] and
+            index['indexVersion']==state['indexVersion'], 'Recommendation mapping metadata is incompatible')
+    slugs=next((item for item in runtime['externalAssets'] if item['path'].endswith('/organizer-slugs.json')),None)
+    require(slugs is not None, 'Vision slug mapping is missing')
+    require(digest(slugs['path'])==slugs['sha256'], 'Vision slug mapping changed')
+    allowed=read(slugs['path'])
+    require(allowed.get('catalog_version')==runtime['visionCatalogVersion'] and
+            isinstance(allowed.get('slugs'),list) and len(set(allowed['slugs']))==len(allowed['slugs']),
+            'Vision slug mapping is invalid')
+    known=set(allowed['slugs'])
+    # Organizer allowlist contains query slugs, not the display-card ID set.
+    # Four display IDs are absent from it in the pinned catalog; compare the
+    # recommendation graph to display IDs, not to a differently scoped list.
+    require(isinstance(index['neighbors'],dict) and TEST_PHOTO_SLUG in known,
+            'Recommendation mapping or known answer differs from pinned vision mapping')
+    if r is not None:
+        catalog=pathlib.Path(r['catalogPackage'])
+        display=[json.loads(line) for line in (catalog/'wines.jsonl').read_text().splitlines()]
+        ids={wine['id'] for wine in display}
+        require(len(ids)==len(display) and all(wine['id']==wine['slug'] for wine in display) and
+                set(index['neighbors'])==ids and TEST_PHOTO_SLUG in ids,
+                'Recommendation IDs or recognized slug do not map to active display catalog')
+        aliases=read(catalog/'aliases.json')['aliases']
+        require(all(row['canonical_slug'] in ids for row in aliases), 'Alias points outside active display catalog')
+    for source, rows in index['neighbors'].items():
+        require(isinstance(rows,list) and len(rows)<=100, 'Invalid recommendation rows')
+        seen=set(); last=1.0
+        for row in rows:
+            require(isinstance(row,dict) and set(row)=={'id','score'} and row['id'] in index['neighbors'] and
+                    row['id']!=source and row['id'] not in seen and type(row['score']) in (int,float) and
+                    math.isfinite(row['score']) and 0<=row['score']<=last, 'Invalid recommendation neighbor')
+            seen.add(row['id']); last=row['score']
+    return path,index
+
+def require_recommendation_pin(state, r):
+    require(r.get('catalogVersion')==RECOMMENDATION_PIN['catalogVersion'] and
+            r.get('catalogManifestSHA256')==RECOMMENDATION_PIN['catalogManifestSHA256'] and
+            all(state.get(k)==RECOMMENDATION_PIN[k] for k in ('catalogVersion','sha256','indexVersion','modelVersion')),
+            'This real release requires exact cleaned recommendation index and alpha catalog')
+
+def recommendation_receipt(candidate, r, runtime):
+    state_path=ROOT/'environments'/'test-recommendations.json'
+    require(state_path.is_file(), 'TEST recommendation override is not active')
+    state=read(state_path)
+    require(state['appCandidateId']==candidate and state['catalogVersion']==r['catalogVersion'],
+            'Recommendation override belongs to another candidate or catalog')
+    verified_recommendations(state,runtime,r)
+    require_recommendation_pin(state,r)
+    return state
+
+def f8_health(runtime, base='http://127.0.0.1:8126'):
     for _ in range(90):
         try:
-            result=http_json('http://127.0.0.1:8126','/healthz')
+            result=http_json(base,'/healthz')
             require(result.get('status')=='ready' and
                     result.get('model_version')==runtime['modelVersion'] and
                     result.get('catalog_version')==runtime['visionCatalogVersion'] and
                     result.get('index_version')==runtime['visionIndexVersion'] and
                     result.get('serving_profile')=='so400m-onnx640','F8 health metadata differs from candidate')
             return
-        except (urllib.error.URLError,TimeoutError,RuntimeError): time.sleep(1)
+        except (urllib.error.URLError,TimeoutError): time.sleep(1)
     raise RuntimeError('Pinned F8 did not become ready')
 
-def f8_photo(base,runtime):
+def f8_photo(base,runtime, product=False):
     boundary='brutforce-f8-test-smoke'
     body=(f'--{boundary}\r\nContent-Disposition: form-data; name="image"; filename="control.webp"\r\n'
           'Content-Type: image/webp\r\n\r\n').encode()+TEST_PHOTO.read_bytes()+f'\r\n--{boundary}--\r\n'.encode()
     req=urllib.request.Request(base+'/v1/eval/predict',body,{'Content-Type':f'multipart/form-data; boundary={boundary}'})
-    with urllib.request.urlopen(req,timeout=25) as response: result=json.load(response)
+    started=time.monotonic()
+    with urllib.request.urlopen(req,timeout=9.5) as response: result=json.load(response)
     require(result.get('slug')==TEST_PHOTO_SLUG and result.get('model_version',runtime['modelVersion'])==runtime['modelVersion'],
             'F8 known-answer photo did not match the pinned model')
-    if base.endswith(':8103'):
+    require(time.monotonic()-started<10, 'Contest photo smoke exceeded 10 seconds')
+    if product:
+        started=time.monotonic()
         upload=urllib.request.Request(base+'/v1/photos',body.replace(b'name="image"',b'name="photo"'),
-                                  {'Content-Type':f'multipart/form-data; boundary={boundary}'})
-        with urllib.request.urlopen(upload,timeout=25) as response: receipt=json.load(response)
-        found=http_json(base,'/v1/search',{'photoId':receipt['id']})
+                                   {'Content-Type':f'multipart/form-data; boundary={boundary}'})
+        with urllib.request.urlopen(upload,timeout=9.5) as response: receipt=json.load(response)
+        remaining=10-(time.monotonic()-started)
+        require(remaining>0, 'Product photo smoke exceeded 10 seconds')
+        found=http_json(base,'/v1/search',{'photoId':receipt['id']},timeout=remaining)
         require(found.get('demo') is False and found.get('recognizedSlug')==TEST_PHOTO_SLUG and
                 found.get('modelVersion')==runtime['modelVersion'],
                 'Public API photo result did not come from pinned F8')
+        require(time.monotonic()-started<10, 'Product photo smoke exceeded 10 seconds')
+        card=http_json(base,'/v2/catalog/'+TEST_PHOTO_SLUG)
+        require(card.get('canonicalId')==TEST_PHOTO_SLUG and card.get('candidate',{}).get('slug')==TEST_PHOTO_SLUG,
+                'Recognized slug does not open the matching catalog card')
 
-def test_vision_env(runtime):
+def test_vision_env(runtime, recommendations=None):
     root='/srv/lct/maks/vision-service/releases/cpu-f8-text-rescue-20260927'
     slugs=next(item for item in runtime['externalAssets'] if item['path']==root+'/organizer-slugs.json')
     neighbors=next(item for item in runtime['externalAssets'] if item['path']==root+'/visual-neighbors.json')
+    rec_path,rec_sha=(recommendations['file'],recommendations['sha256']) if recommendations else (neighbors['path'],neighbors['sha256'])
     return (f'VISION_SERVICE_URL=http://127.0.0.1:8126\n'
             f'VISION_CATALOG_VERSION={runtime["visionCatalogVersion"]}\n'
             f'VISION_INDEX_VERSION={runtime["visionIndexVersion"]}\n'
             f'VISION_SLUGS_FILE={slugs["path"]}\nVISION_SLUGS_SHA256={slugs["sha256"]}\n'
-            f'RECOMMENDATION_INDEX_FILE={neighbors["path"]}\nRECOMMENDATION_INDEX_SHA256={neighbors["sha256"]}\n')
+            f'RECOMMENDATION_INDEX_FILE={rec_path}\nRECOMMENDATION_INDEX_SHA256={rec_sha}\n')
 
 def write_vision_env(text):
     temp=TEST_VISION_ENV.with_suffix('.tmp')
     temp.write_text(text); temp.chmod(0o600); temp.replace(TEST_VISION_ENV)
 
-def smoke(cfg, r):
+def switch_test_recommendations(wanted):
+    """TEST-only data switch. F8, catalog, code, and their release gates stay pinned."""
+    require(wanted==RECOMMENDATION_PIN['sha256'],
+            'Only the pinned cleaned recommendation index may be switched in TEST')
+    state=read(ROOT/'environments'/'test.json')
+    require(state.get('mode')=='real' and state.get('catalogVersion'), 'Real TEST catalog required')
+    release=load(state['candidateId'])
+    require(state['catalogVersion']==RECOMMENDATION_PIN['catalogVersion'] and
+            state.get('catalogManifestSHA256')==RECOMMENDATION_PIN['catalogManifestSHA256'] and
+            release['catalogManifestSHA256']==RECOMMENDATION_PIN['catalogManifestSHA256'],
+            'TEST catalog does not match pinned cleaned recommendation index')
+    require(release['gates']['test']['status']=='passed', 'Current TEST release has not passed smoke')
+    cfg=read(CONFIG)['environments']['test']; base=cfg['url']
+    require(http_json(base,'/release.json')['revision']==state['revision'], 'TEST app has changed')
+    path=ROOT/'recommendations'/f'{wanted}.json'
+    require(path.is_file() and not path.is_symlink() and path.stat().st_size <= 16*1024*1024 and
+            path.stat().st_mode & 0o222 == 0,
+            'Recommendation asset is absent, linked, writable, or too large')
+    require(digest(path)==wanted, 'Recommendation asset checksum mismatch')
+    index=read(path)
+    visual=pathlib.Path('/srv/lct/maks/vision-service/releases/cpu-f8-text-rescue-20260927/visual-neighbors.json')
+    old_visual=read(visual)
+    require(set(index)=={'catalogVersion','indexVersion','modelVersion','neighbors'} and
+            index['catalogVersion']==state['catalogVersion'] and
+            index['indexVersion']==RECOMMENDATION_PIN['indexVersion'] and
+            index['modelVersion']==RECOMMENDATION_PIN['modelVersion'] and
+            all(isinstance(index[k],str) and 0<len(index[k])<=128 for k in ('indexVersion','modelVersion')),
+            'Recommendation metadata differs from current TEST catalog')
+    require(index['indexVersion']==old_visual['indexVersion'],
+            'Recommendation compatibility token differs from pinned F8 index')
+    known=set(old_visual['neighbors'])
+    require(isinstance(index['neighbors'],dict) and set(index['neighbors'])==known,
+            'Recommendations do not cover the exact active catalog IDs')
+    for source, rows in index['neighbors'].items():
+        require(isinstance(rows,list) and len(rows)<=100, 'Invalid recommendation list')
+        seen=set(); last=1.0
+        for row in rows:
+            require(isinstance(row,dict) and set(row)=={'id','score'} and row['id'] in known and
+                    row['id']!=source and row['id'] not in seen and type(row['score']) in (int,float) and
+                    math.isfinite(row['score']) and 0<=row['score']<=last,
+                    'Invalid recommendation neighbor')
+            seen.add(row['id']); last=row['score']
+    before=TEST_VISION_ENV.read_text()
+    require(before.count('RECOMMENDATION_INDEX_FILE=')==1 and before.count('RECOMMENDATION_INDEX_SHA256=')==1,
+            'Existing recommendation configuration is ambiguous')
+    previous={line.split('=',1)[0]:line.split('=',1)[1] for line in before.splitlines()
+              if line.startswith(('RECOMMENDATION_INDEX_FILE=','RECOMMENDATION_INDEX_SHA256='))}
+    require(previous['RECOMMENDATION_INDEX_SHA256']==digest(previous['RECOMMENDATION_INDEX_FILE']),
+            'Existing recommendation asset changed; do not switch')
+    updated='\n'.join('RECOMMENDATION_INDEX_FILE='+str(path) if line.startswith('RECOMMENDATION_INDEX_FILE=')
+                      else 'RECOMMENDATION_INDEX_SHA256='+wanted if line.startswith('RECOMMENDATION_INDEX_SHA256=')
+                      else line for line in before.splitlines())+'\n'
+    probe='a-gordienko-m-nikolaev-sira-nuvo-krasnoe-suhoe-115'
+    expected=index['neighbors'][probe][0]['id']
+    try:
+        write_vision_env(updated)
+        command('sudo','-n','/usr/local/sbin/lct-release-service','restart-test')
+        for _ in range(20):
+            try:
+                if http_json(base,'/v1/health').get('ok'): break
+            except Exception: pass
+            time.sleep(.5)
+        else: raise RuntimeError('TEST API did not become ready')
+        catalog=http_json(base,'/v2/catalog?limit=1')
+        require(catalog.get('catalogVersion')==state['catalogVersion'] and catalog.get('candidates'),
+                'Active TEST catalog changed during recommendation switch')
+        result=http_json(base,'/v1/recommendations',{'wineId':probe,'limit':1})
+        require(result.get('catalogVersion')==state['catalogVersion'] and
+                result.get('modelVersion')==index['modelVersion'] and
+                [x['id'] for x in result.get('candidates',[])]==[expected],
+                'New recommendation index failed live smoke')
+        require(http_json(base,'/v1/health').get('demo') is False and
+                http_json(base,'/release.json')['revision']==state['revision'],
+                'App health or revision changed during recommendation switch')
+    except Exception:
+        write_vision_env(before)
+        command('sudo','-n','/usr/local/sbin/lct-release-service','restart-test')
+        raise
+    write(ROOT/'environments'/'test-recommendations.json', {
+        'appCandidateId':state['candidateId'],'catalogVersion':state['catalogVersion'],
+        'file':str(path),'sha256':wanted,'modelVersion':index['modelVersion'],
+        'indexVersion':index['indexVersion'],'previousFile':previous['RECOMMENDATION_INDEX_FILE'],
+        'previousSHA256':previous['RECOMMENDATION_INDEX_SHA256'],'at':stamp()})
+    publish()
+
+def smoke(cfg, r, envname='test'):
     base=cfg['url']; samples=[]
     for _ in range(20):
         try:
@@ -296,8 +508,12 @@ def smoke(cfg, r):
         wine=found['candidates'][0]
         alternatives=http_json(base,'/v1/recommendations',{'wineId':wine['id'],'limit':3})
         require(alternatives.get('demo') is False and alternatives.get('candidates'),'Real recommendations failed')
-        f8_health(runtime)
-        f8_photo(base,runtime)
+        if envname=='prod':
+            rec=read(ROOT/'environments'/'prod-recommendations.json')
+            require(alternatives.get('modelVersion')==rec['modelVersion'] and
+                    alternatives.get('catalogVersion')==r['catalogVersion'], 'PROD recommendation version differs from approval')
+        f8_health(runtime,cfg.get('visionURL','http://127.0.0.1:8126'))
+        f8_photo(base,runtime,product=True)
     return {'status':'passed','at':stamp(),'revision':sha,'candidateId':r.get('candidateId',sha),'requestMs':samples,'note':'HTTP placement smoke; not ML quality measurement'}
 
 def placement(cfg,target,r,candidate,previous_snapshot,allow_removed,accepted_report):
@@ -333,6 +549,7 @@ def placement(cfg,target,r,candidate,previous_snapshot,allow_removed,accepted_re
 
 def switch(envname, candidate, action='deploy'):
     cfg=read(CONFIG)['environments'][envname]; r=load(candidate); candidate=r.get('candidateId',candidate); sha=r['revision']; target=ROOT/'packages'/sha
+    target_config(envname,cfg)
     require(target.is_dir(), 'Missing package')
     manifest=read(target/'manifest.json')
     require(manifest==r['manifest'], 'Installed manifest changed')
@@ -342,20 +559,50 @@ def switch(envname, candidate, action='deploy'):
         validate_data_report(r['dataReport']); validate_catalog_bytes(r['dataReport'])
         require(r['validatorVersion']==digest(target/'catalog-import'),'Installed validator differs from accepted report')
     if envname=='prod':
-        require(r['gates']['ci'].get('targetScope','all-environments')=='all-environments' and
-                r['gates']['ci'].get('bddCoverageStatus','passed')=='passed',
-                'TEST-only BDD exceptions cannot be promoted to PROD')
-        require(r['gates']['test']['status']=='passed' and r['gates']['browser']['status']=='passed', 'TEST gates required')
+        require(r.get('mode')=='real', 'PROD must use pinned real CPU')
+        policy_sha=fast_prod_policy(r)
+        require(r['gates']['test']['status']=='passed', 'TEST HTTP smoke required')
+        require(r['gates'].get('browser',{}).get('status') in ('pending','passed'),
+                'Failed browser evidence cannot be waived')
         if r.get('catalogManifestSHA256') is not None:
             require(r['gates'].get('placement',{}).get('status')=='passed','TEST placement gates required')
-        require(r.get('approval',{}).get('candidateId')==candidate, 'Explicit approval for this exact candidate required')
+        approval=r.get('approval',{})
+        require(approval.get('candidateId')==candidate and approval.get('policySHA256')==policy_sha and
+                approval.get('catalogManifestSHA256')==r.get('catalogManifestSHA256') and
+                approval.get('revision')==sha and approval.get('archiveSHA256')==r.get('archiveSHA256'),
+                'Explicit fast-prod-v1 approval for this exact bundle required')
     runtime=None
     vision_started=False
     previous_vision_env=None
-    if envname=='test':
-        previous_vision_env=TEST_VISION_ENV.read_text() if TEST_VISION_ENV.exists() else None
-        if r.get('mode')=='real': runtime=f8_runtime(target)
+    vision_env=pathlib.Path(cfg.get('visionRuntimeEnv',f'/srv/lct/{"stage" if envname=="test" else "prod"}/vision-runtime.env'))
+    previous_vision_env=vision_env.read_text() if vision_env.exists() else None
+    if r.get('mode')=='real': runtime=f8_runtime(target)
+    recommendations=None
+    if envname=='test' and runtime:
+        state_path_rec=ROOT/'environments'/'test-recommendations.json'
+        require(state_path_rec.exists(), 'Cleaned TEST recommendation receipt is required; no visual fallback')
+        recommendations=read(state_path_rec)
+        require(recommendations['catalogVersion']==r['catalogVersion'] and
+                recommendations['appCandidateId']==read(ROOT/'environments'/'test.json')['candidateId'],
+                'TEST recommendation override incompatible with new candidate')
+        require_recommendation_pin(recommendations,r)
+        verified_recommendations(recommendations,runtime,r)
+    if envname=='prod':
+        require(pathlib.Path(read(CONFIG)['environments']['test']['path'],'current').resolve()==target.resolve() and
+                read(ROOT/'environments'/'test.json')['candidateId']==candidate,
+                'Approved candidate is not the current TEST release')
+        recommendations=recommendation_receipt(candidate,r,runtime)
+        require(approval.get('recommendationSHA256')==recommendations['sha256'] and
+                approval.get('modelVersion')==r['modelVersion'], 'Recommendation asset differs from approved bundle')
+        require(previous_vision_env is None, 'First PROD has an unexpected existing vision env')
+        f8_health(runtime,cfg.get('visionURL','http://127.0.0.1:8126'))
+        f8_photo(cfg.get('visionURL','http://127.0.0.1:8126'),runtime)
+    else:
+        prod=ROOT/'environments'/'prod.json'
+        require(not prod.exists() or read(prod).get('mode')!='real',
+                'Pinned shared PROD F8 forbids TEST deployments that can stop or change it')
     current=pathlib.Path(cfg['path'])/'current'; previous=str(current.resolve()) if current.is_symlink() else None
+    if envname=='prod': require(previous is None, 'fast-prod-v1 supports first PROD rollout only')
     state_path=ROOT/'environments'/f'{envname}.json'; previous_state=read(state_path) if state_path.exists() else None
     migration_files=lambda folder: {str(p.relative_to(folder/'migrations')):digest(p) for p in (folder/'migrations').rglob('*.sql')}
     if action=='rollback' and previous:
@@ -389,7 +636,7 @@ def switch(envname, candidate, action='deploy'):
         fresh=read(preflight); preflight.unlink(missing_ok=True)
         fresh_manifest,fresh_validator=validate_data_report(fresh)
         require(fresh_manifest==r['catalogManifestSHA256'] and fresh_validator==r['validatorVersion'],'Fresh target preflight differs from candidate')
-    if runtime:
+    if runtime and envname=='test':
         command('sudo','-n','/usr/local/sbin/lct-release-service','start-test-f8')
         vision_started=True
         try:
@@ -410,31 +657,43 @@ def switch(envname, candidate, action='deploy'):
         if vision_started: command('sudo','-n','/usr/local/sbin/lct-release-service','stop-test-f8')
         r['gates'][envname]={'status':'failed','at':stamp(),'summary':'Миграция не завершилась; приложение не переключали. Схему проверить отдельно.'}
         save(candidate,r); raise
-    catalog_env=pathlib.Path(cfg.get('catalogEnv',f'/srv/lct/{envname}/catalog.env'))
+    catalog_env=pathlib.Path(cfg.get('catalogEnv',f'/srv/lct/{"stage" if envname=="test" else "prod"}/catalog.env'))
     previous_catalog_env=catalog_env.read_text() if catalog_env.exists() else None
+    prod_rec=ROOT/'environments'/'prod-recommendations.json'
+    old_prod_rec=prod_rec.read_text() if prod_rec.exists() else None
     try:
         temp=current.with_name('next'); temp.unlink(missing_ok=True); temp.symlink_to(target); temp.replace(current)
         catalog_env_tmp=catalog_env.with_suffix('.tmp'); catalog_env_tmp.write_text('CATALOG_VERSION='+r['catalogVersion']+'\n'); catalog_env_tmp.replace(catalog_env)
-        if runtime: write_vision_env(test_vision_env(runtime))
+        if runtime:
+            text=test_vision_env(runtime,recommendations)
+            temp_env=vision_env.with_suffix('.tmp'); temp_env.write_text(text); temp_env.chmod(0o600); temp_env.replace(vision_env)
+            if envname=='prod': write(prod_rec, recommendations)
         elif envname=='test' and action=='rollback':
             restored=previous_state.get('previousVisionEnv') if previous_state else None
-            if restored is None: TEST_VISION_ENV.unlink(missing_ok=True)
+            if restored is None: vision_env.unlink(missing_ok=True)
             else: write_vision_env(restored)
         command('sudo','-n','/usr/local/sbin/lct-release-service','restart-'+envname)
-        result=smoke(cfg,r)
+        result=smoke(cfg,r,envname)
+        if envname=='prod':
+            command('sudo','-n','/usr/local/sbin/lct-release-service','publish-prod')
+            smoke({**cfg,'url':cfg['publicURL']},r,envname)
         placement_result=placement(cfg,target,r,candidate,snapshot,allow,accepted_report) if r.get('catalogManifestSHA256') is not None else None
-        if envname=='prod': command('sudo','-n','/usr/local/sbin/lct-release-service','publish-prod')
     except Exception:
         summary='Проверка после выкатки не прошла.'
         try:
+            if envname=='prod':
+                command('sudo','-n','/usr/local/sbin/lct-release-service','unpublish-prod')
             if previous and auto_code_rollback:
                 if snapshot is not None:
                     command(str(target/'catalog-import'),'--restore',str(snapshot),env=envfile(cfg['migrationEnv']),stdout=subprocess.DEVNULL)
                 temp.symlink_to(previous); temp.replace(current)
                 if previous_catalog_env is not None: catalog_env.write_text(previous_catalog_env)
-                if envname=='test':
-                    if previous_vision_env is None: TEST_VISION_ENV.unlink(missing_ok=True)
-                    else: write_vision_env(previous_vision_env)
+                if previous_vision_env is None: vision_env.unlink(missing_ok=True)
+                else:
+                    tmp_env=vision_env.with_suffix('.tmp'); tmp_env.write_text(previous_vision_env); tmp_env.chmod(0o600); tmp_env.replace(vision_env)
+                if envname=='prod':
+                    if old_prod_rec is None: prod_rec.unlink(missing_ok=True)
+                    else: prod_rec.write_text(old_prod_rec)
                 command('sudo','-n','/usr/local/sbin/lct-release-service','restart-'+envname)
                 summary+=' Прежний current возвращён; проверьте доступность.'
                 if previous_state is not None: write(state_path,previous_state)
@@ -442,6 +701,8 @@ def switch(envname, candidate, action='deploy'):
                 summary+=' Схема миграций отличается; автоматический возврат к старому коду небезопасен. Требуется оператор.'
             else:
                 current.unlink(missing_ok=True)
+                if previous_vision_env is None: vision_env.unlink(missing_ok=True)
+                if envname=='prod': prod_rec.unlink(missing_ok=True)
                 command('sudo','-n','/usr/local/sbin/lct-release-service','stop-'+envname)
                 summary+=' Первый неудачный выпуск остановлен.'
             if vision_started and (not previous or auto_code_rollback):
@@ -459,7 +720,13 @@ def switch(envname, candidate, action='deploy'):
     r['history'].append({'action':action,'environment':envname,'at':stamp(),'previous':pathlib.Path(previous).name if previous else None})
     write(state_path,{'candidateId':candidate,'revision':sha,'catalogVersion':r['catalogVersion'],
                       'catalogManifestSHA256':r.get('catalogManifestSHA256'),'mode':r['mode'],'modelVersion':r['modelVersion'],
+                      **({'policySHA256':approval['policySHA256'],'recommendationSHA256':recommendations['sha256']}
+                         if envname=='prod' else {}),
                       **({'previousVisionEnv':previous_vision_env} if runtime else {}),'at':stamp()})
+    if envname=='test' and recommendations:
+        recommendations['appCandidateId']=candidate
+        recommendations['at']=stamp()
+        write(ROOT/'environments'/'test-recommendations.json',recommendations)
     save(candidate,r)
 
 def safe_switch(envname,candidate,action='deploy'):
@@ -476,7 +743,7 @@ def safe_switch(envname,candidate,action='deploy'):
         save(cid,r); raise
 
 def main(args):
-    arity={'status':1,'install':4,'register-data':2,'deploy-test':2,'promote':2,'rollback':3,'browser-result':2,'approve':4}
+    arity={'status':1,'install':4,'register-data':2,'deploy-test':2,'promote':2,'rollback':3,'browser-result':2,'approve':4,'recommendations-test':2}
     require(bool(args) and args[0] in arity and len(args)==arity[args[0]],'Invalid command or argument count')
     require(not ('SSH_ORIGINAL_COMMAND' in os.environ and args[0]=='approve'), 'SSH deploy key cannot approve production')
     ROOT.mkdir(exist_ok=True)
@@ -486,7 +753,8 @@ def main(args):
         if cmd=='status':
             publish(); print((ROOT/'public'/'status.json').read_text()); return
         token=args[1]; require(bool(re.fullmatch('[a-f0-9]{40}|[a-f0-9]{64}',token)),'Invalid revision or candidate ID')
-        if cmd=='install': install(revision(token),args[2],args[3])
+        if cmd=='recommendations-test': switch_test_recommendations(sha256(token))
+        elif cmd=='install': install(revision(token),args[2],args[3])
         elif cmd=='register-data': register_data(revision(token)); return
         elif cmd=='deploy-test': safe_switch('test',token)
         elif cmd=='promote': safe_switch('prod',token)
@@ -514,10 +782,24 @@ def main(args):
         elif cmd=='approve':
             r=load(token); candidate=r.get('candidateId',token); actor=args[2]; reference=args[3]
             require(actor in ('maks','roman'),'Only named human acceptance')
-            require(3<=len(reference)<=500,'Provide Telegram message or explicit request reference')
-            required=('ci','test','browser') if r.get('catalogManifestSHA256') is None else ('ci','data','test','browser','placement')
+            require(3<=len(reference)<=500,'Provide BB thread message or explicit request reference')
+            required=('ci','data','test','placement') if r.get('mode')=='real' else ('ci','test','browser')
             require(all(r['gates'][g]['status']=='passed' for g in required),'Required gates incomplete')
-            r['approval']={'candidateId':candidate,'revision':r['revision'],'catalogManifestSHA256':r.get('catalogManifestSHA256'),'actor':actor,'reference':reference,'recordedBy':os.environ.get('SUDO_USER',os.environ.get('USER','unknown')),'at':stamp()}; save(candidate,r)
+            extra={}
+            if r.get('mode')=='real':
+                policy_sha=fast_prod_policy(r)
+                runtime=f8_runtime(ROOT/'packages'/r['revision'])
+                test=read(ROOT/'environments'/'test.json')
+                require(test.get('candidateId')==candidate, 'Approval candidate is not deployed in TEST')
+                rec=recommendation_receipt(candidate,r,runtime)
+                extra={'policyId':'fast-prod-v1','policySHA256':policy_sha,
+                       'recommendationSHA256':rec['sha256'],'modelVersion':r['modelVersion'],
+                       'archiveSHA256':r['archiveSHA256']}
+            r['approval']={'candidateId':candidate,'revision':r['revision'],
+                           'catalogManifestSHA256':r.get('catalogManifestSHA256'),
+                           'actor':actor,'reference':reference,
+                           'recordedBy':os.environ.get('SUDO_USER',os.environ.get('USER','unknown')),
+                           'at':stamp(),**extra}; save(candidate,r)
         else: raise RuntimeError('Unknown command')
         print(json.dumps({'ok':True,'command':cmd,'candidateId':token}))
 

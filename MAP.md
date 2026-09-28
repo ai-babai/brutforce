@@ -22,7 +22,7 @@
 | Проверки и история | [cases](cases/cases.json), `scripts/run-fast-checks.mjs`, reports/ |
 | Права и публичность | [Граница прав](docs/SOLUTION.md#презентация-и-права), приватный аудит раскрытия у владельца |
 | Совместная работа | [RULES](docs/agent-guide/RULES.md), [BOARD](docs/agent-guide/BOARD.md) |
-| Выпуск, TEST F8 switch и откат | [PIPELINE](deploy/PIPELINE.md), `deploy/release.py`, `deploy/lct-vision-test-f8.service`, [DATABASE](docs/agent-guide/DATABASE.md) |
+| Выпуск, TEST F8 и PROD fast-prod-v1 | [PIPELINE](deploy/PIPELINE.md), [fast-prod-v1](deploy/fast-prod-v1.json), `deploy/release.py`, [DATABASE](docs/agent-guide/DATABASE.md) |
 | Полномочия | [AGENTS](AGENTS.md), [подробные правила](docs/agent-guide/OPERATING-RULES.md) |
 | Обновление структуры | [GUIDE-FORMAT](docs/agent-guide/GUIDE-FORMAT.md) |
 
