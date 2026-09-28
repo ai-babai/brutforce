@@ -20,6 +20,7 @@ datasets/
 weights/
 checkpoints/
 uploads/
+local-uploads/
 private/
 artifacts/
 *.safetensors
