@@ -26,8 +26,8 @@
   API-адаптер и быстрые спеки.
 - Референсная заглушка не заменяет конкурсный `/v1/eval/predict`.
   Она не доказывает ML-качество.
-- В TEST (28.09.2026) используется реальный CPU F8, app `d26afa3`, candidate `b0428147`;
-  PROD пока заглушка. Полную связку сверяй с журналом выпуска, не выводи из одного Git SHA.
+- В TEST и PROD (28.09.2026) используется общий CPU F8, app `d26afa3`, candidate `b0428147`;
+  полную связку сверяй с журналом выпуска, не выводи из одного Git SHA.
 - Реализация идёт в коротких ветках `codex/<название>` и попадает в `main` только через PR.
 
 ## Перед работой
@@ -40,6 +40,8 @@
   [api-versioning.md](contracts/api-versioning.md).
 - Выпуск и откат: [deploy/PIPELINE.md](deploy/PIPELINE.md).
   БД: [DATABASE.md](docs/agent-guide/DATABASE.md).
+- Docker CPU F8: [RUNBOOK.ru.md](docs/RUNBOOK.ru.md#полный-cpu-профиль-f8)
+  и [Compose](deploy/compose.yaml); assets вне Git, clean-Linux parity pending.
 - Публичный вход: [README](README.md), [English](README.en.md),
   [архитектура](ARCHITECTURE.md), [решение/метрики](docs/SOLUTION.md),
   [runbook](docs/RUNBOOK.ru.md).
