@@ -163,8 +163,19 @@ body { background: #f3f0e9; }
 #UI-007 .result-description p { margin: 0 0 18px; font-size: 13px; line-height: 1.6; white-space: pre-line; overflow-wrap: anywhere; }
 #UI-007 .recommendations { margin-top: 24px; padding-top: 20px; border-color: var(--line); }
 #UI-007 .recommendations h3 { font-family: Onest,sans-serif; font-weight: 500; }
-#UI-007 .recommendation-list button { min-height: 112px; padding: 10px 0; }
-#UI-007 .recommendation-list button.candidate-leader { min-height: 136px; }
+#UI-007 .recommendation-list button,
+#UI-007 .recommendation-list button.candidate-leader {
+  grid-template-columns: 62px minmax(0,1fr) 20px;
+  gap: 12px;
+  width: 100%;
+  min-height: 142px;
+  margin-inline: 0;
+  padding: 16px 0;
+}
+#UI-007 .recommendation-list button.candidate-leader {
+  background: linear-gradient(105deg,#f8eee7 0%,#fbf7f1 72%,#fefdfa 100%);
+}
+#UI-007 .recommendation-list .candidate-leader b { font-size: 16px; line-height: 1.35; }
 #UI-007 .recommendation-list img, #UI-007 .recommendation-list .missing-image { width: 56px; height: 98px; min-height: 98px; }
 #UI-007 .result-actions { padding-top: 24px; }
 
