@@ -78,9 +78,10 @@ def export(sources, out):
             shutil.copyfile(original, target)  # dereference HF cache snapshot symlinks
             target.chmod(0o444)
         check(stage)
-        for directory, _, _ in os.walk(stage):
-            Path(directory).chmod(0o555)
         stage.rename(out)
+        # macOS refuses to rename a directory after its write bit was removed.
+        for directory, _, _ in os.walk(out):
+            Path(directory).chmod(0o555)
 
 
 def main():
