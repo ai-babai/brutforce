@@ -93,9 +93,9 @@ func newEvalPredictHandler(recognizer Recognizer, maxConcurrent int) http.Handle
 			} else if errors.Is(err, context.Canceled) {
 				writeEvalContextError(w, err)
 			} else if errors.Is(err, errVisionNoMatch) {
-				writeJSON(w, http.StatusOK, map[string]string{"action": "no_match"})
+				writeJSON(w, http.StatusOK, map[string]string{"slug": "", "action": "no_match"})
 			} else if errors.Is(err, errVisionInsufficient) {
-				writeJSON(w, http.StatusOK, map[string]string{"action": "insufficient_information"})
+				writeJSON(w, http.StatusOK, map[string]string{"slug": "", "action": "insufficient_information"})
 			} else if errors.Is(err, errVisionInvalid) || errors.Is(err, errCatalogNotFound) {
 				writeEvalError(w, http.StatusBadGateway, "recognition_invalid_result", "recognition returned an invalid catalog result")
 			} else {

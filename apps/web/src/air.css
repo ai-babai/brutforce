@@ -249,6 +249,9 @@ body { background: #f3f0e9; }
 
 #UI-004 { overflow-anchor: none; }
 #UI-004 h2 { max-width: 380px; min-height: 2.26em; font-size: 33px; }
+#UI-004 .air-search-progress { position: relative; width: 100%; height: 5px; margin: 12px 0 0; overflow: hidden; border-radius: 999px; background: #e9dcd1; }
+#UI-004 .air-search-progress span { position: absolute; inset: 0 auto 0 0; width: 40%; border-radius: inherit; background: var(--wine); animation: air-search-progress 1.5s ease-in-out infinite alternate; }
+@keyframes air-search-progress { from { transform: translateX(0); } to { transform: translateX(150%); } }
 #UI-004 .mascot-scene-walk { height: 230px; margin: 16px -18px 0; }
 #UI-004 .mascot-scene-walk img { height: 100%; max-height: none; object-fit: contain; }
 #UI-004 .air-waiting-discovery { display: grid; grid-template-columns: 130px minmax(0,1fr); align-items: center; gap: 18px; min-height: 170px; margin: 5px 0 14px; }
@@ -257,7 +260,7 @@ body { background: #f3f0e9; }
 #UI-004 .air-waiting-photo .photo img { width: 100%; height: 100%; object-fit: cover; }
 #UI-004 .air-waiting-photo .photo span { display: none; }
 #UI-004 .air-scan-viewport { position: absolute; z-index: 2; inset: 3px; overflow: hidden; border-radius: 6px; pointer-events: none; }
-#UI-004 .scan-line { position: absolute; inset: 0; width: auto; height: auto; margin: 0; background: linear-gradient(#fff,#fff) center 6% / calc(100% - 18px) 2px no-repeat; filter: drop-shadow(0 0 1px #fff); animation: air-waiting-vertical-scan 5.6s ease-in-out infinite; }
+#UI-004 .scan-line { position: absolute; inset: 0; width: auto; height: auto; margin: 0; background: linear-gradient(var(--wine),var(--wine)) center 6% / calc(100% - 18px) 3px no-repeat; filter: drop-shadow(0 0 2px #fff); animation: air-waiting-vertical-scan 2.4s ease-in-out infinite; }
 @keyframes air-waiting-vertical-scan { 0%, 100% { background-position: center 6%; } 50% { background-position: center 94%; } }
 #UI-004 .air-wine-note { min-width: 0; color: #6a554d; }
 #UI-004 .air-wine-note-header { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 7px; }
@@ -398,6 +401,7 @@ body { background: #f3f0e9; }
 }
 
 @media (prefers-reduced-motion: reduce) {
+  #UI-004 .air-search-progress span { animation: none; }
   #UI-004 .scan-line { display: none; }
   #UI-004 .air-wine-note p { animation: none; }
   .primary:active, .scan-button:active { transform: none; }

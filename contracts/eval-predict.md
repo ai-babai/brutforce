@@ -40,9 +40,10 @@ vision adapter checks it against the organizer catalog allowlist. A test stub pr
 only the HTTP hand-off; it is not evidence of recognition quality.
 
 A deliberate `no_match` or `insufficient_information` response is HTTP 200
-with `{"action":"..."}` and no slug. A technical failure returns an error
-status. The organizer script records both cases as null; retain response
-status and action in our own diagnostics to distinguish them.
+with `{"slug":"","action":"..."}`. This is an explicit abstention, not a
+catalog prediction. The organizer script requires a nonempty slug and records
+both cases as null; retain response status and action in our own diagnostics
+to distinguish them from a technical failure, which returns an error status.
 
 Errors are JSON objects with an `error.code` and `error.message`. Invalid
 multipart/image input is HTTP 400; a wrong method is 405; no configured
