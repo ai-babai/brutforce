@@ -4,21 +4,24 @@ Built for the **Digital Transformation Leaders 2026** challenge from the Svoe Vi
 
 **Project authors:** Maxim Popkov ([Telegram @skifmax](https://t.me/skifmax)) and Roman Karandashov ([GitHub MisterMolox](https://github.com/MisterMolox)). [Русский README](README.md).
 
-[Try the app](https://app.dzap.pw) · [Self-hosting guide (Russian)](docs/SELF-HOST.ru.md) · [Download data](https://disk.yandex.ru/d/dHAXDPcitS-ZJQ) · [Architecture](ARCHITECTURE.md) · [Evidence and limits](docs/SOLUTION.md)
+## Contents
 
-## Start without external data
+- [Quick start](#quick-start)
+- [Supply your data](#supply-your-data)
+- [Call the contest API](#call-the-contest-api)
+- [Architecture at a glance](#architecture-at-a-glance)
+- [Links and limits](#links-and-limits)
 
-With Docker Engine and Compose v2 installed, run:
+## Quick start
+
+Recognition requires Linux x86-64, Docker with Compose v2, and the [external data bundle](https://disk.yandex.ru/d/dHAXDPcitS-ZJQ). See the [host requirements (Russian)](docs/SELF-HOST.ru.md#полный-режим-с-docker). Clone the repository:
 
 ```sh
 git clone https://github.com/ai-babai/brutforce.git
 cd brutforce
-docker compose -f deploy/compose.demo.yaml up --build -d --wait
 ```
 
-Open <http://127.0.0.1:8097/>. This is a demo with eight sample cards, text search and photo upload, **without wine recognition**. The contest endpoint returns 503 in this mode. Stop with `docker compose -f deploy/compose.demo.yaml down`; see the [non-Docker option](docs/SELF-HOST.ru.md#минимальный-режим-без-docker) or [full deployment](docs/SELF-HOST.ru.md#полный-режим-с-docker).
-
-For full mode, [download all 14 files](https://disk.yandex.ru/d/dHAXDPcitS-ZJQ), verify SHA-256 and stream-extract the six weight-archive parts as shown in the [transfer guide (Russian)](docs/ASSET-TRANSFER.ru.md#как-восстановить-на-linux). Then, from the repository root:
+Download all 14 files, verify SHA-256, and extract them into `$HOME/brutforce-local` using the [transfer guide (Russian)](docs/ASSET-TRANSFER.ru.md#как-восстановить-на-linux). From the repository root:
 
 ```sh
 sh scripts/docker-local.sh init "$HOME/brutforce-local"
@@ -26,17 +29,39 @@ sh scripts/docker-local.sh up
 sh scripts/docker-local.sh smoke
 ```
 
-`up` includes preflight checks. CPU recognition **source code is in [apps/vision/](apps/vision/README.md)**; data and weights are external to Git. Public access to the files does not establish redistribution rights for models, catalog data or photos. See [host requirements and verification limits](docs/SELF-HOST.ru.md#полный-режим-с-docker).
+`init` creates local configuration and passwords; `up` checks the data and starts the full Compose stack. Open <http://127.0.0.1:8097/>. Stop it with `sh scripts/docker-local.sh stop` (volumes persist).
+
+For a UI-only demo after cloning, run `docker compose -f deploy/compose.demo.yaml up --build -d --wait`. It has eight sample cards but **no recognition: the contest API returns 503**. See the [other launch options](docs/SELF-HOST.ru.md).
+
+## Supply your data
+
+Keep the extracted bundle **outside Git**, with `f8-bundle/`, `catalog-package/`, `catalog-media/`, and `recommendations/index.json` under the same data root. To use another absolute path, pass it to the **first** `sh scripts/docker-local.sh init /absolute/path/to/data`. `up` checks pinned versions and SHA-256. Arbitrary new wine catalogs or reference-photo folders cannot be swapped in directly: the visual index, allowed slugs, display package, and hashes must agree. See the [data layout](docs/SELF-HOST.ru.md#данные-для-полного-режима) and [index rebuild limits](docs/ASSET-TRANSFER.ru.md#как-заново-построить-индексы). Send your **test photos** in the API request below, rather than copying them into the model directory.
+
+## Call the contest API
+
+After starting the full stack, send your label photo as exactly one multipart field named `image`:
+
+```sh
+curl --fail-with-body --max-time 10 \
+  -F 'image=@/path/to/your-label.jpg' \
+  http://127.0.0.1:8097/v1/eval/predict
+```
+
+A confirmed match returns HTTP 200 with `{"slug":"catalog-slug"}`. For `no_match` or `insufficient_information`, HTTP 200 carries `action` instead of a slug; technical errors use another status, and the data-free demo returns 503. No team token is needed locally. This endpoint accepts `image`, **not** the application's `/v1/photos` field `photo`. See the [request and response contract](contracts/eval-predict.md).
 
 ## Architecture at a glance
 
 ```text
-Browser (React) --> Go API --> PostgreSQL (display cards)
-                        |----> Python CPU (model + reference index) --> slug
-                        `----> recommendation index (separate from the model)
-Contest client --> POST /v1/eval/predict --> Go API --> validated slug
+Browser (React) ------> Go API --+--> PostgreSQL (display cards)
+                               +--> CPU vision (model + reference index) --> slug
+                               `--> recommendation index (separate from model)
+Contest client --POST /v1/eval/predict (image)--> Go API --> CPU vision --> slug
 ```
 
-The organizer sends multipart `image` and reads `{"slug":"..."}`; the app uses `/v1/photos` followed by `/v1/search` with a `photoId`. A recognized organizer slug without a matching display card is not replaced by an unrelated wine. See the [full architecture](ARCHITECTURE.md), [external data layout](docs/SELF-HOST.ru.md#данные-для-полного-режима) and [API contract](contracts/eval-predict.md).
+The app uses `/v1/photos` followed by `/v1/search` with a `photoId`. A recognized organizer slug without a matching display card is not replaced by an unrelated wine. CPU serving source is in [apps/vision/](apps/vision/README.md). See the [full architecture](ARCHITECTURE.md).
 
-[Repository](https://github.com/ai-babai/brutforce) · [documentation index](docs/README.md). A presentation URL is not confirmed; distribution rights for third-party data and weights require separate approval.
+## Links and limits
+
+- [Live app](https://app.dzap.pw) · [repository](https://github.com/ai-babai/brutforce) · [documentation](docs/README.md) · [verification results](docs/SOLUTION.md).
+- The repository is currently private; cloning requires access. A presentation URL is not confirmed.
+- Weights and data are outside Git. Public access does not establish redistribution rights. Full Compose health/catalog checks passed on Mac/OrbStack with linux/amd64 containers; clean-Linux and known-photo checks remain outstanding.
