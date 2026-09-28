@@ -85,23 +85,34 @@ The home screen with the sommelier mascot, catalog name search, and a wine card.
 
 ## Research and development checks
 
-**Dataset and test baskets.** To research label-based retrieval, we assembled an SKU-linked image bank and separate test baskets for comparing approaches. [Roman's experiments journal](https://reps.roman.dzap.pw/#experiments) lists protocols and top-1/top-3/top-5 results on validation and test sets; the [coverage map](https://reps.roman.dzap.pw/#coverage) shows candidate groups and gaps in confirmed captures by SKU. Downloaded candidates are not automatically verified independent references. Results from individual experiments are not the contest accuracy of the deployed service.
+### Dataset and test baskets
+
+To research label-based retrieval, we assembled an SKU-linked image bank and separate test baskets for comparing approaches.
+
+- [Roman's experiments journal](https://reps.roman.dzap.pw/#experiments) — protocols and top-1/top-3/top-5 results on validation and test sets.
+- [Coverage map](https://reps.roman.dzap.pw/#coverage) — candidate groups and gaps in confirmed captures by SKU.
+
+> A downloaded candidate is not yet a verified independent reference. Experimental metrics are not the contest accuracy of the deployed service.
 
 <p align="center">
   <a href="docs/product/readme-research-experiments.jpg"><img src="docs/product/readme-research-experiments.jpg" width="440" alt="Experiments journal with protocols and top-1, top-3, top-5 metrics"></a>
   <a href="docs/product/readme-research-coverage.jpg"><img src="docs/product/readme-research-coverage.jpg" width="440" alt="SKU coverage map with candidate groups and gaps in confirmed captures"></a>
 </p>
 
-**UX research.** The [reference atlas](https://reps.maks.dzap.pw/view#references) compares wine-app screens and user journeys; the [scenarios and prototype](https://reps.maks.dzap.pw/view#flows) show the proposed mobile-web design. The capture below is a research prototype using fictional data, not a functioning scanner.
+### UX research
 
-**BDD coverage.** During agent-assisted development, we captured the expected API and UI-state behavior as scenarios and checked them across revisions to catch regressions. The [behavior map](https://reps.maks.dzap.pw/behavior/) shows scenario statuses and run history. These fast checks use a stub recognizer and do not measure photo-search quality.
+The [reference atlas](https://reps.maks.dzap.pw/view#references) compares wine-app screens and user journeys. The [scenarios and prototype](https://reps.maks.dzap.pw/view#flows) show the proposed mobile-web design. The capture below is a prototype using fictional data, not a functioning scanner.
+
+### Behavior checks (BDD)
+
+During agent-assisted development, we captured API and UI-state behavior as scenarios to catch regressions across revisions. The [behavior map](https://reps.maks.dzap.pw/behavior/) shows scenario statuses and run history. These fast checks use a stub recognizer and do not measure photo-search quality.
 
 <p align="center">
   <a href="docs/product/readme-ux-atlas.jpg"><img src="docs/product/readme-ux-atlas.jpg" width="440" alt="UX atlas: label-to-wine-card journey and clickable prototype"></a>
   <a href="docs/product/readme-behavior-bdd.jpg"><img src="docs/product/readme-behavior-bdd.jpg" width="440" alt="Behavior map: BDD scenario statuses for API and UI across revisions"></a>
 </p>
 
-Screenshots are snapshots; follow the linked reports for the latest data and details.
+*Screenshots show the reports at capture time; follow the links above for the latest data.*
 
 ## Links and limits
 
