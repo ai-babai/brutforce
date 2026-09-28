@@ -1,6 +1,6 @@
 # Инструкции агентам
 
-Начни с [MAP.md](MAP.md), затем README.md и локального AGENTS.md изменяемой области.
+Начни с [MAP.md](MAP.md), [README.md](README.md) и локального AGENTS.md изменяемой области.
 Работай в самой маленькой подходящей зоне. Сохраняй чужие изменения.
 Обсуждаемые варианты не являются согласованными решениями.
 
@@ -42,9 +42,10 @@
   БД: [DATABASE.md](docs/agent-guide/DATABASE.md).
 - Docker CPU F8: [RUNBOOK.ru.md](docs/RUNBOOK.ru.md#полный-cpu-профиль-f8)
   и [Compose](deploy/compose.yaml); assets вне Git, clean-Linux parity pending.
-- Публичный вход: [README](README.md), [English](README.en.md),
-  [архитектура](ARCHITECTURE.md), [решение/метрики](docs/SOLUTION.md),
-  [runbook](docs/RUNBOOK.ru.md).
+- Вход эксперта: четыре ссылки в [README](README.md), затем
+  [измерения и ограничения](docs/SOLUTION.md) и [архитектура](ARCHITECTURE.md).
+  Разработчику — [быстрый запуск](README.md#быстрый-запуск) и [runbook](docs/RUNBOOK.ru.md).
+  Английский вход — [README.en.md](README.en.md).
 - Серверные пути: [SERVER.md](docs/agent-guide/SERVER.md).
   Mac-пути не являются серверными.
 

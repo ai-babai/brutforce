@@ -54,15 +54,21 @@ the demo reference service is configured; `query` takes priority over
 `photoId`. Without vision, real-catalog photo search returns 503 rather than
 synthetic results.
 
-Real-catalog `POST /v1/recommendations` uses an offline visual-neighbor map
-from the same pinned SO400M reference index as F8, not the ranked candidates
-from an individual recognition request. `RECOMMENDATION_INDEX_FILE` must match
-`RECOMMENDATION_INDEX_SHA256`; the catalog version must match the active display
-catalog, and the index version must match vision at startup. It returns
-distinct other display cards by exact ID. This is visual label similarity,
-not tasting or personalized recommendations. Missing source vectors yield an
-empty candidate list. Demo retains its independent recommendation service.
+Real-catalog `POST /v1/recommendations` reads a separately pinned offline
+neighbor index, never the ranked candidates from an individual recognition
+request. The 2026-09-28 TEST/PROD override `display-text-attributes-winery-review-v2`
+uses display text, attributes, and winery; the older SO400M visual-neighbor
+snapshot remains in the F8 bundle but is not the active recommendations index.
+`RECOMMENDATION_INDEX_FILE` must match `RECOMMENDATION_INDEX_SHA256`; its catalog
+version must match the active display catalog, and its compatibility index
+version must match vision at startup. It returns distinct other display cards
+by exact ID. These are catalog-based suggestions, not exact recognition, taste
+predictions, or personalization. Missing source IDs yield an empty candidate
+list. Demo retains its independent recommendation service.
 
-The 2026-09-25 TEST audit found 2,103 organizer slugs and 2,038 display
-slugs, with 2,034 shared, 69 organizer-only, and four display-only. These
-figures describe the pinned TEST versions, not a rule for future catalogs.
+The 2026-09-28 pinned TEST/PROD allowlist and display package have 2,103
+organizer slugs and 2,038 canonical display slugs: 2,034 shared, 69
+organizer-only, and four display-only. Three of the organizer-only slugs
+resolve through approved aliases; the other 66 have no display card or
+approved alias in this package. The reasons for their absence are unknown.
+These counts describe this pinned pair, not a rule for future catalogs.

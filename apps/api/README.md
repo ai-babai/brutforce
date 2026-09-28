@@ -70,9 +70,11 @@ the stored original to ranked image recognition. The synthetic local mode
 keeps the receipt-gated demo behavior.
 For imported catalog versions, text search takes priority over `photoId` and
 uses the catalog even when `SEARCH_SERVICE_URL` points to the synthetic engine.
-`POST /v1/recommendations` reads the SHA-pinned offline SO400M visual-neighbor
-map from `RECOMMENDATION_INDEX_FILE` / `RECOMMENDATION_INDEX_SHA256` for real
-cards. These alternatives are visual, not taste-based or personalized.
+`POST /v1/recommendations` reads a separate SHA-pinned offline neighbor index
+from `RECOMMENDATION_INDEX_FILE` / `RECOMMENDATION_INDEX_SHA256` for real cards.
+The 2026-09-28 TEST/PROD override uses display text, attributes, and winery;
+the bundled SO400M visual-neighbor snapshot is not the active index. These
+suggestions are neither exact matches nor taste-based or personalized.
 
 Successful responses have this shape:
 

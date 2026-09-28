@@ -1,18 +1,19 @@
 # BrutForce
 
-**A wine-label photo → an existing Russian wine catalog card.** Mobile React/TypeScript UI, Go API, and a separate CPU vision service. [Русский README](README.md).
+Given a wine-label photo, BrutForce looks up an existing Russian wine catalog card. It has a mobile UI; the live prototype uses a CPU recognition service. [Русский README](README.md).
 
-[Try the live app](https://app.dzap.pw) · [Quick start](#quick-start) · [Docker CPU F8](#docker-with-real-f8-cpu) · [Architecture](ARCHITECTURE.md) · [Results](docs/SOLUTION.md) · [Presentation: pending](docs/SOLUTION.md#презентация-и-права) · [Agent guide](AGENTS.md)
+[Try the live prototype](https://app.dzap.pw) · [Quick demo start](#quick-start) · [How it works](ARCHITECTURE.md) · [Results and limits](docs/SOLUTION.md)
 
-As of 28 September 2026, [app.dzap.pw](https://app.dzap.pw) runs F8 CPU (app `d26afa3`, candidate `b0428147…`, catalog `svoe-20260927-alpha-2035-v1`, recommendations SHA `f05f16c7…`). Public HTTPS, a real photo, and the product HTTP flow passed smoke checks. Browser UI/device-camera review, a rights-cleared screenshot, and a presentation URL remain pending.
+**Four submission links**
 
-## For reviewers
-
-The PROD contest endpoint is `POST https://app.dzap.pw/v1/eval/predict` with multipart field `image`. A successful response returns one `slug`; see the [contract](contracts/eval-predict.md). Three sample responses do not establish accuracy. See the [architecture](ARCHITECTURE.md), [measured results and caveats](docs/SOLUTION.md), and the [single operational runbook (Russian)](docs/RUNBOOK.ru.md) with an [English entry](docs/RUNBOOK.en.md). A release tag has not been confirmed.
+- **Repository:** [ai-babai/brutforce](https://github.com/ai-babai/brutforce) — private; reviewer access needs verification.
+- **Documentation:** [documentation entry](docs/README.md) — in the same private repository.
+- **Presentation:** link pending file and rights approval.
+- **Prototype:** [app.dzap.pw](https://app.dzap.pw) — live.
 
 ## Quick start
 
-This local mode uses **synthetic demo data, not F8 recognition**. Install Go 1.23, Node.js 22 and npm; it does not require PostgreSQL. From the repository root, in terminal 1:
+This is a **synthetic local demo** without label recognition. Install Go 1.23, Node.js 22 and npm; no database is needed. For the real model, obtain external assets and follow the [step-by-step runbook](docs/RUNBOOK.ru.md#полный-cpu-профиль-f8). From the repository root, in terminal 1:
 
 ```sh
 mkdir -p ./local-uploads
@@ -28,20 +29,15 @@ npm ci
 npm run dev
 ```
 
-Open <http://127.0.0.1:5190/> and check `curl --fail http://127.0.0.1:8097/v1/health`. Stop both processes with Ctrl-C. Without F8 the contest endpoint intentionally returns `503 recognition_unavailable`. Do not publish uploaded photos. For a **real F8 CPU** setup, obtain the pinned external assets and follow the [runbook](docs/RUNBOOK.ru.md#полный-cpu-профиль-f8); access and clean Linux reproducibility remain to be verified.
+Open <http://127.0.0.1:5190/> and check the API with `curl --fail http://127.0.0.1:8097/v1/health`. Stop both processes with Ctrl-C. Only the data owner should remove `local-uploads/`; do not publish uploaded photos. The demo contest endpoint returns `503 recognition_unavailable`.
 
-## Docker with real F8 CPU
+## Real setup and results
 
-On Linux x86-64 with Docker Engine/Compose v2, obtain the rights-cleared F8 bundle ([50-file SHA manifest](deploy/assets/f8-cpu.sha256)), approved display catalog package and media, and pinned recommendation index **outside Git**. Copy [`deploy/docker.env.example`](deploy/docker.env.example) to `deploy/.env.local` and set absolute paths to those assets and a private `SECRETS_DIR` containing separate `db_password` and `app_password` files. The [runbook](docs/RUNBOOK.ru.md#полный-cpu-профиль-f8) explains bundle verification/export, permissions and data retention; the [English entry](docs/RUNBOOK.en.md) points to the same commands.
+On Linux x86-64 with Docker Engine/Compose v2, obtain the F8 bundle, catalog package and media, and separate recommendation index from the owner **outside Git**. The [runbook (Russian)](docs/RUNBOOK.ru.md#полный-cpu-профиль-f8) covers acquisition, configuration, verification, startup and shutdown; the [English entry](docs/RUNBOOK.en.md) points to those steps. The [50-file SHA manifest](deploy/assets/f8-cpu.sha256) pins the model bundle. Repro built both linux/amd64 images on OrbStack in a separate patch branch; `main` still has the TS blocker. Bundle delivery and clean-Linux startup remain unverified. Live PROD runs under systemd.
 
-```sh
-sh scripts/docker-local.sh preflight
-sh scripts/docker-local.sh up
-sh scripts/docker-local.sh smoke
-sh scripts/docker-local.sh stop
-```
+As of 28 September 2026, TEST and [PROD](https://app.dzap.pw) use F8 CPU: app `d26afa3`, candidate `b0428147…`, catalog `svoe-20260927-alpha-2035-v1`, recommendation index `f05f16c7…`. Documentation first entered private `main` at `b451ecd`; its SHA may be newer and does not identify deployed code. See [architecture and version boundaries](ARCHITECTURE.md).
 
-The stack contains PostgreSQL, a one-shot migration/import, vision and web/API bound to `127.0.0.1:8097`. HTTP smoke is not a known-answer model test. Image builds, external asset delivery and clean-Linux/OCR parity are still pending; live PROD runs under systemd, not Docker.
+On PROD, the original participant script returned a nonempty `slug` for **3 of 3** sample photos in **4.595 / 4.354 / 3.079 s**; the first known answer matched. This is HTTP smoke, not an overall accuracy or p95 result. The specification's 90–100% and <3 s are targets; other measurements and limitations are in [results](docs/SOLUTION.md). Ops completed the headless mobile text path Home → search → card → recommendations at 390×844 and 320×640 without errors; visual geometry, gallery/photo-result and the physical camera remain unverified.
 
 ```text
 React UI → Go API ──→ PostgreSQL display catalog
@@ -49,6 +45,8 @@ React UI → Go API ──→ PostgreSQL display catalog
               └──→ F8 CPU service → pinned vision assets outside Git
 ```
 
-PROD smoke on `d26afa3` returned 3/3 nonempty slugs in 4.595 / 4.354 / 3.079 seconds; the first known answer matched. This does **not** establish official-gold accuracy or p95. See [results](docs/SOLUTION.md) for the distinct DEV comparison. Alternatives are not exact matches or taste predictions; live recommendations use the pinned display-text/attributes/winery index.
+The contest `POST /v1/eval/predict` accepts multipart `image` and returns a verified slug ([contract](contracts/eval-predict.md)). The app maps it to a catalog card. A separate pinned display-text/attributes/winery index recommends cards; it does not predict taste.
 
-[Project map](MAP.md) · [API contracts](contracts/README.md) · [Release pipeline](deploy/PIPELINE.md). No team code license has yet been agreed; third-party images, catalog data and model weights require separate permission.
+[Project map](MAP.md) · [API contracts](contracts/README.md) · [Web UI](apps/web/) · [Go API](apps/api/) · [Release pipeline](deploy/PIPELINE.md) · [Documentation](docs/README.md). Fast checks: `go test -count=1 ./...` from `apps/api`, `npm test` from `apps/web`; the [report index](reports/README.md) lists broader checks.
+
+The repository remains **PRIVATE**; reviewer access needs verification. No team code license has been agreed; rights to design references, catalog data, datasets and weights require separate checks. [Details](docs/SOLUTION.md#презентация-и-права).
