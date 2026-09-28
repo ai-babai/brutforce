@@ -6,6 +6,8 @@
 
 Built for the **Digital Transformation Leaders 2026** challenge from **Rosselkhozbank (RSHB)** for the Svoe Vino platform. The task is to identify an exact Russian wine catalog entry from a label photo and show its card on a phone. The system combines image retrieval, a catalog and a mobile web application; it does not label an unrelated card as an exact match.
 
+**Two APIs:** organizer-required testing uses [`POST https://app.dzap.pw/v1/eval/predict`](https://app.dzap.pw/v1/eval/predict) (photo in `image`, response with `slug`); in-app search uses [`POST /v1/photos`](https://app.dzap.pw/v1/photos) (`photo`) → [`POST /v1/search`](https://app.dzap.pw/v1/search) (`photoId`, candidates for the UI). These are separate contracts; the organizer request is shown below.
+
 **Project authors:** Maxim Popkov ([Telegram @skifmax](https://t.me/skifmax)) and Roman Karandashov ([GitHub MisterMolox](https://github.com/MisterMolox)). [Русский README](README.md).
 
 ## Contents
@@ -45,15 +47,17 @@ Keep the extracted bundle **outside Git**, with `f8-bundle/`, `catalog-package/`
 
 ## Call the contest API
 
-After starting the full stack, send your label photo as exactly one multipart field named `image`:
+For the running service, send a label photo to **`https://app.dzap.pw/v1/eval/predict`** as exactly one multipart field named `image`:
 
 ```sh
 curl --fail-with-body --max-time 10 \
   -F 'image=@/path/to/your-label.jpg' \
-  http://127.0.0.1:8097/v1/eval/predict
+  https://app.dzap.pw/v1/eval/predict
 ```
 
-A confirmed match returns HTTP 200 with `{"slug":"catalog-slug"}`. For `no_match` or `insufficient_information`, HTTP 200 carries `action` instead of a slug; technical errors use another status, and the data-free demo returns 503. No team token is needed locally. This endpoint accepts `image`, **not** the application's `/v1/photos` field `photo`. See the [request and response contract](contracts/eval-predict.md).
+For a local full-stack installation, replace the URL with `http://127.0.0.1:8097/v1/eval/predict`. A confirmed match returns HTTP 200 with `{"slug":"catalog-slug"}`. For `no_match` or `insufficient_information`, HTTP 200 carries `action` instead of a slug; technical errors use another status, and the data-free demo returns 503. No team token is needed locally. This endpoint accepts `image`, **not** the application's `/v1/photos` field `photo`. See the [request and response contract](contracts/eval-predict.md).
+
+The **application** follows a different flow: `POST /v1/photos` stores the image and returns an `id`; `POST /v1/search` with JSON `{"photoId":"returned-id"}` returns candidates for the UI. Name search uses `GET /v2/catalog?q=...`. See the [interactive API docs](https://app.dzap.pw/api/docs) and the [application boundary](apps/api/README.md#boundary-and-contract).
 
 ## Architecture at a glance
 
