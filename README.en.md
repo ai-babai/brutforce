@@ -62,15 +62,19 @@ The **application** follows a different flow: `POST /v1/photos` stores the image
 
 ## Recognition model
 
-**CPU F8 · label detection → visual retrieval → answer verification.** This is image retrieval, not wine-description generation: it returns ranked `slug` identifiers from the organizer catalog.
+The CPU F8 service looks up a wine in the organizer catalog from a label photo. A confirmed match returns its `slug` identifier.
 
-**01 / Locate the label.** RT-DETR and OWLv2 help select a bottle or label region. The service also handles frames where that region cannot be isolated unambiguously.
+1. **Label region.** RT-DETR and OWLv2 help locate the bottle and label. For difficult frames, the service can also inspect the whole image.
+2. **Visual similarity.** SigLIP2 SO400M encodes the image into visual features. The service compares them with references in a pinned visual index.
+3. **Answer check.** OCR and text confirmation help resolve ambiguous label text. The resulting `slug` is checked against the organizer allowlist.
 
-**02 / Retrieve candidates.** SigLIP2 SO400M encodes the image into visual features, which are compared with a pinned index of reference entries. Model weights and the index live outside Git.
+> When a match remains uncertain, the API returns `no_match` or `insufficient_information`.
 
-**03 / Verify the `slug`.** An allowlist of organizer identifiers, text confirmation, and OCR help resolve ambiguous cases. If an exact match cannot be established, the API reports that outcome instead of presenting a similar wine as exact.
+### Related wines
 
-**Recommendations are separate.** A v3 index suggests related *display cards* using text, attributes, and winery. It neither recognizes the photo nor proves those wines match its label. See the [CPU service](apps/vision/README.md), [external asset inventory](deploy/assets/INVENTORY.md), and [retrieval architecture](ARCHITECTURE.md#модель-и-поиск).
+The v3 recommendation index selects related display cards using text, attributes, and winery. The app requests them through `/v1/recommendations` while viewing a wine.
+
+[CPU F8 source](apps/vision/README.md) · [Model and data inventory](deploy/assets/INVENTORY.md) · [Detailed architecture](ARCHITECTURE.md#модель-и-поиск)
 
 ## Architecture at a glance
 
