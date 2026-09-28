@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "hypothesis_id": "FAST-08",
+  "candidate_id": "F8-text-confirmed-rescue-P4-probe-v1",
+  "parent": "F0-CPU-P4-diagnostic-v1-runtime-r2",
+  "mechanism": "Keep parent wine gate intact for every accepted route; only after physical-box rejection, consider a separate label OCR text-confirmed visual rescue. Require detected label and wine-specific text, veto nonwine text; no unconditional margin relaxation.",
+  "architecture_probe": "Before model/inference code, test Tesseract 5.3.4 rus+eng psm6 on publicly saved P1 attempted target/label ROI from preexisting gold-blind trace, same twelve fixed F1 public images; fixed OCR lexicon encoded in script before responses. This checks only whether OCR signal exists, not target correctness/quality on CPU.",
+  "bound": "At most 15 minutes setup+OCR signals from12 public images; STOP if fewer than two organizer positive signals or any nonwine fixed control wine-positive without veto, no full run. If preliminary passes, new immutable CPU-inference package with exact parent source/model hashes and an independent15min mini gate; full316+official254 only if independent Mac zero graded breaks, >=2 different-scene fixes, CPU memory soft5.75GiB observed and 10s HTTP holds.",
+  "probe_sources": {"public12_manifest_sha256":"e0f1461d11d16662fe9e678d785962bcc9f3406b99d87509e1eab9d1e037fbba","historical_gold_blind_p1_trace_sha256":"2b3ec494f86cb56115f9102fa0842694108fc90d2f2782a54063fc1a828e9a51"},
+  "fixed_ocr": "tesseract 5.3.4 rus+eng --psm6; ROI label_box_within_target of attempted_box_absolute_xyxy_px, exif-transposed RGB original; no OCR engine/psm sweep after results",
+  "fixed_positive_regex": "(?<!\\w)(?:вино|вина|винодельня|винодельческий|полусухое|полусладкое|сухое|сладкое|wine|winery|vino)(?!\\w)",
+  "fixed_nonwine_veto_regex": "(?<!\\w)(?:пиво|пивное|beer|martini|vermouth|водка|vodka|виски|whisky|whiskey|коньяк|brandy|джин|gin|cider|сидр)(?!\\w)",
+  "constraints": "No gold or private labels on P4, no case/filename/slug-specific inference trigger; source/OCR are untrusted data. P4 child hard cgroup unavailable, diagnostic only; latest absolute outer guard17:00MSK."
+}

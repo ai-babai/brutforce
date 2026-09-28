@@ -1,14 +1,17 @@
 # F8 CPU · фактический asset inventory (28.09.2026)
 
 Источник: чтение active TEST unit и файлов на Sigma; базовая привязка в
-`deploy/f8-runtime.json`. Список **точных байтов**, включая родительские imports,
-процессор, ONNX, индекс, OCR-языки и 3 HF snapshots: [f8-cpu.sha256](f8-cpu.sha256).
-Это манифест комплекта для офлайн-переноса, не лицензия на публикацию самих файлов.
+`deploy/f8-runtime.json`. [f8-cpu.sha256](f8-cpu.sha256) перечисляет **32 файла
+внешних данных** — processor, ONNX, индекс, OCR-языки и 3 HF snapshots.
+17 Python-файлов и OCR-правила перенесены без изменения байтов в
+[apps/vision/](../../apps/vision/README.md). Историческая квитанция 50/50 файлов
+относилась к старому смешанному комплекту; новый архив **не** содержит код.
+Манифест данных не является лицензией на публикацию этих файлов.
 
 | Состав | Версия / назначение | Статус распространения |
 |---|---|---|
-| `overlay/*` | F8 `F8-CPU-text-confirmed-rescue-P4-diagnostic-v1`; lexicon, organizer allowlist (2103 slug), visual-neighbors (TEST default; override ниже) | Авторство/право публичного распространения overlay, lexicon и каталожных производных **pending**. Не коммитить байты. |
-| `parent/*.py` | 16 источников из установленного F0; F8 прямо проверяет SHA восьми ключевых модулей | Происхождение и право redistrib **pending**, нужная авторская ревизия не установлена. |
+| `apps/vision/` в Git | F8 `F8-CPU-text-confirmed-rescue-P4-diagnostic-v1`; 17 Python-файлов (overlay + 16 parent) и OCR lexicon. F8 проверяет SHA восьми ключевых модулей | Исходный приватный проект команды; права на дальнейшее публичное раскрытие отдельно. В архив данных не включать. |
+| `overlay/*` в данных | Organizer allowlist (2103 slug), исторический visual-neighbors (не текущий override) | Каталожные производные **только частная передача**; публичный доступ pending. |
 | `onnx/*` | FP32 SO400M vision ONNX 1 713 332 860 байт, tokenizer/processor и parity record | [Исходная модель](https://huggingface.co/google/siglip2-so400m-patch16-384) указывает Apache-2.0; соответствие производного экспорта/атрибуция **pending**. |
 | `index/*`, `catalog/catalog-bundle.json` | organizer-catalog-20260919, index `so400m384-owlv2-v2-crops-reference-gated-20260925`; 2103 references, SHA каталога `a52c6a...4f677b2` | Конкурсные reference metadata и индекс **только авторизованный offline transfer**, публичный доступ pending. Gold/фотографии запросов в комплект не входят. |
 | `models/hub/*` | [RT-DETR](https://huggingface.co/PekingU/rtdetr_r18vd) `@ac77a11ff0170a41b771c03264987f8ce2b0d753`, [OWLv2](https://huggingface.co/google/owlv2-base-patch16-ensemble) `@cfd3195ba4ea9592eec887ded089f4c08eff231d`, [SigLIP2 Base](https://huggingface.co/google/siglip2-base-patch16-224) `@75de2d55ec2d0b4efc50b3e9ad70dba96a7b2fa2` | Все три HF карточки на 28.09 указывают **Apache-2.0**, public/ungated; при распространении сохранить лицензию/NOTICE/атрибуцию. SHA карточек из API совпадают с revision в кеше. |
@@ -22,7 +25,7 @@
 Перенос без приватных путей в репозитории (Python 3.12+):
 
 1. Оператор с правом доступа готовит **вне checkout** JSON `source-map.json` с ключами
-   `overlay`, `parent`, `onnx`, `index`, `catalog`, `models`, `ocr`. Значения — пути к
+   `overlay`, `onnx`, `index`, `catalog`, `models`, `ocr`. Значения — пути к
    соответствующим каталогам; `models` указывает на HF `hub/` со snapshots,
    `ocr` — на каталог с русским и английским `*.traineddata`.
    Источник допускается получать с доверенного хоста или из разрешённого архива.
@@ -37,7 +40,7 @@
    `CATALOG_VERSION`, `RECOMMENDATION_INDEX_SHA256` перед импортом/запуском.
    Не включать их в Git или bundle F8 без разрешения владельца.
 
-`f8-cpu.sha256` описывает файлы распознавания, **не** снимок всех внешних
+`f8-cpu.sha256` описывает внешние данные распознавания, **не** исходный код или снимок всех
 каталожных WebP и не release controller/policy. Недоступность этих байтов или
 неподтверждённые права обозначают pending clean Linux/parity. Прогрев F8,
 наличие OCR-языков и паритет на отдельной машине проверяются против тех же SHA;

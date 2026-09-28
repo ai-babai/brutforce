@@ -7,8 +7,9 @@
 | Цель и запуск | [README.md](README.md) |
 | English entry | [README.en.md](README.en.md), [runbook EN](docs/RUNBOOK.en.md) |
 | Эксперт: четыре ссылки сдачи, результаты и статус | [README](README.md), [результаты](docs/SOLUTION.md), [архитектура](ARCHITECTURE.md) |
-| Разработчик: демо и реальный CPU | [Демо](README.md#быстрый-запуск), [запуск с моделью](README.md#запуск-с-моделью), [полный runbook](docs/RUNBOOK.ru.md#полный-cpu-профиль-f8) |
-| Локальный Docker CPU F8 | [Пошаговый runbook](docs/RUNBOOK.ru.md#полный-cpu-профиль-f8), [Compose](deploy/compose.yaml), [50 SHA assets](deploy/assets/f8-cpu.sha256), [операторский CLI](scripts/docker-local.sh) |
+| Внешний разработчик: без данных / полный режим | [Самостоятельный запуск](docs/SELF-HOST.ru.md), [архитектура](ARCHITECTURE.md) |
+| Команда: закреплённый комплект и серверы | [Операционный runbook](docs/RUNBOOK.ru.md), [PIPELINE](deploy/PIPELINE.md) |
+| Локальный Docker CPU F8 | [Код vision](apps/vision/README.md), [runbook](docs/RUNBOOK.ru.md#полный-cpu-профиль-f8), [Compose](deploy/compose.yaml), [32 SHA данных](deploy/assets/f8-cpu.sha256), [операторский CLI](scripts/docker-local.sh) |
 | Изменение UI | [apps/web](apps/web/AGENTS.md), [Design Specs](apps/web/design-specs.md) |
 | HTTP backend | [apps/api](apps/api/AGENTS.md), [API README](apps/api/README.md) |
 | Разметка тестовых фото | [Контракт feedback](contracts/photo-feedback.md), `apps/api/feedback.go`, UI-007 |

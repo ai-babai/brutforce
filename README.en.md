@@ -1,91 +1,52 @@
-# BrutForce
+# BrutForce — Russian wine-label scanner
 
-Team repository for the **LCT 2026** competition. Given a Russian wine-label photo, we look up an existing catalog card. Project authors: Maxim Popkov (`ai-babai`) and Roman (`@MisterMolox`). [Русский README](README.md).
+Built for the **Digital Transformation Leaders 2026** challenge from the Svoe Vino platform. The task is to identify an exact Russian wine catalog entry from a label photo and show its card on a phone. The system combines image retrieval, a catalog and a mobile web application; it does not label an unrelated card as an exact match.
 
-[Prototype](https://app.dzap.pw) · [Run with the model](#run-with-the-model) · [Local demo](#quick-start) · [Results and limitations](docs/SOLUTION.md)
+**Project authors:** Maxim Popkov ([Telegram @skifmax](https://t.me/skifmax)) and Roman Karandashov ([GitHub MisterMolox](https://github.com/MisterMolox)). [Русский README](README.md).
 
-**Submission links**
+[Try the app](https://app.dzap.pw) · [Run it yourself (Russian guide)](docs/SELF-HOST.ru.md) · [Architecture](ARCHITECTURE.md) · [Evidence and limits](docs/SOLUTION.md)
 
-- **Repository:** [ai-babai/brutforce](https://github.com/ai-babai/brutforce) — private; reviewer access needs verification.
-- **Documentation:** [documentation entry](docs/README.md) — in the same repository.
-- **Presentation:** link pending file and rights approval.
-- **Prototype:** [app.dzap.pw](https://app.dzap.pw).
+## Start without external data
 
-## Run with the model
-
-You need Linux x86-64, Docker Engine with Compose v2, Python 3.11+, `curl`, `openssl`, and enough memory for the model and catalog. The [full runbook (Russian)](docs/RUNBOOK.ru.md#полный-cpu-профиль-f8) covers acquisition, verification, password setup and data retention; [English entry](docs/RUNBOOK.en.md).
-
-Obtain **four separate parts** through the team's approved channel: the verified F8 bundle, display catalog package, catalog media, and exact recommendation-index file. If you have no access, contact Maxim Popkov (`ai-babai`) or Roman (`@MisterMolox`); there is no download URL. `preflight` stops without the exact recommendation file. Another index cannot replace it.
-
-Put the received parts **outside the clone**. Set an absolute root on your Linux host:
+With Docker Engine and Compose v2 installed, run:
 
 ```sh
-DATA_ROOT="$HOME/brutforce-local"
-mkdir -p "$DATA_ROOT"
-DATA_ROOT=$(realpath "$DATA_ROOT")
+git clone https://github.com/ai-babai/brutforce.git
+cd brutforce
+docker compose -f deploy/compose.demo.yaml up --build -d --wait
 ```
 
-Layout under `$DATA_ROOT`:
+Open <http://127.0.0.1:8097/>. This is a demo with eight sample cards, text search and photo upload, **without wine recognition**. The contest endpoint returns 503 in this mode. Stop with `docker compose -f deploy/compose.demo.yaml down`; see the [non-Docker option](docs/SELF-HOST.ru.md#минимальный-режим-без-docker) or [full deployment](docs/SELF-HOST.ru.md#полный-режим-с-docker).
+
+The [self-hosting guide](docs/SELF-HOST.ru.md) covers both modes, requirements and deployment. CPU recognition **source code is in [apps/vision/](apps/vision/README.md)**. Full mode separately needs weights, visual index, catalog package/media and recommendation index. These data are not in Git and **do not have a public download URL yet**. The full stack started and passed health/catalog smoke checks on a Mac running linux/amd64 containers; independent clean-Linux and known-photo checks are still outstanding.
+
+## Modules and data map
 
 ```text
-f8-bundle/
-catalog-package/manifest.json
-catalog-media/
-recommendations/index.json
-secrets/db_password
-secrets/app_password
+brutforce/                          REPOSITORY: code, no large data
+|-- apps/web/                        React/TypeScript mobile UI
+|-- apps/api/                        Go API: uploads, search, cards, recommendations
+|   `-- migrations/                  PostgreSQL schema for display cards
+|-- apps/vision/                     Python CPU recognition source
+|   |-- overlay/, parent/            Pinned serving modules
+|   `-- overlay/spec/lexicon.json    OCR confirmation policy
+|-- deploy/compose.demo.yaml         UI + API demo without DB or model
+|-- deploy/compose.yaml              Full web, vision, migrate and postgres stack
+|-- scripts/docker-local.sh          Full Compose preflight and startup
+`-- contracts/                       API and data formats
+
+~/brutforce-local/                   EXTERNAL DATA: required for full mode
+|-- f8-bundle/                        Recognition DATA and organizer catalog
+|   |-- onnx/, models/hub/, ocr/      Model weights, processor, OCR languages
+|   |-- index/index.npz              Reference-photo vectors (NOT display WebP)
+|   |-- catalog/catalog-bundle.json  Organizer slugs and reference metadata
+|   `-- overlay/organizer-slugs.json Allowed organizer slugs for Go API
+|-- catalog-package/                 2,038 display cards, manifest and aliases
+|-- catalog-media/{400,800,original}/ Display-card WebP images
+|-- recommendations/index.json       Text/attribute card neighbors, NOT image vectors
+`-- secrets/                          Locally generated DB and app passwords
 ```
 
-On first setup, copy the example from the clone root: `cp deploy/docker.env.example deploy/.env.local`. In `deploy/.env.local`, enter **expanded absolute paths** with the resulting `$DATA_ROOT` prefix, not a literal `$DATA_ROOT`:
+After obtaining and extracting the data archives, run `sh scripts/docker-local.sh init "$HOME/brutforce-local"` to generate local configuration and passwords, then `sh scripts/docker-local.sh up` to start the full stack. See the [transfer and index-rebuild guide](docs/ASSET-TRANSFER.ru.md) and [deployment requirements](docs/SELF-HOST.ru.md#полный-режим-с-docker). The organizer sends multipart `image` to `POST /v1/eval/predict` and reads `{"slug":"..."}`; the application uses `/v1/photos` followed by `/v1/search` with a `photoId`. See [architecture](ARCHITECTURE.md) and [API contract](contracts/eval-predict.md).
 
-- `ASSET_DIR` → `f8-bundle/`; `CATALOG_PACKAGE_DIR` → `catalog-package/`.
-- `CATALOG_MEDIA_DIR` → `catalog-media/`; `RECOMMENDATION_INDEX_FILE` → `recommendations/index.json` (a **file**).
-- `SECRETS_DIR` → `secrets/` with two password files created as in the [runbook](docs/RUNBOOK.ru.md#полный-cpu-профиль-f8). Keep the pinned `CATALOG_VERSION` and `RECOMMENDATION_INDEX_SHA256` from the example.
-
-Once the parts are in place, from the clone root:
-
-```sh
-sh scripts/docker-local.sh preflight
-sh scripts/docker-local.sh up
-sh scripts/docker-local.sh smoke
-API=http://127.0.0.1:8097
-curl --fail-with-body --max-time 10 \
-  -F "image=@/path/to/approved.jpg" \
-  "$API/v1/eval/predict"
-sh scripts/docker-local.sh stop
-```
-
-`preflight` checks the bundle, catalog, index, secrets and Compose. `up` waits for healthy services; `smoke` checks HTTP health and the catalog. Use an approved photo with a known answer: expect HTTP 200 and the same nonempty `slug`. `stop` preserves data. See [current Compose and asset limitations](docs/SOLUTION.md#воспроизведение-и-ограничения).
-
-## Quick start
-
-This is a **synthetic local demo** without label recognition. Install Go 1.23, Node.js 22 and npm; PostgreSQL is not needed. Open two terminals at the clone root.
-
-First:
-
-```sh
-mkdir -p ./local-uploads
-cd apps/api
-UPLOAD_DIR="$(pwd)/../../local-uploads" \
-  go run .
-```
-
-Second (from the clone root again):
-
-```sh
-cd apps/web
-npm ci
-npm run dev
-```
-
-Open <http://127.0.0.1:5190/> and check the API with `curl --fail http://127.0.0.1:8097/v1/health`. Stop both processes with Ctrl-C. Only the owner should remove photos in `local-uploads/`. The demo contest endpoint returns `503 recognition_unavailable`.
-
-## How it works
-
-1. The mobile React UI accepts a photo or text query.
-2. The Go API stores uploaded photos privately and reads cards from PostgreSQL.
-3. A separate CPU service detects the label, compares visual features, and uses text when needed to rank slugs.
-4. The Go API verifies the slug and shows an existing card when the display catalog contains it. Contest [`POST /v1/eval/predict`](contracts/eval-predict.md) accepts `image` and returns a slug.
-5. A separate pinned index suggests related cards from display text and winery attributes; it does not replace recognition. [Full architecture](ARCHITECTURE.md).
-
-Measurements, versions and check boundaries are in [results](docs/SOLUTION.md). [Project map](MAP.md) · [Contracts](contracts/README.md) · [Release and rollback](deploy/PIPELINE.md). The repository remains private; no team code license has been agreed and third-party rights require separate checks.
+[Repository](https://github.com/ai-babai/brutforce) · [documentation index](docs/README.md). A presentation URL is not confirmed; distribution rights for third-party data and weights require separate approval.

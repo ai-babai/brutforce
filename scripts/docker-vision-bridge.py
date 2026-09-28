@@ -25,7 +25,7 @@ async def handle(reader, writer):
 
 
 async def main():
-    argv = ["python", "/assets/overlay/night_server.py", "--catalog", "/assets/catalog/catalog-bundle.json",
+    argv = ["python", "/app/vision/overlay/night_server.py", "--catalog", "/assets/catalog/catalog-bundle.json",
             "--index-dir", "/assets/index", "--host", "127.0.0.1", "--port", "8126",
             "--threads", "6", "--encoder", "so400m", "--route", "onnx640"]
     child = subprocess.Popen(argv, env=os.environ.copy())

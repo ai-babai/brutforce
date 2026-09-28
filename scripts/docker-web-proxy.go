@@ -18,6 +18,15 @@ import (
 var mediaPath = regexp.MustCompile(`^(400|800|original)/[0-9a-f]{64}\.webp$`)
 
 func main() {
+	if len(os.Args) == 2 && os.Args[1] == "--healthcheck-demo" {
+		client := &http.Client{Timeout: 4 * time.Second}
+		resp, err := client.Get("http://127.0.0.1:8097/v1/health")
+		if err != nil || resp.StatusCode != http.StatusOK {
+			os.Exit(1)
+		}
+		resp.Body.Close()
+		return
+	}
 	if len(os.Args) == 2 && os.Args[1] == "--healthcheck" {
 		client := &http.Client{Timeout: 4 * time.Second}
 		resp, err := client.Get("http://127.0.0.1:8097/readyz")

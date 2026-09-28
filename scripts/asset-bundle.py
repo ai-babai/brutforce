@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Export/verify F8 assets without persisting source host paths or private bytes in Git."""
+"""Export/verify F8 data assets; CPU Python code lives in apps/vision/."""
 import argparse
 import hashlib
 import json
@@ -10,7 +10,7 @@ import sys
 import tempfile
 
 MANIFEST = Path(__file__).resolve().parent.parent / "deploy/assets/f8-cpu.sha256"
-GROUPS = {"overlay", "parent", "onnx", "index", "catalog", "models", "ocr"}
+GROUPS = {"overlay", "onnx", "index", "catalog", "models", "ocr"}
 
 
 def entries():
@@ -55,7 +55,7 @@ def check(root):
 def export(sources, out):
     mapping = json.loads(sources.read_text())
     if set(mapping) != GROUPS or any(not isinstance(v, str) for v in mapping.values()):
-        raise ValueError("source map must specify overlay,parent,onnx,index,catalog,models,ocr")
+        raise ValueError("source map must specify overlay,onnx,index,catalog,models,ocr")
     roots = {group: Path(source).resolve(strict=True) for group, source in mapping.items()}
     if out.exists():
         raise ValueError("output already exists; choose a new directory")
