@@ -66,7 +66,7 @@ sh scripts/docker-local.sh smoke
 
 Для остановки выполните `sh scripts/docker-local.sh stop`. Команда `sh scripts/docker-local.sh down` удаляет контейнеры и сеть **без `-v`**: БД, uploads, feedback и snapshots остаются в volumes. Повторный `up` использует их снова. Для смены версии каталога заранее подготовьте миграцию и восстановление; `docker compose down -v` удалит сохранённые данные.
 
-Синтаксис скриптов и `docker compose config` проверены. Сборка образов, передача assets, чистый Linux, Tesseract/OCR parity и known-answer через Compose остаются открытыми проверками. Работающий [PROD](https://app.dzap.pw) запущен через systemd.
+Синтаксис скриптов и `docker compose config` проверены. Repro собрал оба linux/amd64-образа на OrbStack в отдельной patch-ветке; в `main` ещё есть TS blocker. Передача assets, чистый Linux, Tesseract/OCR parity и known-answer через Compose остаются открытыми проверками. Работающий [PROD](https://app.dzap.pw) запущен через systemd.
 
 Контрольный конкурсный запрос к **уже работающему реальному** API с разрешённым локальным фото (не использовать в демо без F8):
 
