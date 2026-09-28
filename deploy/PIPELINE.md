@@ -112,8 +112,8 @@ REVISION, manifest.json и evidence. Секреты, пользовательс�
 Все порты loopback. TEST публичный, без HTTP-пароля (решение Макса 2026-09-22).
 Ops и OpenCode сохраняют авторизацию; не переносить её обратно на TEST.
 API/заглушка — отдельные systemd units `brutforce-{test,prod}[-reference].service`.
-PROD подготовлен, но первый выпуск требует отдельного разрешения конкретного кандидата.
-До первой успешной promotion app.dzap.pw сохраняет существующую страницу-заглушку.
+PROD запущен; каждый новый candidate требует отдельного разрешения после TEST-проверки.
+При самом первом выпуске app.dzap.pw переключался с существующей страницы-заглушки.
 Это один сервер и один PostgreSQL-кластер, не независимые отказоустойчивые узлы.
 
 ## Управление через Actions и Sigma
@@ -202,11 +202,25 @@ SHA `fast-prod-v1.json` и controller, actor, источник согласия 
 `approve` закрепляет SHA только после проверки текущего TEST candidate/rec
 receipt; `promote` повторяет сверку и требует готовый F8 :8126, не запуская
 третью ML-копию. PROD имеет отдельные БД `lct_prod`, env, фото/feedback;
-TEST deploy блокируется, пока PROD использует общий pinned F8. Контроллер
+После первого PROD TEST deploy допускается только с теми же catalog manifest,
+model version, external F8 assets, index и SQL-миграциями; запущенный F8 не
+останавливается и не перезапускается. Повторный PROD с этими же инвариантами
+снимает pg_dump, проверяет тот же cleaned recommendation receipt для точного
+TEST candidate и approval нового bundle, меняет только код/окружение API.
+Повторный switch не перепубликует Caddy и не пишет в БД каталога; при ошибке
+возвращает прежний current, а опубликованный маршрут оставляет прежним. Для
+ручного PROD rollback сначала верните прежний candidate на TEST: receipt снова
+привяжется к нему, и exact approval можно будет проверить повторно. Контроллер
 проверяет локальный и внешний HTTPS photo/catalog/recommendation smoke и
 DQ009/DQ010 после publish. Реальное фото должно уложиться в 10 с с точным
 slug/card; это один known-answer probe, а не оценка качества ML. Оставшиеся
 required-live UI-наблюдения выполняются отдельно с фиксацией ограничений.
+
+Перед первым таким повторным switch сравнить SHA установленного root-owned
+`/usr/local/lib/lct-release/release.py` с исходником baseline, сохранить его
+root-owned backup, проверить diff нового `deploy/release.py` из принятого `main`,
+затем установить только controller с прежними владельцем и правами. Не менять
+`lct-release-service.sh`, PROD Caddy или systemd unit ради code-only switch.
 
 ## Структура и обслуживание
 

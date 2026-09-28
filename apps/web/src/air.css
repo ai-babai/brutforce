@@ -79,8 +79,8 @@ body { background: #f3f0e9; }
 #UI-001 .hero > div:first-child { width: 100%; max-width: none; padding: 26px 26px 0; }
 #UI-001 .hero h1 { max-width: 350px; margin: 0 auto; font-size: 39px; font-weight: 500; line-height: 1.14; letter-spacing: -.025em; }
 #UI-001 .hero p { max-width: 285px; margin: 19px auto 0; color: var(--muted); font-size: 14px; line-height: 1.65; }
-#UI-001 .hero > .mascot-scene { display: flex; flex: 1 0 410px; align-items: flex-end; justify-content: center; width: 100%; height: 410px; margin: 20px 0 -10px; overflow: hidden; }
-#UI-001 .hero > .mascot-scene img { flex: none; width: auto; max-width: none; height: min(380px, calc(100vw - 20px)); object-fit: contain; object-position: center bottom; transform: none; }
+#UI-001 .hero > .mascot-scene { display: flex; flex: 1 0 435px; align-items: flex-end; justify-content: center; width: 100%; height: 435px; margin: 16px 0 -10px; overflow: hidden; }
+#UI-001 .hero > .mascot-scene img { flex: none; width: auto; max-width: none; height: 415px; object-fit: contain; object-position: center bottom; transform: none; }
 #UI-001 .actions { position: relative; gap: 0; margin: 0; padding-top: 0; }
 #UI-001 .scan-button { min-height: 66px; grid-template-columns: 30px minmax(0,1fr) 30px; gap: 12px; padding: 12px 24px; border-radius: 14px; text-align: center; }
 #UI-001 .scan-button > svg:first-child, #UI-001 .scan-button > svg:last-child { width: 27px; height: 27px; padding: 0; border: 0; border-radius: 0; background: none; stroke-width: 1.3; }
@@ -334,8 +334,8 @@ body { background: #f3f0e9; }
   #UI-001 .brand.v2-brand { height: 82px; min-height: 82px; padding-top: 20px; }
   #UI-001 .hero { min-height: 450px; }
   #UI-001 .hero > div:first-child { padding-top: 15px; }
-  #UI-001 .hero > .mascot-scene { flex-basis: 287px; height: 287px; margin-top: 16px; }
-  #UI-001 .hero > .mascot-scene img { width: 100%; height: 287px; transform: none; }
+  #UI-001 .hero > .mascot-scene { flex-basis: 315px; height: 315px; margin-top: 16px; }
+  #UI-001 .hero > .mascot-scene img { height: 315px; }
   #UI-004 .mascot-scene-walk { height: 195px; }
   #UI-009 .mascot-scene-counter, #UI-010 .mascot-scene-offline, #UI-010 .mascot-scene-server { height: 205px; min-height: 205px; margin-top: 18px; }
 }
@@ -345,8 +345,8 @@ body { background: #f3f0e9; }
   #UI-001 .hero > div:first-child { padding-top: 10px; }
   #UI-001 .hero h1 { font-size: 33px; }
   #UI-001 .hero p { margin-top: 12px; font-size: 13px; }
-  #UI-001 .hero > .mascot-scene { flex-basis: 219px; height: 219px; margin-top: 12px; }
-  #UI-001 .hero > .mascot-scene img { width: 100%; height: 219px; transform: none; }
+  #UI-001 .hero > .mascot-scene { flex-basis: 245px; height: 245px; margin-top: 2px; }
+  #UI-001 .hero > .mascot-scene img { height: 245px; }
   #UI-008 .air-search-mascot, #UI-008 .manual-empty .mascot-scene-browse { height: 145px; margin-top: 10px; }
   #UI-004 .mascot-scene-walk { height: 160px; }
   #UI-004 .air-waiting-discovery { min-height: 140px; grid-template-columns: 110px minmax(0,1fr); gap: 13px; }
@@ -356,8 +356,14 @@ body { background: #f3f0e9; }
 }
 
 @media (min-width: 380px) and (max-width: 400px) and (min-height: 800px) {
-  #UI-001 .hero > .mascot-scene { flex-basis: 345px; height: 345px; margin-top: 20px; }
-  #UI-001 .hero > .mascot-scene img { width: auto; height: 345px; transform: none; }
+  #UI-001 .hero > .mascot-scene { flex-basis: 375px; height: 375px; margin-top: 16px; }
+  #UI-001 .hero > .mascot-scene img { height: 375px; }
+}
+
+@media (max-height: 600px) {
+  #UI-001 .hero { min-height: 0; }
+  #UI-001 .hero > .mascot-scene { flex-basis: 165px; height: 165px; margin-top: 6px; }
+  #UI-001 .hero > .mascot-scene img { height: 165px; }
 }
 
 @media (min-width: 768px) and (max-width: 1023px) {
