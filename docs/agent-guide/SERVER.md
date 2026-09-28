@@ -14,7 +14,7 @@
 | Рабочие копии | `/srv/lct/work` — отдельная ветка и папка на задачу |
 | Зоны приложений | `/srv/lct/maks`, `/srv/lct/roman`, `/srv/lct/prod` |
 | Демо Макса | <https://demo.maks.dzap.pw>, собранное из `codex/behavior-demo` |
-| Остальные домены | `roman.maks.dzap.pw` и `app.dzap.pw` — HTTPS-заглушки, не приложения |
+| Остальные домены | `roman.maks.dzap.pw` — исходная HTTPS-заглушка; `app.dzap.pw` — PROD BrutForce F8 CPU с 28.09.2026, ревизия `d26afa3`/candidate `b0428147…` (перед работой проверяй live status) |
 | Активность | `/srv/lct/notes/activity`; находки: `/srv/lct/notes/INDEX.md` и `inbox` |
 | Данные | `/srv/lct/data/{maks,roman,prod}`; общий корень моделей пока не назначен |
 | Ресурсы | 8 vCPU, около 15 GiB RAM, 213 GiB корневого диска; общие ресурсы, GPU нет |

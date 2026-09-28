@@ -54,6 +54,12 @@ root helper, запускает отдельный F8 на loopback :8126, тр�
 TEST-only `vision-runtime.env`; публичный smoke сверяет фото и точный modelVersion.
 Старый :8125 остаётся готовым к откату. Для установки отдельных TEST-only
 unit/drop-in/helper и controller не запускать `bootstrap.py` целиком.
+Проверенный data-switch рекомендаций закрепляется по точному SHA: при следующем
+совместимом TEST deploy контроллер сверяет bytes, ID активного display-каталога
+и версии, затем переносит receipt на новый appCandidateId. При несовместимости
+switch останавливается до изменения `current` и env. Для следующих real TEST
+и первого PROD обязателен exact cleaned SHA `f05f16c7790782ec3c1b50047bba4e29f1d906217f63846c217d5516e6ef8e7f`;
+отсутствующий receipt не даёт fallback на базовые visual-neighbors F8.
 
 ## Проверки и артефакт
 
@@ -75,8 +81,14 @@ Chromium-проверки AIR и DESIGN запускаются отдельно 
 По разрешению Макса от 2026-09-28 медленные Chromium-BDD не входят в обязательный
 fast gate. Точные ID остаются `skipped` и фиксируются в policy и immutable package;
 пакет получает `targetScope: test-only`. AIR-025 закрывается только обязательным
-реальным photo smoke на TEST после переключения F8. TEST-only исключения не
-дают права продвижения в PROD: для него требуется полный BDD `passed`.
+реальным photo smoke на TEST после переключения F8. TEST-only исключения сами
+по себе не дают права продвижения в PROD. Для первого CPU PROD действует
+отдельная [fast-prod-v1](fast-prod-v1.json): только ровно 26 известных `skipped`,
+поштучно отнесённых к superseded/deferred/required-live; `failed`, `error`,
+новый skipped или иной SHA policy блокируют promote. Старый `checks.json` не
+переименовываем в `all-environments` или полный BDD. Три required-live
+(`DESIGN-009`, `AIR-025`, `AIR-043`) остаются отдельными поствыкаточными UI/HTTP
+наблюдениями; автоматический PROD smoke покрывает фото и card API, но не UI целиком.
 Действующий серверный контроллер обновляется отдельным infra-выпуском;
 не направлять туда demo-only пакет до обновления. Для preview Макса используется
 его отдельный контур, без переключения TEST/PROD.
@@ -111,7 +123,9 @@ PROD подготовлен, но первый выпуск требует от�
 реальный текст, рекомендации и фото; workflow проверяет внешний HTTP. Chromium
 `deploy/browser-smoke.mjs` запускается отдельно как медленная диагностика, не в
 обязательном CI/TEST workflow. Его реальный результат можно записать в серверный
-журнал; пока его нет, browser gate остаётся `pending`, PROD не разрешён.
+журнал. Для первого CPU PROD `fast-prod-v1` допускает `browser: pending`, но
+требует прошедшие CI/data/TEST/placement, exact TEST recommendation override
+и явную human approval на bundle; browser `pending` остаётся видимым.
 
 Sigma получает состояние без генерации проверки моделью:
 
@@ -129,8 +143,8 @@ sudo -n -u lct-release /usr/local/bin/lct-release status
 Только после явного поручения Макса или Романа продвинуть **названный** кандидат:
 
 ```bash
-sudo -n -u lct-release /usr/local/bin/lct-release approve CANDIDATE_ID maks 'telegram:<chat>:<message>'
-# Для поручения Романа actor=roman, только из уже разрешённого доверенного чата.
+sudo -n -u lct-release /usr/local/bin/lct-release approve CANDIDATE_ID maks 'bb:thr_ygieygxmy6:<точная запись и время согласования>'
+# Записывать только существующую ссылку на согласование exact candidate.
 /opt/sigma-hermes/bin/sigma-gh workflow run deploy.yml --repo ai-babai/brutforce \
   -f ci_run=RUN_ID -f target=prod -f candidate_id=CANDIDATE_ID
 ```
@@ -155,6 +169,11 @@ SSH-ключ Actions не может выдавать approve и не даёт �
 Миграция не откатывается автоматически; сбой миграции фиксируется, приложение ещё не переключено.
 Перед PROD создаётся pg_dump. Откат приложения разрешён автоматикой только при одинаковых SQL-миграциях.
 Иначе оператор сначала устанавливает совместимость; down/reset постоянных БД запрещён.
+На failed initial PROD smoke контроллер возвращает Caddy placeholder из
+`/etc/lct-release/pre-prod-caddy.backup`, удаляет новый `current`, останавливает
+PROD units и снимает новый vision env. `pg_dump` и catalog snapshot сохраняются
+для отдельной проверки/восстановления: миграция автоматически не отменяется.
+TEST F8 при откате PROD не останавливать.
 
 ```bash
 sudo -n -u lct-release /usr/local/bin/lct-release rollback PREVIOUS_FULL_SHA test
@@ -163,6 +182,31 @@ sudo -n -u lct-release /usr/local/bin/lct-release rollback PREVIOUS_FULL_SHA tes
 Sigma объясняет по-русски: что случилось, что успели, что осталось, что нужно от человека.
 В назначенной карточке — Pending/подробности и ссылка на запуск; не закрывать её по exit процесса.
 Выкатка сама не завершает продуктовую задачу и не создаёт новую разработку автоматически.
+
+## Первый CPU PROD: fast-prod-v1
+
+Это план установки только после согласования точного manifest владельцем deploy.
+Сначала сверить SHA live controller с baseline, снять root-owned backup и
+показать diff/SHA мастеру. Установить `release.py`, `fast-prod-v1.json`,
+`publish-prod.py`, `unpublish-prod.py`, `lct-release-service.sh` и drop-in `lct-prod-f8.conf`
+точечно; `bootstrap.py` целиком не запускать. Подготовить приватный `feedback`
+под `/srv/lct/data/prod/` для `lct-release`, не переносить photos/feedback из
+TEST. Drop-in подключает PROD-only catalog/vision env и FEEDBACK_DIR.
+`prod-runtime.env`/`prod-migration.env` остаются в `/etc/lct-release` (0600),
+значения секретов не выводить. До switch `prod/vision-runtime.env` ещё не
+существует; при установке drop-in не перезапускать units.
+
+Bundle: candidate ID, Git SHA, CI run, archive SHA, catalog manifest SHA,
+шесть SHA F8 assets, recommendation SHA и model/index/catalog versions,
+SHA `fast-prod-v1.json` и controller, actor, источник согласия и время.
+`approve` закрепляет SHA только после проверки текущего TEST candidate/rec
+receipt; `promote` повторяет сверку и требует готовый F8 :8126, не запуская
+третью ML-копию. PROD имеет отдельные БД `lct_prod`, env, фото/feedback;
+TEST deploy блокируется, пока PROD использует общий pinned F8. Контроллер
+проверяет локальный и внешний HTTPS photo/catalog/recommendation smoke и
+DQ009/DQ010 после publish. Реальное фото должно уложиться в 10 с с точным
+slug/card; это один known-answer probe, а не оценка качества ML. Оставшиеся
+required-live UI-наблюдения выполняются отдельно с фиксацией ограничений.
 
 ## Структура и обслуживание
 
@@ -184,11 +228,13 @@ Sigma объясняет по-русски: что случилось, что у
 
 Для первого TEST alpha `svoe-20260927-alpha-2035-v1` данные содержат прозрачные
 WebP 2035 из 2038 карточек. Три оставшихся непрозрачных фото временно не
-передаются в API: клиент показывает штатное «Фото отсутствует». Список похожих
-использует прежний фиксированный SO400M index `svoe-20260922-v2` **только** для
-этой пары версий при точном совпадении всех 2038 ID. Ранжирование не меняется;
-это визуальные соседи, не вкусовое или персональное сходство. Для новых каталогов
-это исключение не действует — нужен новый проверенный индекс.
+передаются в API: клиент показывает штатное «Фото отсутствует». Базовый F8
+индекс содержит визуальных соседей; проверенный TEST override
+`display-text-attributes-winery-review-v2` содержит текстовых соседей для
+2038 display ID текущего alpha-каталога и закреплён отдельным SHA. Это
+атрибутивное сходство, не вкусовое/персональное и не метрика качества ML.
+Для нового каталога нужен новый проверенный индекс/receipt; несовместимый
+TEST override блокирует switch.
 
 BE-089: read-only аудит прозрачности и локальная подготовка новых версионированных
 media/manifest описаны в [catalog-alpha-be089.md](../docs/product/catalog-alpha-be089.md).

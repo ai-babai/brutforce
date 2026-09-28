@@ -127,8 +127,9 @@ class ReleaseSafetyTests(unittest.TestCase):
             "ci": {"status": "passed"}, "test": {"status": "passed"},
             "browser": {"status": "passed"},
         }, "manifest": manifest, "history": []})
-        with self.assertRaisesRegex(RuntimeError, "Explicit approval"):
-            release.switch("prod", SHA)
+        with mock.patch.object(release, "target_config"):
+            with self.assertRaisesRegex(RuntimeError, "PROD must use pinned real CPU"):
+                release.switch("prod", SHA)
 
     def test_rollback_refuses_different_schema(self):
         previous_sha = "b" * 40
@@ -142,8 +143,9 @@ class ReleaseSafetyTests(unittest.TestCase):
         manifest = {"files": []}
         (target / "manifest.json").write_text(json.dumps(manifest))
         release.write(release.record(SHA), {"revision": SHA, "gates": {}, "manifest": manifest, "history": []})
-        with self.assertRaisesRegex(RuntimeError, "Schema differs"):
-            release.switch("test", SHA, "rollback")
+        with mock.patch.object(release, "target_config"):
+            with self.assertRaisesRegex(RuntimeError, "Schema differs"):
+                release.switch("test", SHA, "rollback")
 
     def test_cli_rejects_missing_or_invalid_arguments(self):
         with self.assertRaisesRegex(RuntimeError, "Invalid command or argument count"):
@@ -240,6 +242,7 @@ class ReleaseSafetyTests(unittest.TestCase):
             if "--report-out" in args:
                 pathlib.Path(args[args.index("--report-out")+1]).write_text(json.dumps(report))
         with mock.patch.object(release,"command",side_effect=command), \
+             mock.patch.object(release,"target_config"), \
              mock.patch.object(release,"validate_catalog_bytes",return_value=(pathlib.Path('/catalog'),pathlib.Path('/media'))), \
              mock.patch.object(release,"smoke",side_effect=RuntimeError("smoke failed")):
             with self.assertRaisesRegex(RuntimeError,"smoke failed"):

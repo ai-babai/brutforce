@@ -66,32 +66,18 @@ for name,folder,port,engine in [('test','stage',8103,8113),('prod','prod',8104,8
     file(f'/etc/systemd/system/brutforce-{name}.service',f'[Unit]\nDescription=BrutForce {name} application\nAfter=network.target postgresql.service brutforce-{name}-reference.service\nRequires=brutforce-{name}-reference.service\n[Service]\n{common}EnvironmentFile=/etc/lct-release/{name}-runtime.env\nEnvironmentFile={catalog_env}\nEnvironment=ADDRESS=127.0.0.1:{port}\nEnvironment=WEB_ROOT={root}/web\nEnvironment=UPLOAD_DIR=/srv/lct/data/{folder}/photos\nEnvironment=UPLOAD_MAX_BYTES=209715200\nEnvironment=FEEDBACK_DIR=/srv/lct/data/{folder}/feedback\nEnvironment=SEARCH_SERVICE_URL=http://127.0.0.1:{engine}\nEnvironment=RECOMMENDATION_SERVICE_URL=http://127.0.0.1:{engine}\nReadWritePaths=/srv/lct/data/{folder}/photos /srv/lct/data/{folder}/feedback\nExecStart={root}/brutforce-api\n[Install]\nWantedBy=multi-user.target\n')
 file('/etc/lct-release/config.json',json.dumps(config,indent=2)+'\n')
 file('/usr/local/lib/lct-release/release.py',(BASE/'release.py').read_text(),0o755)
+file('/usr/local/lib/lct-release/fast-prod-v1.json',(BASE/'fast-prod-v1.json').read_text(),0o644)
+file('/usr/local/lib/lct-release/unpublish-prod.py',(BASE/'unpublish-prod.py').read_text(),0o755)
+file('/usr/local/lib/lct-release/publish-prod.py',(BASE/'publish-prod.py').read_text(),0o755)
 file('/srv/lct/releases/public/index.html',(BASE/'releases.html').read_text(),0o640,'lct-release')
 file('/srv/lct/releases/public/app.js',(BASE/'releases.js').read_text(),0o640,'lct-release')
 file('/srv/lct/releases/public/style.css',(BASE/'releases.css').read_text(),0o640,'lct-release')
 file('/usr/local/bin/lct-release','#!/bin/sh\nexec /usr/bin/python3 /usr/local/lib/lct-release/release.py "$@"\n',0o755)
 file('/usr/local/sbin/lct-release-service',(BASE/'lct-release-service.sh').read_text(),0o755)
+file('/etc/systemd/system/brutforce-prod.service.d/99-f8-release.conf',(BASE/'lct-prod-f8.conf').read_text())
 file('/etc/systemd/system/lct-vision-test-f8.service',(BASE/'lct-vision-test-f8.service').read_text())
 file('/etc/systemd/system/brutforce-test.service.d/99-f8-release.conf',
      '[Service]\nEnvironmentFile=-/srv/lct/stage/vision-runtime.env\n')
-file('/usr/local/lib/lct-release/publish-prod.py',r'''from pathlib import Path
-import subprocess
-p=Path('/etc/caddy/sites-enabled/lct-previews.caddy')
-old=p.read_text()
-placeholder='root * /srv/lct/prod/public\n\tfile_server'
-new=old.replace(placeholder,'import lct_catalog_media\n\treverse_proxy 127.0.0.1:8104')
-if new==old and 'reverse_proxy 127.0.0.1:8104' not in old: raise SystemExit('Unexpected app route; no edit')
-if new!=old:
-    Path('/etc/lct-release/pre-prod-caddy.backup').write_text(old)
-    p.write_text(new)
-    try:
-        subprocess.run(['caddy','validate','--config','/etc/caddy/Caddyfile'],check=True)
-        subprocess.run(['systemctl','reload','caddy'],check=True)
-    except Exception:
-        p.write_text(old)
-        subprocess.run(['systemctl','reload','caddy'],check=True)
-        raise
-''',0o755)
 file('/etc/sudoers.d/lct-release','lct-release ALL=(root) NOPASSWD: /usr/local/sbin/lct-release-service *\nsigma-ops ALL=(lct-release) NOPASSWD: /usr/local/bin/lct-release *\n',0o440)
 run('visudo','-cf','/etc/sudoers.d/lct-release')
 run('systemctl','daemon-reload')
