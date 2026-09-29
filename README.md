@@ -47,6 +47,8 @@ sh scripts/docker-local.sh smoke
 
 `init` создаёт локальную конфигурацию и пароли. `up` проверяет файлы и запускает полный Compose. Откройте <http://127.0.0.1:8097/>. Остановка: `sh scripts/docker-local.sh stop`; данные в volumes сохраняются.
 
+`init` записывает `deploy/.env.local` из [примера конфигурации](deploy/docker.env.example). В нём указаны пути к модели и каталогу (`ASSET_DIR`, `CATALOG_PACKAGE_DIR`, `CATALOG_MEDIA_DIR`), индексу рекомендаций (`RECOMMENDATION_INDEX_FILE`) и файлам секретов (`SECRETS_DIR`). `CATALOG_VERSION` задаёт версию каталога, `RECOMMENDATION_INDEX_SHA256` фиксирует содержимое индекса. [Переменные ручного запуска без Docker](docs/SELF-HOST.ru.md#полный-режим-без-docker) описаны отдельно.
+
 Для интерфейса без модели после клонирования запустите `docker compose -f deploy/compose.demo.yaml up --build -d --wait`. В этом режиме доступны восемь пробных карточек; конкурсный API отвечает HTTP 503. [Другие способы запуска](docs/SELF-HOST.ru.md).
 
 ## Как подложить свои данные
