@@ -10,6 +10,7 @@
 | Внешний разработчик: без данных / полный режим | [Самостоятельный запуск](docs/SELF-HOST.ru.md), [архитектура](ARCHITECTURE.md) |
 | Команда: закреплённый комплект и серверы | [Операционный runbook](docs/RUNBOOK.ru.md), [PIPELINE](deploy/PIPELINE.md) |
 | Локальный Docker CPU F8 | [Код vision](apps/vision/README.md), [runbook](docs/RUNBOOK.ru.md#полный-cpu-профиль-f8), [Compose](deploy/compose.yaml), [32 SHA данных](deploy/assets/f8-cpu.sha256), [операторский CLI](scripts/docker-local.sh) |
+| Быстрый запуск на Mac с загрузкой данных | [Bootstrap](scripts/bootstrap-local.sh), [инструкция и фото](docs/SELF-HOST.ru.md#bootstrap-на-mac) |
 | Изменение UI | [apps/web](apps/web/AGENTS.md), [Design Specs](apps/web/design-specs.md) |
 | HTTP backend | [apps/api](apps/api/AGENTS.md), [API README](apps/api/README.md) |
 | Разметка тестовых фото | [Контракт feedback](contracts/photo-feedback.md), `apps/api/feedback.go`, UI-007 |
