@@ -2,14 +2,14 @@
 
 [Главная](../README.md) · [Архитектура](../ARCHITECTURE.md) · [Данные для переноса](ASSET-TRANSFER.ru.md)
 
-Оба режима запускают код **на своей машине**, без доступа к TEST/PROD, токена команды или её серверов. Минимальный режим работает с файлами репозитория. Для полного режима [комплект данных доступен отдельно](https://disk.yandex.ru/d/dHAXDPcitS-ZJQ), но права на дальнейшее распространение моделей, каталога и фотографий не установлены. Интерфейс и API открываются на `http://127.0.0.1:8097/`.
+Все режимы запускают код **на своей машине**, без доступа к TEST/PROD, токена команды или её серверов. Минимальный режим работает с файлами репозитория. Для распознавания [комплект данных доступен отдельно](https://disk.yandex.ru/d/dHAXDPcitS-ZJQ), но права на дальнейшее распространение моделей, каталога и фотографий не установлены. API открывается на `http://127.0.0.1:8097/`; интерфейс есть в минимальном и полном Docker-профилях, но не в профиле скоринга Mac.
 
-| | Минимальный | Полный |
-|---|---|---|
-| Инструменты | Go 1.23, Node.js 22, npm **или** Docker Engine + Compose v2 | Linux x86-64, Docker Engine + Compose v2, Python 3.11+, GNU `sha256sum`, `tar`, `curl`, `openssl`; для ручного пути также Go 1.23, Node.js 22, PostgreSQL 18 и Python 3.12 |
-| Данные | Не нужны: восемь демонстрационных записей из `apps/api/catalog.json` | Bundle распознавания, пакет каталога, media и отдельный индекс рекомендаций, размещённые вне Git |
-| Фото | Приватная загрузка; поиск в демонстрационном каталоге **не** распознаёт вино | Настоящее ранжирование по изображению и проверка slug по каталогу организаторов |
-| Проверка | `/v1/health`, `/v2/catalog?limit=1` | `preflight`, `smoke`, известное разрешённое фото и точный slug |
+| | Минимальный | Скоринг Mac | Полный Docker |
+|---|---|---|---|
+| Инструменты | Go 1.23, Node.js 22, npm **или** Docker Engine + Compose v2 | Apple Silicon, Go, `uv`, Tesseract, `curl`, `tar`; `uv` устанавливает Python 3.12 в отдельное окружение | Linux x86-64, Docker Engine + Compose v2, Python 3.11+, GNU `sha256sum`, `tar`, `curl`, `openssl`; для ручного пути также Go 1.23, Node.js 22, PostgreSQL 18 и Python 3.12 |
+| Данные | Не нужны: восемь демонстрационных записей из `apps/api/catalog.json` | Только `f8-bundle/`: веса, визуальный индекс, slug, OCR | Bundle распознавания, пакет каталога, media и отдельный индекс рекомендаций, размещённые вне Git |
+| Фото | Приватная загрузка; поиск в демонстрационном каталоге **не** распознаёт вино | Конкурсный `/v1/eval/predict`, модель и allowlist slug; PostgreSQL не нужен | Настоящее ранжирование по изображению и проверка slug по каталогу организаторов |
+| Проверка | `/v1/health`, `/v2/catalog?limit=1` | `/healthz` модели, health API, известное разрешённое фото и точный slug | `preflight`, `smoke`, известное разрешённое фото и точный slug |
 
 Демо не содержит PostgreSQL, модели и конкурсных данных. `POST /v1/eval/predict` в нём возвращает 503 `recognition_unavailable`, а не выдуманный slug.
 
@@ -101,14 +101,14 @@ sh scripts/docker-local.sh stop
 
 `up` **сам вызывает `preflight`** (32 SHA внешних данных, точные manifest/index SHA, secrets и Compose-конфигурация), строит образы с [кодом распознавания из репозитория](../apps/vision/README.md), применяет миграции/импорт и ждёт готовности. `smoke` проверяет health и каталог, **не** точность модели: известное разрешённое фото должно дать HTTP 200 и `{"slug":"точный-slug"}`. `stop` сохраняет volumes; `down` снимает контейнеры/сеть без удаления volumes. Скрипт рассчитан на один закреплённый комплект — произвольные файлы или другую версию каталога он не примет.
 
-### Bootstrap на Mac
+### Bootstrap с Docker
 
-Нужны работающий Docker с Compose v2, Python 3.11+, `bash`, `curl`, `openssl` и `tar`. Для Apple Silicon Docker должен выделять достаточно памяти для vision (лимит контейнера 7 ГиБ), базы и веб-сервиса. Из чистого клона `main`:
+Нужны работающий Docker с Compose v2, Python 3.11+, `bash`, `curl`, `openssl` и `tar`. На Apple Silicon Docker должен выделять достаточно памяти для vision (лимит контейнера 7 ГиБ), базы и веб-сервиса. Из чистого клона `main`:
 
 ```sh
 git clone https://github.com/ai-babai/brutforce.git
 cd brutforce
-bash scripts/bootstrap-local.sh
+bash scripts/bootstrap-docker.sh
 ```
 
 Скрипт скачивает с [публичного Яндекс Диска](https://disk.yandex.ru/d/dHAXDPcitS-ZJQ) только файлы для работы сервиса: данные распознавания, шесть частей весов, каталог, media и рекомендации. Он проверяет закреплённый SHA-256 манифеста, хеши архивов, собранного потока весов и содержимого `f8-bundle/`, затем создаёт локальные пароли, строит Compose и проверяет `/readyz`, каталог и health. Данные и архивы остаются вне Git в `$HOME/ml-data/brutforce/local-demo/`; промежуточные файлы для **пересборки** визуального индекса не скачиваются. На Mac vision работает в `linux/amd64`, остальные сервисы используют доступную архитектуру Docker. Compose-проект получает отдельное имя по пути к данным, чтобы не задеть имеющиеся локальные volumes.
@@ -116,17 +116,39 @@ bash scripts/bootstrap-local.sh
 Если комплект уже скачан, передайте каталог архивов вторым аргументом и собственный каталог для распаковки первым — скрипт проверит архивы без обращения к Яндекс Диску:
 
 ```sh
-bash scripts/bootstrap-local.sh "$HOME/ml-data/brutforce/my-demo" /absolute/path/to/archives
+bash scripts/bootstrap-docker.sh "$HOME/ml-data/brutforce/my-demo" /absolute/path/to/archives
 ```
 
 Откройте <http://127.0.0.1:8097/>. На этом Apple Silicon Mac из чистого клона с готовыми локальными архивами и кэшированными Docker-слоями запуск до успешного smoke занял **3 минуты 10 секунд**. Первичная загрузка по сети и холодная сборка образов добавят время; архивы занимают около 4,3 ГиБ. Прямая проверка двух разрешённых фото через модель заняла примерно по 27 секунд:
 
 ```sh
-bash scripts/bootstrap-local.sh photo /absolute/path/to/approved-photo.jpg
+bash scripts/bootstrap-docker.sh photo /absolute/path/to/approved-photo.jpg
 sh scripts/docker-local.sh stop
 ```
 
-Команда `photo` возвращает `slug` непосредственно от локального CPU-сервиса внутри Compose. Она обходит Go API: конкурсный `/v1/eval/predict` на этом Mac прервал запрос через 9 секунд (HTTP 504), пока модель продолжала работу. Таким показом можно подтвердить локальный инференс, но не успешный ответ конкурсного API в установленный срок. На Linux x86-64 для сквозной проверки используйте запрос `curl` из предыдущего раздела.
+Команда `photo` возвращает `slug` непосредственно от локального CPU-сервиса внутри Compose. Она обходит Go API: конкурсный `/v1/eval/predict` на этом Mac прервал запрос через 9 секунд (HTTP 504), пока модель продолжала работу. Таким показом можно подтвердить локальный инференс, но не успешный ответ конкурсного API в установленный срок. На Linux x86-64 для сквозной проверки используйте запрос `curl` из предыдущего раздела. На Apple Silicon для сквозного скоринга используйте нативный путь ниже.
+
+## Скоринг на Mac
+
+На Apple Silicon запускаются нативные F8 и Go конкурсный API. PostgreSQL, Docker, Node.js, UI и пакет витрины не нужны: ответ `/v1/eval/predict` сверяется со списком slug организаторов из `f8-bundle/`. Нужны `uv`, `go`, `tesseract`, `curl` и `tar` (при необходимости установите первые три через `brew install uv go tesseract`). `uv` устанавливает Python 3.12. На диске нужны скачанные архивы весов и распакованный bundle; Python-окружение и логи хранятся вне Git.
+
+```sh
+bash scripts/bootstrap-mac.sh
+bash scripts/bootstrap-mac.sh photo /absolute/path/to/approved-photo.jpg
+bash scripts/bootstrap-mac.sh stop
+```
+
+Bootstrap скачивает только `SHA256SUMS`, `01-recognition-data.tar.gz`, шесть частей `02-recognition-weights.tar.part-000` … `005` и `02-recognition-weights.tar.sha256`, сверяет SHA архивов, собранного потока и всех 32 файлов `f8-bundle/`. Данные остаются в `$HOME/ml-data/brutforce/local-demo/`; `mac-scoring/venv`, бинарник Go и логи — рядом с bundle. Пакет каталога, media, рекомендации и материалы для пересборки индекса не скачиваются. Для уже распакованного проверенного bundle передайте каталог данных первым аргументом; если bundle ещё не распакован, вторым передайте каталог локальных архивов:
+
+```sh
+bash scripts/bootstrap-mac.sh up /absolute/path/to/data /absolute/path/to/archives
+bash scripts/bootstrap-mac.sh photo /absolute/path/to/photo.jpg /absolute/path/to/data
+bash scripts/bootstrap-mac.sh stop /absolute/path/to/data
+```
+
+Повторный `up` оставляет работающий процесс; `stop` завершает только процессы, запущенные этим bootstrap. Порты — `127.0.0.1:8126` (модель) и `127.0.0.1:8097` (Go API). Проверка своего фото через `curl`: `curl --fail-with-body -F 'image=@/absolute/path/to/photo.jpg' http://127.0.0.1:8097/v1/eval/predict`. HTTP 200 с `slug` подтверждает ответ сервиса, но для оценки качества сравнивайте его с известным верным slug. На Apple Silicon два фото в прогретой нативной модели дошли до Go API с HTTP 200 примерно за 1–4 секунды (в зависимости от фото); первичная загрузка модели заняла около 27 секунд. Время холодного скачивания архива по сети не измерено. `GET /v1/health` показывает `demo:true`, потому что каталог витрины встроенный; конкурсный маршрут использует настоящую модель и не требует базы.
+
+Для скоринга нужны `f8-bundle/onnx/vision.onnx` (экспорт SigLIP2 SO400M), `f8-bundle/index/index.npz` (готовые эталонные векторы), метаданные `index/index-info.json`, три HF snapshot в `models/hub/`, OCR-данные и allowlist `overlay/organizer-slugs.json`. Исходного обучаемого SO400M checkpoint и исходных эталонных фотографий в runtime-комплекте нет: для дообучения или пересборки индекса они потребуются отдельно.
 
 ## Полный режим без Docker
 

@@ -30,14 +30,30 @@ BrutForce — проект команды соревнования **«Лиде�
 
 ## Быстрый запуск
 
-Для распознавания этикетки нужны Linux x86-64, Docker с Compose v2 и [внешний комплект данных](https://disk.yandex.ru/d/dHAXDPcitS-ZJQ). Требования к памяти и диску — в [руководстве по запуску](docs/SELF-HOST.ru.md#полный-режим-с-docker). Клонируйте репозиторий:
+Для распознавания этикетки нужен [внешний комплект данных](https://disk.yandex.ru/d/dHAXDPcitS-ZJQ). На Apple Silicon есть нативный скоринг без Docker и PostgreSQL; на Linux x86-64 полный стек запускается с Docker Compose. Требования — в [руководстве](docs/SELF-HOST.ru.md). Клонируйте репозиторий:
 
 ```sh
 git clone https://github.com/ai-babai/brutforce.git
 cd brutforce
 ```
 
-Скачайте все 14 файлов комплекта, проверьте SHA-256 и распакуйте их в `$HOME/brutforce-local` [по инструкции](docs/ASSET-TRANSFER.ru.md#как-восстановить-на-linux). Из корня клона выполните:
+Для скоринга фото на Apple Silicon из корня клона:
+
+```sh
+bash scripts/bootstrap-mac.sh
+bash scripts/bootstrap-mac.sh photo /absolute/path/to/photo.jpg
+bash scripts/bootstrap-mac.sh stop
+```
+
+Скрипт скачивает только bundle распознавания, проверяет SHA-256 и запускает модель с конкурсным API. [Условия и повторный запуск](docs/SELF-HOST.ru.md#скоринг-на-mac). Для полного стека с каталогом и интерфейсом через Docker:
+
+```sh
+bash scripts/bootstrap-docker.sh
+bash scripts/bootstrap-docker.sh photo /absolute/path/to/photo.jpg
+sh scripts/docker-local.sh stop
+```
+
+Или скачайте все 14 файлов комплекта, проверьте SHA-256 и распакуйте их в `$HOME/brutforce-local` [по инструкции](docs/ASSET-TRANSFER.ru.md#как-восстановить-на-linux). Из корня клона выполните:
 
 ```sh
 sh scripts/docker-local.sh init "$HOME/brutforce-local"
@@ -49,7 +65,7 @@ sh scripts/docker-local.sh smoke
 
 `init` записывает `deploy/.env.local` из [примера конфигурации](deploy/docker.env.example). В нём указаны пути к модели и каталогу (`ASSET_DIR`, `CATALOG_PACKAGE_DIR`, `CATALOG_MEDIA_DIR`), индексу рекомендаций (`RECOMMENDATION_INDEX_FILE`) и файлам секретов (`SECRETS_DIR`). `CATALOG_VERSION` задаёт версию каталога, `RECOMMENDATION_INDEX_SHA256` фиксирует содержимое индекса. [Переменные ручного запуска без Docker](docs/SELF-HOST.ru.md#полный-режим-без-docker) описаны отдельно.
 
-На Mac с Docker [bootstrap-скрипт](docs/SELF-HOST.ru.md#bootstrap-на-mac) сам получает закреплённые данные, проверяет хеши и поднимает полный Compose. Из-за ограничения времени конкурсного API фото на Apple Silicon удобнее показать через команду прямого вызова модели из этой инструкции.
+На Apple Silicon Docker использует `linux/amd64` для модели: ранее прямой инференс занимал около 27 секунд и конкурсный API возвращал 504 по своему лимиту. Для скоринга с конкурсным API используйте нативный Mac bootstrap выше.
 
 Для интерфейса без модели после клонирования запустите `docker compose -f deploy/compose.demo.yaml up --build -d --wait`. В этом режиме доступны восемь пробных карточек; конкурсный API отвечает HTTP 503. [Другие способы запуска](docs/SELF-HOST.ru.md).
 

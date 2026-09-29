@@ -30,14 +30,30 @@ An organizer request example follows below.
 
 ## Quick start
 
-Recognition requires Linux x86-64, Docker with Compose v2, and the [external data bundle](https://disk.yandex.ru/d/dHAXDPcitS-ZJQ). See the [host requirements (Russian)](docs/SELF-HOST.ru.md#полный-режим-с-docker). Clone the repository:
+Recognition needs the [external data bundle](https://disk.yandex.ru/d/dHAXDPcitS-ZJQ). On Apple Silicon, native photo scoring runs without Docker or PostgreSQL; the complete display stack uses Docker Compose. See the [host requirements (Russian)](docs/SELF-HOST.ru.md). Clone the repository:
 
 ```sh
 git clone https://github.com/ai-babai/brutforce.git
 cd brutforce
 ```
 
-Download all 14 files, verify SHA-256, and extract them into `$HOME/brutforce-local` using the [transfer guide (Russian)](docs/ASSET-TRANSFER.ru.md#как-восстановить-на-linux). From the repository root:
+For native photo scoring on Apple Silicon, from the repository root:
+
+```sh
+bash scripts/bootstrap-mac.sh
+bash scripts/bootstrap-mac.sh photo /absolute/path/to/photo.jpg
+bash scripts/bootstrap-mac.sh stop
+```
+
+The script downloads only the pinned recognition assets and runs the model with the contest API. See the [Mac scoring guide](docs/SELF-HOST.ru.md#скоринг-на-mac). For the complete Docker stack:
+
+```sh
+bash scripts/bootstrap-docker.sh
+bash scripts/bootstrap-docker.sh photo /absolute/path/to/photo.jpg
+sh scripts/docker-local.sh stop
+```
+
+Alternatively, download all 14 files, verify SHA-256, and extract them into `$HOME/brutforce-local` using the [transfer guide (Russian)](docs/ASSET-TRANSFER.ru.md#как-восстановить-на-linux). From the repository root:
 
 ```sh
 sh scripts/docker-local.sh init "$HOME/brutforce-local"
@@ -49,7 +65,7 @@ sh scripts/docker-local.sh smoke
 
 `init` writes `deploy/.env.local` from the [configuration example](deploy/docker.env.example). It sets paths for the model and catalog (`ASSET_DIR`, `CATALOG_PACKAGE_DIR`, `CATALOG_MEDIA_DIR`), the recommendation index (`RECOMMENDATION_INDEX_FILE`), and secret files (`SECRETS_DIR`). `CATALOG_VERSION` identifies the catalog release; `RECOMMENDATION_INDEX_SHA256` pins the index bytes. The [manual setup without Docker (Russian)](docs/SELF-HOST.ru.md#полный-режим-без-docker) lists its additional variables.
 
-On a Mac with Docker, the [bootstrap script (Russian instructions)](docs/SELF-HOST.ru.md#bootstrap-на-mac) downloads and verifies the pinned data before starting the full Compose stack. On Apple Silicon, use its direct-model photo command to demonstrate recognition: the contest API's nine-second deadline is shorter than inference under emulation.
+On Apple Silicon, Docker emulates `linux/amd64` for the model: the previously measured direct inference took about 27 seconds, and the contest API returned HTTP 504. Use native Mac scoring above to exercise the contest endpoint.
 
 For a UI-only demo, run `docker compose -f deploy/compose.demo.yaml up --build -d --wait` after cloning. This mode has eight sample cards; the contest API returns HTTP 503. See the [other launch options](docs/SELF-HOST.ru.md).
 
