@@ -39,6 +39,7 @@ services:
     restart: "no"
 
   vision:
+    platform: linux/amd64
     build:
       context: ..
       dockerfile: deploy/Dockerfile.vision

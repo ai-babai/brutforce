@@ -49,6 +49,8 @@ sh scripts/docker-local.sh smoke
 
 `init` writes `deploy/.env.local` from the [configuration example](deploy/docker.env.example). It sets paths for the model and catalog (`ASSET_DIR`, `CATALOG_PACKAGE_DIR`, `CATALOG_MEDIA_DIR`), the recommendation index (`RECOMMENDATION_INDEX_FILE`), and secret files (`SECRETS_DIR`). `CATALOG_VERSION` identifies the catalog release; `RECOMMENDATION_INDEX_SHA256` pins the index bytes. The [manual setup without Docker (Russian)](docs/SELF-HOST.ru.md#полный-режим-без-docker) lists its additional variables.
 
+On a Mac with Docker, the [bootstrap script (Russian instructions)](docs/SELF-HOST.ru.md#bootstrap-на-mac) downloads and verifies the pinned data before starting the full Compose stack. On Apple Silicon, use its direct-model photo command to demonstrate recognition: the contest API's nine-second deadline is shorter than inference under emulation.
+
 For a UI-only demo, run `docker compose -f deploy/compose.demo.yaml up --build -d --wait` after cloning. This mode has eight sample cards; the contest API returns HTTP 503. See the [other launch options](docs/SELF-HOST.ru.md).
 
 ## Supply your data
