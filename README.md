@@ -83,6 +83,21 @@ curl --fail-with-body --max-time 10 \
 
 В приложении `POST /v1/photos` сохраняет фото и возвращает `id`. Затем `POST /v1/search` с JSON `{"photoId":"полученный-id"}` выдаёт кандидатов для интерфейса. Для поиска по названию служит `GET /v2/catalog?q=...`. [Интерактивная документация API](https://app.dzap.pw/api/docs) · [границы приложения](apps/api/README.md#boundary-and-contract).
 
+### Оригинальный клиент проверки
+
+[Оригинальный скрипт организаторов](scripts/participant_test.sh) читает фото из `queries/` по списку `queries.tsv` из их комплекта. Нужны `bash`, `curl`, `jq`, `awk`, `mktemp` и `sha256sum` либо `shasum`.
+
+```sh
+curl -fL https://raw.githubusercontent.com/ai-babai/brutforce/main/scripts/participant_test.sh -o participant_test.sh
+bash participant_test.sh \
+  --images-dir ./queries \
+  --manifest ./queries.tsv \
+  --endpoint https://app.dzap.pw/v1/eval/predict \
+  --output ./predictions.jsonl
+```
+
+Результат — `predictions.jsonl`: Top-1 `slug` или `null` на каждое фото. Существующий файл результата скрипт не перезаписывает.
+
 ## Модель распознавания
 
 Сервис CPU F8 сопоставляет фото этикетки с каталогом организаторов. При совпадении он возвращает `slug` — идентификатор вина.
