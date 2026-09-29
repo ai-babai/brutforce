@@ -47,6 +47,8 @@ sh scripts/docker-local.sh smoke
 
 `init` creates local configuration and passwords. `up` checks the data and starts the full Compose stack. Open <http://127.0.0.1:8097/>. To stop: `sh scripts/docker-local.sh stop`; volumes persist.
 
+`init` writes `deploy/.env.local` from the [configuration example](deploy/docker.env.example). It sets paths for the model and catalog (`ASSET_DIR`, `CATALOG_PACKAGE_DIR`, `CATALOG_MEDIA_DIR`), the recommendation index (`RECOMMENDATION_INDEX_FILE`), and secret files (`SECRETS_DIR`). `CATALOG_VERSION` identifies the catalog release; `RECOMMENDATION_INDEX_SHA256` pins the index bytes. The [manual setup without Docker (Russian)](docs/SELF-HOST.ru.md#полный-режим-без-docker) lists its additional variables.
+
 For a UI-only demo, run `docker compose -f deploy/compose.demo.yaml up --build -d --wait` after cloning. This mode has eight sample cards; the contest API returns HTTP 503. See the [other launch options](docs/SELF-HOST.ru.md).
 
 ## Supply your data
