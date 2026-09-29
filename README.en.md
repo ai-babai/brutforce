@@ -6,7 +6,7 @@
 
 BrutForce was built for the **Digital Transformation Leaders 2026** challenge from **Rosselkhozbank (RSHB)** for the Svoe Vino platform. The task is to find the exact Russian wine catalog entry from a label photo and open its card on a phone. Image recognition, catalog search, and a mobile web app work together. If the matching display card is missing, the app reports that outcome without substituting another wine.
 
-[Project site](https://brutforce.dzap.pw/) · [Live app](https://app.dzap.pw/)
+[Project site](https://brutforce.dzap.pw/) · [Demo app](https://app.dzap.pw/)
 
 The two photo-search paths have different APIs:
 
