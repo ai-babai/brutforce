@@ -77,20 +77,23 @@ In the app, `POST /v1/photos` stores the image and returns an `id`. Then `POST /
 
 **Fast CPU — the default.** The F8 service handles label photos in TEST and PROD and returns a verified `slug`.
 
-1. **Target in the photo.** RT-DETR finds the bottle; SigLIP2 Base helps check that it is wine. If no bottle is found, OWLv2 looks for a label. For a standalone label, the service may also inspect the full image.
-2. **Visual comparison.** SigLIP2 SO400M is the visual encoder: it turns the selected region into a feature vector. The service ranks candidates against an index of reference photos.
-3. **Response check.** On a borderline rejection, Tesseract OCR looks for wine words on the label. The resulting `slug` is checked against the organizer allowlist.
+1. **Target selection.** The image is corrected for orientation. RT-DETR detects bottles, and SigLIP2 Base checks the drink type to help select a wine target.
+2. **Visual search.** SigLIP2 SO400M is a visual encoder running on ONNX Runtime: it produces a 1,152-dimensional vector for the selected region. The service selects up to 20 candidates by cosine similarity against a prepared reference index.
+3. **Difficult frames.** On a borderline rejection, OWLv2 locates the label and Tesseract checks for wine words. If no bottle is found, OWLv2 looks for a standalone label; a confident result may trigger a second pass over the full photo.
+4. **Response.** The Go API checks the resulting `slug` against the organizer allowlist.
 
 **GPU — an additional option when a graphics card is available.** A visual encoder processes the bottle and label separately, while OCR reads the text; the results are combined into a candidate list. GPU is off by default: a separate graphics-card service costs more to maintain. Connecting it to the app requires setup and verification.
 
 > When a match remains uncertain, the API returns `no_match` or `insufficient_information`.
 
 ```mermaid
-flowchart TB
-    photo["Label photo"] --> cpu["CPU F8 · default"]
-    cpu --> target["Bottle / label"] --> cpuEncoder["SigLIP2 SO400M<br/>visual encoder"]
-    cpuEncoder --> references[("Reference index")] --> slug["Slug allowlist check"]
-    photo -.-> gpu["GPU · off by default"]
+flowchart LR
+    photo["Photo"] --> cpu["CPU F8 · default<br/>RT-DETR + Base"]
+    cpu --> encoder["SO400M / ONNX<br/>visual encoder"] --> references[("Cosine search<br/>references")]
+    references --> slug["Slug allowlist check"]
+    cpu -->|borderline rejection| ocr["OWLv2 + Tesseract<br/>wine-word check"] --> encoder
+    cpu -->|no bottle| labelCrop["OWLv2<br/>standalone label"] --> encoder
+    photo -.-> gpu["GPU · off"]
     gpu -.-> bottle["Whole bottle<br/>visual encoder"]
     gpu -.-> label["Label<br/>visual encoder"]
     gpu -.-> text["Text<br/>OCR"]
