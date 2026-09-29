@@ -40,6 +40,12 @@ type EncodedRecognizer interface {
 	RecognizeEncoded(context.Context, []byte) (string, error)
 }
 
+// RankedEncodedRecognizer exposes the existing upstream order for optional
+// evaluation requests without starting another inference.
+type RankedEncodedRecognizer interface {
+	RecognizeRankedEncoded(context.Context, []byte) ([]string, error)
+}
+
 type evalErrorResponse struct {
 	Error apiError `json:"error"`
 }
@@ -52,6 +58,11 @@ func newEvalPredictHandler(recognizer Recognizer, maxConcurrent int) http.Handle
 	return func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodPost {
 			writeEvalError(w, http.StatusMethodNotAllowed, "method_not_allowed", "use POST")
+			return
+		}
+		topKValues, supplied := r.URL.Query()["top_k"]
+		if supplied && (len(topKValues) != 1 || topKValues[0] != "5") {
+			writeEvalError(w, http.StatusBadRequest, "invalid_request", "top_k must be 5 when supplied")
 			return
 		}
 		ctx, cancel := context.WithTimeout(r.Context(), evalRecognitionDeadline)
@@ -84,7 +95,18 @@ func newEvalPredictHandler(recognizer Recognizer, maxConcurrent int) http.Handle
 			return
 		}
 		var slug string
-		if raw, ok := recognizer.(EncodedRecognizer); ok {
+		var ranked []string
+		if supplied {
+			raw, ok := recognizer.(RankedEncodedRecognizer)
+			if !ok {
+				writeEvalError(w, http.StatusServiceUnavailable, "recognition_unavailable", "ranked recognition is not configured")
+				return
+			}
+			ranked, err = raw.RecognizeRankedEncoded(ctx, encoded)
+			if len(ranked) > 0 {
+				slug = ranked[0]
+			}
+		} else if raw, ok := recognizer.(EncodedRecognizer); ok {
 			slug, err = raw.RecognizeEncoded(ctx, encoded)
 		} else {
 			slug, err = recognizer.Recognize(ctx, img)
@@ -97,9 +119,9 @@ func newEvalPredictHandler(recognizer Recognizer, maxConcurrent int) http.Handle
 			} else if errors.Is(err, context.Canceled) {
 				writeEvalContextError(w, err)
 			} else if errors.Is(err, errVisionNoMatch) {
-				writeJSON(w, http.StatusOK, map[string]string{"action": "no_match"})
+				writeEvalAction(w, "no_match", supplied)
 			} else if errors.Is(err, errVisionInsufficient) {
-				writeJSON(w, http.StatusOK, map[string]string{"action": "insufficient_information"})
+				writeEvalAction(w, "insufficient_information", supplied)
 			} else if errors.Is(err, errVisionInvalid) || errors.Is(err, errCatalogNotFound) {
 				writeEvalError(w, http.StatusBadGateway, "recognition_invalid_result", "recognition returned an invalid catalog result")
 			} else {
@@ -111,6 +133,28 @@ func newEvalPredictHandler(recognizer Recognizer, maxConcurrent int) http.Handle
 			writeEvalContextError(w, err)
 			return
 		}
+		if supplied {
+			if len(ranked) > 20 || len(ranked) == 0 {
+				writeEvalError(w, http.StatusBadGateway, "recognition_invalid_result", "recognition returned an invalid ranking")
+				return
+			}
+			seen := make(map[string]bool, len(ranked))
+			for _, candidate := range ranked {
+				if candidate == "" || seen[candidate] {
+					writeEvalError(w, http.StatusBadGateway, "recognition_invalid_result", "recognition returned an invalid ranking")
+					return
+				}
+				seen[candidate] = true
+			}
+			if len(ranked) > 5 {
+				ranked = ranked[:5]
+			}
+			writeJSON(w, http.StatusOK, struct {
+				Slug        string   `json:"slug"`
+				RankedSlugs []string `json:"ranked_slugs"`
+			}{Slug: slug, RankedSlugs: ranked})
+			return
+		}
 		if slug == "" {
 			writeEvalError(w, http.StatusServiceUnavailable, "recognition_invalid_result", "recognition returned an empty slug")
 			return
@@ -119,6 +163,17 @@ func newEvalPredictHandler(recognizer Recognizer, maxConcurrent int) http.Handle
 			Slug string `json:"slug"`
 		}{Slug: slug})
 	}
+}
+
+func writeEvalAction(w http.ResponseWriter, action string, ranked bool) {
+	if ranked {
+		writeJSON(w, http.StatusOK, struct {
+			Action      string   `json:"action"`
+			RankedSlugs []string `json:"ranked_slugs"`
+		}{Action: action, RankedSlugs: []string{}})
+		return
+	}
+	writeJSON(w, http.StatusOK, map[string]string{"action": action})
 }
 
 func writeEvalContextError(w http.ResponseWriter, err error) {

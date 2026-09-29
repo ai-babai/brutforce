@@ -210,8 +210,17 @@
     "/v1/eval/predict": {
       "post": {
         "operationId": "predictContestSlug",
-        "summary": "Return one recognizer-selected contest slug",
-        "description": "Accepts exactly one JPEG, PNG, GIF, or WebP file in multipart field `image`, determines its format by decoding bytes, and never writes it to the demo upload store. The default executable has no recognizer and returns recognition_unavailable.",
+        "summary": "Return a recognizer-selected contest slug, optionally with five ranked slugs",
+        "description": "Accepts exactly one JPEG, PNG, GIF, WebP, BMP, or TIFF file in multipart field `image`, determines its format by decoding bytes, and never writes it to the demo upload store. HEIC/HEIF is unsupported. The default executable has no recognizer and returns recognition_unavailable. Omitting top_k preserves the original response shape.",
+        "parameters": [
+          {
+            "name": "top_k",
+            "in": "query",
+            "required": false,
+            "description": "Only value 5 is accepted. Returns the first five organizer-catalog slugs from the same inference; no display-catalog filtering.",
+            "schema": { "type": "integer", "enum": [5] }
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -235,11 +244,14 @@
         },
         "responses": {
           "200": {
-            "description": "Exact nonempty slug returned by the configured recognizer.",
+            "description": "Exact slug or deliberate abstention. With top_k=5, ranked_slugs is included; the first ranked slug equals slug when present.",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/EvalPrediction"
+                  "oneOf": [
+                    { "$ref": "#/components/schemas/EvalPrediction" },
+                    { "$ref": "#/components/schemas/EvalAction" }
+                  ]
                 }
               }
             }
@@ -595,6 +607,29 @@
           "slug": {
             "type": "string",
             "minLength": 1
+          },
+          "ranked_slugs": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 5,
+            "uniqueItems": true,
+            "items": { "type": "string", "minLength": 1 }
+          }
+        },
+        "additionalProperties": false
+      },
+      "EvalAction": {
+        "type": "object",
+        "required": ["action"],
+        "properties": {
+          "action": {
+            "type": "string",
+            "enum": ["no_match", "insufficient_information"]
+          },
+          "ranked_slugs": {
+            "type": "array",
+            "maxItems": 0,
+            "items": { "type": "string" }
           }
         },
         "additionalProperties": false

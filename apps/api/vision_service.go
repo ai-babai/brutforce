@@ -195,17 +195,25 @@ func (v *visionRecognizer) Recognize(ctx context.Context, img image.Image) (stri
 }
 
 func (v *visionRecognizer) RecognizeEncoded(ctx context.Context, data []byte) (string, error) {
-	result, err := v.client.predict(ctx, data)
+	ranked, err := v.RecognizeRankedEncoded(ctx, data)
 	if err != nil {
 		return "", err
 	}
+	return ranked[0], nil
+}
+
+func (v *visionRecognizer) RecognizeRankedEncoded(ctx context.Context, data []byte) ([]string, error) {
+	result, err := v.client.predict(ctx, data)
+	if err != nil {
+		return nil, err
+	}
 	if result.Action == "no_match" {
-		return "", errVisionNoMatch
+		return nil, errVisionNoMatch
 	}
 	if result.Action == "insufficient_information" {
-		return "", errVisionInsufficient
+		return nil, errVisionInsufficient
 	}
-	return result.Slug, nil
+	return result.RankedSlugs, nil
 }
 
 func configuredVisionSearch(r *http.Request, store *photoStore, catalog catalogReader, photoID string, client *visionClient) (searchResponse, int, string, string) {

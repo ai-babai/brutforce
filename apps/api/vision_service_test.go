@@ -105,6 +105,54 @@ func TestVISION001ContestAndAppUseSameRealRanking(t *testing.T) {
 	}
 }
 
+func TestVISIONTopFiveEvalUsesOneOrganizerRanking(t *testing.T) {
+	mode := "match"
+	requests := 0
+	upstream := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		requests++
+		w.Header().Set("Content-Type", "application/json")
+		result := visionResult{CatalogVersion: "organizer-v1", IndexVersion: "index-v1", ModelVersion: "model-v1"}
+		if mode == "match" {
+			result.Slug = "organizer-only"
+			result.RankedSlugs = []string{"organizer-only", "second", "third", "fourth", "fifth", "sixth"}
+		} else {
+			result.Action = "no_match"
+			result.RankedSlugs = []string{}
+		}
+		_ = json.NewEncoder(w).Encode(result)
+	}))
+	defer upstream.Close()
+	client := &visionClient{baseURL: upstream.URL, catalogVersion: "organizer-v1", indexVersion: "index-v1", client: noRedirectHTTPClient(), validSlugs: map[string]struct{}{"organizer-only": {}, "second": {}, "third": {}, "fourth": {}, "fifth": {}, "sixth": {}}}
+	h := newEvalPredictHandler(&visionRecognizer{client: client}, 1)
+	call := func(query string) *httptest.ResponseRecorder {
+		t.Helper()
+		req := evalMultipartRequest(t, "image", "photo.png", smallPNG(t), nil)
+		req.URL.RawQuery = query
+		w := httptest.NewRecorder()
+		h.ServeHTTP(w, req)
+		return w
+	}
+	w := call("")
+	if w.Code != 200 || w.Body.String() != "{\"slug\":\"organizer-only\"}\n" || requests != 1 {
+		t.Fatalf("default: status=%d body=%s requests=%d", w.Code, w.Body.String(), requests)
+	}
+	w = call("top_k=5")
+	if w.Code != 200 || w.Body.String() != "{\"slug\":\"organizer-only\",\"ranked_slugs\":[\"organizer-only\",\"second\",\"third\",\"fourth\",\"fifth\"]}\n" || requests != 2 {
+		t.Fatalf("top5: status=%d body=%s requests=%d", w.Code, w.Body.String(), requests)
+	}
+	for _, query := range []string{"top_k=0", "top_k=6", "top_k=5&top_k=5", "top_k="} {
+		w = call(query)
+		if w.Code != 400 || requests != 2 {
+			t.Fatalf("invalid %s: status=%d body=%s requests=%d", query, w.Code, w.Body.String(), requests)
+		}
+	}
+	mode = "no_match"
+	w = call("top_k=5")
+	if w.Code != 200 || w.Body.String() != "{\"action\":\"no_match\",\"ranked_slugs\":[]}\n" || requests != 3 {
+		t.Fatalf("no match: status=%d body=%s requests=%d", w.Code, w.Body.String(), requests)
+	}
+}
+
 func TestVISION002AbstentionAndUnknownSlugStayDistinct(t *testing.T) {
 	catalog := realVisionCatalog{[]wine{{ID: "id-a", Slug: "known", Name: "Known"}}}
 	mode := "no_match"

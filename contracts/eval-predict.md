@@ -11,6 +11,8 @@ contract and from private demo-photo storage.
 
 `POST /v1/eval/predict` accepts `multipart/form-data` with exactly one file
 part named `image`. The filename and declared part MIME type are not trusted.
+An optional `?top_k=5` requests the first five slugs from the same inference.
+Other `top_k` values and repeated parameters return HTTP 400 `invalid_request`.
 The server reads at most 10 MiB, recognizes JPEG, PNG, GIF, WebP, BMP, and TIFF from the
 decoder, then checks a maximum 12,000-pixel side and 50,000,000 source pixels
 before fully decoding the image. Images above 25,000,000 pixels are
@@ -43,10 +45,22 @@ The standalone boundary does not normalize or invent a slug. The configured
 vision adapter checks it against the organizer catalog allowlist. A test stub proves
 only the HTTP hand-off; it is not evidence of recognition quality.
 
+With `?top_k=5`, a successful response keeps `slug` and adds ordered
+`ranked_slugs` (one to five unique organizer-catalog slugs). The first item
+equals `slug`; this is the existing upstream ranking, truncated without a
+second inference or display-catalog filtering. For example:
+
+```json
+{"slug":"catalog-slug","ranked_slugs":["catalog-slug","another-slug"]}
+```
+
+The default request and its response remain exactly as above.
+
 A deliberate `no_match` or `insufficient_information` response is HTTP 200
 with `{"action":"..."}` and no slug. A technical failure returns an error
 status. The organizer script records both cases as null; retain response
 status and action in our own diagnostics to distinguish them.
+With `?top_k=5`, an abstention additionally has `"ranked_slugs":[]`.
 
 Errors are JSON objects with an `error.code` and `error.message`. Invalid
 multipart/image input is HTTP 400; a wrong method is 405; no configured
@@ -73,6 +87,8 @@ the supplied context. The configured HTTP adapter additionally implements
 within 25 MP and bounded normalized bytes for larger inputs. The model and index
 run in that separate process; the Go adapter pins their response versions and
 the organizer slug allowlist.
+For `?top_k=5`, the configured adapter also implements
+`RankedEncodedRecognizer` and returns the existing validated upstream order.
 
 ## Behavior checks
 
@@ -88,6 +104,7 @@ the organizer slug allowlist.
 | EVAL-008 | Repeated valid requests with `UPLOAD_DIR` configured | All succeed without demo rate limiting or saved files |
 | EVAL-009 | Recognition slot is occupied | A second request gets 429 and the slot releases afterward |
 | EVAL-010 | BMP or TIFF bytes arrive with a misleading `.jpg` filename | Decoder accepts actual content |
+| VISION TopFive | Default and `?top_k=5` call the upstream once each | Default body unchanged; ranked response has first five organizer slugs in upstream order; invalid parameter rejected; no-match has an empty ranking |
 
 Run only this boundary's fast suite with:
 

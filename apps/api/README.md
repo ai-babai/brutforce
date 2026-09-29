@@ -38,10 +38,12 @@ with the contest endpoint are described in
 
 `POST /v1/eval/predict` is a separate, stateless contest boundary documented
 by [`contracts/eval-predict.md`](../../contracts/eval-predict.md). It accepts
-one bounded multipart `image`, detects JPEG/PNG/GIF/WebP from bytes rather than
+one bounded multipart `image`, detects JPEG/PNG/GIF/WebP/BMP/TIFF from bytes rather than
 the filename, and returns only `{ "slug": "..." }` when an injected
 recognizer returns a nonempty exact slug. It never uses `UPLOAD_DIR`, the
 synthetic catalog, or the demo search result.
+An optional `?top_k=5` adds `ranked_slugs` from the same upstream inference;
+the default response stays unchanged. HEIC/HEIF is unsupported and receives HTTP 400.
 
 Without `VISION_SERVICE_URL`, a valid decoded image returns JSON HTTP 503
 `recognition_unavailable`. With the vision service configured, the same
