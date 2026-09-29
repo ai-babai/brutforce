@@ -30,6 +30,9 @@
   полную связку сверяй с журналом выпуска, не выводи из одного Git SHA.
 - По распоряжению владельца больше не создавать pull request; порядок прямых
   коммитов и заморозки репозитория указан ниже.
+- Не создавать и не вести карточки задач в GitHub Issues/Project; не обновлять
+  доску задач. Существующие карточки и `docs/agent-guide/BOARD.md` — история,
+  не рабочий процесс для новых поручений.
 
 ## Окно коммитов и заморозка · 29.09.2026
 
@@ -41,8 +44,7 @@
 
 ## Перед работой
 
-- Совместная работа: [RULES.md](docs/agent-guide/RULES.md),
-  доска: [BOARD.md](docs/agent-guide/BOARD.md).
+- Совместная работа: [RULES.md](docs/agent-guide/RULES.md).
 - Агенту Романа: [ROMAN-START.md](ROMAN-START.md),
   затем [ROMAN-SERVICES.md](docs/agent-guide/ROMAN-SERVICES.md).
 - Контракты: [contracts/README.md](contracts/README.md) и
