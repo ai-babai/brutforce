@@ -75,13 +75,32 @@ In the app, `POST /v1/photos` stores the image and returns an `id`. Then `POST /
 
 ## Recognition model
 
-The CPU F8 service looks up a wine in the organizer catalog from a label photo. A confirmed match returns its `slug` identifier.
+**Fast CPU — the default.** The F8 service handles label photos in TEST and PROD and returns a verified `slug`.
 
-1. **Label region.** RT-DETR and OWLv2 help locate the bottle and label. For difficult frames, the service can also inspect the whole image.
-2. **Visual similarity.** SigLIP2 SO400M encodes the image into visual features. The service compares them with references in a pinned visual index.
-3. **Answer check.** OCR and text confirmation help resolve ambiguous label text. The resulting `slug` is checked against the organizer allowlist.
+1. **Target in the photo.** RT-DETR finds the bottle; SigLIP2 Base helps check that it is wine. If no bottle is found, OWLv2 looks for a label. For a standalone label, the service may also inspect the full image.
+2. **Visual comparison.** SigLIP2 SO400M is the visual encoder: it turns the selected region into a feature vector. The service ranks candidates against an index of reference photos.
+3. **Response check.** On a borderline rejection, Tesseract OCR looks for wine words on the label. The resulting `slug` is checked against the organizer allowlist.
+
+**GPU — an additional option when a graphics card is available.** A visual encoder processes the bottle and label separately, while OCR reads the text; the results are combined into a candidate list. GPU is off by default: a separate graphics-card service costs more to maintain. Connecting it to the app requires setup and verification.
 
 > When a match remains uncertain, the API returns `no_match` or `insufficient_information`.
+
+```mermaid
+flowchart TB
+    photo["Label photo"] --> cpu["CPU F8 · default"]
+    cpu --> target["Bottle / label"] --> cpuEncoder["SigLIP2 SO400M<br/>visual encoder"]
+    cpuEncoder --> references[("Reference index")] --> slug["Slug allowlist check"]
+    photo -.-> gpu["GPU · off by default"]
+    gpu -.-> bottle["Whole bottle<br/>visual encoder"]
+    gpu -.-> label["Label<br/>visual encoder"]
+    gpu -.-> text["Text<br/>OCR"]
+    bottle -.-> merge["Merge candidates"]
+    label -.-> merge
+    text -.-> merge
+    merge -.-> candidates["Candidate list"]
+```
+
+The solid path shows the running CPU service. The dotted path marks a GPU option for a separate deployment; automatic switching between profiles is not configured.
 
 ### Related wines
 
@@ -95,7 +114,7 @@ The v3 recommendation index selects related display cards using text, attributes
 flowchart LR
     web["Mobile web · React"] -->|photo → photoId → search| api["Go API · contract boundary"]
     contest["Contest client · image"] -->|eval/predict| api
-    api -->|image bytes| vision["CPU F8 · detection + SO400M + OCR"]
+    api -->|image bytes| vision["CPU F8 · detection + SO400M + selective OCR"]
     vision <-->|reference lookup| visual[("Visual index · organizer slugs")]
     vision -->|ranked slugs| api
     api -->|name search and existing card| catalog[("PostgreSQL · display catalog")]
