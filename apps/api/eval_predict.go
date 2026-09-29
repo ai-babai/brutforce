@@ -174,7 +174,7 @@ func decodeEvalImage(w http.ResponseWriter, r *http.Request) (image.Image, []byt
 	}
 	config, format, err := image.DecodeConfig(bytes.NewReader(data))
 	if err != nil || config.Width <= 0 || config.Height <= 0 || config.Width > maxEvalImageDimension || config.Height > maxEvalImageDimension || int64(config.Width) > maxEvalSourcePixels/int64(config.Height) {
-		return nil, nil, errors.New("image must be a decodable JPEG, PNG, GIF, or WebP image within the allowed pixel limit")
+		return nil, nil, errors.New("image must be a decodable JPEG, PNG, GIF, WebP, BMP, or TIFF image within the allowed pixel limit")
 	}
 	decoded, decodedFormat, err := image.Decode(bytes.NewReader(data))
 	if err != nil || decodedFormat != format || decoded.Bounds().Dx() != config.Width || decoded.Bounds().Dy() != config.Height {

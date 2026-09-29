@@ -10,6 +10,24 @@ from pathlib import Path
 
 SUFFIX = '-a2-auto-v1'
 F8_SHA = 'c82ce1d3671f539a811b0afa46c58395e4675969bd3b8e1aedce8ff2b7585887'
+QUEUE_WAIT_SECONDS = 3
+
+
+def serve_candidate(handler, upstream_post, inference_lock, request_slots):
+    """Admit one waiting request while preserving the shared single-model lock."""
+    if not request_slots.acquire(blocking=False):
+        handler.respond(503, {'error': 'vision inference busy'})
+        return
+    try:
+        if not inference_lock.acquire(timeout=QUEUE_WAIT_SECONDS):
+            handler.respond(503, {'error': 'vision inference busy'})
+            return
+        try:
+            upstream_post(handler)
+        finally:
+            inference_lock.release()
+    finally:
+        request_slots.release()
 
 
 def qualifies(raw):
@@ -81,10 +99,17 @@ def main():
     pipeline = f8.CPUPipeline(args.catalog, args.index_dir, 6, 'so400m', route='onnx640')
     import server
     lock = threading.Lock()
+    request_slots = threading.BoundedSemaphore(2)
     baseline = f8.base.make_handler(server.Handler, pipeline, 6)
     candidate = f8.base.make_handler(server.Handler, A2View(pipeline), 6)
 
     class CandidateHandler(candidate):
+        def do_POST(self):
+            # The parent uses a nonblocking lock, causing valid simultaneous
+            # images to fail immediately. Bypass that admission layer after a
+            # bounded wait; the pinned inference implementation stays intact.
+            serve_candidate(self, server.Handler.do_POST, lock, request_slots)
+
         def respond(self, status, payload):
             if self.path == '/healthz' and status == 200:
                 payload = {**payload, 'model_version': payload['model_version'] + SUFFIX,

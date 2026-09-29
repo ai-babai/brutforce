@@ -229,6 +229,23 @@ describe("mobile behavior demo", () => {
     await userEvent.click(screen.getByRole("button", { name: /Каберне Совиньон, 2023/i }));
     expect(screen.getByRole("heading", { name: "Каберне Совиньон" })).toBeVisible();
   });
+  it("UI-011 accepts an organizer WebP photo and starts upload", async () => {
+    vi.stubGlobal("URL", {
+      ...URL,
+      createObjectURL: vi.fn(() => "blob:webp-photo"),
+      revokeObjectURL: vi.fn(),
+    });
+    vi.stubGlobal("fetch", vi.fn((url: string) => Promise.resolve(response(
+      url === "/v1/photos" ? receipt : exact,
+    ))));
+    render(<App />);
+    await userEvent.upload(
+      screen.getByLabelText(/Загрузить фотографию/i),
+      new File(["webp"], "organizer.webp", { type: "image/webp" }),
+    );
+    expect(await screen.findByRole("heading", { name: "Проверьте найденное вино" })).toBeVisible();
+    expect(vi.mocked(fetch).mock.calls[0][0]).toBe("/v1/photos");
+  });
   it("UI-011 rejects a non-image before API use", async () => {
     vi.stubGlobal("fetch", vi.fn());
     render(<App />);
@@ -261,7 +278,7 @@ describe("mobile behavior demo", () => {
       screen.getByLabelText(/Загрузить фотографию/i),
       new File(["image"], "broken.jpg", { type: "image/jpeg" }),
     );
-    expect(await screen.findByText(/JPEG, PNG или GIF.*10 МБ/i)).toBeVisible();
+    expect(await screen.findByText(/JPEG, PNG, GIF, WebP или BMP.*10 МБ/i)).toBeVisible();
   });
   it("UI-008 keeps the catalog hidden until the user asks for it", async () => {
     mock(exact);

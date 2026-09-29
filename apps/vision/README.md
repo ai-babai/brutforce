@@ -28,7 +28,8 @@ without the original reference photos. See [the transfer guide](../../docs/ASSET
 
 `a2_server.py` wraps the same SHA-pinned F8 without changing its source. One
 CPU model serves baseline on loopback 8126 and A2 on 8127, with one shared
-nonblocking inference lock. Both health and inference report their actual
+inference lock. A2 admits at most two requests and waits up to three seconds
+for the lock before returning 503. Both health and inference report their actual
 model/profile; A2 appends `-a2-auto-v1`. The Docker bridge above still starts
 the baseline F8; this new entrypoint is the staged Sigma release path.
 

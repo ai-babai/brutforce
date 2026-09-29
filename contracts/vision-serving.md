@@ -80,5 +80,6 @@ versions and organizer allowlist remain pinned to F8. It runs whole-input
 retrieval only after service detects a standalone label without a bottle,
 with `owlv2_label*` source and finite numeric score >= 0.15. A retrieval error
 or empty rank preserves service. Internal `a2` diagnostic booleans are ignored
-by Go. Baseline and A2 endpoints share a CPU model and busy lock, but each
-environment selects its own endpoint; see [pipeline](../deploy/PIPELINE.md#p0--automatic-a2).
+by Go. Baseline and A2 endpoints share a CPU model and busy lock. A2 admits at
+most two requests and waits up to three seconds for the lock before returning
+503; each environment selects its own endpoint. See [pipeline](../deploy/PIPELINE.md#p0--automatic-a2).

@@ -262,7 +262,7 @@ export function App({
     };
   }, [screen, permissionDenied]);
   const validPhoto = (file: File) =>
-    ["image/jpeg", "image/png", "image/gif"].includes(file.type) &&
+    ["image/jpeg", "image/png", "image/gif", "image/webp", "image/bmp"].includes(file.type) &&
     file.size <= 10 * 1024 * 1024;
   const pickPhoto = (file?: File) => {
     if (!file) return;
@@ -1205,7 +1205,7 @@ export function App({
                 <ImageSquare />
               </StateIcon>
               <h2>Нужно изображение</h2>
-              <p>Выберите JPEG, PNG или GIF размером не более 10 МБ.</p>
+              <p>Выберите JPEG, PNG, GIF, WebP или BMP размером не более 10 МБ.</p>
               <button
                 className="primary"
                 onClick={() => galleryRef.current?.click()}

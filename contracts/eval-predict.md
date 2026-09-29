@@ -11,13 +11,14 @@ contract and from private demo-photo storage.
 
 `POST /v1/eval/predict` accepts `multipart/form-data` with exactly one file
 part named `image`. The filename and declared part MIME type are not trusted.
-The server reads at most 10 MiB, recognizes JPEG, PNG, GIF, and WebP from the
+The server reads at most 10 MiB, recognizes JPEG, PNG, GIF, WebP, BMP, and TIFF from the
 decoder, then checks a maximum 12,000-pixel side and 50,000,000 source pixels
 before fully decoding the image. Images above 25,000,000 pixels are
 proportionally resized to a maximum 4,000-pixel side and JPEG-encoded at quality
 88 before forwarding to the recognizer. Smaller images retain their validated
 original bytes. The image is held only for the request and is never written to
 `UPLOAD_DIR` or exposed through an HTTP route.
+Unsupported formats, including HEIC/HEIF, return HTTP 400 `invalid_image`.
 
 The request context has a nine-second deadline from handler entry. A recognizer
 must stop its own work when that context is cancelled; the HTTP boundary does
@@ -86,6 +87,7 @@ the organizer slug allowlist.
 | EVAL-007 | Truncated, over-50-MP, or oversized-dimension image | HTTP 400 before recognition; 25–50 MP is normalized |
 | EVAL-008 | Repeated valid requests with `UPLOAD_DIR` configured | All succeed without demo rate limiting or saved files |
 | EVAL-009 | Recognition slot is occupied | A second request gets 429 and the slot releases afterward |
+| EVAL-010 | BMP or TIFF bytes arrive with a misleading `.jpg` filename | Decoder accepts actual content |
 
 Run only this boundary's fast suite with:
 

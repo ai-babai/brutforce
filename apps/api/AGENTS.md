@@ -21,8 +21,8 @@ with it.
   `golang.org/x/image/webp` decoder used by the contest and private upload boundaries and the
   authorized PostgreSQL catalog dependencies `github.com/jackc/pgx/v5` and
   `github.com/pressly/goose/v3`. It lets
-  `POST /v1/eval/predict` identify actual WebP bytes regardless of filename;
-  the private upload allowlist is JPEG/PNG/GIF/WebP, checked by decoded bytes.
+  `POST /v1/eval/predict` identify actual WebP/BMP/TIFF bytes regardless of filename;
+  the private upload allowlist is JPEG/PNG/GIF/WebP/BMP/TIFF, checked by decoded bytes.
 - `go test -count=1 ./...` is the required fast verification command.
 
 - Preserve [Security Specs](../../docs/product/security-spec.md). Never call DecodeAll or process stored originals without resource bounds. A

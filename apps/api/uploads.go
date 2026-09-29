@@ -19,6 +19,8 @@ import (
 	"sync"
 	"time"
 
+	_ "golang.org/x/image/bmp"
+	_ "golang.org/x/image/tiff"
 	_ "golang.org/x/image/webp"
 )
 
@@ -33,7 +35,7 @@ const (
 
 var (
 	errStorageFull   = errors.New("photo storage limit reached")
-	errInvalidPhoto  = errors.New("photo must be a JPEG, PNG, GIF, or WebP image within the allowed pixel limit")
+	errInvalidPhoto  = errors.New("photo must be a JPEG, PNG, GIF, WebP, BMP, or TIFF image within the allowed pixel limit")
 	errPhotoNotFound = errors.New("photo receipt not found")
 )
 
@@ -185,7 +187,7 @@ func uploadHandlerWithConcurrency(store *photoStore, maxConcurrent int) http.Han
 			writeError(w, http.StatusBadRequest, "invalid_photo", errInvalidPhoto.Error())
 			return
 		}
-		mimeType, ok := map[string]string{"jpeg": "image/jpeg", "png": "image/png", "gif": "image/gif", "webp": "image/webp"}[imageFormat]
+		mimeType, ok := map[string]string{"jpeg": "image/jpeg", "png": "image/png", "gif": "image/gif", "webp": "image/webp", "bmp": "image/bmp", "tiff": "image/tiff"}[imageFormat]
 		if !ok {
 			writeError(w, http.StatusBadRequest, "invalid_photo", errInvalidPhoto.Error())
 			return
