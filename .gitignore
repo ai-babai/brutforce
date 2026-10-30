@@ -28,3 +28,9 @@ artifacts/
 *.pth
 *.onnx
 *.log
+*.onnx.data
+*.npz
+._*
+/.local-archive/
+# New generated run logs stay local; the retained historical examples remain tracked.
+/reports/site/data/runs/

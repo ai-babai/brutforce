@@ -1,5 +1,7 @@
 # F8 CPU recognition service
 
+> Текущий прод — **Boost V16 C16**: [код](c16/README.md), [состав и запуск](../../docs/PRODUCTION.ru.md). Ниже сохранён исторический F8-профиль.
+
 This is the Python code used by the local full Docker profile. The pinned F8
 overlay and its F0 parent modules are kept byte-for-byte from the verified
 CPU runtime snapshot so the overlay's parent SHA checks still hold. `overlay/spec/lexicon.json`

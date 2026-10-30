@@ -12,6 +12,7 @@ import (
 	_ "image/png"
 	"io"
 	"mime"
+	"net"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -146,6 +147,18 @@ func uploadHandlerWithConcurrency(store *photoStore, maxConcurrent int) http.Han
 			writeError(w, http.StatusTooManyRequests, "upload_busy", "too many uploads are in progress; retry shortly")
 			return
 		}
+		// Mobile uploads may exceed the general API read deadline. Keep this
+		// extension local to uploads, with the existing byte/concurrency limits.
+		controller := http.NewResponseController(w)
+		for _, err := range []error{
+			controller.SetReadDeadline(time.Now().Add(90 * time.Second)),
+			controller.SetWriteDeadline(time.Now().Add(120 * time.Second)),
+		} {
+			if err != nil && !errors.Is(err, http.ErrNotSupported) {
+				writeError(w, http.StatusServiceUnavailable, "upload_unavailable", "photo upload is temporarily unavailable")
+				return
+			}
+		}
 		r.Body = http.MaxBytesReader(w, r.Body, maxMultipartBytes)
 		reader, err := r.MultipartReader()
 		if err != nil {
@@ -160,7 +173,7 @@ func uploadHandlerWithConcurrency(store *photoStore, maxConcurrent int) http.Han
 				break
 			}
 			if err != nil {
-				writeError(w, http.StatusBadRequest, "invalid_upload", "multipart form is invalid or too large")
+				writeUploadReadError(w, err, "multipart form is invalid or too large")
 				return
 			}
 			if part.FormName() != "photo" || part.FileName() == "" {
@@ -173,7 +186,11 @@ func uploadHandlerWithConcurrency(store *photoStore, maxConcurrent int) http.Han
 				return
 			}
 			data, err = io.ReadAll(io.LimitReader(part, maxPhotoBytes+1))
-			if err != nil || len(data) > maxPhotoBytes {
+			if err != nil {
+				writeUploadReadError(w, err, "photo upload could not be read")
+				return
+			}
+			if len(data) > maxPhotoBytes {
 				writeError(w, http.StatusBadRequest, "invalid_upload", "photo must be no larger than 10 MiB")
 				return
 			}
@@ -347,4 +364,14 @@ func writeAtomicFile(path string, data []byte) error {
 		return err
 	}
 	return os.Rename(temporaryPath, path)
+}
+
+// An interrupted transfer is not evidence that the image file is invalid.
+func writeUploadReadError(w http.ResponseWriter, err error, message string) {
+	var networkError net.Error
+	if errors.As(err, &networkError) && networkError.Timeout() {
+		writeError(w, http.StatusRequestTimeout, "upload_timeout", "photo upload timed out; retry the same photo")
+		return
+	}
+	writeError(w, http.StatusBadRequest, "invalid_upload", message)
 }

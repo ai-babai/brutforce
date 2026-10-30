@@ -1,5 +1,9 @@
 # CPU vision service
 
+Current production is Boost V16 C16: read `c16/README.md` and
+`../../docs/PRODUCTION.ru.md`; exact sources/assets are pinned in
+`../../deploy/production.json`. The F8 instructions below describe the legacy profile.
+
 This folder owns the pinned F8 CPU Python serving code. Read [README.md](README.md)
 and [vision-serving.md](../../contracts/vision-serving.md) before changing its behavior.
 

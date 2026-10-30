@@ -1,0 +1,91 @@
+{
+  "status": "QUALIFIED_NOT_ACTIVATED",
+  "qualified": true,
+  "version": "boost-independent-recovery-v16-c16-20261006",
+  "candidate_id": "boost_independent_recovery_v16_c16",
+  "candidate": "c16-independent-positive-recovery-v1",
+  "freeze_sha256": "e058737902f065c1d7389c201c7dca0b2061e728994225b842d9ef55f3922dc5",
+  "candidate_bundle_sha256": "225e43619cb06ccf965b7834635320fd46f4f90d48d80a1cb71e03af2dd2bf94",
+  "model_id": "batch32-4744-pass2",
+  "checkpoint_sha256": "b82d343499bb1c6be6c5d84de321b9f2ca658caf844787003a5f57b5592e3178",
+  "weights_unchanged": true,
+  "index_assets_unchanged": true,
+  "new_model_calls": true,
+  "serving": {
+    "model_version": "rtdetr-siglip-batch32-4744-pass2-b82d343499bb-boost-independent-recovery-v16-c16-20261006",
+    "serving_index_version": "so400m384-owlv2-v2-crops-reference-gated-20260925-batch32-4744-pass2-b82d343499bb-boost-independent-recovery-v16-c16-20261006",
+    "serving_profile": "boost-independent-recovery-v16-c16-20261006-torch2-ort6"
+  },
+  "shared_trace_config": "/srv/lct/data/experiments/batch32-simple84-production-20261002/runtime/workflow-config.json",
+  "shared_trace_config_write": false,
+  "qualification_required": [
+    "Full725 both hosts versus cached actual C14; zero observed Top1/Top5 losses/errors; all18 mandatory rank1",
+    "Predeclared samehost median/p95/max/violation gates and >=95% Mac<=3s/Linux<=7s; preprocessing/drain included",
+    "Frozen40helpers8assets and unchanged encoder/index; originalTop20 scope and no-new-host-drift",
+    "Private18 ordinary Go upload/search on actual MAIN model owner; source/profile/OFF/runtime trace",
+    "Metadata-only promotion, actual C14 rollback, public18x3=54 readback and scanner UI preservation"
+  ],
+  "public_binding_created": false,
+  "service_units_created": false,
+  "asset_pins": [
+    {
+      "role": "index",
+      "path": "/srv/lct/data/experiments/siglip-finetune-20260930/iterative-run/runtime/batch32-production-deployment-20261002/assets/index/index.npz",
+      "sha256": "e9997e4fef0bd7f68b710795b478879d5d4810c83ea7cadaacde322586e55d3f"
+    },
+    {
+      "role": "onnx_external_weights",
+      "path": "/srv/lct/data/experiments/siglip-finetune-20260930/iterative-run/runtime/batch32-production-deployment-20261002/assets/onnx/vision.onnx.data",
+      "sha256": "b259ad6972a95c6877e61853d920eeb9d1cfe04ea0a2861ac3e7c86c9aed0a76"
+    }
+  ],
+  "wrapper_entrypoint": "serve_v7.py",
+  "nomination_freeze_sha256": "5aabab82ccd45274846ba69d48d037b9fd1d1b85d9b31ce5adead96959e02be3",
+  "rollback_release": {
+    "version": "boost-resource-upper-v14-c14v6-20261005",
+    "port": 8136,
+    "unit": "lct-boost-v14-c14-qualified-20261005.service",
+    "capture_required": "fresh actual C14 API/unit/env/recommendation/config/source state after owner old-model retirement; preserve C13 and fallback disabled/OFF",
+    "assets_retained": true
+  },
+  "model_and_index_semantics": "Unchanged Batch32 weights, detector, full retrieval index, existing title/upper/artwork assets; additive source-bound context-title sidegallery9vectors using existing SigLIP only.",
+  "Unicode_descriptor_evidence_version": "unicode-complete-descriptor-geometry-v2-boundary-punctuation",
+  "new_models_weights_or_training": false,
+  "existing_encoder_additive_call_bound": 3,
+  "derived_asset_pins": {
+    "assets/context-title-gallery.json": "e94d515e5bb1f3ab098b458e9804cc57e829155fc64c9d71a659f97e7694105d",
+    "assets/context-title-gallery.npz": "312d939af725559732a95482f2207c07ca5d40736d521f6a420e4fb1586190a9",
+    "assets/title-gallery.json": "7e838558cc498b151b80798f3e497f423fffca24d79ee69cc9360f2ffe629e4c",
+    "assets/title-gallery.npz": "41353534077911ad09afba6848888f5b714f2daf385dbffeff38c28bea2e0f54",
+    "assets/upper-artwork.json": "13d2c4150f4ff63bed2557137769f90fd92e920c2e70e413b5fbeb2172750794",
+    "assets/upper-artwork.npz": "03007acd3e25800aa0567319cec8199e130cda5f419426c9d3c6373a8d9949de",
+    "assets/upper-gallery.json": "ce1fc24b41cd431f11398dce0b421f4675df6d9e4074dfb98bdf1c0c55a23d1d",
+    "assets/upper-gallery.npz": "fa27702dfd3ac06a88d69e47bf9f762f4a730f4a14be81e089b24e0580c8618c"
+  },
+  "static_metadata_state_scope": "Immutable prepared recipe metadata; current activation status is dynamic qualification_overlay bound to actual root transaction readback.",
+  "serving_port": 8137,
+  "local_whole_grape_evidence_version": "local-whole-grape-bilingual-v5-word90-budget900",
+  "local_whole_grape_execution_budget_ms": 900,
+  "full_customer_scope": {
+    "required_cases": 18,
+    "qualification_pending": true,
+    "full_fix_complete": false
+  },
+  "source_helper_count": 40,
+  "derived_asset_count": 8,
+  "resource_acquisition_failure_contract": "Earlier word TimeoutExpired is unknown: only existing separate completed word90 positive product+color may recover, with all contradictions/blends preserved; otherwise preserve incoming order and block visual absence fallback.",
+  "semantic_descriptor_execution_budget_ms": 900,
+  "resource_field_execution_budget_ms": 1500,
+  "context_title_contract": {
+    "whole_grape_reliable90_unchanged": true,
+    "source_observed_context_not_detector_extent": true,
+    "generic_specificity_not_contradiction": true,
+    "all_required_sameproducer_relatedvariety_originalTop20_competitors_ready": true,
+    "sourcebound_complete_following_ink_row": true,
+    "positive_image_similarity": 0.7,
+    "positive_margin": 0.05,
+    "no_absent_word_negative": true,
+    "failed_prior_observation_abstain": true,
+    "4calls550ms_queryOCR": true
+  }
+}

@@ -1,0 +1,51 @@
+{
+  "model_id": "batch32-4744-pass2",
+  "checkpoint_sha256": "b82d343499bb1c6be6c5d84de321b9f2ca658caf844787003a5f57b5592e3178",
+  "base_index_sha256": "e9997e4fef0bd7f68b710795b478879d5d4810c83ea7cadaacde322586e55d3f",
+  "onnx_external_weights_sha256": "b259ad6972a95c6877e61853d920eeb9d1cfe04ea0a2861ac3e7c86c9aed0a76",
+  "gallery_sources": {
+    "legacy_label": {
+      "path": "/srv/lct/data/experiments/siglip-finetune-20260930/iterative-run/runtime/batch32-production-deployment-20261002/assets/index/index.npz",
+      "sha256": "e9997e4fef0bd7f68b710795b478879d5d4810c83ea7cadaacde322586e55d3f",
+      "provenance": "Existing original historical label reference vectors preserved by canonical Batch32 export. Query encoder and full-gallery are Batch32; no extra model weights loaded."
+    }
+  },
+  "policy": {
+    "name": "simple84_fullframe_gate_then_original_cascade84",
+    "kind": "cascade_simple84",
+    "visual": {
+      "name": "cascade84_batch32_query_legacy_label_gallery",
+      "kind": "cascade",
+      "base": {
+        "kind": "gate",
+        "view": "central_pad25",
+        "floor": 0.03
+      },
+      "candidate": {
+        "kind": "gate",
+        "view": "central_pad10",
+        "gallery": "legacy_label",
+        "floor": 0,
+        "reciprocal_top5": true
+      }
+    }
+  },
+  "execution": {
+    "full_margin_crop_gate": 0.05,
+    "persistent_detector_prefire": true,
+    "detector_workers": 1,
+    "max_siglip_encodes": 3
+  },
+  "code_sha256": {
+    "boost_runtime.py": "793e17219f23a168120c03f061bf1336c4b7eb3adf8552b09508e28fd06e72af",
+    "boost_policy.py": "8c0d915f4924306878a87c368bdf49c89b4df3ca4a882689765f899b7e742548"
+  },
+  "protocol": "Single frozen simplification, no search. OriginalCASCADE84 pad25/full margin.03 then reciprocal legacy-label pad10 floor0; existing fullmargin>.05 returns originalfullTop20 beforecropinference. RTDETR prefire concurrentfullframe oncopiedimage, pool1 serializeddetector; samefixedBatch32querygraph andfullgallery. Only originalindex legacylabel used; no newgalleryassets. NoOWL/rawreference/density/OCR/title/training/queryrules. boost0 returnsoriginalpath.",
+  "validation": {
+    "source_frozen": true,
+    "native_validation": "pending_root",
+    "expected_exports": "independent_goldblind_singleton_all444_frozen"
+  },
+  "limitations": "Existing historical legacy-label vectors remain deliberately used, not re-encoded. Fullmargin crop skip empirically validated on seen datasets; no universal quality or latency guarantee. Original main wine/nonwine classification route is bypassed in optional boost retrieval.",
+  "server_protocol": "Isolated readonly FAST84 HTTP benchmark, same frozen simple84 ranking. Private Torch2/ORT6/BLAS1; no OCR/OWL/rawreference/title/density calls. Original code/weights/services unchanged."
+}

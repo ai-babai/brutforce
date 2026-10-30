@@ -1,5 +1,7 @@
 # F8 CPU · фактический asset inventory (28.09.2026)
 
+> Историческая опись F8. Текущий C16, дообученный Batch32 и его 43 внешних файла закреплены в [production.json](../production.json) и [PRODUCTION.ru.md](../../docs/PRODUCTION.ru.md).
+
 Источник: чтение active TEST unit и файлов на Sigma; базовая привязка в
 `deploy/f8-runtime.json`. [f8-cpu.sha256](f8-cpu.sha256) перечисляет **32 файла
 внешних данных** — processor, ONNX, индекс, OCR-языки и 3 HF snapshots.

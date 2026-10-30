@@ -1,5 +1,12 @@
 # Shared vision serving boundary
 
+Current production (verified 2026-10-31) is **Boost V16 C16**, not the historical
+F8/A2 runtime below. The same Go boundary and organizer slug validation apply.
+Exact model/index versions, code and external-data hashes are in
+[`deploy/production.json`](../deploy/production.json); the running system is
+documented in [`PRODUCTION.ru.md`](../docs/PRODUCTION.ru.md).
+F8/A2-specific paragraphs below describe the previous release.
+
 The Go API uses one ranked image result for both `POST /v1/eval/predict` and
 photo `POST /v1/search`. Configure `VISION_SERVICE_URL` as an internal HTTP(S)
 origin. Its serving process accepts `POST /v1/eval/predict?track=service` with
