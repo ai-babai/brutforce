@@ -97,7 +97,8 @@ python3 deploy/demo/build-report-catalog.py /srv/brut/current/reports
 
 После переноса/обновления архива выполнить `archive-reports.py`, скопировать
 `deploy/demo/reports-index.html` в `reports/index.html`, затем пересобрать каталог.
-Корень `reps.maks.dzap.pw/` перенаправляет в полный каталог, `/view` сохраняет UX Atlas.
+Полный каталог открыт на `https://brut.mipopkov.ru/reports/`, UX Atlas сохранён в `/reports/maks/`.
+С 01.11.2026 старые адреса Sigma выведены из эксплуатации по решению владельца.
 
 Сохранены текущие отчёты Макса и Романа, синтетическая галерея, behavior,
 mascot-lab, wine-after-scan, UX v2/v3 с предыдущими вариантами, training dashboard,
@@ -108,7 +109,8 @@ mascot-lab, wine-after-scan, UX v2/v3 с предыдущими варианта
 скачивание входного eval-пакета отключено. Ручная проверка референсов завершена,
 живой reviewer/collector не переносился. Исторические статусы/метрики не исправлялись.
 
-Старые app/reports/landing/eval/training адреса на Sigma перенаправляют на Beget.
+Перенаправления старых app/reports/landing/eval/training адресов Sigma отключены;
+их DNS-записи удалены. Использовать только `brut.mipopkov.ru`.
 Пять старых BrutForce-служб остановлены и отключены. Десять файлов весов и
 индексов (~3.94 ГБ) удалены с Sigma после повторной SHA-проверки локальных
 97 исходников и 43 внешних assets. Общий системный Tesseract не удалялся.
