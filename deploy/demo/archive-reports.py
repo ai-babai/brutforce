@@ -27,8 +27,8 @@ for p in root.rglob('*'):
         new = re.sub(r'([\x22\x27\x60])/' + re.escape(name) + r'(?=[/#?\x22\x27\x60])',
                      lambda m: m[1] + '/reports/maks/' + ('index.html' if name == 'view' else name), new)
     if 'project' in p.relative_to(root).parts:
-        new = new.replace('/api-status', '/v2/catalog?limit=1').replace('PROD API работает', 'Демо API работает').replace('PROD API недоступен', 'Демо API недоступен')
-        for name in ['files', 'icon.png', 'contest-glass-010.png', 'mascot-hold-2d-alpha.webp', 'svoe-vino-logo.svg']:
+        new = new.replace('/api-status', '/v2/catalog?limit=1').replace('PROD API работает', 'Демо API работает').replace('PROD API недоступен', 'Демо API недоступен').replace('каталога PROD', 'каталога демо')
+        for name in ['files', 'icon.png', 'contest-glass-010.png', 'mascot-hold-2d-alpha.webp', 'svoe-vino-logo.svg', 'PlayfairDisplay-VariableFont_wght.woff2', 'onest-2.woff2', 'app-home-preview.webp', 'app-home-preview-source.png', 'ui-demo.mp4']:
             new = re.sub(r'([\x22\x27\x60])/' + re.escape(name) + r'(?=[/\x22\x27\x60])',
                          lambda m: m[1] + '/reports/project/' + name, new)
         new = re.sub(r'<a\b[^>]*href=[\x22\x27][^\x22\x27]*brutforce-data\.tar[\x22\x27][\s\S]*?</a>', '', new)
