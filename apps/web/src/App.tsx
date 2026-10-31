@@ -935,7 +935,7 @@ export function App({
                   ? "Сверьте название и винодельню со своим снимком."
                   : "Сравните название, винодельню и год."}
               </p>
-              {(demoMode || demoStand) && <DemoDisclosure simulation={demoStand} />}
+              {!demoStand && demoMode && <DemoDisclosure />}
               {photo && candidateHasPhoto && <div className="air-comparison">
                 <Photo photo={photo} compact onExpand={() => setExpandedPhoto(true)} />
                 <div className="air-comparison-actions" role="group" aria-label="Заменить снимок">
@@ -1006,7 +1006,7 @@ export function App({
                       {storageNotice}
                     </p>
                   )}
-                  {(demoMode || (demoStand && resultOrigin === "scan")) && <DemoDisclosure simulation={demoStand} />}
+                  {!demoStand && demoMode && <DemoDisclosure />}
                   <dl className="result-overview">
                     {shown.sugar?.trim() ? <div><dt>Сахар</dt><dd>{shown.sugar}</dd></div> : null}
                     {strength && <div><dt>Алкоголь</dt><dd>{strength}</dd></div>}
@@ -1360,14 +1360,15 @@ function Top({
     </header>
   );
 }
-function DemoDisclosure({ simulation = false }: { simulation?: boolean }) {
+function DemoDisclosure() {
   return (
-    <aside className="demo-disclosure" role="note" aria-label={simulation ? "Демо-сканирование" : "Reference-режим"}>
-      <strong>{simulation ? "Демо-сканирование" : "Reference-режим"}</strong>
-      <span>{simulation ? "Это случайное вино из каталога. Распознавание и загрузка фото отключены." : "Распознавание показывает справочные варианты; результат не является измеренной модельной оценкой."}</span>
+    <aside className="demo-disclosure" role="note" aria-label="Reference-режим">
+      <strong>Reference-режим</strong>
+      <span>Распознавание показывает справочные варианты; результат не является измеренной модельной оценкой.</span>
     </aside>
   );
 }
+
 function StateIcon({ children }: { children: React.ReactNode }) {
   return <div className="state-icon">{children}</div>;
 }
