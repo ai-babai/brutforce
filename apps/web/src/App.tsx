@@ -715,7 +715,7 @@ export function App({
   const showNav = !expandedPhoto;
 
   return (
-    <main className="app-shell">
+    <main className={`app-shell${demoStand ? " demo-stand" : ""}`}>
       <section className={`app${screen === "camera" ? " camera-open" : ""}`} data-testid="app">
         <div className="app-content" ref={contentRef}>
           {screen === "welcome" && (

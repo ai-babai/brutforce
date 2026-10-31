@@ -1,0 +1,9 @@
+/* Keep both demo actions visible inside the desktop device frame. */
+@media (min-width: 1024px) {
+  .demo-stand > .app #UI-001 .hero { min-height: 0; }
+  .demo-stand > .app #UI-001 .hero > .mascot-scene {
+    flex-basis: clamp(110px, calc(var(--device-screen-height) - 570px), 250px);
+    height: clamp(110px, calc(var(--device-screen-height) - 570px), 250px);
+  }
+  .demo-stand > .app #UI-001 .hero > .mascot-scene img { height: 100%; }
+}
