@@ -26,13 +26,22 @@ for p in root.rglob('*'):
     for name in report_roots:
         new = re.sub(r'([\x22\x27\x60])/' + re.escape(name) + r'(?=[/#?\x22\x27\x60])',
                      lambda m: m[1] + '/reports/maks/' + ('index.html' if name == 'view' else name), new)
+    if p.relative_to(root).as_posix().startswith('maks/vision/'):
+        new = re.sub(r'([\x22\x27\x60])/data(?=[/\x22\x27\x60])', lambda m: m[1] + '/reports/maks/vision/gallery', new)
+        for name in ['style.css', 'app.js', 'guide.html', 'requirements.html', 'requirements.css', 'requirements.js']:
+            new = re.sub(r'([\x22\x27\x60])/' + re.escape(name) + r'(?=[?\x22\x27\x60])', lambda m: m[1] + '/reports/maks/vision/' + name, new)
+        new = re.sub(r'([\x22\x27\x60])/(?=[?\x22\x27\x60])', lambda m: m[1] + '/reports/maks/vision/', new)
     if 'project' in p.relative_to(root).parts:
         new = new.replace('/api-status', '/v2/catalog?limit=1').replace('PROD API работает', 'Демо API работает').replace('PROD API недоступен', 'Демо API недоступен').replace('каталога PROD', 'каталога демо')
-        for name in ['files', 'icon.png', 'contest-glass-010.png', 'mascot-hold-2d-alpha.webp', 'svoe-vino-logo.svg', 'PlayfairDisplay-VariableFont_wght.woff2', 'onest-2.woff2', 'app-home-preview.webp', 'app-home-preview-source.png', 'ui-demo.mp4']:
+        for name in ['icons', 'files', 'icon.png', 'contest-glass-010.png', 'mascot-hold-2d-alpha.webp', 'svoe-vino-logo.svg', 'PlayfairDisplay-VariableFont_wght.woff2', 'onest-2.woff2', 'app-home-preview.webp', 'app-home-preview-source.png', 'ui-demo.mp4']:
             new = re.sub(r'([\x22\x27\x60])/' + re.escape(name) + r'(?=[/\x22\x27\x60])',
                          lambda m: m[1] + '/reports/project/' + name, new)
         new = re.sub(r'<a\b[^>]*href=[\x22\x27][^\x22\x27]*brutforce-data\.tar[\x22\x27][\s\S]*?</a>', '', new)
-    new = new.replace('/reports/maks/v2/catalog', '/v2/catalog').replace('/reports/maks/mascots/baseline/mascot.html', '/reports/maks/mascots/glass.html')
+    new = new.replace('/reports/maks/v2/catalog', '/v2/catalog').replace('/reports/maks/mascots/baseline/mascot.html', '/reports/maks/mascots/v1/mascot.html')
+    if p.relative_to(root).as_posix() == 'maks/mascots/baseline/index.html':
+        new = new.replace('href="mascot.html"', 'href="../v1/mascot.html"')
+    if p.relative_to(root).as_posix() == 'maks/index.html':
+        new = new.replace('BrutForce · архив отчётов</a>', 'Все отчёты BrutForce · полный каталог →</a>')
     if p.suffix == '.html' and 'brut-demo-archive-notice' not in new:
         notice = '<aside id="brut-demo-archive-notice" style="padding:10px 16px;background:#faf8f3;color:#694657;border-bottom:1px solid #d8cdd2;font:13px/1.5 system-ui"><a href="/reports/" style="color:inherit">BrutForce · архив отчётов</a> · Сохранённое состояние. Распознавание, загрузки и новые прогоны отключены.</aside>'
         new = re.sub(r'(<body\b[^>]*>)', lambda m: m[0] + notice, new, count=1, flags=re.I)

@@ -88,6 +88,17 @@ CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -trimpath -o /external/staging/br
 
 ## Архив отчётов
 
+Главная `/reports/` содержит полный каталог **68 опубликованных страниц** с поиском
+и разделами. Метаданные строятся из серверного архива, в Git не включаются:
+
+```sh
+python3 deploy/demo/build-report-catalog.py /srv/brut/current/reports
+```
+
+После переноса/обновления архива выполнить `archive-reports.py`, скопировать
+`deploy/demo/reports-index.html` в `reports/index.html`, затем пересобрать каталог.
+Корень `reps.maks.dzap.pw/` перенаправляет в полный каталог, `/view` сохраняет UX Atlas.
+
 Сохранены текущие отчёты Макса и Романа, синтетическая галерея, behavior,
 mascot-lab, wine-after-scan, UX v2/v3 с предыдущими вариантами, training dashboard,
 презентация и видео. Eval сохранён как статическая страница с 98 прежними

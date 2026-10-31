@@ -12,6 +12,7 @@ https://brut.mipopkov.ru {
     }
     redir /reports /reports/ 308
     redir /reports/maks/view /reports/maks/ 308
+    redir /reports/maks/mascots/baseline/mascot.html /reports/maks/mascots/v1/mascot.html 308
     handle /reports/* {
         import /etc/brut/reports-auth.caddy
         header Cache-Control "private, no-store"
