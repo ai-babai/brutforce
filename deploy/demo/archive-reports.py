@@ -27,6 +27,7 @@ for p in root.rglob('*'):
         new = re.sub(r'([\x22\x27\x60])/' + re.escape(name) + r'(?=[/#?\x22\x27\x60])',
                      lambda m: m[1] + '/reports/maks/' + ('index.html' if name == 'view' else name), new)
     if 'project' in p.relative_to(root).parts:
+        new = new.replace('/api-status', '/v2/catalog?limit=1').replace('PROD API работает', 'Демо API работает').replace('PROD API недоступен', 'Демо API недоступен')
         for name in ['files', 'icon.png', 'contest-glass-010.png', 'mascot-hold-2d-alpha.webp', 'svoe-vino-logo.svg']:
             new = re.sub(r'([\x22\x27\x60])/' + re.escape(name) + r'(?=[/\x22\x27\x60])',
                          lambda m: m[1] + '/reports/project/' + name, new)

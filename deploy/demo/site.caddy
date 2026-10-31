@@ -19,6 +19,8 @@ https://brut.mipopkov.ru {
         respond @write "Read-only report archive" 405
         @private_dirs path_regexp private_dirs (?i)(^|/)(inputs?|uploads?|feedback|node_modules|\.git)(/|$)
         respond @private_dirs 404
+        @retired_live path /reports/maks/vision/api/data/* /reports/roman/review-api/*
+        respond @retired_live "Live input/review backend is retired; see the archived metrics" 410
         @archived_case path_regexp archived_case ^/reports/maks/vision/api/baskets/[^/]+/cases/[^/]+/image$
         rewrite @archived_case /reports/maks/vision/archived-image.svg
         uri strip_prefix /reports
