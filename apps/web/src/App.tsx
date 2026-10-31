@@ -235,7 +235,7 @@ export function App({
     return () => controller.abort();
   }, [screen, selected?.id, recommendationAttempt]);
   useEffect(() => {
-    if (screen !== "camera" || permissionDenied) return;
+    if (demoStand || screen !== "camera" || permissionDenied) return;
     let active = true;
     (async () => {
       try {
@@ -261,7 +261,7 @@ export function App({
       active = false;
       stopCamera();
     };
-  }, [screen, permissionDenied]);
+  }, [screen, permissionDenied, demoStand]);
   const validPhoto = (file: File) =>
     ["image/jpeg", "image/png", "image/gif", "image/webp", "image/bmp"].includes(file.type) &&
     file.size <= 10 * 1024 * 1024;
@@ -376,7 +376,44 @@ export function App({
       }
     }
   };
+  const runDemoScan = () => {
+    abort.current?.abort();
+    clearWaitTimer();
+    stopCamera();
+    clearPhotoPath();
+    beginWineNotes();
+    setDemoMode(false);
+    setSection("scanner");
+    const controller = new AbortController();
+    abort.current = controller;
+    setScreen("loading");
+    waitTimer.current = setTimeout(() => {
+      if (controller.signal.aborted || abort.current !== controller) return;
+      setScreen("waiting");
+      waitTimer.current = setTimeout(async () => {
+        waitTimer.current = undefined;
+        try {
+          const data = await getCatalog({ limit: 24, signal: controller.signal });
+          if (controller.signal.aborted || abort.current !== controller) return;
+          if (!data.candidates.length) throw new Error("Каталог пуст");
+          const wine = data.candidates[Math.floor(Math.random() * data.candidates.length)];
+          setCandidates([wine]);
+          setCandidateOrigin("scan");
+          setCandidateHasPhoto(false);
+          setScreen("candidates");
+        } catch (error) {
+          if (!controller.signal.aborted && abort.current === controller) {
+            setErrorKind(classifyError(error));
+            setScreen("error");
+          }
+        }
+      }, 1200);
+    }, 1200);
+  };
   const retry = () =>
+    demoStand && !lastRequest.current.query
+      ? runDemoScan()
+      :
     lastRequest.current.query
       ? (setQuery(lastRequest.current.query), submitCatalogSearch())
       :
@@ -421,7 +458,6 @@ export function App({
     setScreen("welcome");
   };
   const openCamera = () => {
-	if (demoStand) return;
     cameraReturn.current = screen;
     if (screen === "missing" && missingReason === "rejected") setMissingReason("rejected");
     permissionDenied ? setScreen("permission") : setScreen("camera");
@@ -480,6 +516,10 @@ export function App({
     setScreen("saved");
   };
   const capture = () => {
+    if (demoStand) {
+      runDemoScan();
+      return;
+    }
     const video = videoRef.current,
       canvas = canvasRef.current;
     if (!video || !canvas || !video.videoWidth) {
@@ -729,18 +769,18 @@ export function App({
                     <h1>
                       Какое вино перед вами?
                     </h1>
-                    <p>{demoStand ? <>Найдите карточку в каталоге.<br />Распознавание по фото отключено.</> : <>Сфотографируйте этикетку.<br />Откроем карточку вина.</>}</p>
+                    <p>{demoStand ? <>Попробуйте сканирование.<br />В демо покажем случайное вино.</> : <>Сфотографируйте этикетку.<br />Откроем карточку вина.</>}</p>
                   </div>
                   <MascotScene scene="home" />
                 </div>
               </div>
               <div className="actions">
-                <button className="primary scan-button" onClick={demoStand ? openSearch : openCamera}>
-                  {demoStand ? <MagnifyingGlass /> : <Camera />}
+                <button className="primary scan-button" onClick={openCamera}>
+                  <Camera />
                   <span>
-                    <b>{demoStand ? "Найти вино" : "Сканировать вино"}</b>
+                    <b>Сканировать вино</b>
                   </span>
-                  {demoStand ? <ArrowRight /> : <AtlasScan />}
+                  <AtlasScan />
                 </button>
                 <div className="split-actions">
                   {demoStand ? <button onClick={() => window.location.assign("/reports/")}>Как создавали проект</button> : <><button onClick={() => galleryRef.current?.click()}>
@@ -761,28 +801,28 @@ export function App({
             <div className="camera-page" id="UI-002">
               <div className="camera-header">
                 <Top title="Этикетка вина" onBack={backFromCamera} />
-                <p>Нужная бутылка по центру</p>
+                <p>{demoStand ? "Демо: нажмите на кнопку снимка" : "Нужная бутылка по центру"}</p>
               </div>
               <div className="camera-preview">
                 <div className="viewfinder">
-                  <video
+                  {demoStand ? <div className="demo-camera-scene"><MascotScene scene="home" /></div> : <video
                     ref={videoRef}
                     playsInline
                     muted
                     aria-label="Изображение с камеры"
-                  />
+                  />}
                   <div className="camera-frame" />
                 </div>
               </div>
               <canvas ref={canvasRef} hidden />
               <div className="camera-actions">
-                <button
+                {demoStand ? <span aria-hidden="true" /> : <button
                   className="camera-gallery-action"
                   aria-label="Выбрать из галереи"
                   onClick={() => galleryRef.current?.click()}
                 >
                   <ImageSquare weight="light" />
-                </button>
+                </button>}
                 <button
                   className="shutter"
                   aria-label="Сделать снимок"
@@ -854,9 +894,11 @@ export function App({
                   : "Ищем ваше вино"}
               </h2>
               <p>
-                {screen === "waiting"
-                  ? "Проверяем похожие записи в каталоге."
-                  : "Сверяем снимок с винами в каталоге."}
+                {demoStand
+                  ? "Демонстрация: после ожидания покажем случайное вино из каталога."
+                  : screen === "waiting"
+                    ? "Проверяем похожие записи в каталоге."
+                    : "Сверяем снимок с винами в каталоге."}
               </p>
               <MascotScene scene="walk" />
               <div className="air-waiting-discovery">
@@ -893,7 +935,7 @@ export function App({
                   ? "Сверьте название и винодельню со своим снимком."
                   : "Сравните название, винодельню и год."}
               </p>
-              {demoMode && <DemoDisclosure />}
+              {(demoMode || demoStand) && <DemoDisclosure simulation={demoStand} />}
               {photo && candidateHasPhoto && <div className="air-comparison">
                 <Photo photo={photo} compact onExpand={() => setExpandedPhoto(true)} />
                 <div className="air-comparison-actions" role="group" aria-label="Заменить снимок">
@@ -953,6 +995,7 @@ export function App({
                         </dl>
                       )}
                     </div>
+                    {demoStand && resultOrigin === "scan" && <span className="demo-label"><Check />Демо-сканирование</span>}
                     {(resultOrigin === "catalog" ? catalogDemo : demoMode) && <span className="demo-label"><Check />{resultOrigin === "catalog" ? "Демо-карточка" : "Reference"}</span>}
                     <p className="result-winery">{shown.winery}{hasYear(shown.year) && <>{shown.winery && " · "}{shown.year}</>}</p>
                     <h2>{shown.name}</h2>
@@ -963,7 +1006,7 @@ export function App({
                       {storageNotice}
                     </p>
                   )}
-                  {demoMode && <DemoDisclosure />}
+                  {(demoMode || (demoStand && resultOrigin === "scan")) && <DemoDisclosure simulation={demoStand} />}
                   <dl className="result-overview">
                     {shown.sugar?.trim() ? <div><dt>Сахар</dt><dd>{shown.sugar}</dd></div> : null}
                     {strength && <div><dt>Алкоголь</dt><dd>{strength}</dd></div>}
@@ -1006,8 +1049,8 @@ export function App({
                     )}
                   </section>
                   <div className="result-actions">
-                    <button className="primary" onClick={demoStand ? openSearch : newCapture}>
-                      {demoStand ? "Найти другое вино" : "Сканировать ещё"}
+                    <button className="primary" onClick={newCapture}>
+                      Сканировать ещё
                     </button>
                     {photo && resultHasPhoto && (
                       <button
@@ -1093,10 +1136,10 @@ export function App({
                   </button>
                 )}
               </>}
-              {!demoStand && <button className="text-button" onClick={newCapture}>
+              <button className="text-button" onClick={newCapture}>
                 <Camera weight="light" />
                 Сканировать этикетку
-              </button>}
+              </button>
               <ProductFooter />
             </Page>
           )}
@@ -1317,11 +1360,11 @@ function Top({
     </header>
   );
 }
-function DemoDisclosure() {
+function DemoDisclosure({ simulation = false }: { simulation?: boolean }) {
   return (
-    <aside className="demo-disclosure" role="note" aria-label="Reference-режим">
-      <strong>Reference-режим</strong>
-      <span>Распознавание показывает справочные варианты; результат не является измеренной модельной оценкой.</span>
+    <aside className="demo-disclosure" role="note" aria-label={simulation ? "Демо-сканирование" : "Reference-режим"}>
+      <strong>{simulation ? "Демо-сканирование" : "Reference-режим"}</strong>
+      <span>{simulation ? "Это случайное вино из каталога. Распознавание и загрузка фото отключены." : "Распознавание показывает справочные варианты; результат не является измеренной модельной оценкой."}</span>
     </aside>
   );
 }
