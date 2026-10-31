@@ -6,6 +6,15 @@ imported display catalog, a private photo receipt feeds real ranked search and
 the contest endpoint returns the top organizer-verified slug. The display
 catalog is loaded by a separately validated importer.
 
+## Read-only production-catalog demo
+
+Set `DEMO_STAND_CATALOG_FILE` to a JSON object with `version`, `wines`, and `aliases`.
+This loads the real display projection from a file; `DATABASE_URL` must be unset.
+The stand disables photo/feedback storage, model clients, uploads, contest prediction,
+and photo-receipt search (410 `demo_read_only`). Text catalog/search, details, aliases,
+and offline recommendations remain available. `demo:false` describes catalog provenance.
+Build the UI with `BRUT_DEMO_STAND=1`; see [deployment guide](../../docs/DEMO-STAND.ru.md).
+
 ## Synthetic catalog: PostgreSQL and standalone mode
 
 [`catalog.json`](catalog.json) defines eight synthetic red-dry wines with stable IDs.

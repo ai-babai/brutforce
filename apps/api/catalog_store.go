@@ -95,6 +95,12 @@ func (embeddedCatalogStore) ResolveIDDetail(_ context.Context, id string) (wine,
 type postgresCatalogStore struct{ pool *pgxpool.Pool }
 
 func openConfiguredCatalog(ctx context.Context) (catalogReader, func(), error) {
+	if path := os.Getenv("DEMO_STAND_CATALOG_FILE"); path != "" {
+		if os.Getenv("DATABASE_URL") != "" {
+			return nil, nil, errCatalogUnavailable
+		}
+		return openFileCatalog(path)
+	}
 	url := os.Getenv("DATABASE_URL")
 	if url == "" {
 		return embeddedCatalogStore{}, func() {}, nil

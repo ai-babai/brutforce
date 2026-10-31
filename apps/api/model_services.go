@@ -44,6 +44,9 @@ type modelClient struct {
 }
 
 func configuredModelServices() modelServices {
+	if demoStandEnabled() {
+		return modelServices{visualIndex: configuredRecommendationIndex()}
+	}
 	version := os.Getenv("CATALOG_VERSION")
 	if version == "" {
 		version = defaultCatalogVersion

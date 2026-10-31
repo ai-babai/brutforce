@@ -1,0 +1,43 @@
+https://brut.mipopkov.ru {
+    import private-access-log
+    encode zstd gzip
+    tls admin@mipopkov.ru
+    header {
+        X-Content-Type-Options nosniff
+        Referrer-Policy no-referrer
+        X-Robots-Tag "noindex, nofollow, noarchive"
+        Permissions-Policy "camera=(), microphone=(), geolocation=()"
+        Strict-Transport-Security "max-age=31536000; includeSubDomains"
+        -Server
+    }
+    redir /reports /reports/ 308
+    redir /reports/maks/view /reports/maks/ 308
+    handle /reports/* {
+        import /etc/brut/reports-auth.caddy
+        header Cache-Control "private, no-store"
+        @write not method GET HEAD OPTIONS
+        respond @write "Read-only report archive" 405
+        @private_dirs path_regexp private_dirs (?i)(^|/)(inputs?|uploads?|feedback|node_modules|\.git)(/|$)
+        respond @private_dirs 404
+        @archived_case path_regexp archived_case ^/reports/maks/vision/api/baskets/[^/]+/cases/[^/]+/image$
+        rewrite @archived_case /reports/maks/vision/archived-image.svg
+        uri strip_prefix /reports
+        root * /srv/brut/current/reports
+        file_server
+    }
+    handle_path /media/catalog/* {
+        root * /srv/brut/assets/catalog
+        header Cache-Control "public, max-age=86400"
+        file_server
+    }
+    @disabled path /uploads /uploads/* /inputs /inputs/* /feedback /feedback/*
+    handle @disabled {
+        respond "Demo uploads disabled" 410
+    }
+    handle {
+        request_body {
+            max_size 64KB
+        }
+        reverse_proxy 127.0.0.1:8098
+    }
+}

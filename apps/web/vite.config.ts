@@ -2,6 +2,7 @@ import { defineConfig } from 'vitest/config';
 import react from '@vitejs/plugin-react';
 
 export default defineConfig({
+  define: { __DEMO_STAND__: JSON.stringify(process.env.BRUT_DEMO_STAND === '1') },
   plugins: [react()],
   server: {
     port: 5190,

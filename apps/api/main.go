@@ -124,8 +124,12 @@ func newHandlerWithCatalogAndServices(webRoot string, recognizer Recognizer, cat
 	if recognizer == nil && services.vision != nil {
 		recognizer = &visionRecognizer{client: services.vision}
 	}
-	store := configuredPhotoStore()
-	feedback := configuredFeedbackStore()
+	var store *photoStore
+	var feedback *feedbackStore
+	if !demoStandEnabled() {
+		store = configuredPhotoStore()
+		feedback = configuredFeedbackStore()
+	}
 	mux := http.NewServeMux()
 	mux.HandleFunc("/api/docs", docsHandler)
 	mux.HandleFunc("/api/docs/", docsHandler)
@@ -134,11 +138,20 @@ func newHandlerWithCatalogAndServices(webRoot string, recognizer Recognizer, cat
 	mux.HandleFunc("/v1/health", healthHandler(catalog))
 	mux.HandleFunc("/v2/catalog", catalogHandler(catalog))
 	mux.HandleFunc("/v2/catalog/", catalogItemHandler(catalog))
-	mux.HandleFunc("/v1/photos", uploadHandler(store))
+	if demoStandEnabled() {
+		unavailable := func(w http.ResponseWriter, r *http.Request) {
+			writeError(w, http.StatusGone, "demo_read_only", "Uploads and recognition are disabled on this demo stand")
+		}
+		mux.HandleFunc("/v1/photos", unavailable)
+		mux.HandleFunc("/v1/feedback", unavailable)
+		mux.HandleFunc("/v1/eval/predict", unavailable)
+	} else {
+		mux.HandleFunc("/v1/photos", uploadHandler(store))
+		mux.HandleFunc("/v1/feedback", correlateServiceRequest(feedbackHandler(feedback, store, catalog), recommendationRequestDeadline))
+		mux.HandleFunc("/v1/eval/predict", newEvalPredictHandler(recognizer, configuredEvalConcurrency()))
+	}
 	mux.HandleFunc("/v1/search", correlateSearchRequest(searchHandlerWithFeedback(store, feedback, catalog, services)))
-	mux.HandleFunc("/v1/feedback", correlateServiceRequest(feedbackHandler(feedback, store, catalog), recommendationRequestDeadline))
 	mux.HandleFunc("/v1/recommendations", correlateRecommendationRequest(recommendationsHandler(catalog, services)))
-	mux.HandleFunc("/v1/eval/predict", newEvalPredictHandler(recognizer, configuredEvalConcurrency()))
 	mux.HandleFunc("/v1/", apiNotFoundHandler)
 	mux.HandleFunc("/api/", apiNotFoundHandler)
 	if webRoot == "" {
@@ -231,6 +244,10 @@ func searchHandlerWithFeedback(store *photoStore, feedback *feedbackStore, catal
 		request, err := decodeSearchRequest(r)
 		if err != nil {
 			writeError(w, http.StatusBadRequest, "invalid_request", err.Error())
+			return
+		}
+		if demoStandEnabled() && request.PhotoID != nil {
+			writeError(w, http.StatusGone, "demo_read_only", "Image recognition is disabled on this demo stand")
 			return
 		}
 		info, err := catalogInfoFor(r.Context(), catalog)

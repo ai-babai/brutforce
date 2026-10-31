@@ -51,7 +51,8 @@ const savedKey = "wine-demo-saved-v1";
 export function App({
   initialScenario = "exact",
   simulatePermissionDenied = false,
-}: { initialScenario?: Scenario; simulatePermissionDenied?: boolean } = {}) {
+  demoStand = false,
+}: { initialScenario?: Scenario; simulatePermissionDenied?: boolean; demoStand?: boolean } = {}) {
   const [screen, setScreen] = useState<Screen>("welcome");
   const [section, setSection] = useState<"scanner" | "search" | "saved">(
     "scanner",
@@ -265,6 +266,7 @@ export function App({
     ["image/jpeg", "image/png", "image/gif", "image/webp", "image/bmp"].includes(file.type) &&
     file.size <= 10 * 1024 * 1024;
   const pickPhoto = (file?: File) => {
+	if (demoStand) return;
     if (!file) return;
     if (!validPhoto(file)) {
       if (screen !== "camera") cameraReturn.current = screen;
@@ -419,6 +421,7 @@ export function App({
     setScreen("welcome");
   };
   const openCamera = () => {
+	if (demoStand) return;
     cameraReturn.current = screen;
     if (screen === "missing" && missingReason === "rejected") setMissingReason("rejected");
     permissionDenied ? setScreen("permission") : setScreen("camera");
@@ -726,21 +729,21 @@ export function App({
                     <h1>
                       Какое вино перед вами?
                     </h1>
-                    <p>Сфотографируйте этикетку.<br />Откроем карточку вина.</p>
+                    <p>{demoStand ? <>Найдите карточку в каталоге.<br />Распознавание по фото отключено.</> : <>Сфотографируйте этикетку.<br />Откроем карточку вина.</>}</p>
                   </div>
                   <MascotScene scene="home" />
                 </div>
               </div>
               <div className="actions">
-                <button className="primary scan-button" onClick={openCamera}>
-                  <Camera />
+                <button className="primary scan-button" onClick={demoStand ? openSearch : openCamera}>
+                  {demoStand ? <MagnifyingGlass /> : <Camera />}
                   <span>
-                    <b>Сканировать вино</b>
+                    <b>{demoStand ? "Найти вино" : "Сканировать вино"}</b>
                   </span>
-                  <AtlasScan />
+                  {demoStand ? <ArrowRight /> : <AtlasScan />}
                 </button>
                 <div className="split-actions">
-                  <button onClick={() => galleryRef.current?.click()}>
+                  {demoStand ? <button onClick={() => window.location.assign("/reports/")}>Как создавали проект</button> : <><button onClick={() => galleryRef.current?.click()}>
                     <ImageSquare />
                     Выбрать фото
                   </button>
@@ -748,6 +751,7 @@ export function App({
                     <MagnifyingGlass />
                     По названию
                   </button>
+                  </>}
                 </div>
               </div>
               <InstallApp />
@@ -1002,8 +1006,8 @@ export function App({
                     )}
                   </section>
                   <div className="result-actions">
-                    <button className="primary" onClick={newCapture}>
-                      Сканировать ещё
+                    <button className="primary" onClick={demoStand ? openSearch : newCapture}>
+                      {demoStand ? "Найти другое вино" : "Сканировать ещё"}
                     </button>
                     {photo && resultHasPhoto && (
                       <button
@@ -1089,10 +1093,10 @@ export function App({
                   </button>
                 )}
               </>}
-              <button className="text-button" onClick={newCapture}>
+              {!demoStand && <button className="text-button" onClick={newCapture}>
                 <Camera weight="light" />
                 Сканировать этикетку
-              </button>
+              </button>}
               <ProductFooter />
             </Page>
           )}
@@ -1140,7 +1144,7 @@ export function App({
                   ? "Карточка пока недоступна"
                   : "Ничего не найдено"}</h2>
               <p>{missingReason === "rejected"
-                ? "Попробуйте поиск по названию или другой снимок."
+                ? (demoStand ? "Попробуйте другое название или винодельню." : "Попробуйте поиск по названию или другой снимок.")
                 : missingReason === "outside_display"
                   ? "Вино распознано, но его карточки пока нет в нашем каталоге."
                   : "Сервис не нашёл подходящего совпадения."}</p>
@@ -1216,7 +1220,7 @@ export function App({
               <button className="text-button" onClick={openSearch}>По названию</button>
             </Page>
           )}
-          <input
+          {!demoStand && <><input
             ref={cameraRef}
             className="visually-hidden"
             aria-label="Снять фотографию этикетки"
@@ -1239,6 +1243,7 @@ export function App({
               e.currentTarget.value = "";
             }}
           />
+          </>}
           {expandedPhoto && photo && (
             <div
               className="photo-dialog"
